@@ -16,6 +16,8 @@ import net.corda.core.schemas.QueryableState
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.Emoji
 import com.barclays.indiacp.cordapp.schemas.IndiaCommercialPaperSchemaV1
+import com.barclays.indiacp.cordapp.schemas.StandardSettlementSchema
+import com.barclays.indiacp.cordapp.schemas.StandardSettlementSchemaV1
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import net.corda.core.crypto.*
 import java.security.PublicKey
@@ -104,7 +106,7 @@ class IndiaCommercialPaper : Contract {
         override fun toString() = "${Emoji.newspaper}CommercialPaper($cpProgramID:$cpTradeID of $faceValue redeemable on $maturityDate by '$issuer', owned by ${beneficiary.owningKey.toString()})"
 
         /** Object Relational Mapping support. */
-        override fun supportedSchemas(): Iterable<MappedSchema> = listOf(IndiaCommercialPaperSchemaV1)
+        override fun supportedSchemas(): Iterable<MappedSchema> = listOf(IndiaCommercialPaperSchemaV1, StandardSettlementSchemaV1)
 
         /** Object Relational Mapping support. */
         override fun generateMappedObject(schema: MappedSchema): PersistentState {
@@ -124,6 +126,18 @@ class IndiaCommercialPaper : Contract {
                         isin = this.isin,
                         version = this.version,
                         hashDealConfirmationDoc = this.hashDealConfirmationDoc
+                )
+                is StandardSettlementSchemaV1 -> StandardSettlementSchemaV1.PersistentStandardSettlementSchemaState(
+                        settlement_key = this.issuer.owningKey.toBase58String(),
+                        cpTradeID = this.cpTradeID,
+                        cpProgramID = this.cpProgramID,
+                        creditorName = this.issuerSettlementDetails?.paymentAccountDetails?.creditorName?:"",
+                        bankAccountDetails = this.issuerSettlementDetails?.paymentAccountDetails?.bankAccountDetails?:"",
+                        bankName = this.issuerSettlementDetails?.paymentAccountDetails?.bankName?:"",
+                        rtgsCode = this.issuerSettlementDetails?.paymentAccountDetails?.rtgsCode?:"",
+                        dpName = this.issuerSettlementDetails?.depositoryAccountDetails?.dpName?:"",
+                        clientId = this.issuerSettlementDetails?.depositoryAccountDetails?.clientId?:"",
+                        dpID = this.issuerSettlementDetails?.depositoryAccountDetails?.dpID?:""
                 )
                 else -> throw IllegalArgumentException("Unrecognised schema $schema")
             }
