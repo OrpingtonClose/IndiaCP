@@ -28,6 +28,16 @@ object CPUtils {
         throw Exception("ECPTradeAndSettlementProtocol: Commercial Paper referenced by $cpTradeId not found")
     }
 
+    fun getReferencedCommercialPaperStateRef(serviceHub: ServiceHub, cpTradeId: String) : StateAndRef<IndiaCommercialPaper.State> {
+        val states = serviceHub.vaultService.currentVault.statesOfType<IndiaCommercialPaper.State>()
+        for (stateAndRef: StateAndRef<IndiaCommercialPaper.State> in states) {
+            if (stateAndRef.state.data.ref.equals(cpTradeId)) {
+                return stateAndRef
+            }
+        }
+        throw Exception("ECPTradeAndSettlementProtocol: Commercial Paper referenced by $cpTradeId not found")
+    }
+
     fun getReference(cpRefId: String): OpaqueBytes {
         return OpaqueBytes.of(*cpRefId.toByteArray())
     }

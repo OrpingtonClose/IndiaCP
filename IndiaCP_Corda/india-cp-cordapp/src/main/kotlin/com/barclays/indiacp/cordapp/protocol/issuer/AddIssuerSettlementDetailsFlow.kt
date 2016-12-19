@@ -43,32 +43,27 @@ class AddIssuerSettlementDetailsFlow(val cpRefId: String, val settlementDetails:
 
     override val progressTracker = tracker()
 
-    @Suppress("UNCHECKED_CAST")
-    internal val cpReference: StateAndRef<IndiaCommercialPaper.State> by TransientProperty {
-        val indiaCP = CPUtils.getReferencedCommercialPaper(serviceHub, cpRefId)
-
-        val state = serviceHub.loadState(cpReference.ref) as TransactionState<IndiaCommercialPaper.State>
-        StateAndRef(state, cpReference.ref)
-    }
-
-    internal val issuerSettlementDetails: IndiaCommercialPaper.SettlementDetails = IndiaCommercialPaper.SettlementDetails(
-        paymentAccountDetails = IndiaCommercialPaper.PaymentAccountDetails(
-                creditorName = settlementDetails.paymentAccountDetailsJSONObject.creditorName,
-            bankAccountDetails = settlementDetails.paymentAccountDetailsJSONObject.bankAccountDetails,
-                bankName = settlementDetails.paymentAccountDetailsJSONObject.bankName,
-                rtgsCode = settlementDetails.paymentAccountDetailsJSONObject.rtgsCode
-        ),
-        depositoryAccountDetails = IndiaCommercialPaper.DepositoryAccountDetails (
-                dpName = settlementDetails.depositoryAccountDetailsJSONObject.dpName,
-                clientId =  settlementDetails.depositoryAccountDetailsJSONObject.clientId,
-                dpID =  settlementDetails.depositoryAccountDetailsJSONObject.dpID)
-    )
-
-    val notaryNode: NodeInfo get() =
-    serviceHub.networkMapCache.notaryNodes.filter { it.notaryIdentity == cpReference.state.notary }.single()
-
     @Suspendable
     override fun call(): SignedTransaction {
+        var cpReference: StateAndRef<IndiaCommercialPaper.State> = CPUtils.getReferencedCommercialPaperStateRef(serviceHub, cpRefId)
+        val state = serviceHub.loadState(cpReference.ref) as TransactionState<IndiaCommercialPaper.State>
+        cpReference = StateAndRef(state, cpReference.ref)
+
+        val issuerSettlementDetails: IndiaCommercialPaper.SettlementDetails = IndiaCommercialPaper.SettlementDetails(
+                paymentAccountDetails = IndiaCommercialPaper.PaymentAccountDetails(
+                        creditorName = settlementDetails.paymentAccountDetailsJSONObject.creditorName,
+                        bankAccountDetails = settlementDetails.paymentAccountDetailsJSONObject.bankAccountDetails,
+                        bankName = settlementDetails.paymentAccountDetailsJSONObject.bankName,
+                        rtgsCode = settlementDetails.paymentAccountDetailsJSONObject.rtgsCode
+                ),
+                depositoryAccountDetails = IndiaCommercialPaper.DepositoryAccountDetails (
+                        dpName = settlementDetails.depositoryAccountDetailsJSONObject.dpName,
+                        clientId =  settlementDetails.depositoryAccountDetailsJSONObject.clientId,
+                        dpID =  settlementDetails.depositoryAccountDetailsJSONObject.dpID)
+        )
+
+        val notaryNode = serviceHub.networkMapCache.notaryNodes.filter { it.notaryIdentity == cpReference.state.notary }.single()
+
         progressTracker.currentStep = ADDING_ISSUER_SETTLEMENT_DETAILS
 
         val ptx = TransactionType.General.Builder(notaryNode.notaryIdentity)
