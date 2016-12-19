@@ -49,13 +49,24 @@ class IssueCPFlow(val newCP: IndiaCPApi.CPJSONObject) : FlowLogic<SignedTransact
         progressTracker.currentStep = SELF_ISSUING
 
         val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
-        val cpOwnerKey = serviceHub.legalIdentityKey
-        val party = Party(newCP.issuer, cpOwnerKey.public)
+        val issuer = getPartyByName(newCP.issuer)
+        val beneficiary = getPartyByName(newCP.beneficiary)
+        val ipa = getPartyByName(newCP.ipa)
+        val depository = getPartyByName(newCP.depository)
 
-        val tx = IndiaCommercialPaper().generateIssue(party.ref(CPUtils.getReference(newCP.cpRefId)), newCP.faceValue.DOLLARS `issued by` DUMMY_CASH_ISSUER,
-                Instant.now() + newCP.maturityDays.days, notary.notaryIdentity)
-
-        // TODO: Consider moving these two steps below into generateIssue.
+        val tx = IndiaCommercialPaper().generateIssue(
+                issuer = issuer,
+                beneficiary = beneficiary,
+                ipa = ipa,
+                depository = depository,
+                notary = notary.notaryIdentity,
+                cpProgramID = newCP.cpProgramID,
+                cpTradeID = newCP.cpTradeID,
+                tradeDate = newCP.tradeDate,
+                valueDate = newCP.valueDate,
+                faceValue = newCP.faceValue.DOLLARS `issued by` DUMMY_CASH_ISSUER,
+                maturityDate = Instant.now() + newCP.maturityDays.days,
+                isin = newCP.isin)
 
         // Attach the prospectus.
         //tx.addAttachment(serviceHub.storageService.attachments.openAttachment(PROSPECTUS_HASH)!!.id)
@@ -63,8 +74,8 @@ class IssueCPFlow(val newCP: IndiaCPApi.CPJSONObject) : FlowLogic<SignedTransact
         // Requesting timestamping, all CP must be timestamped.
         tx.setTime(Instant.now(), 30.seconds)
 
-        // Sign it as ourselves.
-        tx.signWith(cpOwnerKey)
+        // Sign it as Issuer.
+        tx.signWith(serviceHub.legalIdentityKey)
 
         // Get the notary to sign the timestamp
         progressTracker.currentStep = OBTAINING_NOTARY_SIGNATURE
@@ -79,6 +90,10 @@ class IssueCPFlow(val newCP: IndiaCPApi.CPJSONObject) : FlowLogic<SignedTransact
         progressTracker.currentStep = TRANSACTION_RECORDED
 
         return stx
+    }
+
+    private fun getPartyByName(partyName: String) : Party {
+        return serviceHub.networkMapCache.getNodeByLegalName(partyName)!!.legalIdentity
     }
 }
 

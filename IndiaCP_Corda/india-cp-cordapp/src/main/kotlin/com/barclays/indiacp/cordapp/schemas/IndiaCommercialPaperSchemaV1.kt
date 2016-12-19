@@ -24,14 +24,14 @@ object IndiaCommercialPaperSchemaV1 : MappedSchema(schemaFamily = IndiaCommercia
             @Column(name = "issuance_key")
             var issuanceParty: String,
 
-            @Column(name = "issuance_ref")
-            var issuanceRef: ByteArray,
+            @Column(name = "beneficiary_key")
+            var beneficiaryParty: String,
 
-            @Column(name = "owner_key")
-            var owner: String,
+            @Column(name = "ipa_key")
+            var ipaParty: String,
 
-            @Column(name = "maturity_instant")
-            var maturity: Instant,
+            @Column(name = "depository_key")
+            var depositoryParty: String,
 
             @Column(name = "face_value")
             var faceValue: Long,
@@ -39,17 +39,29 @@ object IndiaCommercialPaperSchemaV1 : MappedSchema(schemaFamily = IndiaCommercia
             @Column(name = "ccy_code", length = 3)
             var currency: String,
 
-            @Column(name = "face_value_issuer_key")
-            var faceValueIssuerParty: String,
+            @Column(name = "maturity_instant")
+            var maturity: Instant,
 
-            @Column(name = "face_value_issuer_ref")
-            var faceValueIssuerRef: ByteArray,
+            @Column(name = "cp_program_id")
+            var cpProgramID: String,
+
+            @Column(name = "cp_trade_id")
+            var cpTradeID: String,
+
+            @Column(name = "trade_date")
+            var tradeDate: String,
+
+            @Column(name = "value_date")
+            var valueDate: String,
+
+            @Column(name = "isin", nullable=true)
+            var isin: String,
 
             @Column(name = "version", nullable=true)
             var version: Integer,
 
-            @Column(name = "isin", nullable=true)
-            var isin: String
+            @Column(name = "hash_deal_confirmation_doc", nullable=true)
+            var hashDealConfirmationDoc: String?
 
     ) : PersistentState()
 }
