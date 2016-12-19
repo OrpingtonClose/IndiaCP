@@ -1,0 +1,3 @@
+[submodule "IndiaCP"]
+	path = IndiaCP
+	url = https://github.com/nilavghosh/IndiaCP/
