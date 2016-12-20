@@ -10,17 +10,17 @@ import javax.persistence.Table
 /**
  * An object used to fully qualify the [StandardSettlementSchema] family name (i.e. independent of version).
  */
-object StandardSettlementSchema
+object InvestorSettlementSchema
 
 
 /**
  * First version of a India commercial paper contract ORM schema that maps all fields of the [StandardSettlementSchema] contract state
  * as it stood at the time of writing.
  */
-object StandardSettlementSchemaV1 : MappedSchema(schemaFamily = StandardSettlementSchema.javaClass, version = 1, mappedTypes = listOf(PersistentStandardSettlementSchemaState::class.java)) {
+object InvestorSettlementSchemaV1 : MappedSchema(schemaFamily = InvestorSettlementSchema.javaClass, version = 1, mappedTypes = listOf(PersistentInvestorSettlementSchemaState::class.java)) {
     @Entity
-    @Table(name = "standard_settlement_states")
-    class PersistentStandardSettlementSchemaState(
+    @Table(name = "investor_settlement_states")
+    class PersistentInvestorSettlementSchemaState(
 
             @Column(name = "settlement_key")
             var settlement_key: String,
