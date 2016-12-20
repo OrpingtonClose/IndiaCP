@@ -2,8 +2,8 @@ package com.barclays.indiacp.cordapp.api
 
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.protocol.issuer.DealEntryFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.ISINGenerationFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
+import com.barclays.indiacp.cordapp.protocol.issuer.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import net.corda.core.contracts.*
 import net.corda.core.messaging.CordaRPCOps
@@ -19,6 +19,7 @@ import net.corda.flows.CashFlow
 import net.corda.core.contracts.DOLLARS
 import net.corda.core.contracts.Amount
 import net.corda.flows.CashFlowResult
+import java.time.Instant
 
 
 @Path("indiacp")
@@ -26,7 +27,39 @@ class IndiaCPApi(val rpc: CordaRPCOps){
     val notaryName = "Controller" //todo: remove hardcoding
 
     data class CPReferenceAndAcceptablePrice(val cpRefId: String, val acceptablePrice: Int)
-    data class CPJSONObject(val cpRefId: String, val issuer: String, val faceValue: Int, val maturityDays: Int)
+
+    data class CPJSONObject(val issuer: String,
+                            val beneficiary: String,
+                            val ipa: String,
+                            val depository: String,
+                            val cpProgramID: String,
+                            val cpTradeID: String,
+                            val tradeDate: String,
+                            val valueDate: String,
+                            val faceValue: Int,
+                            val maturityDays: Int,
+                            val isin: String
+                            )
+
+    data class SettlementDetailsJSONObject(
+                            val partyType : String,
+                            val paymentAccountDetailsJSONObject: PaymentAccountDetailsJSONObject,
+                            val depositoryAccountDetailsJSONObject: DepositoryAccountDetailsJSONObject
+    )
+
+    data class PaymentAccountDetailsJSONObject (
+            val creditorName: String,
+            val bankAccountDetails: String,
+            val bankName: String,
+            val rtgsCode: String
+    )
+
+    data class DepositoryAccountDetailsJSONObject (
+            val dpName: String,
+            val clientId: String,
+            val dpID: String
+    )
+
     data class Cash(val amount: Int)
 
     private companion object {
@@ -49,12 +82,27 @@ class IndiaCPApi(val rpc: CordaRPCOps){
     }
 
     @POST
+    @Path("addSettlementDetails/{ref}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    fun addSettlementDetails(@PathParam("ref") cpTradeID: String, settlementDetails: SettlementDetailsJSONObject): Response {
+        try {
+            val stx = rpc.startFlow(::AddSettlementDetailsFlow, cpTradeID, settlementDetails).returnValue.toBlocking().first()
+            logger.info("Issuer Settlement Details added to CP $cpTradeID\n\nModified transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+            return Response.status(Response.Status.OK).build()
+        } catch (ex: Throwable) {
+            logger.info("Exception when Issuer Settlement Details: ${ex.toString()}")
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+        }
+    }
+
+
+    @POST
     @Path("generateISIN/{ref}")
     @Consumes(MediaType.APPLICATION_JSON)
     fun generateISIN(@PathParam("ref") ref: String, isin: String): Response {
         try {
-            val stx = rpc.startFlow(::ISINGenerationFlow, ref, isin).returnValue.toBlocking().first()
-            logger.info("ISIN Stamped on CP\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+//            val stx = rpc.startFlow(::ISINGenerationFlow, ref, isin).returnValue.toBlocking().first()
+//            logger.info("ISIN Stamped on CP\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
@@ -100,12 +148,12 @@ class IndiaCPApi(val rpc: CordaRPCOps){
     @GET
     @Path("fetchCP/{ref}")
     @Produces(MediaType.APPLICATION_JSON)
-    fun fetchCPWithRef(@PathParam("ref") ref: String): OwnableState? {
+    fun fetchCPWithRef(@PathParam("ref") ref: String): IndiaCommercialPaper.State? {
         return getCP(ref)
     }
 
     private fun getCP(ref: String): IndiaCommercialPaper.State? {
-        val states = rpc.vaultAndUpdates().first.filterStatesOfType<IndiaCommercialPaper.State>().filter { it.state.data.issuance.reference == CPUtils.getReference(ref) }
+        val states = rpc.vaultAndUpdates().first.filterStatesOfType<IndiaCommercialPaper.State>().filter { it.state.data.ref == ref }
         return if (states.isEmpty()) null else {
             val deals = states.map { it.state.data }
             return if (deals.isEmpty()) null else deals[0]

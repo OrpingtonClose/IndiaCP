@@ -18,15 +18,24 @@ val DEFAULT_BASE_DIRECTORY = "./build/indiacpdemo"
 
 object CPUtils {
 
-    fun getReferencedCommercialPaper(serviceHub: ServiceHub, cpRefId: String) : StateAndRef<OwnableState> {
+    fun getReferencedCommercialPaper(serviceHub: ServiceHub, cpTradeId: String) : IndiaCommercialPaper.State {
         val states = serviceHub.vaultService.currentVault.statesOfType<IndiaCommercialPaper.State>()
         for (stateAndRef: StateAndRef<IndiaCommercialPaper.State> in states) {
-            val ref = getReference(cpRefId)
-            if (stateAndRef.state.data.issuance.reference.equals(ref)) {
+            if (stateAndRef.state.data.ref.equals(cpTradeId)) {
+                return stateAndRef.state.data
+            }
+        }
+        throw Exception("ECPTradeAndSettlementProtocol: Commercial Paper referenced by $cpTradeId not found")
+    }
+
+    fun getReferencedCommercialPaperStateRef(serviceHub: ServiceHub, cpTradeId: String) : StateAndRef<IndiaCommercialPaper.State> {
+        val states = serviceHub.vaultService.currentVault.statesOfType<IndiaCommercialPaper.State>()
+        for (stateAndRef: StateAndRef<IndiaCommercialPaper.State> in states) {
+            if (stateAndRef.state.data.ref.equals(cpTradeId)) {
                 return stateAndRef
             }
         }
-        throw Exception("ECPTradeAndSettlementProtocol: Commercial Paper referenced by $cpRefId not found")
+        throw Exception("ECPTradeAndSettlementProtocol: Commercial Paper referenced by $cpTradeId not found")
     }
 
     fun getReference(cpRefId: String): OpaqueBytes {
