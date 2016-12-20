@@ -197,8 +197,12 @@
         "CPProgram": {
             "type": "object",
             "properties": {
+                "program_id": {
+                    "type": "string",
+                    "description": "Unique identifier representing a specific CP Program raised by an Issuer"
+                },
                 "name": {
-                    "type":"string",
+                    "type": "string",
                     "description": "Name of the CP Program"
                 },
                 "type": {
@@ -209,138 +213,209 @@
                     "type": "string",
                     "description": "Purpose of the CP Program"
                 },
-                "id": {
-                    "type": "string",
-                    "description": "Unique ID of the program"
-                },
-                "issuer": {
-                    "type": "string",
-                    "description": "Issuer of the CP Program."
-                },
                 "issuer_id": {
                     "type": "string",
-                    "description": "Id of the Issuer"
+                    "description": "Unique identifier of the Issuer. This will also uniquely map to the DL Node of the Issuer"
                 },
-                "issue_date": {
+                "issuer_name": {
                     "type": "string",
-                    "format": "date",
-                    "description": "Date of creation of the issue"
+                    "description": "Display name of the Issuer"
                 },
-                "issue_name": {
+                "issue_commencement_date": {
+                    "type": "date",
+                    "description": "Date when the CP Program was initiated. India regulations mandate that a program should be fully allocated within 2 weeks of commencement."
+                },
+                "program_size": {
+                    "type": "integer",
+                    "description": "Total borrowing amount under this CP Program"
+                },
+                "program_currency": {
                     "type": "string",
-                    "description": "Name of the issue"
-                },
-                "programme_size_ceiling": {
-                    "type": "number",
-                    "format":"double",
-                    "description": "Maximum size of the Programme."
-                },
-                "currency": {
-                    "type": "string",
-                    "description": "Currency in which the notes need to be issues"
-                },
-                "rating": {
-                    "type": "string",
-                    "description": "Rating of the issue"
-                },
-                "rating_amount": {
-                    "type":"number",
-                    "format":"double",
-                    "description": "The amount allowed for the rating"
-                },
-                "borrowing_limit": {
-                    "type": "number",
-                    "format": "double",
-                    "description": "The bowrrowing limit for the Issuer."
+                    "description": "Currency of the issue of CP notes"
                 },
                 "maturity_days": {
-                    "type":"number",
-                    "format":"double",
-                    "description": "The number of days for the issue to mature"
-                },
-                "ipa": {
-                    "type": "string",
-                    "description": "The IPA"
+                    "type": "integer",
+                    "description": "No of days to maturity from the value date"
                 },
                 "ipa_id": {
                     "type": "string",
-                    "description": "The Id of the IPA"
+                    "description": "Unique identifier of the IPA. This will also uniquely map to the DL Node of the IPA"
                 },
                 "ipa_name": {
                     "type": "string",
-                    "description": "The name of the IPA"
-                },
-                "depository": {
-                    "type": "string",
-                    "description": "The depository"
+                    "description": "Display name of the IPA"
                 },
                 "depository_id": {
                     "type": "string",
-                    "description": "Id of the depository"
+                    "description": "Unique identifier of the Depository (NSDL). This will also uniquely map to the DL Node of the Depository"
                 },
                 "depository_name": {
                     "type": "string",
-                    "description": "Name of the depository"
-                }
-               }
-        },
-        "Profile": {
-            "type": "object",
-            "properties": {
-                "first_name": {
-                    "type": "string",
-                    "description": "First name of the Uber user."
+                    "description": "Display name of the Depository"
                 },
-                "last_name": {
+                "isin_generation_request_doc_id": {
                     "type": "string",
-                    "description": "Last name of the Uber user."
+                    "description": "Unique identifier of the documents sent to the depository to generate ISIN"
                 },
-                "email": {
+                "ipa_verification_request_doc_id": {
                     "type": "string",
-                    "description": "Email address of the Uber user"
+                    "description": "Unique identifier of the documents sent to the IPA to certify the CP Program"
                 },
-                "picture": {
+                "ipa_certificate_doc_id": {
                     "type": "string",
-                    "description": "Image URL of the Uber user."
+                    "description": "Unique identifier of the IPA certificate issued by the IPA on verification of the CP Program and supporting Issuer documents"
                 },
-                "promo_code": {
+                "corporate_action_form_doc_id": {
                     "type": "string",
-                    "description": "Promo code of the Uber user."
+                    "description": "Unique identifier of the Corporate Action Form generated by the Issuer to allot CP"
+                },
+                "allotment_letter_doc_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account"
                 }
             }
         },
-        "Activity": {
+        "CPIssue": {
             "type": "object",
             "properties": {
-                "uuid": {
+                "cp_program_id": {
                     "type": "string",
-                    "description": "Unique identifier for the activity"
+                    "description": "Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program"
+                },
+                "cp_trade_id": {
+                    "type": "string",
+                    "description": "Unique identifier representing a specific CP Issue under the umbrella CP Program"
+                },
+                "book_id": {
+                    "type": "string",
+                    "description": "Internal Book Id that this trade is booked under"
+                },
+                "isin": {
+                    "type": "string",
+                    "description": "Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities."
+                },
+                "trader_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the trader booking this trade"
+                },
+                "issuer_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the Issuer"
+                },
+                "issuer_name": {
+                    "type": "string",
+                    "description": "Display name of the Issuer"
+                },
+                "investor_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the Investor. This also uniquely identifies the Investor DL Node"
+                },
+                "investor_name": {
+                    "type": "string",
+                    "description": "Display name of the Investor"
+                },
+                "ipa_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the IPA"
+                },
+                "ipa_name": {
+                    "type": "string",
+                    "description": "Display name of the IPA"
+                },
+                "depository_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the Depository (NSDL)"
+                },
+                "depository_name": {
+                    "type": "string",
+                    "description": "Display name of the Depository"
+                },
+                "trade_date": {
+                    "type": "date",
+                    "description": "Date on which the trade was captured"
+                },
+                "value_date": {
+                    "type": "date",
+                    "description": "Date on which the trade was settled and the Cash and CP securities were swapped between the Issuer and the Investor"
+                },
+                "maturity_date": {
+                    "type": "date",
+                    "description": "Date on which the CP will be matured and redeemed"
+                },
+                "currency": {
+                    "type": "string",
+                    "description": "Currency of the issued CP Notes"
+                },
+                "notional_amount": {
+                    "type": "date",
+                    "description": "This is the amount that will be paid by the Issuer to the Investor on redemption"
+                },
+                "yield": {
+                    "type": "float",
+                    "description": "Rate at which the yield is calculated"
+                },
+                "issuer_settlement_details": {
+                    "$ref": "#/definitions/SettlementDetails"
+                },
+                "investor_settlement_details": {
+                    "$ref": "#/definitions/SettlementDetails"
+                },
+                "deal_confirmation_doc_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the deal confirmation document signed by both the Issuer and the Investor"
                 }
             }
         },
-        "Activities": {
+        "SettlementDetails": {
             "type": "object",
             "properties": {
-                "offset": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Position in pagination."
+                "paymentAccountDetails": {
+                    "$ref": "#/definitions/PaymentAccountDetails"
                 },
-                "limit": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Number of items to retrieve (100 max)."
+                "depositoryAccountDetails": {
+                    "$ref": "#/definitions/DepositoryAccountDetails"
+                }
+            }
+        },
+        "PaymentAccountDetails": {
+            "type": "object",
+            "properties": {
+                "creditor_name": {
+                    "type": "string",
+                    "description": "Name in which the payment has to be made. For e.g. Barclays Investments & Loans (India) Ltd CP"
                 },
-                "count": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "Total number of items available."
+                "bank_account_no": {
+                    "type": "string",
+                    "description": "Bank account no. at the IPA Bank"
                 },
-                "history": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Activity"
-                    }
+                "bank_account_type": {
+                    "type": "string",
+                    "description": "Bank account type. For e.g. current account"
+                },
+                "bank_name": {
+                    "type": "string",
+                    "description": "Name of the IPA Bank"
+                },
+                "rtgs_ifsc_code": {
+                    "type": "string",
+                    "description": "RTGS IFSC code of the IPA Bank to receive payments"
+                }
+            }
+        },
+        "DepositoryAccountDetails": {
+            "type": "object",
+            "properties": {
+                "dp_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the DP Account at the Depository"
+                },
+                "dp_name": {
+                    "type": "string",
+                    "description": "Name under which the DP Account is registered. For e.g. Barclays Securities India Pvt Ltd"
+                },
+                "client_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the Client at the Depository"
                 }
             }
         },
