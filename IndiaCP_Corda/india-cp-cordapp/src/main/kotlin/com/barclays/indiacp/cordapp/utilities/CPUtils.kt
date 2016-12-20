@@ -4,7 +4,6 @@ import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import net.corda.core.contracts.OwnableState
 import net.corda.core.contracts.PartyAndReference
 import net.corda.core.contracts.StateAndRef
-import net.corda.core.messaging.CordaRPCOps
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.dealsWith
 import net.corda.core.serialization.OpaqueBytes
