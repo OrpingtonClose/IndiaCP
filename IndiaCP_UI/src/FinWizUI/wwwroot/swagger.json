@@ -14,7 +14,33 @@
         "application/json"
     ],
     "paths": {
-        "/cpprogram": {
+        "/{entityId}/cpprograms": {
+            "get": {
+                "summary": "All CPPrograms for the current Issuer",
+                "description": "Returns all the CP Programs for the current issuer\n",
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of CP Programs",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CPProgram"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/{entityId}/cpprogram/{cpProgramId}": {
             "get": {
                 "summary": "Get CP Program details by Id",
                 "description": "This returns a single CP Program identified by an Id provided by the call\n",
@@ -36,32 +62,6 @@
                         "description": "Returns a CP",
                         "schema": {
                             "$ref": "#/definitions/CPProgram"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/issuer/cpprograms": {
-            "get": {
-                "summary": "All CPPrograms for the current Issuer",
-                "description": "Returns all the CP Programs for the current issuer\n",
-                "tags": [
-                    "Issuer"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "An array of CP Programs",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/CPProgram"
-                            }
                         }
                     },
                     "default": {
