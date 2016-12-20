@@ -131,9 +131,13 @@ namespace FinWizUI
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "Landing", // Route name
+                    template: "{controller=Home}/{action=Landing}/{id?}");
             });
 
-            
+
             // Enable middleware to serve generated Swagger as a JSON endpoint
             app.UseSwagger();
 

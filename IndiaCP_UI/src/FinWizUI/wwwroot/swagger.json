@@ -197,27 +197,92 @@
         "CPProgram": {
             "type": "object",
             "properties": {
-                "product_id": {
-                    "type": "string",
-                    "description": "Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles."
+                "name": {
+                    "type":"string",
+                    "description": "Name of the CP Program"
                 },
-                "description": {
+                "type": {
                     "type": "string",
-                    "description": "Description of product."
+                    "description": "Type of the CP Program"
                 },
-                "display_name": {
+                "purpose": {
                     "type": "string",
-                    "description": "Display name of product."
+                    "description": "Purpose of the CP Program"
                 },
-                "capacity": {
+                "id": {
                     "type": "string",
-                    "description": "Capacity of product. For example, 4 people."
+                    "description": "Unique ID of the program"
                 },
-                "image": {
+                "issuer": {
                     "type": "string",
-                    "description": "Image URL representing the product."
+                    "description": "Issuer of the CP Program."
+                },
+                "issuer_id": {
+                    "type": "string",
+                    "description": "Id of the Issuer"
+                },
+                "issue_date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Date of creation of the issue"
+                },
+                "issue_name": {
+                    "type": "string",
+                    "description": "Name of the issue"
+                },
+                "programme_size_ceiling": {
+                    "type": "number",
+                    "format":"double",
+                    "description": "Maximum size of the Programme."
+                },
+                "currency": {
+                    "type": "string",
+                    "description": "Currency in which the notes need to be issues"
+                },
+                "rating": {
+                    "type": "string",
+                    "description": "Rating of the issue"
+                },
+                "rating_amount": {
+                    "type":"number",
+                    "format":"double",
+                    "description": "The amount allowed for the rating"
+                },
+                "borrowing_limit": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "The bowrrowing limit for the Issuer."
+                },
+                "maturity_days": {
+                    "type":"number",
+                    "format":"double",
+                    "description": "The number of days for the issue to mature"
+                },
+                "ipa": {
+                    "type": "string",
+                    "description": "The IPA"
+                },
+                "ipa_id": {
+                    "type": "string",
+                    "description": "The Id of the IPA"
+                },
+                "ipa_name": {
+                    "type": "string",
+                    "description": "The name of the IPA"
+                },
+                "depository": {
+                    "type": "string",
+                    "description": "The depository"
+                },
+                "depository_id": {
+                    "type": "string",
+                    "description": "Id of the depository"
+                },
+                "depository_name": {
+                    "type": "string",
+                    "description": "Name of the depository"
                 }
-            }
+               }
         },
         "Profile": {
             "type": "object",
