@@ -14,10 +14,61 @@
         "application/json"
     ],
     "paths": {
-        "/{entityId}/cpprograms": {
+        "/cpprogram/{issuer}": {
+            "post": {
+                "summary": "Issue new CP Program",
+                "description": "This creates a new CP Program with the details provided\n",
+                "operationId": "issueCPProgram",
+                "consumes": [ "application/json","application/xml"],
+                "parameters": [
+                    {
+                        "name": "issuer",
+                        "in": "path",
+                        "description": "issuer id that uniquely maps to the issuer DL node",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "cpprogram_details",
+                        "in": "body",
+                        "description": "Details of the CP Program to be Issued",
+                        "required": true,
+                        "$ref": "#/definitions/CPProgram"
+                    }
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Creates a new CP Program",
+                        "schema": {
+                            "$ref": "#/definitions/CPProgram"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/cpprograms/{issuer}": {
             "get": {
-                "summary": "All CPPrograms for the current Issuer",
+                "summary": "Fetch All CPPrograms for the current Issuer",
                 "description": "Returns all the CP Programs for the current issuer\n",
+                "operationId": "fetchAllCPProgram",
+                "parameters": [
+                    {
+                        "name": "issuer",
+                        "in": "path",
+                        "description": "issuer id that uniquely maps to the issuer DL node",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "tags": [
                     "Issuer"
                 ],
@@ -40,26 +91,33 @@
                 }
             }
         },
-        "/{entityId}/cpprogram/{cpProgramId}": {
+        "/cpprogram/{issuer}/{cpProgramId}": {
             "get": {
                 "summary": "Get CP Program details by Id",
                 "description": "This returns a single CP Program identified by an Id provided by the call\n",
+                "operationId": "fetchCPProgram",
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "query",
-                        "description": "UniqueId of the CP Program",
+                        "name": "issuer",
+                        "in": "path",
+                        "description": "issuer id that uniquely maps to the issuer DL node",
                         "required": true,
-                        "type": "string",
-                        "format": "uuid"
+                        "type": "string"
+                    },
+                    {
+                        "name": "cpProgramId",
+                        "in": "path",
+                        "description": "CP Program ID that uniquely identifies the CP Program issued by the Issuer",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "tags": [
-                    "CPProgram"
+                    "Issuer"
                 ],
                 "responses": {
                     "200": {
-                        "description": "Returns a CP",
+                        "description": "Returns a CP Program",
                         "schema": {
                             "$ref": "#/definitions/CPProgram"
                         }
@@ -73,51 +131,37 @@
                 }
             }
         },
-        "/estimates/time": {
+        "/cpissues/{issuer}/{cpProgramId}": {
             "get": {
-                "summary": "Time Estimates",
-                "description": "The Time Estimates endpoint returns ETAs for all products offered at a given location, with the responses expressed as integers in seconds. We recommend that this endpoint be called every minute to provide the most accurate, up-to-date ETAs.",
+                "summary": "Get CP Issues allotted under a given CP Program",
+                "description": "This returns all the CP Issues under the umbrella CP Program identified by an Id provided by the call\n",
+                "operationId": "fetchAllCPForCPProgram",
                 "parameters": [
                     {
-                        "name": "start_latitude",
-                        "in": "query",
-                        "description": "Latitude component of start location.",
+                        "name": "issuer",
+                        "in": "path",
+                        "description": "issuer id that uniquely maps to the issuer DL node",
                         "required": true,
-                        "type": "number",
-                        "format": "double"
+                        "type": "string"
                     },
                     {
-                        "name": "start_longitude",
-                        "in": "query",
-                        "description": "Longitude component of start location.",
+                        "name": "cpProgramId",
+                        "in": "path",
+                        "description": "CP Program ID that uniquely identifies the CP Program issued by the Issuer",
                         "required": true,
-                        "type": "number",
-                        "format": "double"
-                    },
-                    {
-                        "name": "customer_uuid",
-                        "in": "query",
-                        "type": "string",
-                        "format": "uuid",
-                        "description": "Unique customer identifier to be used for experience customization."
-                    },
-                    {
-                        "name": "product_id",
-                        "in": "query",
-                        "type": "string",
-                        "description": "Unique identifier representing a specific product for a given latitude & longitude."
+                        "type": "string"
                     }
                 ],
                 "tags": [
-                    "Estimates"
+                    "Issuer"
                 ],
                 "responses": {
                     "200": {
-                        "description": "An array of products",
+                        "description": "Returns all CP Issues under the umbrella CP Program",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/CPProgram"
+                                "$ref": "#/definitions/CPIssue"
                             }
                         }
                     },
@@ -130,18 +174,31 @@
                 }
             }
         },
-        "/me": {
+        "/cpissues/open/{entity}": {
             "get": {
-                "summary": "User Profile",
-                "description": "The User Profile endpoint returns information about the Uber user that has authorized with the application.",
+                "summary": "Get All Open CP Issues for the given Issuer/Investor. Open CP Issues refers to the Issues that are yet to mature",
+                "description": "This returns all the CP Issues under the umbrella CP Program identified by an Id provided by the call\n",
+                "operationId": "fetchAllCP",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "in": "path",
+                        "description": "issuer or investor id that uniquely maps to the DL node",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "tags": [
-                    "User"
+                    "Issuer", "Investor"
                 ],
                 "responses": {
                     "200": {
-                        "description": "Profile information for a user",
+                        "description": "Get All Open CP Issues for the given Issuer/Investor. Open CP Issues refers to the Issues that are yet to mature",
                         "schema": {
-                            "$ref": "#/definitions/Profile"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CPIssue"
+                            }
                         }
                     },
                     "default": {
@@ -153,24 +210,64 @@
                 }
             }
         },
-        "/history": {
+        "/cpissue/{entity}/{cpIssueId}": {
             "get": {
-                "summary": "User Activity",
-                "description": "The User Activity endpoint returns data about a user's lifetime activity with Uber. The response will include pickup locations and times, dropoff locations and times, the distance of past requests, and information about which products were requested.<br><br>The history array in the response will have a maximum length based on the limit parameter. The response value count may exceed limit, therefore subsequent API requests may be necessary.",
+                "summary": "Get All Open CP Issues for the given Issuer/Investor. Open CP Issues refers to the Issues that are yet to mature",
+                "description": "This returns all the CP Issues under the umbrella CP Program identified by an Id provided by the call\n",
+                "operationId": "fetchCP",
                 "parameters": [
                     {
-                        "name": "offset",
-                        "in": "query",
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "Offset the list of returned results by this amount. Default is zero."
+                        "name": "entity",
+                        "in": "path",
+                        "description": "issuer or investor id that uniquely maps to the DL node",
+                        "required": true,
+                        "type": "string"
                     },
                     {
-                        "name": "limit",
-                        "in": "query",
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "Number of items to retrieve. Default is 5, maximum is 100."
+                        "name": "cpIssueId",
+                        "in": "path",
+                        "description": "Unique identifier of the CP Issue to be fetched",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Issuer", "Investor"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get All Open CP Issues for the given Issuer/Investor. Open CP Issues refers to the Issues that are yet to mature",
+                        "schema": {
+                                "$ref": "#/definitions/CPIssue"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactionhistory/{issuer}/{cpProgramId}": {
+            "get": {
+                "summary": "Complete audit log of all changes/versions of given CP Program",
+                "description": "A given CP Program once initiated undergoes various changes as it progresses through the trade lifecycle of generating ISIN, generating Deal Confirmations with each identified Investor, getting IPA Verification till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.",
+                "parameters": [
+                    {
+                        "name": "issuer",
+                        "in": "path",
+                        "description": "issuer id that uniquely maps to the DL node",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "cpProgramId",
+                        "in": "path",
+                        "description": "CP Program ID that uniquely identifies the CP Program issued by the Issuer",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "tags": [
@@ -178,9 +275,12 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "History information for the given user",
+                        "description": "An array of all versions of the given CP Program",
                         "schema": {
-                            "$ref": "#/definitions/Activities"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CPProgram"
+                            }
                         }
                     },
                     "default": {
