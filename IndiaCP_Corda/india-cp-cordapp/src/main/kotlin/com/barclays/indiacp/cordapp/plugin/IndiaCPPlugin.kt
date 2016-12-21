@@ -2,8 +2,7 @@ package com.barclays.indiacp.cordapp.plugin
 
 import com.barclays.indiacp.cordapp.api.IndiaCPApi
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
-import com.barclays.indiacp.cordapp.protocol.issuer.AddInvestorSettlementDetailsFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.AddIssuerSettlementDetailsFlow
+import com.barclays.indiacp.cordapp.protocol.issuer.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.DealEntryFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
 import com.esotericsoftware.kryo.Kryo
@@ -19,8 +18,7 @@ class IndiaCPPlugin : CordaPluginRegistry() {
     override val requiredFlows: Map<String, Set<String>> = mapOf(
             DealEntryFlow::class.java.name to setOf(String::class.java.name, Party::class.java.name),
             IssueCPFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
-            AddIssuerSettlementDetailsFlow::class.java.name to setOf(String::class.java.name, IndiaCPApi.SettlementDetailsJSONObject::class.java.name),
-            AddInvestorSettlementDetailsFlow::class.java.name to setOf(String::class.java.name, IndiaCPApi.SettlementDetailsJSONObject::class.java.name)
+            AddSettlementDetailsFlow::class.java.name to setOf(String::class.java.name, IndiaCPApi.SettlementDetailsJSONObject::class.java.name)
     )
 
     override fun registerRPCKryoTypes(kryo: Kryo): Boolean {

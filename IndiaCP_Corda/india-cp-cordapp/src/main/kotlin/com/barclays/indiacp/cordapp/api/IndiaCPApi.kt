@@ -3,8 +3,7 @@ package com.barclays.indiacp.cordapp.api
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.protocol.issuer.DealEntryFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.AddIssuerSettlementDetailsFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.AddInvestorSettlementDetailsFlow
+import com.barclays.indiacp.cordapp.protocol.issuer.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import net.corda.core.contracts.*
 import net.corda.core.messaging.CordaRPCOps
@@ -43,6 +42,7 @@ class IndiaCPApi(val rpc: CordaRPCOps){
                             )
 
     data class SettlementDetailsJSONObject(
+                            val partyType : String,
                             val paymentAccountDetailsJSONObject: PaymentAccountDetailsJSONObject,
                             val depositoryAccountDetailsJSONObject: DepositoryAccountDetailsJSONObject
     )
@@ -82,11 +82,11 @@ class IndiaCPApi(val rpc: CordaRPCOps){
     }
 
     @POST
-    @Path("addIssuerSettlementDetails/{ref}")
+    @Path("addSettlementDetails/{ref}")
     @Consumes(MediaType.APPLICATION_JSON)
-    fun addIssuerSettlementDetails(@PathParam("ref") cpTradeID: String, issuerSettlementDetails: SettlementDetailsJSONObject): Response {
+    fun addSettlementDetails(@PathParam("ref") cpTradeID: String, settlementDetails: SettlementDetailsJSONObject): Response {
         try {
-            val stx = rpc.startFlow(::AddIssuerSettlementDetailsFlow, cpTradeID, issuerSettlementDetails).returnValue.toBlocking().first()
+            val stx = rpc.startFlow(::AddSettlementDetailsFlow, cpTradeID, settlementDetails).returnValue.toBlocking().first()
             logger.info("Issuer Settlement Details added to CP $cpTradeID\n\nModified transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
@@ -95,20 +95,6 @@ class IndiaCPApi(val rpc: CordaRPCOps){
         }
     }
 
-
-    @POST
-    @Path("addInvestorSettlementDetails/{ref}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    fun addInvestorSettlementDetails(@PathParam("ref") cpTradeID: String, investorSettlementDetails: SettlementDetailsJSONObject): Response {
-        try {
-            val stx = rpc.startFlow(::AddInvestorSettlementDetailsFlow, cpTradeID, investorSettlementDetails).returnValue.toBlocking().first()
-            logger.info("Investor Settlement Details added to CP $cpTradeID\n\nModified transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
-        } catch (ex: Throwable) {
-            logger.info("Exception when Investor Settlement Details: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
-        }
-    }
 
     @POST
     @Path("generateISIN/{ref}")

@@ -24,21 +24,21 @@ import java.time.Instant
  * In the "real world", we'd probably have the offers sitting in the platform prior to the agreement step
  * or the protocol would have to reach out to external systems (or users) to verify the deals.
  */
-class AddIssuerSettlementDetailsFlow(val cpRefId: String, val settlementDetails: IndiaCPApi.SettlementDetailsJSONObject) : FlowLogic<SignedTransaction>() {
+class AddSettlementDetailsFlow(val cpRefId: String, val settlementDetails: IndiaCPApi.SettlementDetailsJSONObject) : FlowLogic<SignedTransaction>() {
 
     companion object {
         //val PROSPECTUS_HASH = SecureHash.parse("decd098666b9657314870e192ced0c3519c2c9d395507a238338f8d003929de9")
 
-        object ADDING_ISSUER_SETTLEMENT_DETAILS : ProgressTracker.Step("Adding Issuer Settlement Details for the issued commercial paper")
+        object ADDING_SETTLEMENT_DETAILS : ProgressTracker.Step("Adding Settlement Details for the issued commercial paper")
         object OBTAINING_NOTARY_SIGNATURE : ProgressTracker.Step("Obtaining Notary Signature")
         object NOTARY_SIGNATURE_OBTAINED : ProgressTracker.Step("Notary Signature Obtained")
-        object RECORDING_ISSUER_SETTLEMENT_DETAILS : ProgressTracker.Step("Recording Issuer Settlement Details in Local Storage")
-        object ISSUER_SETTLEMENT_DETAILS_RECORDED : ProgressTracker.Step("Issuer Settlement Details Recorded in Local Storage")
+        object RECORDING_ISSUER_SETTLEMENT_DETAILS : ProgressTracker.Step("Recording Settlement Details in Local Storage")
+        object SETTLEMENT_DETAILS_RECORDED : ProgressTracker.Step("Settlement Details Recorded in Local Storage")
 
         // We vend a progress tracker that already knows there's going to be a TwoPartyTradingProtocol involved at some
         // point: by setting up the tracker in advance, the user can see what's coming in more detail, instead of being
         // surprised when it appears as a new set of tasks below the current one.
-        fun tracker() = ProgressTracker(ADDING_ISSUER_SETTLEMENT_DETAILS, OBTAINING_NOTARY_SIGNATURE, NOTARY_SIGNATURE_OBTAINED, RECORDING_ISSUER_SETTLEMENT_DETAILS, ISSUER_SETTLEMENT_DETAILS_RECORDED)
+        fun tracker() = ProgressTracker(ADDING_SETTLEMENT_DETAILS, OBTAINING_NOTARY_SIGNATURE, NOTARY_SIGNATURE_OBTAINED, RECORDING_ISSUER_SETTLEMENT_DETAILS, SETTLEMENT_DETAILS_RECORDED)
     }
 
     override val progressTracker = tracker()
@@ -49,7 +49,8 @@ class AddIssuerSettlementDetailsFlow(val cpRefId: String, val settlementDetails:
 //        val state = serviceHub.loadState(cpReference.ref) as TransactionState<IndiaCommercialPaper.State>
 //        cpReference = StateAndRef(state, cpReference.ref)
 
-        val issuerSettlementDetails: IndiaCommercialPaper.SettlementDetails = IndiaCommercialPaper.SettlementDetails(
+        val settlementDetails: IndiaCommercialPaper.SettlementDetails = IndiaCommercialPaper.SettlementDetails(
+                partyType = settlementDetails.partyType,
                 paymentAccountDetails = IndiaCommercialPaper.PaymentAccountDetails(
                         creditorName = settlementDetails.paymentAccountDetailsJSONObject.creditorName,
                         bankAccountDetails = settlementDetails.paymentAccountDetailsJSONObject.bankAccountDetails,
@@ -64,11 +65,11 @@ class AddIssuerSettlementDetailsFlow(val cpRefId: String, val settlementDetails:
 
         val notaryNode = serviceHub.networkMapCache.notaryNodes.filter { it.notaryIdentity == cpReference.state.notary }.single()
 
-        progressTracker.currentStep = ADDING_ISSUER_SETTLEMENT_DETAILS
+        progressTracker.currentStep = ADDING_SETTLEMENT_DETAILS
 
         val ptx = TransactionType.General.Builder(notaryNode.notaryIdentity)
 
-        val tx = IndiaCommercialPaper().addIssuerSettlementDetails(ptx, cpReference, issuerSettlementDetails)
+        val tx = IndiaCommercialPaper().addSettlementDetails(ptx, cpReference, settlementDetails)
 
         // Attach the prospectus.
         //tx.addAttachment(serviceHub.storageService.attachments.openAttachment(PROSPECTUS_HASH)!!.id)
@@ -89,7 +90,7 @@ class AddIssuerSettlementDetailsFlow(val cpRefId: String, val settlementDetails:
         val stx = tx.toSignedTransaction(true)
         progressTracker.currentStep = RECORDING_ISSUER_SETTLEMENT_DETAILS
         serviceHub.recordTransactions(listOf(stx))
-        progressTracker.currentStep = ISSUER_SETTLEMENT_DETAILS_RECORDED
+        progressTracker.currentStep = SETTLEMENT_DETAILS_RECORDED
 
         return stx
     }
