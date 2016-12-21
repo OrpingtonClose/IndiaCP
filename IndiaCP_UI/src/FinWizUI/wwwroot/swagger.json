@@ -17,23 +17,29 @@
         "/cpprogram/{issuer}": {
             "post": {
                 "summary": "Issue new CP Program",
-                "description": "This creates a new CP Program with the details provided\n",
+                "description": "This creates a new CP Program with the details provided",
                 "operationId": "issueCPProgram",
-                "consumes": [ "application/json","application/xml"],
+                "consumes": [ "application/json"],
                 "parameters": [
-                    {
-                        "name": "issuer",
-                        "in": "path",
-                        "description": "issuer id that uniquely maps to the issuer DL node",
-                        "required": true,
-                        "type": "string"
-                    },
                     {
                         "name": "cpprogram_details",
                         "in": "body",
                         "description": "Details of the CP Program to be Issued",
                         "required": true,
-                        "$ref": "#/definitions/CPProgram"
+                        "schema":
+                        {
+                         "type": "array",
+                         "items":{
+                          "$ref" : "#/definitions/CPProgram"
+                        }
+                        }
+                    },
+                    {
+                        "name": "issuer",
+                        "in": "path",
+                        "description": "Issuer id that uniquely maps to the issuer DL node",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "tags": [
@@ -322,7 +328,8 @@
                     "description": "Display name of the Issuer"
                 },
                 "issue_commencement_date": {
-                    "type": "date",
+                    "type": "string",
+                    "format": "date",
                     "description": "Date when the CP Program was initiated. India regulations mandate that a program should be fully allocated within 2 weeks of commencement."
                 },
                 "program_size": {
@@ -431,15 +438,18 @@
                     "description": "Display name of the Depository"
                 },
                 "trade_date": {
-                    "type": "date",
+                    "type": "string",
+                    "format": "date",
                     "description": "Date on which the trade was captured"
                 },
                 "value_date": {
-                    "type": "date",
+                    "type": "string",
+                    "format": "date",
                     "description": "Date on which the trade was settled and the Cash and CP securities were swapped between the Issuer and the Investor"
                 },
                 "maturity_date": {
-                    "type": "date",
+                    "type": "string",
+                    "format": "date",
                     "description": "Date on which the CP will be matured and redeemed"
                 },
                 "currency": {
@@ -447,11 +457,13 @@
                     "description": "Currency of the issued CP Notes"
                 },
                 "notional_amount": {
-                    "type": "date",
+                    "type": "string",
+                    "format": "date",
                     "description": "This is the amount that will be paid by the Issuer to the Investor on redemption"
                 },
-                "yield": {
-                    "type": "float",
+                "rate": {
+                    "type": "number",
+                    "format": "float",
                     "description": "Rate at which the yield is calculated"
                 },
                 "issuer_settlement_details": {
