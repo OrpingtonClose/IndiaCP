@@ -57,10 +57,10 @@
                         <!-- /responsive nav button -->
                         <!-- logo -->
                         @*<a class="navbar-brand" href="#body">
-                            <h1 id="logo">
-                                     <img src="Content/img/logo.png" alt="MSim">
-                                </h1>
-                        </a>*@
+                                <h1 id="logo">
+                                         <img src="Content/img/logo.png" alt="MSim">
+                                    </h1>
+                            </a>*@
                         <a class="navbar-brand" href="#">MSim</a>
                         <!-- /logo -->
                     </div>
@@ -656,39 +656,43 @@
             <a href="javascript:void(0);" id="back-top"><i class="fa fa-angle-up fa-3x"></i></a>
         </div>
     </div>
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/angular")
-    @Scripts.Render("~/bundles/modernizr")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/games")
-    @Scripts.Render("~/bundles/angularapp")
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/angular/angular.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    @*@Scripts.Render("~/bundles/jquery")
+
+        @Scripts.Render("~/bundles/angular")
+        @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/games")
+        @Scripts.Render("~/bundles/angularapp")*@
     <!-- Essential jQuery Plugins
     ================================================== -->
     <!-- Main jQuery -->
-    @*<script src="Scripts/landingjs/jquery-1.11.1.min.js"></script>*@
+    @*<script src="~js/landingjs/jquery-1.11.1.min.js"></script>*@
     <!-- Single Page Nav -->
-    <script src="Scripts/landingjs/jquery.singlePageNav.min.js"></script>
+    <script src="~js/landingjs/jquery.singlePageNav.min.js"></script>
     <!-- Twitter Bootstrap -->
-    @*<script src="Scripts/landingjs/bootstrap.min.js"></script>*@
+    @*<script src="~js/landingjs/bootstrap.min.js"></script>*@
     <!-- jquery.fancybox.pack -->
-    <script src="Scripts/landingjs/jquery.fancybox.pack.js"></script>
+    <script src="~js/landingjs/jquery.fancybox.pack.js"></script>
     <!-- jquery.mixitup.min -->
-    <script src="Scripts/landingjs/jquery.mixitup.min.js"></script>
+    <script src="~js/landingjs/jquery.mixitup.min.js"></script>
     <!-- jquery.parallax -->
-    <script src="Scripts/landingjs/jquery.parallax-1.1.3.js"></script>
+    <script src="~js/landingjs/jquery.parallax-1.1.3.js"></script>
     <!-- jquery.countTo -->
-    <script src="Scripts/landingjs/jquery-countTo.js"></script>
+    <script src="~js/landingjs/jquery-countTo.js"></script>
     <!-- jquery.appear -->
-    <script src="Scripts/landingjs/jquery.appear.js"></script>
+    <script src="~js/landingjs/jquery.appear.js"></script>
     <!-- Contact form validation -->
     @*<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.32/jquery.form.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>*@
     <!-- Google Map -->
     @*<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>*@
     <!-- jquery easing -->
-    <script src="Scripts/landingjs/jquery.easing.min.js"></script>
+    <script src="~js/landingjs/jquery.easing.min.js"></script>
     <!-- jquery easing -->
-    <script src="Scripts/landingjs/wow.min.js"></script>
+    <script src="~js/landingjs/wow.min.js"></script>
     <script>
         var wow = new WOW({
             boxClass: 'wow',      // animated element css class (default is wow)
@@ -701,7 +705,7 @@
         wow.init();
     </script>
     <!-- Custom Functions -->
-    <script src="Scripts/landingjs/custom.js"></script>
+    <script src="~js/landingjs/custom.js"></script>
 
     @*<script type="text/javascript">
             $(function () {

@@ -13,6 +13,10 @@ namespace FinWizUI.Controllers
             return new string[] { "value1", "value2" };
         }
 
+        public ActionResult Landing()
+        {
+            return View();
+        }
         public IActionResult Index()
         {
             return View();
