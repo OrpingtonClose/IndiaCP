@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DataUtils/DataUtils.iml" filepath="$PROJECT_DIR$/.idea/modules/DataUtils/DataUtils.iml" group="DataUtils" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IndiaCPRefDataService.iml" filepath="$PROJECT_DIR$/.idea/modules/IndiaCPRefDataService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IndiaCPRefDataService_main.iml" filepath="$PROJECT_DIR$/.idea/modules/IndiaCPRefDataService_main.iml" group="IndiaCPRefDataService" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/IndiaCPRefDataService_test.iml" filepath="$PROJECT_DIR$/.idea/modules/IndiaCPRefDataService_test.iml" group="IndiaCPRefDataService" />
+    </modules>
+  </component>
+</project>
