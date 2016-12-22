@@ -1,6 +1,7 @@
 package com.barclays.indiacp.cordapp.plugin
 
 import com.barclays.indiacp.cordapp.api.IndiaCPApi
+import com.barclays.indiacp.cordapp.api.IndiaCPProgramApi
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
@@ -19,7 +20,7 @@ import java.util.function.Function
 class IndiaCPPlugin : CordaPluginRegistry() {
     // A list of classes that expose web APIs.
     //override val webApis = listOf(Function(::IndiaCPApi))
-    override val webApis: List<Class<*>> = listOf(IndiaCPApi::class.java)
+    override val webApis: List<Class<*>> = listOf(IndiaCPApi::class.java, IndiaCPProgramApi::class.java)
 
     // A list of protocol that are required for this cordapp
     override val requiredFlows: Map<String, Set<String>> = mapOf(

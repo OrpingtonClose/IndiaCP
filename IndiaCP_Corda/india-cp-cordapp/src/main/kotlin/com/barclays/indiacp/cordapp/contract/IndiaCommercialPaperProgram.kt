@@ -223,7 +223,7 @@ class IndiaCommercialPaperProgram : Contract {
                                 commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
                                 groupingKey: Issued<IndiaCommercialPaperProgram.Terms>?): Set<IndiaCommercialPaperProgram.Commands> {
                 val consumedCommands = super.verify(tx, inputs, outputs, commands, groupingKey)
-                commands.requireSingleCommand<IndiaCommercialPaper.Commands.Issue>()
+                commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.Issue>()
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
@@ -231,57 +231,6 @@ class IndiaCommercialPaperProgram : Contract {
 
                 return consumedCommands
             }
-        }
-
-//        class Agree: Clause<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, Issued<IndiaCommercialPaperProgram.Terms>>() {
-//            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.Move::class.java)
-//
-//            override fun verify(tx: TransactionForContract,
-//                                inputs: List<IndiaCommercialPaperProgram.State>,
-//                                outputs: List<IndiaCommercialPaperProgram.State>,
-//                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
-//                                groupingKey: Issued<IndiaCommercialPaperProgram.Terms>?): Set<IndiaCommercialPaperProgram.Commands> {
-//                val command = commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.Move>()
-//                val input = inputs.single()
-//                requireThat {
-//
-//                    //MM : For now, lets skip this check.
-////                    "the transaction is signed by the beneficiary of the CP" by (input.beneficiary.owningKey in command.signers)
-//                    "the state is propagated" by (outputs.size == 1)
-//                    // Don't need to check anything else, as if outputs.size == 1 then the output is equal to
-//                    // the input ignoring the owner field due to the grouping.
-//                }
-//                return setOf(command.value)
-//            }
-//        }
-
-        class Redeem(): Clause<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, Issued<IndiaCommercialPaperProgram.Terms>>() {
-            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.Redeem::class.java)
-
-            override fun verify(tx: TransactionForContract,
-                                inputs: List<IndiaCommercialPaperProgram.State>,
-                                outputs: List<IndiaCommercialPaperProgram.State>,
-                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
-                                groupingKey: Issued<IndiaCommercialPaperProgram.Terms>?): Set<IndiaCommercialPaperProgram.Commands> {
-                // TODO: This should filter commands down to those with compatible subjects (underlying product and maturity date)
-                // before requiring a single command
-                val command = commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.Redeem>()
-                val timestamp = tx.timestamp
-
-                val input = inputs.single()
-                //MM for now lets skip redeem as much as possible.
-//                val received = tx.outputs.sumCashBy(input.issuer.owningKey)
-                val time = timestamp?.after ?: throw IllegalArgumentException("Redemptions must be timestamped")
-                requireThat {
-                    "the paper must have matured" by (time >= input.maturity_days)
-//                    "the received amount equals the face value" by (received == input.faceValue)
-                    "the paper must be destroyed" by outputs.isEmpty()
-//                    "the transaction is signed by the beneficiary of the CP" by (input.issuer.owningKey in command.signers)
-                }
-
-                return setOf(command.value)
-            }
-
         }
 
 //        class AddSettlementDetails: Clause<IndiaCommercialPaper.State, IndiaCommercialPaper.Commands, Issued<IndiaCommercialPaper.Terms>>() {
@@ -318,7 +267,7 @@ class IndiaCommercialPaperProgram : Contract {
      * an existing transaction because you aren't able to issue multiple pieces of CP in a single transaction
      * at the moment: this restriction is not fundamental and may be lifted later.
      */
-    fun generateIssue( notary: Party, issuer: Party,beneficiary: Party,ipa: Party, depository: Party,
+    fun generateIssue( notary: Party, issuer: Party, ipa: Party, depository: Party,
 
                        indiaCPProgramJSON : IndiaCPProgramJSON): TransactionBuilder {
 

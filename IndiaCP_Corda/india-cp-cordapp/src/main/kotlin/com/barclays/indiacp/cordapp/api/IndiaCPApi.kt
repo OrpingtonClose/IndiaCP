@@ -210,7 +210,7 @@ class IndiaCPApi(val services: ServiceHub) {
     @Consumes(MediaType.APPLICATION_JSON)
     fun issueCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON): Response {
         try {
-            val stx = rpc.startFlow(::IssueCPProgramFlow, indiaCPProgramJSON).returnValue.toBlocking().first()
+            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {

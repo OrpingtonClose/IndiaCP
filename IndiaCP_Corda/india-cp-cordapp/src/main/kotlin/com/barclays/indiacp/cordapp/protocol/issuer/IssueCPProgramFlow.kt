@@ -52,11 +52,10 @@ class IssueCPProgramFlow(val indiaCPProgramJSON: IndiaCPProgramJSON) : FlowLogic
 
         val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
         val issuer = getPartyByName(indiaCPProgramJSON.issuer)
-        val beneficiary = getPartyByName(indiaCPProgramJSON.beneficiary)
         val ipa = getPartyByName(indiaCPProgramJSON.ipa)
         val depository = getPartyByName(indiaCPProgramJSON.depository)
 
-        val tx = IndiaCommercialPaperProgram().generateIssue(notary.notaryIdentity, issuer, beneficiary, ipa, depository, indiaCPProgramJSON)
+        val tx = IndiaCommercialPaperProgram().generateIssue(notary.notaryIdentity, issuer, ipa, depository, indiaCPProgramJSON)
 
         // Attach the prospectus.
         //tx.addAttachment(serviceHub.storageService.attachments.openAttachment(PROSPECTUS_HASH)!!.id)
