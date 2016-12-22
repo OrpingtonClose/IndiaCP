@@ -118,7 +118,7 @@ class IndiaCommercialPaperProgram : Contract {
         override val linearId: UniqueIdentifier
             get() = UniqueIdentifier(program_id)
 
-        //Only the Issuer and Investor should be party to the full state of this transaction
+        //Only the Issuer should be party to the full state of this transaction
         val parties: List<Party>
             get() = listOf(issuer)
 
@@ -132,18 +132,7 @@ class IndiaCommercialPaperProgram : Contract {
         val token: Issued<IndiaCommercialPaperProgram.Terms>
             get() = Issued(issuer.ref(), IndiaCommercialPaperProgram.Terms(maturity_days))
 
-//        override fun withNewOwner(newOwner: CompositeKey) = Pair(IndiaCommercialPaperProgram.Commands.Move(), copy(owner = newOwner))
-        override fun toString() = "${Emoji.newspaper}CommercialPaper(of $program_size redeemable on lastUpdateTime by '$issuer', owned by ${issuer.toString()})"
-
-//        // Although kotlin is smart enough not to need these, as we are using the ICommercialPaperState, we need to declare them explicitly for use later,
-//        override fun withOwner(newOwner: CompositeKey): ICommercialPaperState = copy(owner = newOwner)
-//
-//        override fun withIssuance(newIssuance: PartyAndReference): ICommercialPaperState = copy(issuance = newIssuance)
-//        override fun withFaceValue(newFaceValue: Amount<Issued<Currency>>): ICommercialPaperState = copy(faceValue = newFaceValue)
-//
-//
-//        //MM: Place Holder for maturity
-//        override fun withMaturityDate(maturity_days: Instant): ICommercialPaperState = copy(maturity_days = maturity_days)
+        override fun toString() = "${Emoji.newspaper}IndiaCommercialPaperProgram(of $program_size issued by '$issuer' on '$issue_commencement_date' with a maturity period of '$maturity_days')"
 
         /** Object Relational Mapping support. */
         override fun supportedSchemas(): Iterable<MappedSchema> = listOf(IndiaCommercialPaperProgramSchemaV1)
@@ -213,8 +202,8 @@ class IndiaCommercialPaperProgram : Contract {
     interface Clauses {
         class Group : GroupClauseVerifier<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, Issued<IndiaCommercialPaperProgram.Terms>>(
                 AnyComposition(
-                        IndiaCommercialPaperProgram.Clauses.Redeem(),
                         IndiaCommercialPaperProgram.Clauses.Issue()
+//                          IndiaCommercialPaperProgram.Clauses.AddISINGenerationDocs()
 //                        IndiaCommercialPaper.Clauses.Agree()
 //                        IndiaCommercialPaperProgram.Clauses.AddSettlementDetails()
                 )) {
@@ -346,35 +335,6 @@ class IndiaCommercialPaperProgram : Contract {
         ), notary)
         return TransactionType.General.Builder(notary = notary).withItems(state, Command(IndiaCommercialPaperProgram.Commands.Issue(), issuer.owningKey))
     }
-
-    /**
-     * Returns a transaction that issues commercial paper, owned by the issuing parties key. Does not update
-     * an existing transaction because you aren't able to issue multiple pieces of CP in a single transaction
-     * at the moment: this restriction is not fundamental and may be lifted later.
-     */
-    fun generateAgreement(issuer: Party, beneficiary: Party, ipa: Party, depository: Party,
-                      cpProgramID: String, cpTradeID: String, tradeDate: String, valueDate: String,
-                      faceValue: Amount<Issued<Currency>>, maturityDate: Instant,
-                      isin: String, notary: Party): TransactionBuilder {
-
-        val state = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
-                cpProgramID, cpTradeID, tradeDate, valueDate,
-                faceValue, maturityDate,
-                isin), notary)
-        return TransactionType.General.Builder(notary = notary).withItems(state, Command(IndiaCommercialPaper.Commands.Agree(), listOf(issuer.owningKey, beneficiary.owningKey)))
-    }
-
-//
-//    fun addSettlementDetails(tx: TransactionBuilder, cp: StateAndRef<State>, settlementDetails: SettlementDetails): TransactionBuilder {
-//        tx.addInputState(cp)
-//        val newVersion = Integer(cp.state.data.version.toInt() + 1)
-//        tx.addOutputState(
-//                cp.state.data.copy(settlementDetails = settlementDetails, version = newVersion),
-//                cp.state.notary
-//        )
-//        tx.addCommand(Commands.AddSettlementDetails(settlementDetails), listOf(cp.state.data.issuer.owningKey))
-//        return tx;
-//    }
 
 }
 
