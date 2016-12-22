@@ -56,6 +56,8 @@ data class IndiaCPProgramJSON
 
     val allotment_letter_doc_id: String,
 
+    val status : String,
+
     val last_modified : Date,
 
     val version: Integer

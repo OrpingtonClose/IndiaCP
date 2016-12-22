@@ -19,6 +19,7 @@ import net.corda.core.transactions.SignedTransaction
 import net.corda.core.utilities.ProgressTracker
 import net.corda.flows.NotaryFlow
 import java.time.Instant
+import java.util.*
 
 /**
  * This whole class is really part of a demo just to initiate the agreement of a deal with a simple
@@ -27,7 +28,7 @@ import java.time.Instant
  * In the "real world", we'd probably have the offers sitting in the platform prior to the agreement step
  * or the protocol would have to reach out to external systems (or users) to verify the deals.
  */
-class IssueCPProgramFlow(val indiaCPProgramJSON: IndiaCPProgramJSON) : FlowLogic<SignedTransaction>() {
+class IssueCPProgramFlow(val newCPProgram: IndiaCPProgramJSON) : FlowLogic<SignedTransaction>() {
 
     companion object {
         val PROSPECTUS_HASH = SecureHash.parse("decd098666b9657314870e192ced0c3519c2c9d395507a238338f8d003929de9")
@@ -51,11 +52,27 @@ class IssueCPProgramFlow(val indiaCPProgramJSON: IndiaCPProgramJSON) : FlowLogic
         progressTracker.currentStep = CP_PROGRAM_ISSUING
 
         val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
-        val issuer = getPartyByName(indiaCPProgramJSON.issuer)
-        val ipa = getPartyByName(indiaCPProgramJSON.ipa)
-        val depository = getPartyByName(indiaCPProgramJSON.depository)
+        val issuer = getPartyByName(newCPProgram.issuer)
+        val ipa = getPartyByName(newCPProgram.ipa)
+        val depository = getPartyByName(newCPProgram.depository)
 
-        val tx = IndiaCommercialPaperProgram().generateIssue(notary.notaryIdentity, issuer, ipa, depository, indiaCPProgramJSON)
+        val tx = IndiaCommercialPaperProgram().generateIssue(
+                IndiaCommercialPaperProgram.State(issuer, ipa, depository,
+                        newCPProgram.program_id, newCPProgram.name, newCPProgram.type, newCPProgram.purpose,
+                        newCPProgram.issuer_id, newCPProgram.issuer_name,
+                        newCPProgram.issue_commencement_date.toInstant(),
+                        newCPProgram.program_size.DOLLARS `issued by` DUMMY_CASH_ISSUER,
+                        newCPProgram.program_allocated_value.DOLLARS `issued by` DUMMY_CASH_ISSUER,
+                        Currency.getInstance("INR"), //TODO fix the hardcoding to INR and DOLLAR
+                        newCPProgram.maturity_days.toInstant(), newCPProgram.ipa_id, newCPProgram.ipa_name,
+                        newCPProgram.depository_id, newCPProgram.depository_name, newCPProgram.isin_generation_request_doc_id,
+                        newCPProgram.ipa_verification_request_doc_id,
+                        newCPProgram.ipa_certificate_doc_id, newCPProgram.corporate_action_form_doc_id,
+                        newCPProgram.allotment_letter_doc_id,
+                        "NEW_PROGRAM_INCEPTED", //TODO: Add Status Enum
+                        Instant.now(),
+                        Integer(0)),
+                notary = notary.notaryIdentity)
 
         // Attach the prospectus.
         //tx.addAttachment(serviceHub.storageService.attachments.openAttachment(PROSPECTUS_HASH)!!.id)

@@ -64,7 +64,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     }
 
     private fun getCPProgram(ref: String): IndiaCommercialPaperProgram.State? {
-        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>().filterValues { it.state.data.program_id == ref }
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>().filterValues { it.state.data.programId == ref }
         return if (states.isEmpty()) null else {
             val deals = states.values.map { it.state.data }
             return if (deals.isEmpty()) null else deals[0]

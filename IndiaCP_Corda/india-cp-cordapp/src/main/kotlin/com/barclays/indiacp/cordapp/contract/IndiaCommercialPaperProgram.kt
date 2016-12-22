@@ -52,6 +52,7 @@ class IndiaCommercialPaperProgram : Contract {
     override val legalContractReference: SecureHash = SecureHash.sha256("https://en.wikipedia.org/wiki/Commercial_paper")
 
     data class Terms(
+            val asset: Issued<Currency>,
             val maturityDate: Instant
     )
 
@@ -65,7 +66,7 @@ class IndiaCommercialPaperProgram : Contract {
 
             val depository: Party,
 
-            val program_id: String,
+            val programId: String,
 
             val name: String,
 
@@ -73,39 +74,41 @@ class IndiaCommercialPaperProgram : Contract {
 
             val purpose: String,
 
-            val issuer_id : String,
+            val issuerId: String,
 
-            val issuer_name : String,
+            val issuerName: String,
 
-            val issue_commencement_date: Instant,
+            val issueCommencementDate: Instant,
 
-            val program_size: Double,
+            val programSize: Amount<Issued<Currency>>,
 
-            val program_allocated_value: Double,
+            val programAllocatedValue: Amount<Issued<Currency>>,
 
-            val program_currency: String,
+            val programCurrency: Currency,
 
-            val maturity_days: Instant,
+            val maturityDate: Instant,
 
-            val ipa_id: String,
+            val ipaId: String,
 
-            val ipa_name: String,
+            val ipaName: String,
 
-            val depository_id: String,
+            val depositoryId: String,
 
-            val depository_name: String,
+            val depositoryName: String,
 
-            val isin_generation_request_doc_id: String,
+            val isinGenerationRequestDocId: String,
 
-            val ipa_verification_request_doc_id: String,
+            val ipaVerificationRequestDocId: String,
 
-            val ipa_certificate_doc_id: String,
+            val ipaCertificateDocId: String,
 
-            val corporate_action_form_doc_id: String,
+            val corporateActionFormDocId: String,
 
-            val allotment_letter_doc_id: String,
+            val allotmentLetterDocId: String,
 
-            val last_modified : Instant,
+            val status: String,
+
+            val lastModified: Instant,
 
             val version: Integer
 
@@ -116,7 +119,7 @@ class IndiaCommercialPaperProgram : Contract {
 //        val ref = program_id
 
         override val linearId: UniqueIdentifier
-            get() = UniqueIdentifier(program_id)
+            get() = UniqueIdentifier(programId)
 
         //Only the Issuer should be party to the full state of this transaction
         val parties: List<Party>
@@ -130,9 +133,9 @@ class IndiaCommercialPaperProgram : Contract {
         }
 
         val token: Issued<IndiaCommercialPaperProgram.Terms>
-            get() = Issued(issuer.ref(), IndiaCommercialPaperProgram.Terms(maturity_days))
+            get() = Issued(issuer.ref(CPUtils.getReference(programId)), IndiaCommercialPaperProgram.Terms(programSize.token, maturityDate))
 
-        override fun toString() = "${Emoji.newspaper}IndiaCommercialPaperProgram(of $program_size issued by '$issuer' on '$issue_commencement_date' with a maturity period of '$maturity_days')"
+        override fun toString() = "${Emoji.newspaper}IndiaCommercialPaperProgram(of $programSize issued by '$issuer' on '$issueCommencementDate' with a maturity period of '$maturityDate')"
 
         /** Object Relational Mapping support. */
         override fun supportedSchemas(): Iterable<MappedSchema> = listOf(IndiaCommercialPaperProgramSchemaV1)
@@ -148,7 +151,7 @@ class IndiaCommercialPaperProgram : Contract {
 
                         depositoryParty = this.depository.owningKey.toBase58String(),
 
-                        program_id = this.program_id,
+                        program_id = this.programId,
 
                         name = this.name,
 
@@ -156,39 +159,39 @@ class IndiaCommercialPaperProgram : Contract {
 
                         purpose = this.purpose,
 
-                        issuer_id = this.issuer_id,
+                        issuer_id = this.issuerId,
 
-                       issuer_name = this.issuer_name,
+                       issuer_name = this.issuerName,
 
-                        issue_commencement_date = this.issue_commencement_date,
+                        issue_commencement_date = this.issueCommencementDate,
 
-                        program_size = this.program_size,
+                        program_size = this.programSize.quantity.toDouble(),
 
-                        program_allocated_value = this.program_allocated_value,
+                        program_allocated_value = this.programAllocatedValue.quantity.toDouble(),
 
-                        program_currency = this.program_currency,
+                        program_currency = this.programCurrency.symbol,
 
-                       maturity_days = this.maturity_days,
+                       maturity_days = this.maturityDate,
 
-                        ipa_id = this.ipa_id,
+                        ipa_id = this.ipaId,
 
-                        ipa_name = this.ipa_name,
+                        ipa_name = this.ipaName,
 
-                        depository_id = this.depository_id,
+                        depository_id = this.depositoryId,
 
-                        depository_name = this.depository_name,
+                        depository_name = this.depositoryName,
 
-                        isin_generation_request_doc_id = this.isin_generation_request_doc_id,
+                        isin_generation_request_doc_id = this.isinGenerationRequestDocId,
 
-                        ipa_verification_request_doc_id = this.ipa_verification_request_doc_id,
+                        ipa_verification_request_doc_id = this.ipaVerificationRequestDocId,
 
-                        ipa_certificate_doc_id = this.ipa_certificate_doc_id,
+                        ipa_certificate_doc_id = this.ipaCertificateDocId,
 
-                       corporate_action_form_doc_id = this.corporate_action_form_doc_id,
+                       corporate_action_form_doc_id = this.corporateActionFormDocId,
 
-                        allotment_letter_doc_id = this.allotment_letter_doc_id,
+                        allotment_letter_doc_id = this.allotmentLetterDocId,
 
-                        last_modified = this.last_modified,
+                        last_modified = this.lastModified,
 
                         version = this.version
 
@@ -212,8 +215,8 @@ class IndiaCommercialPaperProgram : Contract {
         }
 
         class Issue : AbstractIssue<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, IndiaCommercialPaperProgram.Terms>(
-                { map { Amount(it.program_allocated_value.toLong(), it.token) }.sumOrThrow() },
-                { token -> map { Amount(it.program_allocated_value.toLong(), it.token) }.sumOrZero(token) }
+                { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
+                { token -> map { Amount(it.programSize.quantity, it.token) }.sumOrZero(token) }
         ) {
             override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.Issue::class.java)
 
@@ -227,7 +230,7 @@ class IndiaCommercialPaperProgram : Contract {
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
-                require(outputs.all { time < it.maturity_days }) { "maturity date is not in the past" }
+                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
 
                 return consumedCommands
             }
@@ -267,22 +270,10 @@ class IndiaCommercialPaperProgram : Contract {
      * an existing transaction because you aren't able to issue multiple pieces of CP in a single transaction
      * at the moment: this restriction is not fundamental and may be lifted later.
      */
-    fun generateIssue( notary: Party, issuer: Party, ipa: Party, depository: Party,
+    fun generateIssue( indiaCPProgram: IndiaCommercialPaperProgram.State, notary: Party): TransactionBuilder {
 
-                       indiaCPProgramJSON : IndiaCPProgramJSON): TransactionBuilder {
-
-        val state = TransactionState(IndiaCommercialPaperProgram.State(issuer, ipa, depository,
-                indiaCPProgramJSON.program_id, indiaCPProgramJSON.name, indiaCPProgramJSON.type, indiaCPProgramJSON.purpose,
-                indiaCPProgramJSON.issuer_id, indiaCPProgramJSON.issuer_name,
-                indiaCPProgramJSON.issue_commencement_date.toInstant(), indiaCPProgramJSON.program_size,
-                indiaCPProgramJSON.program_allocated_value, indiaCPProgramJSON.program_currency,
-                indiaCPProgramJSON.maturity_days.toInstant(), indiaCPProgramJSON.ipa_id, indiaCPProgramJSON.ipa_name,
-                indiaCPProgramJSON.depository_id, indiaCPProgramJSON.depository_name, indiaCPProgramJSON.isin_generation_request_doc_id,
-                indiaCPProgramJSON.ipa_verification_request_doc_id,
-                indiaCPProgramJSON.ipa_certificate_doc_id, indiaCPProgramJSON.corporate_action_form_doc_id,
-                indiaCPProgramJSON.allotment_letter_doc_id, Instant.now(), Integer(0)
-        ), notary)
-        return TransactionType.General.Builder(notary = notary).withItems(state, Command(IndiaCommercialPaperProgram.Commands.Issue(), issuer.owningKey))
+        val state = TransactionState(indiaCPProgram, notary)
+        return TransactionType.General.Builder(notary = notary).withItems(state, Command(IndiaCommercialPaperProgram.Commands.Issue(), indiaCPProgram.issuer.owningKey))
     }
 
 }
