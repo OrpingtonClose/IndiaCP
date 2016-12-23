@@ -76,6 +76,9 @@ object IndiaCommercialPaperProgramSchemaV1 : MappedSchema(schemaFamily = IndiaCo
     @Column(name = "depository_name")
             var depository_name: String,
 
+     @Column(name = "isin")
+     var isin: String,
+
     @Column(name = "isin_generation_request_doc_id")
             var isin_generation_request_doc_id: String,
 

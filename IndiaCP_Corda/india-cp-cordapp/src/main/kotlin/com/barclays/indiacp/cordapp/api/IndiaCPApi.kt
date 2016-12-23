@@ -1,10 +1,8 @@
 package com.barclays.indiacp.cordapp.api
 
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
-import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.DealEntryFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import net.corda.contracts.testing.fillWithSomeTestCash
@@ -90,13 +88,13 @@ class IndiaCPApi(val services: ServiceHub) {
     }
 
     @POST
-    @Path("addSettlementDetails/{ref}")
+    @Path("addSettlementDetails/{cpIssueId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    fun addSettlementDetails(@PathParam("ref") cpTradeID: String, settlementDetails: SettlementDetailsJSONObject): Response {
+    fun addSettlementDetails(@PathParam("cpIssueId") cpIssueId: String, settlementDetails: SettlementDetailsJSONObject): Response {
         try {
-            val stx = services.invokeFlowAsync(AddSettlementDetailsFlow::class.java, cpTradeID, settlementDetails).resultFuture.get()
+            val stx = services.invokeFlowAsync(AddSettlementDetailsFlow::class.java, cpIssueId, settlementDetails).resultFuture.get()
 //            val stx = rpc.startFlow(::AddSettlementDetailsFlow, cpTradeID, settlementDetails).returnValue.toBlocking().first()
-            logger.info("Issuer Settlement Details added to CP $cpTradeID\n\nModified transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+            logger.info("Issuer Settlement Details added to CP $cpIssueId\n\nModified transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
             logger.info("Exception when Issuer Settlement Details: ${ex.toString()}")
@@ -104,14 +102,13 @@ class IndiaCPApi(val services: ServiceHub) {
         }
     }
 
-
     @POST
-    @Path("generateISIN/{ref}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    fun generateISIN(@PathParam("ref") ref: String, isin: String): Response {
+    @Path("addDealConfirmationDocs/{cpIssueId}/{docHashId}/{docStatus}")
+    fun addDealConfirmationDocs(@PathParam("cpIssueId") cpIssueId: String,
+                              @PathParam("docHashId") docHashId: String,
+                              @PathParam("docStatus") docStatus: String): Response {
         try {
-//            val stx = rpc.startFlow(::ISINGenerationFlow, ref, isin).returnValue.toBlocking().first()
-//            logger.info("ISIN Stamped on CP\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+            //TODO: Add code here
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
@@ -142,6 +139,33 @@ class IndiaCPApi(val services: ServiceHub) {
 //
 //        return Response.status(Response.Status.CREATED).build()
     }
+
+    @POST
+    @Path("getTransactionHistory/{cpIssueId}")
+    fun getTransactionHistory(@PathParam("cpIssueId") cpIssueId: String): Response {
+        try {
+            //TODO: Add code here
+            return Response.status(Response.Status.OK).build()
+        } catch (ex: Throwable) {
+            logger.info("Exception when creating deal: ${ex.toString()}")
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+        }
+    }
+
+    @POST
+    @Path("getDocumentHistory/{cpIssueId}/{docType}/{docSubType}")
+    fun getDocumentHistory(@PathParam("cpIssueId") cpIssueId: String,
+                           @PathParam("docType") docType: String,
+                           @PathParam("docSubType") docSubType: String): Response {
+        try {
+            //TODO: Add code here
+            return Response.status(Response.Status.OK).build()
+        } catch (ex: Throwable) {
+            logger.info("Exception when creating deal: ${ex.toString()}")
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+        }
+    }
+
 
     @GET
     @Path("fetchAllCP")
@@ -203,20 +227,4 @@ class IndiaCPApi(val services: ServiceHub) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
         }
     }
-
-
-    @POST
-    @Path("issueCPProgram")
-    @Consumes(MediaType.APPLICATION_JSON)
-    fun issueCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON): Response {
-        try {
-            val stx = rpc.startFlow(::IssueCPProgramFlow, indiaCPProgramJSON).returnValue.toBlocking().first()
-            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
-        } catch (ex: Throwable) {
-            logger.info("Exception when creating CP Program deal: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
-        }
-    }
-
 }

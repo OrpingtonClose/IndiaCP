@@ -1,0 +1,36 @@
+group 'IndiaCPRefDataService'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.0.5-3'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+
+    // For H2 database support in persistence
+    compile "com.h2database:h2:1.4.192"
+
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:1.4.2.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-web:1.4.2.RELEASE")
+    
+
+}
