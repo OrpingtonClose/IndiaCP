@@ -36,6 +36,13 @@ popd >/dev/null
 git clone https://github.com/jpmorganchase/quorum-examples.git
 chown -R indiacp:indiacp /home/indiacp/quorum /home/indiacp/quorum-examples
 
+#install py dependencies
+pip install flask
+pip install ethjsonrpc
+#find target directory
+cp client.py <target directory>
+
+
 # done!
 echo "Quorum is ready to run"
 

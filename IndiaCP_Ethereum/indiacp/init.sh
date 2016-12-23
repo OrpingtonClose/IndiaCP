@@ -36,4 +36,3 @@ cp keys/key9 qdata/nsdl/keystore
 cp keys/key10 qdata/nsdl/keystore
 cp keys/key11 qdata/nsdl/keystore
 geth --datadir qdata/nsdl init genesis.json
-
