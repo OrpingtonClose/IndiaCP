@@ -44,6 +44,9 @@ public class SettlementDetails
     @Column(name = "redemptionDpID")
     String redemptionDpID;
 
+    @ManyToOne
+    @JoinColumn(name="legal_entity_id")
+    LegalEntity legalEntity;
 
     public SettlementDetails() {
     }

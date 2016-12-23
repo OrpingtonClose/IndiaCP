@@ -1,5 +1,9 @@
 package com.barclays.indiacp.reference.data.entities;
 
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,9 +47,17 @@ public class LegalEntity
     @Column(name = "contact_person")
     String contact_person;
 
-
-    @OneToMany(mappedBy="person_id", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
+    //@LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy="legalEntity", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     private Collection<UserDetails> userDetails;
+
+
+    //@LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(mappedBy="legalEntity",fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    private Collection<SettlementDetails> settlementDetails;
+
+    //@ManyToOne(mappedBy="person_id", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
+    //private Collection<UserDetails> userDetails;
 
     public LegalEntity() {
     }
@@ -156,6 +168,7 @@ public class LegalEntity
     }
 
     public Collection<UserDetails> getUserDetails() {
+
         return userDetails;
     }
 
@@ -163,9 +176,33 @@ public class LegalEntity
         this.userDetails = userDetails;
     }
 
+    public Collection<SettlementDetails> getSettlementDetails() {
+        return settlementDetails;
+    }
+
+    public void setSettlementDetails(Collection<SettlementDetails> settlementDetails) {
+        this.settlementDetails = settlementDetails;
+    }
+
     @Override
     public String toString() {
-        return "LegalEntity{" +
+
+        String ud = "";
+
+        for(UserDetails u : userDetails)
+        {
+            ud += u.toString();
+        }
+
+        String sd = "";
+
+        for(SettlementDetails s : settlementDetails)
+        {
+            sd += s.toString();
+        }
+
+        String temp =
+        "LegalEntity{" +
                 "legal_entity_id=" + legal_entity_id +
                 ", legal_entity_name='" + legal_entity_name + '\'' +
                 ", CIN='" + CIN + '\'' +
@@ -176,7 +213,18 @@ public class LegalEntity
                 ", official_website='" + official_website + '\'' +
                 ", entity_type='" + entity_type + '\'' +
                 ", contact_person='" + contact_person + '\'' +
-                ", userDetails=" + userDetails +
-                '}';
+                ", userDetails=[" +
+                ud+
+                "], settlementDetails=[" + sd + "]";
+         /*String users;
+        for (int i=0, n=userDetails.size(); i < n; i++)
+        {
+            userDetails
+        }*/
+
+
+         String legalEntityString = temp;
+
+        return legalEntityString;
     }
 }

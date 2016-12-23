@@ -29,4 +29,7 @@ public class UserDetailsDAO
         return em.createQuery("SELECT * FROM UserDetail where dept = " + dept).getResultList();
     }
 
+    public List<UserDetails> findAll() {
+        return em.createQuery("SELECT u FROM UserDetails u").getResultList();
+    }
 }

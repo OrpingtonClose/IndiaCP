@@ -27,6 +27,10 @@ public class UserDetails
     @Column(name = "officer_email")
     String officer_email;
 
+    @ManyToOne
+    @JoinColumn(name="legal_entity_id")
+    LegalEntity legalEntity;
+
 
     public UserDetails()
     {}

@@ -5,6 +5,7 @@ import com.barclays.indiacp.reference.data.entities.LegalEntity;
 import com.barclays.indiacp.reference.data.entities.UserDetails;
 import com.barclays.indiacp.reference.data.service.LegalEntityService;
 import com.barclays.indiacp.reference.data.service.SettlementDetailsService;
+import com.barclays.indiacp.reference.data.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -24,15 +25,20 @@ import java.util.HashSet;
 @EnableAutoConfiguration
 @Component
 @ComponentScan
-@PropertySource(value = { "file:/home/chaos/RISE_CP/RISE_WORK/IndiaCP/IndiaCPRefDataService/src/main/resources/jdbc.properties" })
+@PropertySource(value = { "classpath:jdbc.properties"})
 public class IndiaCPRefDataAppMain
 {
 
     @Autowired
-    SettlementDetailsService settlementDetailsService;
+    LegalEntityService legalEntityService;
 
     @Autowired
-    LegalEntityService legalEntityService;
+    SettlementDetailsService settlementDetailsService;
+
+   @Autowired
+   UserDetailsService userDetailsService;
+
+
 
     public static void main(String[] arg)
     {
@@ -46,21 +52,33 @@ public class IndiaCPRefDataAppMain
     private void testRun()
     {
         System.out.println("This is IndiaCPRefDataAppMain test Run");
-        settlementDetailsService.add(new SettlementDetails("Issuer","","MM","","","","","", ""));
-        System.out.println(" " + settlementDetailsService.listAll());
+        //settlementDetailsService.add(new SettlementDetails("Issuer","","MM","","","","","", ""));
+        //System.out.println(" " + settlementDetailsService.listAll());
 
-        LegalEntity le = new LegalEntity("ABC Bank","123123123123","Chennai","020-20202020","abc@abc.com","www.abc.com","","","ABC DEF");
+        LegalEntity le = new LegalEntity("Mo Bank","12312312312312","Kuala Lumpur","0612-232223232","","Kuala,Lumpur@kl.com","kualalumpur.com","","Mr. KL");
+        LegalEntity le1 = new LegalEntity("Bank of America","567567567","America","+1 99999999","","United States of America","unitedstates.com","","Mr. US");
 
-        ArrayList<UserDetails> arr = new ArrayList<UserDetails>();
 
-        arr.add(new UserDetails("person A", "AI", "Wall street","100","obama@mm.com"));
+        ArrayList<UserDetails> arrUser = new ArrayList<UserDetails>();
 
-        le.setUserDetails(arr);
+        arrUser.add(new UserDetails("person DE", "Finance", "Langkawi","+613 232323232","langkawi@kl.com"));
+        arrUser.add(new UserDetails("person FG","Operations","Malacca", "+613 1000 000 00", "malacca@kl.com"));
+        le.setUserDetails(arrUser);
+
+        ArrayList<SettlementDetails> arrSettlement = new ArrayList<SettlementDetails>();
+
+        arrSettlement.add(new SettlementDetails("HDFC Bank", "121211212", "Barclays","50000","123123123","1231231231","45645645", "675675", "34232"));
+        arrSettlement.add(new SettlementDetails("BILIL","6445645","Yes Bank", "HDFC0000", "56456464", "35346346","78678687", "786856856", "79878978"));
+        le.setSettlementDetails(arrSettlement);
 
         legalEntityService.add(le);
-        System.out.println(" " + legalEntityService.listAll());
+        legalEntityService.add(le1);
 
-        System.out.println("This is IndiaCPRefDataAppMain test Run is now complete");
+       System.out.println(legalEntityService.listAll());
+       System.out.println(userDetailsService.listAll());
+       System.out.println(settlementDetailsService.listAll());
+       System.out.println(legalEntityService.getLegalEntityByID("2"));
+       System.out.println("This is IndiaCPRefDataAppMain test Run is now complete");
     }
 
 }

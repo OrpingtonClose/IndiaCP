@@ -23,7 +23,8 @@ public class LegalEntityDAO
     {
         LegalEntity le = null;
 
-        List<LegalEntity> list = em.createQuery("SELECT l FROM LegalEntity l where legalEntityId =" + legalEntityId).getResultList();
+
+        List<LegalEntity> list = em.createQuery("SELECT l FROM LegalEntity l where legal_entity_id =" + legalEntityId).getResultList();
 
         if(list!=null && list.size()>0)
         {

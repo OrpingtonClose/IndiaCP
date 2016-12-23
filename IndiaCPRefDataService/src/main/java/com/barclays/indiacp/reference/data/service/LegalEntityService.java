@@ -2,6 +2,7 @@ package com.barclays.indiacp.reference.data.service;
 
 import com.barclays.indiacp.reference.data.dao.LegalEntityDAO;
 import com.barclays.indiacp.reference.data.dao.SettlementDetailsDAO;
+import com.barclays.indiacp.reference.data.dao.UserDetailsDAO;
 import com.barclays.indiacp.reference.data.entities.LegalEntity;
 import com.barclays.indiacp.reference.data.entities.SettlementDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,13 @@ public class LegalEntityService
         return legalEntityDAO.findAll();
 
     }
+
+    @Transactional(readOnly = true)
+    public LegalEntity getLegalEntityByID(String legalEntityId) {
+        return legalEntityDAO.getLegalEntityByID(legalEntityId);
+
+    }
+
 
 
 
