@@ -1,8 +1,10 @@
 package com.barclays.indiacp.cordapp.api
 
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
+import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.DealEntryFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
+import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import net.corda.core.contracts.*
@@ -178,4 +180,20 @@ class IndiaCPApi(val rpc: CordaRPCOps){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
         }
     }
+
+
+    @POST
+    @Path("issueCPProgram")
+    @Consumes(MediaType.APPLICATION_JSON)
+    fun issueCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON): Response {
+        try {
+            val stx = rpc.startFlow(::IssueCPProgramFlow, indiaCPProgramJSON).returnValue.toBlocking().first()
+            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+            return Response.status(Response.Status.OK).build()
+        } catch (ex: Throwable) {
+            logger.info("Exception when creating CP Program deal: ${ex.toString()}")
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+        }
+    }
+
 }
