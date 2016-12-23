@@ -25,7 +25,8 @@ import java.util.function.Function
 class DealEntryFlow(val cpTradeId: String, val investor: Party) : FlowLogic<SignedTransaction>() {
 
     class Plugin : CordaPluginRegistry() {
-        override val servicePlugins = listOf(Function(::Service))
+        override val servicePlugins: List<Class<*>> = listOf(Service::class.java)
+        //override val servicePlugins = listOf(Function(::Service))
     }
 
     class Service(services: PluginServiceHub) : SingletonSerializeAsToken() {

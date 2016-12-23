@@ -18,7 +18,8 @@ import java.util.function.Function
 
 class IndiaCPPlugin : CordaPluginRegistry() {
     // A list of classes that expose web APIs.
-    override val webApis = listOf(Function(::IndiaCPApi))
+    //override val webApis = listOf(Function(::IndiaCPApi))
+    override val webApis: List<Class<*>> = listOf(IndiaCPApi::class.java)
 
     // A list of protocol that are required for this cordapp
     override val requiredFlows: Map<String, Set<String>> = mapOf(

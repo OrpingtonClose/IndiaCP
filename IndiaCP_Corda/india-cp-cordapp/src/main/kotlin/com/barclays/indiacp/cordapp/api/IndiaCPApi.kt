@@ -7,9 +7,11 @@ import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.utilities.CPUtils
+import net.corda.contracts.testing.fillWithSomeTestCash
 import net.corda.core.contracts.*
-import net.corda.core.messaging.CordaRPCOps
-import net.corda.core.messaging.startFlow
+import net.corda.node.services.messaging.CordaRPCOps
+//import net.corda.core.messaging.CordaRPCOps
+//import net.corda.core.messaging.startFlow
 import net.corda.core.serialization.OpaqueBytes
 import net.corda.core.utilities.Emoji
 import net.corda.core.utilities.loggerFor
@@ -20,12 +22,16 @@ import net.corda.flows.CashCommand
 import net.corda.flows.CashFlow
 import net.corda.core.contracts.DOLLARS
 import net.corda.core.contracts.Amount
+import net.corda.core.node.ServiceHub
+import net.corda.core.node.services.linearHeadsOfType
 import net.corda.flows.CashFlowResult
+import net.corda.node.services.messaging.startFlow
 import java.time.Instant
 
 
 @Path("indiacp")
-class IndiaCPApi(val rpc: CordaRPCOps){
+class IndiaCPApi(val services: ServiceHub) {
+
     val notaryName = "Controller" //todo: remove hardcoding
 
     data class CPReferenceAndAcceptablePrice(val cpRefId: String, val acceptablePrice: Int)
@@ -74,7 +80,7 @@ class IndiaCPApi(val rpc: CordaRPCOps){
     @Consumes(MediaType.APPLICATION_JSON)
     fun issueCP(newCP: CPJSONObject): Response {
         try {
-            val stx = rpc.startFlow(::IssueCPFlow, newCP).returnValue.toBlocking().first()
+            val stx = services.invokeFlowAsync(IssueCPFlow::class.java, newCP).resultFuture.get()
             logger.info("CP Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
@@ -88,7 +94,8 @@ class IndiaCPApi(val rpc: CordaRPCOps){
     @Consumes(MediaType.APPLICATION_JSON)
     fun addSettlementDetails(@PathParam("ref") cpTradeID: String, settlementDetails: SettlementDetailsJSONObject): Response {
         try {
-            val stx = rpc.startFlow(::AddSettlementDetailsFlow, cpTradeID, settlementDetails).returnValue.toBlocking().first()
+            val stx = services.invokeFlowAsync(AddSettlementDetailsFlow::class.java, cpTradeID, settlementDetails).resultFuture.get()
+//            val stx = rpc.startFlow(::AddSettlementDetailsFlow, cpTradeID, settlementDetails).returnValue.toBlocking().first()
             logger.info("Issuer Settlement Details added to CP $cpTradeID\n\nModified transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
@@ -116,17 +123,24 @@ class IndiaCPApi(val rpc: CordaRPCOps){
     @Path("issueCash")
     @Consumes(MediaType.APPLICATION_JSON)
     fun issueCash(amount: Cash): Response {
-        val notary = rpc.networkMapUpdates().first.first { it.legalIdentity.name == notaryName }
-        val cashOwner = rpc.nodeIdentity()
-
-        rpc.startFlow(::CashFlow, CashCommand.IssueCash(
-                                                        amount = amount.amount.DOLLARS,
-                                                        issueRef = OpaqueBytes.of(1),
-                                                        recipient = cashOwner.legalIdentity,
-                                                        notary = notary.notaryIdentity)
-        ).returnValue.toBlocking().first() is CashFlowResult.Success
-
+        val notary = services.networkMapCache.notaryNodes.single { it.legalIdentity.name == notaryName }.notaryIdentity
+        services.fillWithSomeTestCash(amount.amount.DOLLARS,
+                outputNotary = notary,
+                ownedBy = services.myInfo.legalIdentity.owningKey)
         return Response.status(Response.Status.CREATED).build()
+
+//        val notary = services.n
+//                networkMapUpdates().first.first { it.legalIdentity.name == notaryName }
+//        val cashOwner = rpc.nodeIdentity()
+//
+//        rpc.startFlow(::CashFlow, CashCommand.IssueCash(
+//                                                        amount = amount.amount.DOLLARS,
+//                                                        issueRef = OpaqueBytes.of(1),
+//                                                        recipient = cashOwner.legalIdentity,
+//                                                        notary = notary.notaryIdentity)
+//        ).returnValue.toBlocking().first() is CashFlowResult.Success
+//
+//        return Response.status(Response.Status.CREATED).build()
     }
 
     @GET
@@ -142,9 +156,12 @@ class IndiaCPApi(val rpc: CordaRPCOps){
     }
 
     private fun getAllCP(): Array<IndiaCommercialPaper.State>?  {
-        val states = rpc.vaultAndUpdates().first.filterStatesOfType<IndiaCommercialPaper.State>()
-        val indiacps = states.map { it.state.data }.toTypedArray()
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaper.State>()
+        val indiacps = states.values.map { it.state.data }.toTypedArray()
         return indiacps
+//        rpc.vaultAndUpdates().first.filterStatesOfType<IndiaCommercialPaper.State>()
+//        val indiacps = states.map { it.state.data }.toTypedArray()
+//        return indiacps
     }
 
     @GET
@@ -155,11 +172,16 @@ class IndiaCPApi(val rpc: CordaRPCOps){
     }
 
     private fun getCP(ref: String): IndiaCommercialPaper.State? {
-        val states = rpc.vaultAndUpdates().first.filterStatesOfType<IndiaCommercialPaper.State>().filter { it.state.data.ref == ref }
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaper.State>().filterValues { it.state.data.ref == ref }
         return if (states.isEmpty()) null else {
-            val deals = states.map { it.state.data }
+            val deals = states.values.map { it.state.data }
             return if (deals.isEmpty()) null else deals[0]
         }
+//        val states = rpc.vaultAndUpdates().first.filterStatesOfType<IndiaCommercialPaper.State>().filter { it.state.data.ref == ref }
+//        return if (states.isEmpty()) null else {
+//            val deals = states.map { it.state.data }
+//            return if (deals.isEmpty()) null else deals[0]
+//        }
     }
 
     @POST
@@ -167,9 +189,10 @@ class IndiaCPApi(val rpc: CordaRPCOps){
     @Consumes(MediaType.APPLICATION_JSON)
     fun enterTrade(cp : CPReferenceAndAcceptablePrice, @PathParam("investor") investorName: String): Response? {
         try {
-            val investor = rpc.partyFromName(investorName)
-            if (investor != null) {
-                val stx = rpc.startFlow(::DealEntryFlow, cp.cpRefId, investor).returnValue.toBlocking().first()
+            if (investorName != null) {
+                val investor = services.identityService.partyFromName(investorName)
+                val stx = services.invokeFlowAsync(DealEntryFlow::class.java, cp.cpRefId, investor).resultFuture.get()
+//                val stx = rpc.startFlow(::DealEntryFlow, cp.cpRefId, investorName).returnValue.toBlocking().first()
                 logger.info("CP Deal Finalized\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
                 return Response.status(Response.Status.OK).build()
             } else {
