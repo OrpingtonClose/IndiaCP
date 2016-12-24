@@ -1,4 +1,4 @@
-package com.barclays.indiacp.utils;
+package com.barclays.indiacp.dl.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,7 +41,17 @@ public class DLConfig extends Properties {
         return scheme + "://" + webHost + ":" + webPort + "/" + basepath + "/";
     }
 
+    public String getDLUploadAttachmentPath() {
+        return getDLProperty("uploadAttachmentPath");
+    }
+
     public String getDLProperty(String property) {
+
+        if (DL == null) {
+            DL = getProperty("DL");
+        }
+
         return getProperty(DL + "." + property);
+
     }
 }
