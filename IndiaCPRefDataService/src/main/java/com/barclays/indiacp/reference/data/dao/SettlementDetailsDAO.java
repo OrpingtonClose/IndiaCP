@@ -24,11 +24,23 @@ public class SettlementDetailsDAO
     }
 
     public void persist(SettlementDetails settlementDetails) {
-        em.persist(settlementDetails);
+
+        try {
+            em.persist(settlementDetails);
+        }
+        finally{
+            em.flush();
+        }
+
     }
 
     public List<SettlementDetails> findAll() {
         return em.createQuery("SELECT s FROM SettlementDetails s").getResultList();
+    }
+
+    public List<SettlementDetails> getUserDetailsForEntity(Integer legalEntityId)
+    {
+        return em.createQuery("SELECT s FROM SettlementDetails s where legal_entity_id =" + legalEntityId).getResultList();
     }
 
 }

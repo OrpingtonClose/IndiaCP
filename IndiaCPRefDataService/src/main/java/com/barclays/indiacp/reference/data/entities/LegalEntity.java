@@ -17,6 +17,10 @@ public class LegalEntity
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "legal_entity_PK")
+    Integer legal_entity_PK;
+
+
     @Column(name = "legal_entity_id")
     Integer legal_entity_id;
 
@@ -47,13 +51,11 @@ public class LegalEntity
     @Column(name = "contact_person")
     String contact_person;
 
-    //@LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(mappedBy="legalEntity", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @Transient
     private Collection<UserDetails> userDetails;
 
 
-    //@LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(mappedBy="legalEntity",fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @Transient
     private Collection<SettlementDetails> settlementDetails;
 
     //@ManyToOne(mappedBy="person_id", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
@@ -63,6 +65,7 @@ public class LegalEntity
     }
 
     public LegalEntity(
+            Integer legal_entity_id,
             String legal_entity_name,
             String CIN,
             String registered_address,
@@ -74,6 +77,7 @@ public class LegalEntity
             String contact_person
             )
     {
+        this.legal_entity_id = legal_entity_id;
         this.legal_entity_name=legal_entity_name;
         this.CIN=CIN;
         this.registered_address=registered_address;
@@ -85,6 +89,9 @@ public class LegalEntity
         this.contact_person=contact_person;
     }
 
+    public Integer getLegal_entity_PK() {
+        return legal_entity_PK;
+    }
 
     public Integer getLegal_entity_id() {
         return legal_entity_id;
@@ -189,16 +196,18 @@ public class LegalEntity
 
         String ud = "";
 
-        for(UserDetails u : userDetails)
-        {
-            ud += u.toString();
+        if(userDetails!=null) {
+            for (UserDetails u : userDetails) {
+                ud += u.toString();
+            }
         }
 
         String sd = "";
 
-        for(SettlementDetails s : settlementDetails)
-        {
-            sd += s.toString();
+        if(settlementDetails!=null) {
+            for (SettlementDetails s : settlementDetails) {
+                sd += s.toString();
+            }
         }
 
         String temp =
