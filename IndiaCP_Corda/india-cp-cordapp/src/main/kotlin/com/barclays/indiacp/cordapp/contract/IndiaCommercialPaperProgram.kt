@@ -210,6 +210,7 @@ class IndiaCommercialPaperProgram : Contract {
         class Group : GroupClauseVerifier<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, Issued<IndiaCommercialPaperProgram.Terms>>(
                 AnyComposition(
                         IndiaCommercialPaperProgram.Clauses.Issue(),
+                        IndiaCommercialPaperProgram.Clauses.AddIsinGenDoc(),
                         IndiaCommercialPaperProgram.Clauses.AddIsin(),
                         IndiaCommercialPaperProgram.Clauses.AddIPAVerification(),
                         IndiaCommercialPaperProgram.Clauses.AddIPACertifcateDoc(),
@@ -270,11 +271,35 @@ class IndiaCommercialPaperProgram : Contract {
             }
         }
 
+        class AddIsinGenDoc : AbstractIssue<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, IndiaCommercialPaperProgram.Terms>(
+                { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
+                { token -> map { Amount(it.programSize.quantity, it.token) }.sumOrZero(token) }
+        ) {
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIsinGenDoc::class.java)
+
+            override fun verify(tx: TransactionForContract,
+                                inputs: List<IndiaCommercialPaperProgram.State>,
+                                outputs: List<IndiaCommercialPaperProgram.State>,
+                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
+                                groupingKey: Issued<IndiaCommercialPaperProgram.Terms>?): Set<IndiaCommercialPaperProgram.Commands> {
+                val consumedCommands = super.verify(tx, inputs, outputs, commands, groupingKey)
+                commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.AddIsin>()
+                val timestamp = tx.timestamp
+                val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
+
+                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
+
+                return consumedCommands
+            }
+        }
+
+
+
         class AddIPAVerification : AbstractIssue<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, IndiaCommercialPaperProgram.Terms>(
                 { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
                 { token -> map { Amount(it.programSize.quantity, it.token) }.sumOrZero(token) }
         ) {
-            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIsin::class.java)
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIPAVerification::class.java)
 
             override fun verify(tx: TransactionForContract,
                                 inputs: List<IndiaCommercialPaperProgram.State>,
@@ -296,7 +321,7 @@ class IndiaCommercialPaperProgram : Contract {
                 { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
                 { token -> map { Amount(it.programSize.quantity, it.token) }.sumOrZero(token) }
         ) {
-            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIsin::class.java)
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIPACertifcateDoc::class.java)
 
             override fun verify(tx: TransactionForContract,
                                 inputs: List<IndiaCommercialPaperProgram.State>,
@@ -318,7 +343,7 @@ class IndiaCommercialPaperProgram : Contract {
                 { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
                 { token -> map { Amount(it.programSize.quantity, it.token) }.sumOrZero(token) }
         ) {
-            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIsin::class.java)
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddCorpActionFormDoc::class.java)
 
             override fun verify(tx: TransactionForContract,
                                 inputs: List<IndiaCommercialPaperProgram.State>,
@@ -340,7 +365,7 @@ class IndiaCommercialPaperProgram : Contract {
                 { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
                 { token -> map { Amount(it.programSize.quantity, it.token) }.sumOrZero(token) }
         ) {
-            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIsin::class.java)
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddAllotmentLetterDoc::class.java)
 
             override fun verify(tx: TransactionForContract,
                                 inputs: List<IndiaCommercialPaperProgram.State>,
@@ -365,6 +390,7 @@ class IndiaCommercialPaperProgram : Contract {
         data class Move(override val contractHash: SecureHash? = null) : FungibleAsset.Commands.Move, IndiaCommercialPaperProgram.Commands
         class Redeem : TypeOnlyCommandData(), IndiaCommercialPaperProgram.Commands
         class AddIsin(isin:String, isinGenerationRequestDocId: String) : IndiaCommercialPaperProgram.Commands
+        class AddIsinGenDoc(isinGenerationRequestDocId: String) : IndiaCommercialPaperProgram.Commands
         class AddIPAVerification(ipaVerificationRequestDocId: String) : IndiaCommercialPaperProgram.Commands
         class AddIPACertifcateDoc(ipaCertificateDocId: String) : IndiaCommercialPaperProgram.Commands
         class AddCorpActionFormDoc(corporateActionFormDocId: String) : IndiaCommercialPaperProgram.Commands
@@ -388,7 +414,7 @@ class IndiaCommercialPaperProgram : Contract {
      * Returns a transaction that that updates the ISIN on to the CP Program.
      * It should also stamp the ISIN Generated proof document on to DL
      */
-    fun addIsinToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, isin:String, isinGenerationRequestDocId: String, status: String): TransactionBuilder {
+    fun addIsinToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, isin:String, status: String): TransactionBuilder {
 
         val ptx = TransactionType.General.Builder(notary)
         ptx.addInputState(indiaCPProgramSF)
@@ -396,13 +422,34 @@ class IndiaCommercialPaperProgram : Contract {
         val newVersion = Integer(indiaCPProgramSF.state.data.version.toInt() + 1)
 
         ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-                isin  = isin, isinGenerationRequestDocId = isinGenerationRequestDocId,
+                isin  = isin,
                 status = status,
                 version = newVersion
         ))
 
         return ptx
     }
+
+    /**
+     * Returns a transaction that that updates the ISIN on to the CP Program.
+     * It should also stamp the ISIN Generated proof document on to DL
+     */
+    fun addIsinGenDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, isinGenerationRequestDocId: String, status: String): TransactionBuilder {
+
+        val ptx = TransactionType.General.Builder(notary)
+        ptx.addInputState(indiaCPProgramSF)
+
+        val newVersion = Integer(indiaCPProgramSF.state.data.version.toInt() + 1)
+
+        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
+                isinGenerationRequestDocId = isinGenerationRequestDocId,
+                status = status,
+                version = newVersion
+        ))
+
+        return ptx
+    }
+
 
     /**
      * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.

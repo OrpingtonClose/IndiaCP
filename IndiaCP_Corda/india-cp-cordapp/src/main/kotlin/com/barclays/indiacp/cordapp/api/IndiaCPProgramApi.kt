@@ -2,7 +2,7 @@ package com.barclays.indiacp.cordapp.api
 
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
-import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
+import com.barclays.indiacp.cordapp.protocol.issuer.CPProgramFlows
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.linearHeadsOfType
@@ -30,7 +30,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @Consumes(MediaType.APPLICATION_JSON)
     fun issueCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON): Response {
         try {
-            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM).resultFuture.get()
+            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
@@ -73,7 +73,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
 
 
 
-            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADDISIN).resultFuture.get()
+            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADDISIN).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
@@ -105,7 +105,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
 
 
 
-            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC).resultFuture.get()
+            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
@@ -124,7 +124,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
 
 
 
-            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC).resultFuture.get()
+            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
@@ -143,7 +143,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
 
 
 
-            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC).resultFuture.get()
+            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
@@ -162,7 +162,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
 
 
 
-            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC).resultFuture.get()
+            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
