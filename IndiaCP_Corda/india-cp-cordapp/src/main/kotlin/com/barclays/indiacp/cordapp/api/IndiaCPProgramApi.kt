@@ -3,6 +3,7 @@ package com.barclays.indiacp.cordapp.api
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
+import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.utilities.Emoji
@@ -29,7 +30,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @Consumes(MediaType.APPLICATION_JSON)
     fun issueCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON): Response {
         try {
-            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON).resultFuture.get()
+            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
@@ -52,13 +53,28 @@ class IndiaCPProgramApi(val services: ServiceHub) {
         }
     }
 
+
+    /*
+    This method will add accept generated ISIN from NSDL and the proof of generation
+    in a document from NSDL or some email.
+
+     */
     @POST
-    @Path("addISIN/{cpProgramId}/{isin}")
+    @Path("addISIN/{cpProgramId}/{isin}/{docHashId}/{docStatus}")
     fun addISIN(@PathParam("cpProgramId") cpProgramId: String,
-                             @PathParam("docHashId") docHashId: String,
-                             @PathParam("docStatus") docStatus: String): Response {
-        try {
-            //TODO: Add code here
+                @PathParam("isin") isin: String,
+                @PathParam("docHashId") docHashId: String,
+                @PathParam("docStatus") docStatus: String
+    ): Response
+    {
+        try
+        {
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, isin = isin, isin_generation_request_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADDISIN.toString())
+
+
+
+            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADDISIN).resultFuture.get()
+            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
@@ -85,7 +101,12 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                              @PathParam("docHashId") docHashId: String,
                              @PathParam("docStatus") docStatus: String): Response {
         try {
-            //TODO: Add code here
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, ipa_verification_request_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.toString())
+
+
+
+            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC).resultFuture.get()
+            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
@@ -99,7 +120,12 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                                @PathParam("docHashId") docHashId: String,
                                @PathParam("docStatus") docStatus: String): Response {
         try {
-            //TODO: Add code here
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, ipa_certificate_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC.toString())
+
+
+
+            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC).resultFuture.get()
+            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
@@ -113,7 +139,12 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                             @PathParam("docHashId") docHashId: String,
                             @PathParam("docStatus") docStatus: String): Response {
         try {
-            //TODO: Add code here
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, corporate_action_form_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC.toString())
+
+
+
+            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC).resultFuture.get()
+            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
@@ -127,7 +158,12 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                              @PathParam("docHashId") docHashId: String,
                              @PathParam("docStatus") docStatus: String): Response {
         try {
-            //TODO: Add code here
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, allotment_letter_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC.toString())
+
+
+
+            val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC).resultFuture.get()
+            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")

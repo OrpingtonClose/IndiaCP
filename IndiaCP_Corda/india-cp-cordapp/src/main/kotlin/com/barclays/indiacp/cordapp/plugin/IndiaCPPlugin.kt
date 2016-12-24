@@ -9,6 +9,7 @@ import com.barclays.indiacp.cordapp.protocol.issuer.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.DealEntryFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
+import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
 import com.esotericsoftware.kryo.Kryo
 import net.corda.core.crypto.Party
 import net.corda.core.node.CordaPluginRegistry
@@ -26,7 +27,7 @@ class IndiaCPPlugin : CordaPluginRegistry() {
     override val requiredFlows: Map<String, Set<String>> = mapOf(
             DealEntryFlow::class.java.name to setOf(String::class.java.name, Party::class.java.name),
             IssueCPFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
-            IssueCPProgramFlow::class.java.name to setOf(IndiaCPProgramJSON::class.java.name),
+            IssueCPProgramFlow::class.java.name to setOf(IndiaCPProgramJSON::class.java.name, CP_PROGRAM_FLOW_STAGES::class.java.name),
             AddSettlementDetailsFlow::class.java.name to setOf(String::class.java.name, IndiaCPApi.SettlementDetailsJSONObject::class.java.name)
     )
 
@@ -45,8 +46,10 @@ class IndiaCPPlugin : CordaPluginRegistry() {
             //MM For India CP Propgram
             register(Date::class.java)
             register(IndiaCPProgramJSON::class.java)
+            register(CP_PROGRAM_FLOW_STAGES::class.java)
             register(IndiaCommercialPaperProgram::class.java)
             register(IndiaCommercialPaperProgram.State::class.java)
+
 
             //MM : Getting error due to this class not registered.
             register(NotaryException::class.java)
