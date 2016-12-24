@@ -153,4 +153,20 @@ public class SettlementDetails
     public void setRedemptionDpID(String redemptionDpID) {
         this.redemptionDpID = redemptionDpID;
     }
+
+    @Override
+    public String toString() {
+        return "SettlementDetails{" +
+                "settlement_key=" + settlement_key +
+                ", creditorName='" + creditorName + '\'' +
+                ", bankAccountDetails='" + bankAccountDetails + '\'' +
+                ", bankName='" + bankName + '\'' +
+                ", rtgsCode='" + rtgsCode + '\'' +
+                ", dpName='" + dpName + '\'' +
+                ", allocationClientId='" + allocationClientId + '\'' +
+                ", allocationDpID='" + allocationDpID + '\'' +
+                ", redemptionClientId='" + redemptionClientId + '\'' +
+                ", redemptionDpID='" + redemptionDpID + '\'' +
+                '}';
+    }
 }

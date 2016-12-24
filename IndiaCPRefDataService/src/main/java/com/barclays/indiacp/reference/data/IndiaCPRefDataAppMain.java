@@ -14,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -48,7 +49,15 @@ public class IndiaCPRefDataAppMain
         settlementDetailsService.add(new SettlementDetails("Issuer","","MM","","","","","", ""));
         System.out.println(" " + settlementDetailsService.listAll());
 
-        legalEntityService.add(new LegalEntity("ABC Bank","123123123123","Chennai","020-20202020","abc@abc.com","www.abc.com","","","ABC DEF"));
+        LegalEntity le = new LegalEntity("ABC Bank","123123123123","Chennai","020-20202020","abc@abc.com","www.abc.com","","","ABC DEF");
+
+        ArrayList<UserDetails> arr = new ArrayList<UserDetails>();
+
+        arr.add(new UserDetails("person A", "AI", "Wall street","100","obama@mm.com"));
+
+        le.setUserDetails(arr);
+
+        legalEntityService.add(le);
         System.out.println(" " + legalEntityService.listAll());
 
         System.out.println("This is IndiaCPRefDataAppMain test Run is now complete");

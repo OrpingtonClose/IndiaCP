@@ -1,6 +1,7 @@
 package com.barclays.indiacp.reference.data.entities;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,6 +43,9 @@ public class LegalEntity
     @Column(name = "contact_person")
     String contact_person;
 
+
+    @OneToMany(mappedBy="person_id", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
+    private Collection<UserDetails> userDetails;
 
     public LegalEntity() {
     }
@@ -143,4 +147,36 @@ public class LegalEntity
     }
 
 
+    public String getContact_person() {
+        return contact_person;
+    }
+
+    public void setContact_person(String contact_person) {
+        this.contact_person = contact_person;
+    }
+
+    public Collection<UserDetails> getUserDetails() {
+        return userDetails;
+    }
+
+    public void setUserDetails(Collection<UserDetails> userDetails) {
+        this.userDetails = userDetails;
+    }
+
+    @Override
+    public String toString() {
+        return "LegalEntity{" +
+                "legal_entity_id=" + legal_entity_id +
+                ", legal_entity_name='" + legal_entity_name + '\'' +
+                ", CIN='" + CIN + '\'' +
+                ", registered_address='" + registered_address + '\'' +
+                ", official_contact_number='" + official_contact_number + '\'' +
+                ", official_fax_number='" + official_fax_number + '\'' +
+                ", official_email='" + official_email + '\'' +
+                ", official_website='" + official_website + '\'' +
+                ", entity_type='" + entity_type + '\'' +
+                ", contact_person='" + contact_person + '\'' +
+                ", userDetails=" + userDetails +
+                '}';
+    }
 }

@@ -36,7 +36,10 @@ public class LegalEntityDAO
 
     public List<LegalEntity> findAll() {
         return em.createQuery("SELECT l FROM LegalEntity l").getResultList();
+//        List<LegalEntity> list = em.find(LegalEntity.class, )
     }
+
+
     public void persist(LegalEntity legalEntityList) {
         em.persist(legalEntityList);
     }

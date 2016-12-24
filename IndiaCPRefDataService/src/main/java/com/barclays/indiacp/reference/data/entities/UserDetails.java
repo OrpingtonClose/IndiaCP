@@ -3,11 +3,12 @@ package com.barclays.indiacp.reference.data.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "User_Details_ref_data")
+@Table(name = "User_Details_Ref_Data")
 public class UserDetails
 {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id")
     String person_id;
 
@@ -27,14 +28,12 @@ public class UserDetails
     String officer_email;
 
 
-
-    public UserDetails() {
-    }
+    public UserDetails()
+    {}
 
     public UserDetails(
-            String person_id, String person_name, String dept, String officer_address, String officer_contact_number, String officer_email
+            String person_name, String dept, String officer_address, String officer_contact_number, String officer_email
     ) {
-        this.person_id = person_id;
         this.person_name = person_name;
         this.dept = dept;
         this.officer_address = officer_address;
@@ -91,4 +90,16 @@ public class UserDetails
         this.officer_email = officer_email;
     }
 
+
+    @Override
+    public String toString() {
+        return "UserDetails{" +
+                "person_id='" + person_id + '\'' +
+                ", person_name='" + person_name + '\'' +
+                ", dept='" + dept + '\'' +
+                ", officer_address='" + officer_address + '\'' +
+                ", officer_contact_number='" + officer_contact_number + '\'' +
+                ", officer_email='" + officer_email + '\'' +
+                '}';
+    }
 }
