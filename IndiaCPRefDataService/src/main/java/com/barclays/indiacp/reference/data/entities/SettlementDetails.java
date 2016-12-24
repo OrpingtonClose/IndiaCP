@@ -1,13 +1,11 @@
 package com.barclays.indiacp.reference.data.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by chaos on 22/12/16.
  */
+
 
 @Entity
 @Table(name = "settlement_details_ref_data")
@@ -15,17 +13,9 @@ public class SettlementDetails
 {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "settlement_key")
-    String settlement_key;
-
-    @Column(name = "party_type")
-    String party_type;
-
-//    @Column(name = "cp_program_id")
-//    String cpProgramID;
-//
-//    @Column(name = "cp_trade_id")
-//    String cpTradeID;
+    Integer settlement_key;
 
     @Column(name = "creditorName")
     String creditorName;
@@ -42,35 +32,41 @@ public class SettlementDetails
     @Column(name = "dpName")
     String dpName;
 
-    @Column(name = "clientId")
-    String clientId;
+    @Column(name = "allocationClientId")
+    String allocationClientId;
 
-    @Column(name = "dpID")
-    String dpID;
+    @Column(name = "allocationDpID")
+    String allocationDpID;
+
+    @Column(name = "redemptionClientId")
+    String redemptionClientId;
+
+    @Column(name = "redemptionDpID")
+    String redemptionDpID;
+
 
     public SettlementDetails() {
     }
 
-    public SettlementDetails(String settlement_key, String party_type, String creditorName, String bankAccountDetails, String bankName, String rtgsCode, String dpName, String clientId, String dpID) {
-        this.settlement_key = settlement_key;
-        this.party_type = party_type;
+    public SettlementDetails(String creditorName, String bankAccountDetails, String bankName, String rtgsCode, String dpName, String allocationClientId, String allocationDpID, String redemptionClientId, String redemptionDpID)
+    {
         this.creditorName = creditorName;
         this.bankAccountDetails = bankAccountDetails;
         this.bankName = bankName;
         this.rtgsCode = rtgsCode;
         this.dpName = dpName;
-        this.clientId = clientId;
-        this.dpID = dpID;
+        this.allocationClientId = allocationClientId;
+        this.allocationDpID = allocationDpID;
+        this.redemptionClientId = redemptionClientId;
+        this.redemptionDpID = redemptionDpID;
     }
 
 
-    public String getSettlement_key() {
+    public Integer getSettlement_key() {
         return settlement_key;
     }
 
-    public String getParty_type() {
-        return party_type;
-    }
+
 
 
     public String getCreditorName() {
@@ -93,20 +89,13 @@ public class SettlementDetails
         return dpName;
     }
 
-    public String getClientId() {
-        return clientId;
-    }
 
-    public String getDpID() {
-        return dpID;
-    }
 
-    public void setSettlement_key(String settlement_key) {
+
+
+
+    public void setSettlement_key(Integer settlement_key) {
         this.settlement_key = settlement_key;
-    }
-
-    public void setParty_type(String party_type) {
-        this.party_type = party_type;
     }
 
     public void setCreditorName(String creditorName) {
@@ -129,11 +118,39 @@ public class SettlementDetails
         this.dpName = dpName;
     }
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
+
+
+
+
+    public String getAllocationClientId() {
+        return allocationClientId;
     }
 
-    public void setDpID(String dpID) {
-        this.dpID = dpID;
+    public void setAllocationClientId(String allocationClientId) {
+        this.allocationClientId = allocationClientId;
+    }
+
+    public String getAllocationDpID() {
+        return allocationDpID;
+    }
+
+    public void setAllocationDpID(String allocationDpID) {
+        this.allocationDpID = allocationDpID;
+    }
+
+    public String getRedemptionClientId() {
+        return redemptionClientId;
+    }
+
+    public void setRedemptionClientId(String redemptionClientId) {
+        this.redemptionClientId = redemptionClientId;
+    }
+
+    public String getRedemptionDpID() {
+        return redemptionDpID;
+    }
+
+    public void setRedemptionDpID(String redemptionDpID) {
+        this.redemptionDpID = redemptionDpID;
     }
 }

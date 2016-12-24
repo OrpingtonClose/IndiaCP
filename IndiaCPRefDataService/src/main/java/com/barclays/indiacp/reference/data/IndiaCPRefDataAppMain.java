@@ -1,6 +1,9 @@
 package com.barclays.indiacp.reference.data;
 
 import com.barclays.indiacp.reference.data.entities.SettlementDetails;
+import com.barclays.indiacp.reference.data.entities.LegalEntity;
+import com.barclays.indiacp.reference.data.entities.UserDetails;
+import com.barclays.indiacp.reference.data.service.LegalEntityService;
 import com.barclays.indiacp.reference.data.service.SettlementDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -10,6 +13,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
 
 /**
  * Created by chaos on 22/12/16.
@@ -25,7 +30,8 @@ public class IndiaCPRefDataAppMain
     @Autowired
     SettlementDetailsService settlementDetailsService;
 
-
+    @Autowired
+    LegalEntityService legalEntityService;
 
     public static void main(String[] arg)
     {
@@ -39,8 +45,11 @@ public class IndiaCPRefDataAppMain
     private void testRun()
     {
         System.out.println("This is IndiaCPRefDataAppMain test Run");
-        settlementDetailsService.add(new SettlementDetails("S2","Issuer","","MM","","","","",""));
-        System.out.println(" " + settlementDetailsService.listAll().size());
+        settlementDetailsService.add(new SettlementDetails("Issuer","","MM","","","","","", ""));
+        System.out.println(" " + settlementDetailsService.listAll());
+
+        legalEntityService.add(new LegalEntity("ABC Bank","123123123123","Chennai","020-20202020","abc@abc.com","www.abc.com","","","ABC DEF"));
+        System.out.println(" " + legalEntityService.listAll());
 
         System.out.println("This is IndiaCPRefDataAppMain test Run is now complete");
     }
