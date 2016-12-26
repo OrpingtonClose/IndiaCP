@@ -1,0 +1,3 @@
+﻿Angular2 setup with typescript
+http://asp.net-hacker.rocks/2016/08/08/setup-angular2-typescript-aspnetcore-in-visualstudio.html
+http://blog.stevensanderson.com/2016/10/04/angular2-template-for-visual-studio/

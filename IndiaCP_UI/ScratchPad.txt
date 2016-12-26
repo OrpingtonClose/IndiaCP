@@ -1,0 +1,18 @@
+http://www.hanselman.com/blog/ControlHowYourBowerPackagesAreInstalledWithAGulpfileInASPNET5.aspx
+
+install definitelytype dependencies
+npm install --save @types/lodash
+
+Angular2
+http://blog.stevensanderson.com/2016/10/04/angular2-template-for-visual-studio/
+http://asp.net-hacker.rocks/2016/08/08/setup-angular2-typescript-aspnetcore-in-visualstudio.html
+
+LESS in 2015
+http://blog.chrisbriggsy.com/Gulp-101-CSS-all-the-LESS/
+
+ScratchPad
+https://github.com/johnpapa/angular-styleguide/tree/master/a1#js-hint
+
+
+Hide js.map files
+http://stackoverflow.com/questions/31587949/hide-js-map-files-in-visual-studio-code
