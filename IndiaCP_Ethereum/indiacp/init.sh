@@ -16,6 +16,9 @@ echo "[*] Configuring node issuer2"
 mkdir -p qdata/issuer2/keystore
 cp keys/key3 qdata/issuer2/keystore
 cp keys/key4 qdata/issuer2/keystore
+cp keys/key9 qdata/issuer2/keystore
+cp keys/key10 qdata/issuer2/keystore
+cp keys/key11 qdata/issuer2/keystore
 geth --datadir qdata/issuer2 init genesis.json
 
 echo "[*] Configuring node investor1"

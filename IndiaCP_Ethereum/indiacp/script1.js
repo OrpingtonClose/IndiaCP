@@ -4,7 +4,7 @@ web3.eth.defaultAccount = a;
 var simpleSource = 'contract simplestorage { uint public storedData; function simplestorage(uint initVal) { storedData = initVal; } function set(uint x) { storedData = x; } function get() constant returns (uint retVal) { return storedData; } }'
 var simpleCompiled = web3.eth.compile.solidity(simpleSource)
 var simpleContract = web3.eth.contract(simpleCompiled.simplestorage.info.abiDefinition);
-var simple = simpleContract.new(42, {from:web3.eth.accounts[0], data: simpleCompiled.simplestorage.code, gas: 300000, privateFor: ["QfeDAys9MPDs2XHExtc84jKGHxZg/aj52DTh0vtA3Xc="]}, function(e, contract) {
+var simple = simpleContract.new(42, {from:web3.eth.accounts[0], data: simpleCompiled.simplestorage.code, gas: 300000}, function(e, contract) {
   if (e) {
     console.log("err creating contract", e);
   } else {
