@@ -69,7 +69,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     {
         try
         {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, isin = isin, isin_generation_request_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADDISIN.toString())
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, isin = isin, isin_generation_request_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADDISIN.endStatus)
 
 
 
@@ -101,7 +101,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                              @PathParam("docHashId") docHashId: String,
                              @PathParam("docStatus") docStatus: String): Response {
         try {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, ipa_verification_request_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.toString())
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, ipa_verification_request_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.endStatus)
 
 
 
@@ -120,7 +120,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                                @PathParam("docHashId") docHashId: String,
                                @PathParam("docStatus") docStatus: String): Response {
         try {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, ipa_certificate_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC.toString())
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, ipa_certificate_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC.endStatus)
 
 
 
@@ -139,7 +139,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                             @PathParam("docHashId") docHashId: String,
                             @PathParam("docStatus") docStatus: String): Response {
         try {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, corporate_action_form_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC.toString())
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, corporate_action_form_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC.endStatus)
 
 
 
@@ -158,7 +158,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                              @PathParam("docHashId") docHashId: String,
                              @PathParam("docStatus") docStatus: String): Response {
         try {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, allotment_letter_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC.toString())
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, allotment_letter_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC.endStatus)
 
 
 

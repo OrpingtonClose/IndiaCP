@@ -529,6 +529,24 @@ class IndiaCommercialPaperProgram : Contract {
         return ptx
     }
 
+    /**
+     * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
+     */
+    fun createCPIssueWithinCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, programAllocatedValue : Amount<Issued<Currency>>, status: String): TransactionBuilder {
+
+        val ptx = TransactionType.General.Builder(notary)
+        ptx.addInputState(indiaCPProgramSF)
+
+        val newVersion = Integer(indiaCPProgramSF.state.data.version.toInt() + 1)
+
+        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
+                programAllocatedValue = programAllocatedValue,
+                status = status,
+                version = newVersion
+        ))
+
+        return ptx
+    }
 
 
 }

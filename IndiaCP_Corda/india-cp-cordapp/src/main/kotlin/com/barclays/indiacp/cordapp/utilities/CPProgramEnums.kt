@@ -6,13 +6,40 @@ package com.barclays.indiacp.cordapp.utilities
 
 
 enum class CP_PROGRAM_FLOW_STAGES {
-    ISSUE_CP_PROGRAM,
-    ADD_ISIN_GEN_DOC,
-    ADDISIN,
-    ISSUE_CP,
-    ADD_IPA_VERI_DOC,
-    ADD_IPA_CERT_DOC,
-    ADD_CORP_ACT_FORM_DOC,
-    ADD_ALLOT_LETTER_DOC,
-    CLOSE_CP_PROGRAM
+
+
+    ISSUE_CP_PROGRAM{
+        override val endStatus:String = "CP_PROGRAM_CREATED";
+    },
+    ADD_ISIN_GEN_DOC{
+        override val endStatus:String = "ISIN_GEN_DOC_ADDED";
+    },
+    ADDISIN{
+        override val endStatus:String = "ISIN_ADDED";
+    },
+    ISSUE_CP{
+        override val endStatus:String = "CP_ISSUEED";
+    },
+    ADD_IPA_VERI_DOC{
+        override val endStatus:String = "IPA_VERI_DOC_ADDED";
+    },
+    ADD_IPA_CERT_DOC{
+        override val endStatus:String = "IPA_CERT_DOC_ADDED";
+    },
+    ADD_CORP_ACT_FORM_DOC{
+        override val endStatus:String = "CORP_ACT_FORM_DOC_ADDED";
+    },
+    ADD_ALLOT_LETTER_DOC{
+        override val endStatus:String = "ALLOT_LETTER_DOC_ADDED";
+    },
+    CLOSE_CP_PROGRAM{
+        override val endStatus:String = "CP_PROGRAM_CLOSED";
+    };
+
+
+    abstract val endStatus:String;
+
+//    fun getEndStatus() :String = endStatus;
+
+
 }

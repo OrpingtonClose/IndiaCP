@@ -44,12 +44,15 @@ public class SettlementDetails
     @Column(name = "redemptionDpID")
     String redemptionDpID;
 
+    @Column(name = "legal_entity_id")
+    Integer legal_entity_id;
 
     public SettlementDetails() {
     }
 
-    public SettlementDetails(String creditorName, String bankAccountDetails, String bankName, String rtgsCode, String dpName, String allocationClientId, String allocationDpID, String redemptionClientId, String redemptionDpID)
+    public SettlementDetails(Integer legal_entity_id, String creditorName, String bankAccountDetails, String bankName, String rtgsCode, String dpName, String allocationClientId, String allocationDpID, String redemptionClientId, String redemptionDpID)
     {
+        this.legal_entity_id = legal_entity_id;
         this.creditorName = creditorName;
         this.bankAccountDetails = bankAccountDetails;
         this.bankName = bankName;
@@ -152,6 +155,14 @@ public class SettlementDetails
 
     public void setRedemptionDpID(String redemptionDpID) {
         this.redemptionDpID = redemptionDpID;
+    }
+
+    public Integer getLegal_entity_id() {
+        return legal_entity_id;
+    }
+
+    public void setLegal_entity_id(Integer legal_entity_id) {
+        this.legal_entity_id = legal_entity_id;
     }
 
     @Override

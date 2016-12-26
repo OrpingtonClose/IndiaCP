@@ -17,16 +17,25 @@ public class UserDetailsDAO
     @PersistenceContext
     private EntityManager em;
 
-    public List<UserDetails> getUserDetailsForEntity(String legalEntityId) {
-        return em.createQuery("SELECT * FROM UserDetail where legalEntityId =" + legalEntityId).getResultList();
+    public List<UserDetails> getUserDetailsForEntity(Integer legalEntityId) {
+        return em.createQuery("SELECT u FROM UserDetails u where legal_entity_id =" + legalEntityId).getResultList();
     }
 
     public void persist(UserDetails userDetailsList) {
-        em.persist(userDetailsList);
+
+        try{
+            em.persist(userDetailsList);
+        }
+        finally{
+            em.flush();
+        }
     }
 
     public List<UserDetails> userDetailByDept(String dept) {
-        return em.createQuery("SELECT * FROM UserDetail where dept = " + dept).getResultList();
+        return em.createQuery("SELECT u FROM UserDetails u where dept = " + dept).getResultList();
     }
 
+    public List<UserDetails> findAll() {
+        return em.createQuery("SELECT u FROM UserDetails u").getResultList();
+    }
 }

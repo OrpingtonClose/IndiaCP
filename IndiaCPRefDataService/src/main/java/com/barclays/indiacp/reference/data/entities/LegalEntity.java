@@ -1,5 +1,9 @@
 package com.barclays.indiacp.reference.data.entities;
 
+import org.hibernate.Hibernate;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,6 +17,10 @@ public class LegalEntity
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "legal_entity_PK")
+    Integer legal_entity_PK;
+
+
     @Column(name = "legal_entity_id")
     Integer legal_entity_id;
 
@@ -43,14 +51,21 @@ public class LegalEntity
     @Column(name = "contact_person")
     String contact_person;
 
-
-    @OneToMany(mappedBy="person_id", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
+    @Transient
     private Collection<UserDetails> userDetails;
+
+
+    @Transient
+    private Collection<SettlementDetails> settlementDetails;
+
+    //@ManyToOne(mappedBy="person_id", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
+    //private Collection<UserDetails> userDetails;
 
     public LegalEntity() {
     }
 
     public LegalEntity(
+            Integer legal_entity_id,
             String legal_entity_name,
             String CIN,
             String registered_address,
@@ -62,6 +77,7 @@ public class LegalEntity
             String contact_person
             )
     {
+        this.legal_entity_id = legal_entity_id;
         this.legal_entity_name=legal_entity_name;
         this.CIN=CIN;
         this.registered_address=registered_address;
@@ -73,6 +89,9 @@ public class LegalEntity
         this.contact_person=contact_person;
     }
 
+    public Integer getLegal_entity_PK() {
+        return legal_entity_PK;
+    }
 
     public Integer getLegal_entity_id() {
         return legal_entity_id;
@@ -156,6 +175,7 @@ public class LegalEntity
     }
 
     public Collection<UserDetails> getUserDetails() {
+
         return userDetails;
     }
 
@@ -163,9 +183,35 @@ public class LegalEntity
         this.userDetails = userDetails;
     }
 
+    public Collection<SettlementDetails> getSettlementDetails() {
+        return settlementDetails;
+    }
+
+    public void setSettlementDetails(Collection<SettlementDetails> settlementDetails) {
+        this.settlementDetails = settlementDetails;
+    }
+
     @Override
     public String toString() {
-        return "LegalEntity{" +
+
+        String ud = "";
+
+        if(userDetails!=null) {
+            for (UserDetails u : userDetails) {
+                ud += u.toString();
+            }
+        }
+
+        String sd = "";
+
+        if(settlementDetails!=null) {
+            for (SettlementDetails s : settlementDetails) {
+                sd += s.toString();
+            }
+        }
+
+        String temp =
+        "LegalEntity{" +
                 "legal_entity_id=" + legal_entity_id +
                 ", legal_entity_name='" + legal_entity_name + '\'' +
                 ", CIN='" + CIN + '\'' +
@@ -176,7 +222,18 @@ public class LegalEntity
                 ", official_website='" + official_website + '\'' +
                 ", entity_type='" + entity_type + '\'' +
                 ", contact_person='" + contact_person + '\'' +
-                ", userDetails=" + userDetails +
-                '}';
+                ", userDetails=[" +
+                ud+
+                "], settlementDetails=[" + sd + "]";
+         /*String users;
+        for (int i=0, n=userDetails.size(); i < n; i++)
+        {
+            userDetails
+        }*/
+
+
+         String legalEntityString = temp;
+
+        return legalEntityString;
     }
 }

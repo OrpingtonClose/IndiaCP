@@ -28,12 +28,17 @@ public class UserDetails
     String officer_email;
 
 
+    @Column(name = "legal_entity_id")
+    Integer legal_entity_id;
+
+
     public UserDetails()
     {}
 
     public UserDetails(
-            String person_name, String dept, String officer_address, String officer_contact_number, String officer_email
+            Integer legal_entity_id, String person_name, String dept, String officer_address, String officer_contact_number, String officer_email
     ) {
+        this.legal_entity_id = legal_entity_id;
         this.person_name = person_name;
         this.dept = dept;
         this.officer_address = officer_address;
@@ -90,6 +95,13 @@ public class UserDetails
         this.officer_email = officer_email;
     }
 
+    public Integer getLegal_entity_id() {
+        return legal_entity_id;
+    }
+
+    public void setLegal_entity_id(Integer legal_entity_id) {
+        this.legal_entity_id = legal_entity_id;
+    }
 
     @Override
     public String toString() {
