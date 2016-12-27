@@ -1,5 +1,6 @@
 package com.barclays.indiacp.cordapp.contract
 
+import com.barclays.indiacp.cordapp.api.IndiaCPApi
 import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.schemas.IndiaCommercialPaperProgramSchemaV1
 import net.corda.contracts.asset.sumCashBy
@@ -17,7 +18,9 @@ import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.Emoji
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import net.corda.contracts.ICommercialPaperState
+import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.crypto.*
+import net.corda.core.days
 import java.security.PublicKey
 import java.time.Instant
 import java.util.*
@@ -532,7 +535,7 @@ class IndiaCommercialPaperProgram : Contract {
     /**
      * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
      */
-    fun createCPIssueWithinCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, programAllocatedValue : Amount<Issued<Currency>>, status: String): TransactionBuilder {
+    fun createCPIssueWithinCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, issuer: Party, beneficiary: Party, ipa: Party, depository: Party, notary: Party, programAllocatedValue : Amount<Issued<Currency>>, newCP: IndiaCPApi.CPJSONObject, status: String): TransactionBuilder {
 
         val ptx = TransactionType.General.Builder(notary)
         ptx.addInputState(indiaCPProgramSF)
@@ -544,6 +547,15 @@ class IndiaCommercialPaperProgram : Contract {
                 status = status,
                 version = newVersion
         ))
+
+        //Now let us add India CP State into this transaction
+        val indiaCPState = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
+                newCP.cpProgramID, newCP.cpTradeID, newCP.tradeDate, newCP.valueDate,
+                newCP.faceValue.DOLLARS `issued by` DUMMY_CASH_ISSUER, Instant.now() + newCP.maturityDays.days,
+                newCP.isin), notary)
+
+
+        ptx.addOutputState(indiaCPState)
 
         return ptx
     }

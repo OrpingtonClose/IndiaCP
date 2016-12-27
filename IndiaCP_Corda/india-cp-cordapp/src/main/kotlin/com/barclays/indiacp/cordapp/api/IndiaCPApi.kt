@@ -42,7 +42,7 @@ class IndiaCPApi(val services: ServiceHub) {
                             val cpTradeID: String,
                             val tradeDate: String,
                             val valueDate: String,
-                            val faceValue: Int,
+                            val faceValue: Double,
                             val maturityDays: Int,
                             val isin: String
                             )

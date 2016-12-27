@@ -36,6 +36,8 @@ private fun makeRequest(request: Request): Boolean {
 
     if (!response.isSuccessful) {
         println("Could not fulfill HTTP request. Status Code: ${response.code()}. Message: ${response.body()}")
+
+        println("Error response body :: " + response.body())
     }
     return response.isSuccessful
 }

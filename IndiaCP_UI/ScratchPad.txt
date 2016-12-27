@@ -1,0 +1,29 @@
+http://www.hanselman.com/blog/ControlHowYourBowerPackagesAreInstalledWithAGulpfileInASPNET5.aspx
+
+install definitelytype dependencies
+npm install --save @types/lodash
+
+Angular2
+http://blog.stevensanderson.com/2016/10/04/angular2-template-for-visual-studio/
+http://asp.net-hacker.rocks/2016/08/08/setup-angular2-typescript-aspnetcore-in-visualstudio.html
+
+LESS in 2015
+http://blog.chrisbriggsy.com/Gulp-101-CSS-all-the-LESS/
+
+ScratchPad
+https://github.com/johnpapa/angular-styleguide/tree/master/a1#js-hint
+
+
+Hide js.map files
+http://stackoverflow.com/questions/31587949/hide-js-map-files-in-visual-studio-code
+
+Angular1 setup with typescript
+PLuralsight course
+https://app.pluralsight.com/player?course=using-typescript-large-angularjs-apps&author=justin-schwarty&name=using-typescript-large-angularjs-apps-m2&clip=2&mode=live
+
+GULP 
+http://blog.chrisbriggsy.com/Gulp-101-CSS-all-the-LESS/
+https://chsakell.com/2015/09/19/typescript-angularjs-gulp-and-bower-in-visual-studio-2015/
+
+Change default view location options in Razor mvc
+https://lostechies.com/jimmybogard/2016/10/21/contoso-university-updated-to-asp-net-core/
