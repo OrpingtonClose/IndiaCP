@@ -2,8 +2,18 @@ package com.barclays.indiacp.dl.integration;
 
 import com.barclays.indiacp.dl.utils.DLConfig;
 import org.apache.commons.io.IOUtils;
-import com.sun.jersey.multipart.MultiPart;
-import com.sun.jersey.multipart.file.FileDataBodyPart;
+import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
@@ -33,7 +43,9 @@ public class DLRestProxyHandler implements InvocationHandler {
     public DLRestProxyHandler(String resourcePath) {
         this.resourcePath = resourcePath;
         Logger logger = Logger.getLogger(IndiaCPProgram.class.getName());
-        Client jerseyClient = ClientBuilder.newClient();
+        Client jerseyClient = ClientBuilder.newBuilder()
+                .register(MultiPartFeature.class).build();
+
         //Client jerseyClient = ClientBuilder.newClient(new ClientConfig().register(org.glassfish.jersey.jsonp.internal.JsonProcessingAutoDiscoverable.class));
         //Feature feature = new LoggingFeature(logger, Level.INFO, null, null);
         //jerseyClient.register(feature);
@@ -88,7 +100,7 @@ public class DLRestProxyHandler implements InvocationHandler {
         MultiPart multiPart = new MultiPart();
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
 
-        final File tempFile = createTempFile(docName, "zip", uploadedInputStream );
+        final File tempFile = createTempFile(docName, ".zip", uploadedInputStream );
 
         FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file",
                 tempFile,
