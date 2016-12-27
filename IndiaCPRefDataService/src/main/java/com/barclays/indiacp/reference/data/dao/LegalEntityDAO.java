@@ -70,7 +70,8 @@ public class LegalEntityDAO
 
     public void persist(LegalEntity legalEntity) {
 
-        try {
+        try
+        {
             em.persist(legalEntity);
 
             if (legalEntity.getUserDetails() != null) {
@@ -84,12 +85,12 @@ public class LegalEntityDAO
                     settlementDetailsDAO.persist(s);
                 }
             }
-        }
-        finally{
             em.flush();
+
+         }
+        finally{
+
         }
-
-
     }
 
 }
