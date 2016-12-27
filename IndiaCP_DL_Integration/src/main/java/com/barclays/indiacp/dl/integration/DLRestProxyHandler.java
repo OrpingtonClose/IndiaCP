@@ -124,8 +124,9 @@ public class DLRestProxyHandler implements InvocationHandler {
                    .request(MediaType.MULTIPART_FORM_DATA)
                    .post(Entity.entity(multiPart, multiPart.getMediaType()));
 
-           System.out.println(attachmentResponse.getStatus() + " "
-                   + attachmentResponse.getStatusInfo() + " " + attachmentResponse);
+
+           String fileHash = attachmentResponse.readEntity(String.class);
+          // System.out.println(attachmentResponse.getStatus() + " " + attachmentResponse.getStatusInfo() + " " + fileHash);
 
 
 
@@ -135,7 +136,7 @@ public class DLRestProxyHandler implements InvocationHandler {
 //                .request()
 //                .post(Entity.entity(streamDataBodyPart, MediaType.MULTIPART_FORM_DATA_TYPE));
 
-        return attachmentResponse.getEntity().toString(); //TODO: extract hash from attachmentResponse
+        return fileHash.trim();
 
     }
 
