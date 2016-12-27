@@ -4,9 +4,10 @@
             /*
             * Angular modules
             */
-            "ngRoute",
+            "ui.router",
             "ngSanitize",
             "ngCookies",
+            "ngStorage"
 
             /*
             *3rd party modules

@@ -2,7 +2,7 @@ var app;
 (function (app) {
     var services;
     (function (services) {
-        'use strict';
+        "use strict";
         var PendingPostNotifyService = (function () {
             function PendingPostNotifyService($timeout) {
                 this.$timeout = $timeout;
@@ -16,10 +16,10 @@ var app;
             };
             return PendingPostNotifyService;
         }());
-        PendingPostNotifyService.$inject = ['$timeout'];
+        PendingPostNotifyService.$inject = ["$timeout"];
         angular
-            .module('app.services')
-            .service('app.services.PendingPostNotifyService', PendingPostNotifyService);
+            .module("app.services")
+            .service("app.services.PendingPostNotifyService", PendingPostNotifyService);
     })(services = app.services || (app.services = {}));
 })(app || (app = {}));
 //# sourceMappingURL=pendingpostnotify.service.js.map

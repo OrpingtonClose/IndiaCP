@@ -1,19 +1,23 @@
 (function () {
-    'use strict';
+    "use strict";
     angular
-        .module('app')
+        .module("app")
         .run(run);
     run.$inject = [
-        '$rootScope',
-        '$cookies',
-        'currentUser',
-        'app.services.PendingPostNotifyService'
+        "$state",
+        "$rootScope",
+        "$cookies",
+        "$timeout"
     ];
-    function run($rootScope, $cookies, currentUser, pendingPostNotifyService) {
-        $rootScope.$on('$routeChangeError', function () {
-        });
-        currentUser.userId = $cookies.userId;
-        pendingPostNotifyService.run();
+    function run($state, $rootScope, $cookies, $timeout) {
+        $rootScope.$on("$routeChangeError", function () { });
+        // "currentUser",
+        // currentUser: ICurrentUser,
+        // currentUser.userId = $cookies.userId;
+        // pendingPostNotifyService.run();
+        $timeout(function () {
+            $state.transitionTo("main.dashboard");
+        }, 1000);
     }
 })();
 //# sourceMappingURL=app.run.js.map

@@ -8,7 +8,9 @@
             "app.layout",
             "app.services",
             "app.blocks",
+
             /*Feature areas*/
+            "app.main",
             "app.dashboard",
             "app.sitesettings",
             "app.usersettings"

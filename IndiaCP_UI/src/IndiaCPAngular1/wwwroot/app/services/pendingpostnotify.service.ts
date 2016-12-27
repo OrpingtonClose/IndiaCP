@@ -1,5 +1,5 @@
 ﻿module app.services {
-    'use strict';
+    "use strict";
 
     export interface IPendingPostNotifyService {
         run(): void;
@@ -8,7 +8,7 @@
     class PendingPostNotifyService implements IPendingPostNotifyService {
         unpublishedCount = 3;
 
-        static $inject = ['$timeout'];
+        static $inject = ["$timeout"];
         constructor(private $timeout: ng.ITimeoutService) { }
 
         run(): void {
@@ -19,7 +19,7 @@
     }
 
     angular
-        .module('app.services')
-        .service('app.services.PendingPostNotifyService',
+        .module("app.services")
+        .service("app.services.PendingPostNotifyService",
         PendingPostNotifyService);
 }

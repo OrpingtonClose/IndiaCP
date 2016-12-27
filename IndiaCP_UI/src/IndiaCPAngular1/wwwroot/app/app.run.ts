@@ -3,27 +3,31 @@
 }
 
 ((): void => {
-    'use strict';
+    "use strict";
 
     angular
-        .module('app')
+        .module("app")
         .run(run);
 
     run.$inject = [
-        '$rootScope',
-        '$cookies',
-        'currentUser',
-        'app.services.PendingPostNotifyService'
+        "$state",
+        "$rootScope",
+        "$cookies",
+        "$timeout"
     ];
     function run(
+        $state: ng.ui.IStateService,
         $rootScope: ng.IRootScopeService,
         $cookies: IAppCookies,
-        currentUser: ICurrentUser,
-        pendingPostNotifyService: app.services.IPendingPostNotifyService): void {
+        $timeout: ng.ITimeoutService): void {
 
-        $rootScope.$on('$routeChangeError', (): void => {
-        });
-        currentUser.userId = $cookies.userId;
-        pendingPostNotifyService.run();
+        $rootScope.$on("$routeChangeError", (): void => { });
+        // "currentUser",
+        // currentUser: ICurrentUser,
+        // currentUser.userId = $cookies.userId;
+        // pendingPostNotifyService.run();
+        $timeout(function () {
+            $state.transitionTo("main.dashboard");
+        },1000);
     }
 })();

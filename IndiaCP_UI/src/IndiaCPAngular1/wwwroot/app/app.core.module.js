@@ -4,9 +4,10 @@
         /*
         * Angular modules
         */
-        "ngRoute",
+        "ui.router",
         "ngSanitize",
         "ngCookies",
+        "ngStorage"
     ]);
 })();
 //# sourceMappingURL=app.core.module.js.map
