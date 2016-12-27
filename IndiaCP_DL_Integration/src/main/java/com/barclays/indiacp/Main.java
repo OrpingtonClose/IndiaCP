@@ -7,7 +7,6 @@ import com.barclays.indiacp.dl.integration.IndiaCPProgramFactory;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.IOException;
@@ -42,7 +41,6 @@ public class Main {
             }
         });
         rc.packages("com.barclays.indiacp.dl.integration");
-        rc.register(MultiPartFeature.class);
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI

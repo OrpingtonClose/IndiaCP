@@ -41,6 +41,16 @@ public class DLConfig extends Properties {
         return scheme + "://" + webHost + ":" + webPort + "/" + basepath + "/";
     }
 
+    public String getDLAttachmentRestEndpoint() {
+        DL = getProperty("DL");
+
+        String scheme = getDLProperty("scheme");
+        String webHost = getDLProperty("webhost");
+        String webPort = getDLProperty("webport");
+
+        return scheme + "://" + webHost + ":" + webPort + "/";
+    }
+
     public String getDLUploadAttachmentPath() {
         return getDLProperty("uploadAttachmentPath");
     }

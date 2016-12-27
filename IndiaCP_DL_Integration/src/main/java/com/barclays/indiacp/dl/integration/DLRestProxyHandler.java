@@ -1,10 +1,9 @@
 package com.barclays.indiacp.dl.integration;
 
 import com.barclays.indiacp.dl.utils.DLConfig;
-import org.glassfish.jersey.client.ClientResponse;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
-import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
-import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.apache.commons.io.IOUtils;
+import com.sun.jersey.multipart.MultiPart;
+import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
@@ -15,19 +14,20 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM_TYPE;
-
 /**
  * Created by ritukedia on 23/12/16.
  */
 public class DLRestProxyHandler implements InvocationHandler {
     WebTarget dlRestEndPoint;
+    WebTarget dlAttachmentRestEndPoint;
     String resourcePath;
 
     public DLRestProxyHandler(String resourcePath) {
@@ -38,6 +38,7 @@ public class DLRestProxyHandler implements InvocationHandler {
         //Feature feature = new LoggingFeature(logger, Level.INFO, null, null);
         //jerseyClient.register(feature);
         dlRestEndPoint = jerseyClient.target(DLConfig.DLConfigInstance().getDLRestEndpoint());
+        dlAttachmentRestEndPoint = jerseyClient.target(DLConfig.DLConfigInstance().getDLAttachmentRestEndpoint());
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -83,14 +84,46 @@ public class DLRestProxyHandler implements InvocationHandler {
     private String uploadAttachmentToDL(String docName, Object[] args) {
 
         InputStream uploadedInputStream = (InputStream) args[args.length - 1];
-        StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart(docName, uploadedInputStream, docName, MediaType.APPLICATION_OCTET_STREAM_TYPE);
 
-        final Response attachmentResponse = dlRestEndPoint.path(DLConfig.DLConfigInstance().getDLUploadAttachmentPath())
-                .request()
-                .post(Entity.entity(streamDataBodyPart, MediaType.MULTIPART_FORM_DATA_TYPE));
+        MultiPart multiPart = new MultiPart();
+        multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+        final File tempFile = createTempFile(docName, "zip", uploadedInputStream );
+
+        FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file",
+                tempFile,
+                MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        multiPart.bodyPart(fileDataBodyPart);
+
+        Response attachmentResponse = dlAttachmentRestEndPoint.path(DLConfig.DLConfigInstance().getDLUploadAttachmentPath())
+                .request(MediaType.MULTIPART_FORM_DATA)
+                .post(Entity.entity(multiPart, multiPart.getMediaType()));
+
+        System.out.println(attachmentResponse.getStatus() + " "
+                + attachmentResponse.getStatusInfo() + " " + attachmentResponse);
+
+
+//        StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart(docName, uploadedInputStream, docName, MediaType.APPLICATION_OCTET_STREAM_TYPE);
+//
+//        final Response attachmentResponse = dlRestEndPoint.path(DLConfig.DLConfigInstance().getDLUploadAttachmentPath())
+//                .request()
+//                .post(Entity.entity(streamDataBodyPart, MediaType.MULTIPART_FORM_DATA_TYPE));
 
         return attachmentResponse.getEntity().toString(); //TODO: extract hash from attachmentResponse
 
+    }
+
+    private File createTempFile(String fileName, String extension, InputStream uploadedInputStream) {
+        try {
+            final File tempFile = File.createTempFile(fileName, extension);
+            tempFile.deleteOnExit();
+            FileOutputStream out = new FileOutputStream(tempFile);
+            IOUtils.copy(uploadedInputStream, out);
+            return tempFile;
+        } catch (Exception ex)
+        {
+            throw new RuntimeException("File could not be uploaded.");
+        }
     }
 
     private boolean methodHasJSONBodyParam(Method method) {
