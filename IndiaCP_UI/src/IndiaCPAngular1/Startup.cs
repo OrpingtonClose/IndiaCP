@@ -25,7 +25,13 @@ namespace IndiaCPAngular1
         public void ConfigureServices(IServiceCollection services)
         {
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc().AddRazorOptions(options =>
+            {
+                options.ViewLocationFormats.Clear();
+                options.ViewLocationFormats.Add("~/wwwroot/app/components/{1}/{0}.html");
+                options.ViewLocationFormats.Add("~/wwwroot/app/{1}/{0}.html");
+                options.ViewLocationFormats.Add("~/wwwroot/app/{0}.html");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,7 +51,7 @@ namespace IndiaCPAngular1
                 }
             });
             app.UseStaticFiles();
-            app.UseMvc();
+            app.UseMvcWithDefaultRoute();
         }
     }
 }

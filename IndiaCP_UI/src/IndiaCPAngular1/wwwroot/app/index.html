@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AspNetCoreSPA</title>
+
+    <!-- bower:css -->
+    <!--<link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.css" />-->
+    <link rel="stylesheet" href="../lib/bootstrap.ui/dist/css/bootstrap-ui.css"/>
+    <!-- endbower -->
+
+    <!-- inject:css -->
+    <!-- endinject -->
+</head>
+<body ng-app="app">
+    <!-- Main navigation -->
+    <div ui-view="main"></div>
+    <div class="container body-content">
+        <div class="jumbotron">
+            <h1>AspNetCoreSPA</h1>
+            <p class="lead">Welcome to AspNetCoreSPA</p>
+        </div>
+        <div class="row">
+            <h2>Student List</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Firstname</th>
+                        <th>Lastname</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John</td>
+                        <td>Doe</td>
+                        <td>john@example.com</td>
+                    </tr>
+                    <tr>
+                        <td>Mary</td>
+                        <td>Moe</td>
+                        <td>mary@example.com</td>
+                    </tr>
+                    <tr>
+                        <td>July</td>
+                        <td>Dooley</td>
+                        <td>july@example.com</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr />
+        <footer>
+            <p>&copy; 2016 - Toan Manh Nguyen</p>
+        </footer>
+    </div>
+
+
+    <!-- bower:js -->
+    <script src="../lib/jquery/dist/jquery.js"></script>
+    <script src="../lib/moment/moment.js"></script>
+    <script src="../lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="../lib/bootstrap.ui/dist/js/bootstrap-ui.js"></script>
+    <script src="../lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="../lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script src="../lib/angular/angular.js"></script>
+    <script src="../lib/angular-route/angular-route.js"></script>
+    <script src="../lib/angular-sanitize/angular-sanitize.js"></script>
+    <script src="../lib/angular-cookies/angular-cookies.js"></script>
+    <!-- endbower -->
+    <!-- inject:js -->
+    <script src="/app/app.core.module.js"></script>
+    <script src="/app/app.module.js"></script>
+    <script src="/app/blocks/blocks.module.js"></script>
+    <script src="/app/dashboard/dashboard.module.js"></script>
+    <script src="/app/layout/layout.module.js"></script>
+    <script src="/app/usersettings/usersettings.module.js"></script>
+    <script src="/app/sitesettings/sitesettings.module.js"></script>
+    <script src="/app/services/services.module.js"></script>
+    <script src="/app/dashboard/dashboard.routes.js"></script>
+    <script src="/app/usersettings/usersettings.routes.js"></script>
+    <script src="/app/dashboard/dashboard.controller.js"></script>
+    <script src="/app/layout/navigation.controller.js"></script>
+    <script src="/app/usersettings/usersettings.controller.js"></script>
+    <!-- endinject -->
+</body>
+</html>
