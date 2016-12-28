@@ -10,6 +10,7 @@ enum class CP_PROGRAM_FLOW_STAGES {
 
     ISSUE_CP_PROGRAM{
         override val endStatus:String = "CP_PROGRAM_CREATED";
+
     },
     ADD_ISIN_GEN_DOC{
         override val endStatus:String = "ISIN_GEN_DOC_ADDED";
@@ -40,6 +41,8 @@ enum class CP_PROGRAM_FLOW_STAGES {
     abstract val endStatus:String;
 
 //    fun getEndStatus() :String = endStatus;
+
+
 
 
 }

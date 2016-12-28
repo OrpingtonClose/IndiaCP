@@ -45,34 +45,70 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
         object ADD_CORP_ACT_FORM_DOC : ProgressTracker.Step("Adding Corporate Action Document and timestamping IndiaCP Program")
         object ADD_ALLOT_LETTER_DOC : ProgressTracker.Step("Adding Allotment Letter Document and timestamping IndiaCP Program")
 
-        object CP_PROGRAM_ISSUE_CP : ProgressTracker.Step("Issuing a IndiaCP within a IndiaCP Program")
-
 
         object OBTAINING_NOTARY_SIGNATURE : ProgressTracker.Step("Obtaining Notary Signature")
         object NOTARY_SIGNATURE_OBTAINED : ProgressTracker.Step("Notary Signature Obtained")
         object RECORDING_TRANSACTION : ProgressTracker.Step("Recording Transaction in Local Storage")
         object TRANSACTION_RECORDED : ProgressTracker.Step("Transaction Recorded in Local Storage")
-        //For exception case, we will not have any state recorded inside the transaction.
-        object TRANSACTION_ERROR : ProgressTracker.Step("Transaction Failed. Not recorded in Local Storage.")
 
         // We vend a progress tracker that already knows there's going to be a TwoPartyTradingProtocol involved at some
         // point: by setting up the tracker in advance, the user can see what's coming in more detail, instead of being
         // surprised when it appears as a new set of tasks below the current one.
         fun tracker() = ProgressTracker(CP_PROGRAM_ISSUING, ADD_ISIN_GEN_DOC, CP_PROGRAM_ADD_ISIN,
-                CP_PROGRAM_ISSUE_CP, ADD_IPA_VERI_DOC, ADD_IPA_CERT_DOC, ADD_CORP_ACT_FORM_DOC, ADD_ALLOT_LETTER_DOC,
-                OBTAINING_NOTARY_SIGNATURE, NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED,
-                TRANSACTION_ERROR)
+                ADD_IPA_VERI_DOC, ADD_IPA_CERT_DOC, ADD_CORP_ACT_FORM_DOC, ADD_ALLOT_LETTER_DOC,
+                OBTAINING_NOTARY_SIGNATURE, NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
     }
 
-    override val progressTracker = tracker()
+    override val progressTracker = getTracker()
+
+    fun getTracker() : ProgressTracker
+    {
+        var progTrack : ProgressTracker = ProgressTracker(CP_PROGRAM_ISSUING,
+                OBTAINING_NOTARY_SIGNATURE, NOTARY_SIGNATURE_OBTAINED,
+                RECORDING_TRANSACTION, TRANSACTION_RECORDED);
+
+        when (trig_stage) {
+
+            CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM -> {
+                progTrack = ProgressTracker(CP_PROGRAM_ISSUING, OBTAINING_NOTARY_SIGNATURE,
+                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+            }
+            CP_PROGRAM_FLOW_STAGES.ADDISIN -> {
+                progTrack = ProgressTracker(CP_PROGRAM_ADD_ISIN, OBTAINING_NOTARY_SIGNATURE,
+                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+            }
+
+            CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC -> {
+                progTrack = ProgressTracker(ADD_ISIN_GEN_DOC, OBTAINING_NOTARY_SIGNATURE,
+                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+            }
+
+            CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC -> {
+                progTrack = ProgressTracker(ADD_IPA_VERI_DOC, OBTAINING_NOTARY_SIGNATURE,
+                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+            }
+
+            CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC -> {
+                progTrack = ProgressTracker(ADD_IPA_CERT_DOC, OBTAINING_NOTARY_SIGNATURE,
+                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+            }
+
+            CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC -> {
+                progTrack = ProgressTracker(ADD_CORP_ACT_FORM_DOC, OBTAINING_NOTARY_SIGNATURE,
+                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+            }
+
+            CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC -> {
+                progTrack = ProgressTracker(ADD_ALLOT_LETTER_DOC, OBTAINING_NOTARY_SIGNATURE,
+                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+            }
+        }
+        return progTrack
+    }
 
     @Suspendable
     override fun call(): SignedTransaction
     {
-
-        try {
-
-
             val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
 
             var tx: TransactionBuilder = TransactionType.General.Builder(notary.notaryIdentity)
@@ -80,7 +116,8 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
 
             when (trig_stage) {
 
-                CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM -> {
+                CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM ->
+                {
                     progressTracker.currentStep = CP_PROGRAM_ISSUING;
                     val issuer = getPartyByName(newCPProgram.issuer)
                     val ipa = getPartyByName(newCPProgram.ipa)
@@ -117,11 +154,6 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
                     progressTracker.currentStep = ADD_ALLOT_LETTER_DOC;
                     tx = addAllotmentLetterDocToCPProgram(newCPProgram, notary);
                 }
-                CP_PROGRAM_FLOW_STAGES.ISSUE_CP ->
-                {
-
-
-                }
             }
 
 
@@ -144,18 +176,6 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
             progressTracker.currentStep = TRANSACTION_RECORDED
 
             return stx
-
-        }catch(e : Exception)
-        {
-
-            progressTracker.currentStep = TRANSACTION_ERROR
-
-            //ToDo: Need to handle this better with logger sometime later.
-            e.printStackTrace()
-
-            throw e;
-        }
-
     }
 
     private fun getPartyByName(partyName: String) : Party {
@@ -166,6 +186,7 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
     /*
     Method for creating a CP Program.
      */
+    @Suspendable
     private fun generateCPProgram(newCPProgram: IndiaCPProgramJSON, issuer : Party, ipa : Party, depository: Party, notary: NodeInfo) : TransactionBuilder
     {
         val tx = IndiaCommercialPaperProgram().generateIssue(
@@ -284,18 +305,6 @@ Method for adding ISIN & supporting document into CP Program.
         //If a deal is not found then we have a big problem :(
         val deals = states.values.map { it }
         return deals[0]
-    }
-
-
-    /*
-   Method for creatign a new CP of some value from within a CP Program.
-*/
-    private fun createCPInCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON, notary: NodeInfo) : TransactionBuilder
-    {
-        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCPProgram.program_id)
-
-        val tx = IndiaCommercialPaperProgram().addAllotmentLetterDocToCPProgram(indiaCPProgramSF, notary.notaryIdentity, indiaCPProgramJSON.allotment_letter_doc_id, indiaCPProgramJSON.status)
-        return tx
     }
 
 

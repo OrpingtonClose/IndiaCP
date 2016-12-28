@@ -3,6 +3,7 @@ package com.barclays.indiacp.cordapp.api
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.CPProgramFlows
+import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPWithinCPProgramFlow
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.linearHeadsOfType
@@ -83,11 +84,20 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     }
 
     @POST
-    @Path("issueCP/{cpProgramId}")
+    @Path("issueCPWithinCPProgram/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    fun issueCP(@PathParam("ref") ref: String, isin: String): Response {
+    fun issueCPWintinCPProgram(@PathParam("cpProgramId") cpProgramId: String,
+                               newCP: IndiaCPApi.CPJSONObject
+                               ): Response {
         try {
-            //TODO: Add code here
+            //TODO: For now we are only testing multithread updates.
+            //TODO: Need to add issueCP Code at this poiont.
+
+
+
+            val stx = services.invokeFlowAsync(IssueCPWithinCPProgramFlow::class.java, newCP).resultFuture.get()
+            logger.info("Issue CP Within a CP Program\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
