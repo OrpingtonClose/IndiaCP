@@ -1,7 +1,8 @@
 (function () {
     "use strict";
     var currentUser = {
-        userId: ""
+        userId: "",
+        password: ""
     };
     angular
         .module("app")

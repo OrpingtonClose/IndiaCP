@@ -2,7 +2,7 @@ var app;
 (function (app) {
     var users;
     (function (users) {
-        'use strict';
+        "use strict";
         var UsersController = (function () {
             function UsersController() {
                 this.user = this.createEmptyUser();
@@ -18,11 +18,11 @@ var app;
             };
             UsersController.prototype.createEmptyUser = function () {
                 return {
-                    email: '',
-                    password: '',
-                    firstName: '',
-                    lastName: '',
-                    twitterUsername: '',
+                    email: "",
+                    password: "",
+                    firstName: "",
+                    lastName: "",
+                    twitterUsername: "",
                     socialNetworks: []
                 };
             };
@@ -30,8 +30,8 @@ var app;
         }());
         UsersController.$inject = [];
         angular
-            .module('app.users')
-            .controller('app.users.UsersController', UsersController);
+            .module("app.users")
+            .controller("app.users.UsersController", UsersController);
     })(users = app.users || (app.users = {}));
 })(app || (app = {}));
 //# sourceMappingURL=users.controller.js.map

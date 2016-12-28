@@ -29,14 +29,11 @@ var app;
     (function (services) {
         "use strict";
         var IssuerService = (function () {
-            function IssuerService($http, $httpParamSerializer, basePath) {
+            function IssuerService($http, $httpParamSerializer) {
                 this.$http = $http;
                 this.$httpParamSerializer = $httpParamSerializer;
-                this.basePath = "http://finwizui.azurewebsites.net/api";
+                this.basePath = "http://52.172.42.128:8080/indiacp/indiacpprogram";
                 this.defaultHeaders = {};
-                if (basePath !== undefined) {
-                    this.basePath = basePath;
-                }
             }
             IssuerService.prototype.extendObj = function (objA, objB) {
                 for (var key in objB) {
@@ -228,7 +225,10 @@ var app;
             };
             return IssuerService;
         }());
-        IssuerService.$inject = ["$http", "$httpParamSerializer", "basePath"];
+        IssuerService.$inject = ["$http", "$httpParamSerializer"];
+        angular
+            .module("app.services")
+            .service("app.services.IssuerService", IssuerService);
     })(services = app.services || (app.services = {}));
 })(app || (app = {}));
 //# sourceMappingURL=issuer.service.js.map

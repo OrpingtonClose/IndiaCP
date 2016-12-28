@@ -188,4 +188,8 @@ module app.services {
             return this.$http(httpRequestParams);
         }
     }
+
+      angular
+        .module("app.services")
+        .service("app.services.UserService", UserService);
 }

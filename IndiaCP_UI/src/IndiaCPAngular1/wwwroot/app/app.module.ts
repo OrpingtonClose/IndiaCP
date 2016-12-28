@@ -10,10 +10,12 @@
             "app.blocks",
 
             /*Feature areas*/
+            "app.login",
             "app.main",
             "app.dashboard",
             "app.sitesettings",
-            "app.usersettings"
+            "app.usersettings",
+            "app.users"
         ]);
 })();
 

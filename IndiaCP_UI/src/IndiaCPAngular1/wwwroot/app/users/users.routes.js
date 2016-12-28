@@ -8,12 +8,12 @@
         '$locationProvider'
     ];
     function config($routeProvider, $locationProvider) {
-        $routeProvider
-            .when('/admin/users', {
-            templateUrl: 'app/users/users.html',
-            controller: 'app.users.UsersController',
-            controllerAs: 'vm'
-        });
+        //$routeProvider
+        //    .when('/admin/users', {
+        //        templateUrl: 'app/users/users.html',
+        //        controller: 'app.users.UsersController',
+        //        controllerAs: 'vm'
+        //    });
     }
 })();
 //# sourceMappingURL=users.routes.js.map

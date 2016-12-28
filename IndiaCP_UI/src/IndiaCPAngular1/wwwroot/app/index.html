@@ -17,7 +17,7 @@
 <body class="site has-navbar-fixed-top" ng-app="app">
     <!-- Main navigation -->
     <div ui-view></div>
-  
+
     <!-- bower:js -->
     <script src="../lib/jquery/dist/jquery.js"></script>
     <script src="../lib/moment/moment.js"></script>
@@ -30,6 +30,9 @@
     <script src="../lib/angular-sanitize/angular-sanitize.js"></script>
     <script src="../lib/angular-cookies/angular-cookies.js"></script>
     <script src="../lib/ngstorage/ngStorage.js"></script>
+    <script src="../lib/raphael/raphael.js"></script>
+    <script src="../lib/justgage-toorshia/justgage.js"></script>
+    <script src="../lib/angular-justgage/ng-justgage.js"></script>
     <!-- endbower -->
     <!-- inject:js -->
     <script src="/app/app.core.module.js"></script>
@@ -37,14 +40,22 @@
     <script src="/app/app.config.js"></script>
     <script src="/app/main/main.module.js"></script>
     <script src="/app/blocks/blocks.module.js"></script>
+    <script src="/app/login/login.module.js"></script>
     <script src="/app/dashboard/dashboard.module.js"></script>
     <script src="/app/layout/layout.module.js"></script>
     <script src="/app/usersettings/usersettings.module.js"></script>
     <script src="/app/sitesettings/sitesettings.module.js"></script>
+    <script src="/app/users/users.module.js"></script>
     <script src="/app/services/services.module.js"></script>
+    <script src="/app/services/auth.service.js"></script>
+    <script src="/app/services/issuer.service.js"></script>
+    <script src="/app/services/investor.service.js"></script>
+    <script src="/app/services/user.service.js"></script>
+    <script src="/app/login/login.routes.js"></script>
     <script src="/app/main/main.routes.js"></script>
     <script src="/app/dashboard/dashboard.routes.js"></script>
     <script src="/app/usersettings/usersettings.routes.js"></script>
+    <script src="/app/login/login.controller.js"></script>
     <script src="/app/main/main.controller.js"></script>
     <script src="/app/dashboard/dashboard.controller.js"></script>
     <script src="/app/layout/navigation.controller.js"></script>
