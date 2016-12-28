@@ -46,7 +46,10 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                              @PathParam("docHashId") docHashId: String,
                              @PathParam("docStatus") docStatus: String): Response {
         try {
-            //TODO: Add code here
+            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, isin_generation_request_doc_id = docHashId , isin_generation_request_doc_status = docStatus, status = CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC.endStatus)
+
+            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC).resultFuture.get()
+            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
             return Response.status(Response.Status.OK).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
@@ -92,8 +95,6 @@ class IndiaCPProgramApi(val services: ServiceHub) {
         try {
             //TODO: For now we are only testing multithread updates.
             //TODO: Need to add issueCP Code at this poiont.
-
-
 
             val stx = services.invokeFlowAsync(IssueCPWithinCPProgramFlow::class.java, newCP).resultFuture.get()
             logger.info("Issue CP Within a CP Program\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")

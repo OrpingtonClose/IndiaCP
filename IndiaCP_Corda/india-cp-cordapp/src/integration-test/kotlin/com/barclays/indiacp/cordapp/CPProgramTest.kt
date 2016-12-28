@@ -42,7 +42,9 @@ class CPProgramTest : IntegrationTestCategory {
 //            putWait(120)
 
 
-//            runIssueCPWithinCPProgram(issuer.config.getHostAndPort("webAddress"))
+            runIssueCPWithinCPProgram(issuer.config.getHostAndPort("webAddress"))
+
+            waitForAllNodesToFinish()
 
         }, useTestClock = true, isDebug = true)
     }
@@ -79,7 +81,7 @@ class CPProgramTest : IntegrationTestCategory {
         if(retflag)
         {
             println("runIssueCPProgram is SUCCESSFUL.......")
-            putWait(3)
+            putWait(1)
         }
 
 
@@ -97,7 +99,7 @@ class CPProgramTest : IntegrationTestCategory {
 
         System.out.println("Target URL : " + url)
 
-        for (i in 1 .. 1) {
+        for (i in 1 .. 2) {
             kotlin.concurrent.thread {
 
                 println("Trigger CP ISSUE Within CP PROGRAM : REQUEST " + i)

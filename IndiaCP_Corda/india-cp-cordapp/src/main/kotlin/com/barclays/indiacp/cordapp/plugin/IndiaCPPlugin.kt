@@ -5,10 +5,7 @@ import com.barclays.indiacp.cordapp.api.IndiaCPProgramApi
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
-import com.barclays.indiacp.cordapp.protocol.issuer.AddSettlementDetailsFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.DealEntryFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.CPProgramFlows
+import com.barclays.indiacp.cordapp.protocol.issuer.*
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
 import com.esotericsoftware.kryo.Kryo
 import net.corda.core.crypto.Party
@@ -36,8 +33,11 @@ class IndiaCPPlugin : CordaPluginRegistry() {
                     CP_PROGRAM_FLOW_STAGES.ADDISIN::class.java.name, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC::class.java.name,
                     CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC::class.java.name, CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC::class.java.name,
                     CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC::class.java.name, CP_PROGRAM_FLOW_STAGES.ISSUE_CP::class.java.name,
-                    CP_PROGRAM_FLOW_STAGES.CLOSE_CP_PROGRAM::class.java.name)
+                    CP_PROGRAM_FLOW_STAGES.CLOSE_CP_PROGRAM::class.java.name),
 
+
+            //ISSUE CP within exsiting CP Program
+                    IssueCPWithinCPProgramFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name)
 
 
     )

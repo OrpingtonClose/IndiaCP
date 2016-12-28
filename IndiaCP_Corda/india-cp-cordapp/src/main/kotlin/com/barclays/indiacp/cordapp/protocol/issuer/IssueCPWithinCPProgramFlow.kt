@@ -78,10 +78,19 @@ class IssueCPWithinCPProgramFlow(val newCP: IndiaCPApi.CPJSONObject) : FlowLogic
 
         val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCP.cpProgramID)
 
-        val programAllocatedValue : Amount<Issued<Currency>> = newCP.faceValue.DOLLARS `issued by` DUMMY_CASH_ISSUER
+        val newProgAllowValue: Amount<Issued<Currency>> = indiaCPProgramSF.state.data.programAllocatedValue.plus(newCP.faceValue.DOLLARS `issued by` DUMMY_CASH_ISSUER);
 
-        println("GOT ref id for program : " + indiaCPProgramSF.state.data.programId + ", having allocated amt of " + indiaCPProgramSF.state.data.programAllocatedValue)
-        val tx = IndiaCommercialPaperProgram().createCPIssueWithinCPProgram(indiaCPProgramSF, notary.notaryIdentity,programAllocatedValue, CP_PROGRAM_FLOW_STAGES.ISSUE_CP.endStatus)
+        if(newProgAllowValue.quantity > indiaCPProgramSF.state.data.programSize.quantity)
+        {
+            println("Unable to Issue CP as CP Program as Insufficient remaining Balance.")
+            throw InsufficientBalanceException(newProgAllowValue.minus(indiaCPProgramSF.state.data.programSize))
+        }
+
+
+        println("GOT ref id for program : " + indiaCPProgramSF.state.data.programId + ", having allocated amt of " + indiaCPProgramSF.state.data.programAllocatedValue
+        + " and new allocated value will be " + newProgAllowValue)
+
+        val tx = IndiaCommercialPaperProgram().createCPIssueWithinCPProgram(indiaCPProgramSF, notary.notaryIdentity,newProgAllowValue, CP_PROGRAM_FLOW_STAGES.ISSUE_CP.endStatus)
 
 
 
