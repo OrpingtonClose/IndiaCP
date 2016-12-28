@@ -93,8 +93,6 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                                newCP: IndiaCPApi.CPJSONObject
                                ): Response {
         try {
-            //TODO: For now we are only testing multithread updates.
-            //TODO: Need to add issueCP Code at this poiont.
 
             val stx = services.invokeFlowAsync(IssueCPWithinCPProgramFlow::class.java, newCP).resultFuture.get()
             logger.info("Issue CP Within a CP Program\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")

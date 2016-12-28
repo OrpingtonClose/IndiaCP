@@ -18,6 +18,14 @@ import java.net.URL
 
 /**
  * Created by chaos on 27/12/16.
+ * Integration test suit for IndiaCPProgram.
+ * We will cover all scenarios of normal flow as well as concurrent updates
+ * so that we are able to ensure system integritiy of IndiaCP Program
+ * This can also have a few behaviour based scenario testing but then BDD should be
+ * done saparately.
+ *
+ * TODO: Still need to put a shutdown hook for this test in tear down.
+ *
  */
 class CPProgramTest : IntegrationTestCategory {
     fun Config.getHostAndPort(name: String): HostAndPort = HostAndPort.fromString(getString(name))!!
@@ -99,7 +107,38 @@ class CPProgramTest : IntegrationTestCategory {
 
         System.out.println("Target URL : " + url)
 
-        for (i in 1 .. 2) {
+                val newCPJSON: String = "{\"issuer\": \"Issuer\", \"beneficiary\": \"Investor1\", \"ipa\": \"Investor1\", \"depository\": " +
+                        "\"Investor1\", \"cpProgramID\": \"CP_PROGRAM_1\", \"cpTradeID\": \"INDIA_CP_1\", " +
+                        "\"tradeDate\": \"19-12-2016\", \"valueDate\": \"23-12-2017\", \"faceValue\": 10, " +
+                        "\"maturityDays\": 7, \"isin\": \"INCP123456-1\"}"
+
+//                assert(postJson(url, newCPJSON))
+
+                var retflag : Boolean  = postJson(url, newCPJSON)
+
+                if(retflag)
+                {
+                    println("runIssueCPProgram is SUCCESSFUL.......")
+                    putWait(5)
+                }
+    }
+
+
+
+    //This is test for trying to issue multiple CP within a given CP program
+    //all at same time. This is expected to fail.
+    private fun runIssueCPWithinCPProgramConcurrently(nodeAddr: HostAndPort) {
+
+        println("\n\n\n\n\n\n\n\n")
+        println("------------------------ Running test case for IssueCPWithinCPProgram -------------------------------")
+
+
+
+        val url = URL("http://$nodeAddr/api/indiacpprogram/issueCPWithinCPProgram/CP_PROGRAM_1/")
+
+        System.out.println("Target URL : " + url)
+
+        for (i in 1 .. 4) {
             kotlin.concurrent.thread {
 
                 println("Trigger CP ISSUE Within CP PROGRAM : REQUEST " + i)

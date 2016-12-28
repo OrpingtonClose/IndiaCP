@@ -90,7 +90,7 @@ class IssueCPWithinCPProgramFlow(val newCP: IndiaCPApi.CPJSONObject) : FlowLogic
         println("GOT ref id for program : " + indiaCPProgramSF.state.data.programId + ", having allocated amt of " + indiaCPProgramSF.state.data.programAllocatedValue
         + " and new allocated value will be " + newProgAllowValue)
 
-        val tx = IndiaCommercialPaperProgram().createCPIssueWithinCPProgram(indiaCPProgramSF, notary.notaryIdentity,newProgAllowValue, CP_PROGRAM_FLOW_STAGES.ISSUE_CP.endStatus)
+        val tx = IndiaCommercialPaperProgram().createCPIssueWithinCPProgram(indiaCPProgramSF, issuer, beneficiary, ipa, depository, notary.notaryIdentity,newProgAllowValue, newCP, CP_PROGRAM_FLOW_STAGES.ISSUE_CP.endStatus)
 
 
 
