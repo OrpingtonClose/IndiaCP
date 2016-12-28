@@ -48,8 +48,8 @@ public class SSContractCode implements SolidityContractCode {
     }
 
     @Override
-    public Contract.CodeTypeEnum getCodeType() {
-        return Contract.CodeTypeEnum.SOLIDITY;
+    public Object[] getArgs() {
+        return new Object[0];
     }
 
     public String getPrivateFor() {

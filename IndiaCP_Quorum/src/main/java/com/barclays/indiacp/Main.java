@@ -2,10 +2,14 @@ package com.barclays.indiacp;
 
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
+import javax.ws.rs.core.Feature;
 import java.io.IOException;
 import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main class.
@@ -23,6 +27,10 @@ public class Main {
         // create a resource config that scans for JAX-RS resources and providers
         // in com.barclays.indiacp package
         final ResourceConfig rc = new ResourceConfig().packages("com.barclays.indiacp");
+
+        Logger logger = Logger.getLogger(Main.class.getName());
+        Feature feature = new LoggingFeature(logger, Level.INFO, null, null);
+        rc.register(feature);
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI

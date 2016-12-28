@@ -3,7 +3,9 @@ package com.barclays.indiacp;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 
 /**
  * Root resource (exposed at "myresource" path)
@@ -22,4 +24,10 @@ public class MyResource {
     public String getIt() {
         return "Got it!";
     }
+
+    @Context
+    public void setRequest(Request request) {
+        System.out.print("");
+    }
+
 }

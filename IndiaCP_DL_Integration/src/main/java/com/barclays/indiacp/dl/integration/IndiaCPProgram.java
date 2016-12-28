@@ -3,6 +3,8 @@ package com.barclays.indiacp.dl.integration;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
@@ -44,4 +46,7 @@ public interface IndiaCPProgram {
                                           @PathParam("docHash") String docHash,
                                           @PathParam("docStatus") String docStatus,
                                           @FormDataParam("file") InputStream uploadedInputStream);
+
+    @Context
+    public void setRequest(Request request);
 }

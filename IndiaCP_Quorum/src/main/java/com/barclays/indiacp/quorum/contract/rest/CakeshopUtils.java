@@ -22,35 +22,6 @@ public class CakeshopUtils {
         // setup cakeshop manager
         final ClientManager manager = ClientManager.create("http://localhost:8080/cakeshop");
         ContractApi contractApi = manager.getClient(ContractApi.class);
-
-        // watch txn events
-//        manager.subscribe(new TransactionEventHandler() {
-//            @Override
-//            public void onData(Transaction data) {
-//                System.out.println("Got txn: " + data.getId());
-//            }
-//        });
-
-        // incr val by 1000
-//        TransactionResult tr = ss2.set(((int) get2.get(0)) + 1000);
-//
-//        // wait for txn to be committed and print info
-//        final ListenableFuture<Transaction> txFuture = manager.waitForTx(tr);
-//        txFuture.addListener(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    System.out.println("tx committed:\n" + txFuture.get().toString());
-//                    System.out.println(ss2.get()); // read new value
-//                    System.out.print("bye!");
-//                    manager.shutdown();
-//                    System.exit(0);
-//                } catch (InterruptedException | ExecutionException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, MoreExecutors.directExecutor());
-
         return contractApi;
     }
 }

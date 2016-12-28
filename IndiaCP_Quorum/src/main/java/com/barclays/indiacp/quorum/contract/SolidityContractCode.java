@@ -11,5 +11,9 @@ public interface SolidityContractCode {
 
     public String getContractBinary();
 
-    public Contract.CodeTypeEnum getCodeType();
+    public default Contract.CodeTypeEnum getCodeType() {
+        return Contract.CodeTypeEnum.SOLIDITY;
+    }
+
+    public Object[] getArgs();
 }

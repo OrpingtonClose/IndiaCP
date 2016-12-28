@@ -1,6 +1,7 @@
 package com.barclays.indiacp.dl.integration;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -24,5 +25,7 @@ public interface IndiaCPIssue {
     @UploadsDocument
     public Response addDealConfirmationDocs(@PathParam("cpIssueId") String cpIssueId
             , @PathParam("docStatus") String docStatus);
+
+
 
 }

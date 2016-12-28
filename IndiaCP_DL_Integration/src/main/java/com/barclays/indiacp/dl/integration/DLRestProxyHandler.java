@@ -23,6 +23,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,6 +41,7 @@ public class DLRestProxyHandler implements InvocationHandler {
     WebTarget dlRestEndPoint;
     WebTarget dlAttachmentRestEndPoint;
     String resourcePath;
+    private Request request;
 
     public DLRestProxyHandler(String resourcePath) {
         this.resourcePath = resourcePath;
@@ -56,6 +58,9 @@ public class DLRestProxyHandler implements InvocationHandler {
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
+        if (method.getName().equals("setRequest")) {
+            System.out.println("");
+        }
 
         String   methodEndPoint = getMethodEndPoint(method, args);
 
@@ -198,6 +203,10 @@ public class DLRestProxyHandler implements InvocationHandler {
 
     private String applyPathParamToMethodPath(String path, String paramName, Object paramValue) {
         return path.replace("{" + paramName + "}", paramValue.toString());
+    }
+
+    public void setRequest(Request request) {
+        this.request = request;
     }
 
 
