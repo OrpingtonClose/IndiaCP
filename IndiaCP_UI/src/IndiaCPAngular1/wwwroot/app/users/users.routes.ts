@@ -10,13 +10,13 @@
         '$locationProvider'
     ];
     function config(
-        $routeProvider: ng.route.IRouteProvider,
+        $routeProvider: ng.ui.IStateService,
         $locationProvider: ng.ILocationProvider): void {
-        $routeProvider
-            .when('/admin/users', {
-                templateUrl: 'app/users/users.html',
-                controller: 'app.users.UsersController',
-                controllerAs: 'vm'
-            });
+        //$routeProvider
+        //    .when('/admin/users', {
+        //        templateUrl: 'app/users/users.html',
+        //        controller: 'app.users.UsersController',
+        //        controllerAs: 'vm'
+        //    });
     }
 })(); 

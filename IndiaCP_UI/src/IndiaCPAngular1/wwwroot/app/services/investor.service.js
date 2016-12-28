@@ -29,14 +29,11 @@ var app;
     (function (services) {
         "use strict";
         var InvestorService = (function () {
-            function InvestorService($http, $httpParamSerializer, basePath) {
+            function InvestorService($http, $httpParamSerializer) {
                 this.$http = $http;
                 this.$httpParamSerializer = $httpParamSerializer;
                 this.basePath = "http://finwizui.azurewebsites.net/api";
                 this.defaultHeaders = {};
-                if (basePath !== undefined) {
-                    this.basePath = basePath;
-                }
             }
             InvestorService.prototype.extendObj = function (objA, objB) {
                 for (var key in objB) {
@@ -106,8 +103,11 @@ var app;
             };
             return InvestorService;
         }());
-        InvestorService.$inject = ["$http", "$httpParamSerializer", "basePath"];
+        InvestorService.$inject = ["$http", "$httpParamSerializer"];
         services.InvestorService = InvestorService;
+        angular
+            .module("app.services")
+            .service("app.services.InvestorService", InvestorService);
     })(services = app.services || (app.services = {}));
 })(app || (app = {}));
 //# sourceMappingURL=investor.service.js.map

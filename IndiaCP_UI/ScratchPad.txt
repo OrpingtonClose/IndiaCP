@@ -27,3 +27,6 @@ https://chsakell.com/2015/09/19/typescript-angularjs-gulp-and-bower-in-visual-st
 
 Change default view location options in Razor mvc
 https://lostechies.com/jimmybogard/2016/10/21/contoso-university-updated-to-asp-net-core/
+
+Demostrate the $q service
+http://stackoverflow.com/questions/34443361/how-to-use-q-service-in-angular-js-for-login

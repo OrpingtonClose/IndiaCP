@@ -1,0 +1,30 @@
+<main role="main" class="site-content aligner">
+    <div class="aligner-item">
+        <div class="container">
+
+            <div class="box center-block offset-bottom-large">
+                <h1 class="h4 page-header text-center offset-bottom">Sign In</h1>
+                <!--<form>-->
+                    <div class="form-group">
+                        <label class="control-label required" for="login_username">E-mail</label>
+                        <input type="email" id="login_username" ng-model="vm.userCredentials.userId" name="login[username]" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label required" for="login_password">Password</label>
+                        <input type="password" id="login_password" ng-model="vm.userCredentials.password" name="login[password]" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" ng-click="vm.login()" class="btn btn-primary btn-raised btn-block">
+                    Sign In
+                </button>
+                    </div>
+                <!--form-->
+            </div>
+
+        </div>
+    </div>
+</main>
+
+
+
+</div>

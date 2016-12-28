@@ -20,7 +20,8 @@
     "Microsoft.AspNetCore.Authentication.Cookies": "1.1.0",
     "Microsoft.AspNetCore.Identity": "1.1.0",
     "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0",
-    "Angular-UI-Router": "0.2.8"
+    "Angular-UI-Router": "0.2.8",
+    "AspNetCore.Identity.MongoDB": "1.0.0-rc2-2"
   },
 
   "tools": {

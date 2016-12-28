@@ -1,6 +1,6 @@
 (function () {
-    'use strict';
+    "use strict";
     angular
-        .module('app.users', []);
+        .module("app.users", []);
 })();
 //# sourceMappingURL=users.module.js.map

@@ -46,3 +46,9 @@ enum class CP_PROGRAM_FLOW_STAGES {
 
 
 }
+
+enum class CP_PROGRAM_DOC_STATUS
+{
+    ADD_ISIN_GEN_DOC,
+
+}

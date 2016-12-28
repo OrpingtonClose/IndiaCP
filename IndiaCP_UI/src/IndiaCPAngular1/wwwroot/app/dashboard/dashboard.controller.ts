@@ -6,15 +6,16 @@ module app.dashboard {
     }
 
     class DashboardController implements IDashboardScope {
+        loggedinUser: app.users.IUser;
+
+        static $inject = ["$http","$scope","app.services.IssuerService"];
         constructor(protected $http: ng.IHttpService,
             protected $scope: ng.IScope,
-            protected $uibModal: ng.ui.bootstrap.IModalService,
-            protected issuerService: app.services.IIssuerService,
-            protected loggedinUser: app.users.IUser) {
+            protected issuerService: app.services.IIssuerService) {
             this.fetchAllCPPrograms();
         }
         public fetchAllCPPrograms(): void {
-            this.issuerService.fetchAllCPProgram(this.loggedinUser.email).then(function (response) {
+            this.issuerService.fetchAllCPProgram("groggy").then(function (response) {
                 this.$scope.cpprograms = response;
             });
         }

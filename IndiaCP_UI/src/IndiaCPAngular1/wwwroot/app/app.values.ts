@@ -1,12 +1,15 @@
-﻿interface ICurrentUser {
+﻿
+interface ICurrentUser {
     userId: string;
+    password: string;
 }
 
 ((): void => {
     "use strict";
-
     var currentUser: ICurrentUser = {
-        userId: ""
+        userId: "",
+        password: ""
+
     };
 
     angular

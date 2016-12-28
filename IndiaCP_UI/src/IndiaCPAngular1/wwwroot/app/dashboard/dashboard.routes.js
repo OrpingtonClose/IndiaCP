@@ -19,7 +19,7 @@
             },
             resolve: {
                 games: function ($http, $stateParams) {
-                    return $http.post('/api/appmain/GetGamesForDate', $stateParams.seldate).then(function (response) {
+                    return $http.post("/api/appmain/GetGamesForDate", $stateParams.seldate).then(function (response) {
                         return response.data;
                     });
                 }

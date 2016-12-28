@@ -2,6 +2,7 @@ package com.barclays.indiacp.cordapp.contract
 
 import com.barclays.indiacp.cordapp.api.IndiaCPApi
 import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
+import com.barclays.indiacp.cordapp.schemas.DocumentAuditSchemaV1
 import com.barclays.indiacp.cordapp.schemas.IndiaCommercialPaperProgramSchemaV1
 import net.corda.contracts.asset.sumCashBy
 import net.corda.contracts.clause.AbstractIssue
@@ -434,27 +435,6 @@ class IndiaCommercialPaperProgram : Contract {
     }
 
     /**
-     * Returns a transaction that that updates the ISIN on to the CP Program.
-     * It should also stamp the ISIN Generated proof document on to DL
-     */
-    fun addIsinGenDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, isinGenerationRequestDocId: String, status: String): TransactionBuilder {
-
-        val ptx = TransactionType.General.Builder(notary)
-        ptx.addInputState(indiaCPProgramSF)
-
-        val newVersion = Integer(indiaCPProgramSF.state.data.version.toInt() + 1)
-
-        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-                isinGenerationRequestDocId = isinGenerationRequestDocId,
-                status = status,
-                version = newVersion
-        ))
-
-        return ptx
-    }
-
-
-    /**
      * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
      */
     fun addIPAVerificationDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, ipaVerificationRequestDocId: String, status: String): TransactionBuilder {
@@ -469,6 +449,12 @@ class IndiaCommercialPaperProgram : Contract {
                 status = status,
                 version = newVersion
         ))
+
+        val docState = TransactionState(IndiaCommercialPaperDocuments.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "IPA_VERI_DOC", "",
+                ipaVerificationRequestDocId, "IPA_VERI",  "ISSUER_1", Instant.now()), notary)
+
+
+        ptx.addOutputState(docState)
 
         return ptx
     }
@@ -490,6 +476,39 @@ class IndiaCommercialPaperProgram : Contract {
                 version = newVersion
         ))
 
+        val docState = TransactionState(IndiaCommercialPaperDocuments.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "IPA_CERT_DOC", "",
+                ipaCertificateDocId, "IPA_CERT",  "ISSUER_1", Instant.now()), notary)
+
+
+        ptx.addOutputState(docState)
+
+        return ptx
+    }
+
+
+    /**
+     * Returns a transaction that that updates the ISIN on to the CP Program.
+     * It should also stamp the ISIN Generated proof document on to DL
+     */
+    fun addIsinGenDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, issuer: Party, notary: Party, isinGenerationRequestDocId: String, status: String): TransactionBuilder {
+
+        val ptx = TransactionType.General.Builder(notary)
+        ptx.addInputState(indiaCPProgramSF)
+
+        val newVersion = Integer(indiaCPProgramSF.state.data.version.toInt() + 1)
+
+        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
+                isinGenerationRequestDocId = isinGenerationRequestDocId,
+                status = status,
+                version = newVersion
+        ))
+
+        val docState = TransactionState(IndiaCommercialPaperDocuments.DocState(issuer , indiaCPProgramSF.state.data.programId, "CPPROGRAM_ISIN_GEN_DOC", "",
+                isinGenerationRequestDocId, "ISIN_GEN_DOC_STATUS",  "ISSUER_1", Instant.now()), notary)
+
+
+        ptx.addOutputState(docState)
+
         return ptx
     }
 
@@ -508,6 +527,12 @@ class IndiaCommercialPaperProgram : Contract {
                 status = status,
                 version = newVersion
         ))
+
+        val docState = TransactionState(IndiaCommercialPaperDocuments.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "CORP_ACT_DOC", "",
+                corporateActionFormDocId, "ISIN_GEN_DOC_STATUS",  "ISSUER_1", Instant.now()), notary)
+
+
+        ptx.addOutputState(docState)
 
         return ptx
     }
@@ -528,6 +553,12 @@ class IndiaCommercialPaperProgram : Contract {
                 status = status,
                 version = newVersion
         ))
+
+        val docState = TransactionState(IndiaCommercialPaperDocuments.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "ALLOT_LETTER_DOC", "",
+                allotmentLetterDocId, "ALLOT_LETTER",  "ISSUER_1", Instant.now()), notary)
+
+
+        ptx.addOutputState(docState)
 
         return ptx
     }

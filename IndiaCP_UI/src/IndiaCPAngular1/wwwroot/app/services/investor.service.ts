@@ -196,12 +196,10 @@ module app.services {
         protected basePath = "http://finwizui.azurewebsites.net/api";
         public defaultHeaders: any = {};
 
-        static $inject: string[] = ["$http", "$httpParamSerializer", "basePath"];
+        static $inject: string[] = ["$http", "$httpParamSerializer"];
 
-        constructor(protected $http: ng.IHttpService, protected $httpParamSerializer?: (d: any) => any, basePath?: string) {
-            if (basePath !== undefined) {
-                this.basePath = basePath;
-            }
+        constructor(protected $http: ng.IHttpService, protected $httpParamSerializer?: (d: any) => any) {
+           
         }
 
         private extendObj<T1, T2>(objA: T1, objB: T2) {
@@ -278,4 +276,8 @@ module app.services {
             return this.$http(httpRequestParams);
         }
     }
+
+    angular
+        .module("app.services")
+        .service("app.services.InvestorService", InvestorService);
 }
