@@ -4,13 +4,16 @@ import com.barclays.indiacp.dl.integration.IndiaCPIssue;
 import com.barclays.indiacp.dl.integration.IndiaCPIssueFactory;
 import com.barclays.indiacp.dl.integration.IndiaCPProgram;
 import com.barclays.indiacp.dl.integration.IndiaCPProgramFactory;
+import org.apache.commons.io.IOUtils;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
+import java.util.Date;
 
 /**
  * Main class.
@@ -18,7 +21,7 @@ import java.net.URI;
  */
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://localhost:8080/indiacp/";
+    public static final String BASE_URI = "http://localhost:8181/indiacp/";
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -40,6 +43,7 @@ public class Main {
                 bindFactory(new IndiaCPIssueFactory()).to(IndiaCPIssue.class);
             }
         });
+        rc.register(MultiPartFeature.class);
         rc.packages("com.barclays.indiacp.dl.integration");
 
         // create and start a new instance of grizzly http server
@@ -52,11 +56,31 @@ public class Main {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException {
         final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
         System.in.read();
         server.stop();
     }
+
+
+    /*public static void main(String[] args) throws IOException {
+
+    try{
+        File initialFile = new File("E:\\SwitchBoard.zip");
+        InputStream targetStream = new FileInputStream(initialFile);
+        String theString = IOUtils.toString(targetStream, "UTF-8");
+        final File tempFile = File.createTempFile("temp", ".zip");
+        tempFile.deleteOnExit();
+        FileOutputStream out = new FileOutputStream(tempFile);
+        IOUtils.copy(targetStream, out);
+
+    } catch (Exception ex)
+        {
+            throw new RuntimeException("File could not be uploaded.");
+        }
+
+    }*/
+
 }

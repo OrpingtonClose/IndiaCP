@@ -2,8 +2,18 @@ package com.barclays.indiacp.dl.integration;
 
 import com.barclays.indiacp.dl.utils.DLConfig;
 import org.apache.commons.io.IOUtils;
-import com.sun.jersey.multipart.MultiPart;
-import com.sun.jersey.multipart.file.FileDataBodyPart;
+import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import org.glassfish.jersey.media.multipart.internal.MultiPartWriter;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
@@ -15,6 +25,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -33,7 +44,9 @@ public class DLRestProxyHandler implements InvocationHandler {
     public DLRestProxyHandler(String resourcePath) {
         this.resourcePath = resourcePath;
         Logger logger = Logger.getLogger(IndiaCPProgram.class.getName());
-        Client jerseyClient = ClientBuilder.newClient();
+        Client jerseyClient = ClientBuilder.newBuilder()
+                .register(MultiPartFeature.class).build();
+
         //Client jerseyClient = ClientBuilder.newClient(new ClientConfig().register(org.glassfish.jersey.jsonp.internal.JsonProcessingAutoDiscoverable.class));
         //Feature feature = new LoggingFeature(logger, Level.INFO, null, null);
         //jerseyClient.register(feature);
@@ -43,7 +56,8 @@ public class DLRestProxyHandler implements InvocationHandler {
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-        String methodEndPoint = getMethodEndPoint(method, args);
+
+        String   methodEndPoint = getMethodEndPoint(method, args);
 
         String docHash = null;
         if (requiresAttachmentUpload(method)) {
@@ -81,26 +95,39 @@ public class DLRestProxyHandler implements InvocationHandler {
         return false;
     }
 
+
     private String uploadAttachmentToDL(String docName, Object[] args) {
 
-        InputStream uploadedInputStream = (InputStream) args[args.length - 1];
+        InputStream uploadedInputStream;
+        final File tempFile;
 
-        MultiPart multiPart = new MultiPart();
-        multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+        try {
+            uploadedInputStream = (InputStream) args[args.length - 1];
 
-        final File tempFile = createTempFile(docName, "zip", uploadedInputStream );
+            tempFile = createTempFile(docName, ".zip", uploadedInputStream);
 
-        FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file",
-                tempFile,
-                MediaType.APPLICATION_OCTET_STREAM_TYPE);
-        multiPart.bodyPart(fileDataBodyPart);
 
-        Response attachmentResponse = dlAttachmentRestEndPoint.path(DLConfig.DLConfigInstance().getDLUploadAttachmentPath())
-                .request(MediaType.MULTIPART_FORM_DATA)
-                .post(Entity.entity(multiPart, multiPart.getMediaType()));
+       } catch (Exception ex)
+       {
+           throw new RuntimeException("File could not be uploaded.");
+       }
 
-        System.out.println(attachmentResponse.getStatus() + " "
-                + attachmentResponse.getStatusInfo() + " " + attachmentResponse);
+            MultiPart multiPart = new MultiPart();
+            multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+           FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file",
+                   tempFile,
+                   MediaType.APPLICATION_OCTET_STREAM_TYPE);
+           multiPart.bodyPart(fileDataBodyPart);
+
+           Response attachmentResponse = dlAttachmentRestEndPoint.path(DLConfig.DLConfigInstance().getDLUploadAttachmentPath())
+                   .request(MediaType.MULTIPART_FORM_DATA)
+                   .post(Entity.entity(multiPart, multiPart.getMediaType()));
+
+
+           String fileHash = attachmentResponse.readEntity(String.class);
+          // System.out.println(attachmentResponse.getStatus() + " " + attachmentResponse.getStatusInfo() + " " + fileHash);
+
 
 
 //        StreamDataBodyPart streamDataBodyPart = new StreamDataBodyPart(docName, uploadedInputStream, docName, MediaType.APPLICATION_OCTET_STREAM_TYPE);
@@ -109,7 +136,7 @@ public class DLRestProxyHandler implements InvocationHandler {
 //                .request()
 //                .post(Entity.entity(streamDataBodyPart, MediaType.MULTIPART_FORM_DATA_TYPE));
 
-        return attachmentResponse.getEntity().toString(); //TODO: extract hash from attachmentResponse
+        return fileHash.trim();
 
     }
 
@@ -146,8 +173,15 @@ public class DLRestProxyHandler implements InvocationHandler {
         return (String)args[args.length - 1];
     }
 
-    private String getMethodEndPoint(Method method, Object[] args) {
-        Path restMethodPath = method.getAnnotation(javax.ws.rs.Path.class);
+    private String getMethodEndPoint(Method method, Object[] args)
+    {
+        Path restMethodPath = null;
+        try {
+             restMethodPath = method.getAnnotation(javax.ws.rs.Path.class);
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
         String path = restMethodPath.value();
         Annotation[][] paramAnnotations = method.getParameterAnnotations();
         int paramIndex = 0;
