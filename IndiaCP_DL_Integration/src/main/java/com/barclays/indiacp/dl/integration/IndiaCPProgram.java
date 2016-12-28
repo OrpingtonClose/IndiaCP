@@ -1,5 +1,7 @@
 package com.barclays.indiacp.dl.integration;
 
+import org.glassfish.jersey.media.multipart.FormDataParam;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
@@ -38,7 +40,8 @@ public interface IndiaCPProgram {
     @Path("addISINGenerationDocs/{cpProgramId}/{docHash}/{docStatus}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     //@UploadsDocument
-    public Response addISINGenerationDocs(@PathParam("cpProgramId") String cpProgramId
-                                          , @PathParam("docStatus") String docStatus
-                                          , InputStream uploadedInputStream);
+    public Response addISINGenerationDocs(@PathParam("cpProgramId") String cpProgramId,
+                                          @PathParam("docHash") String docHash,
+                                          @PathParam("docStatus") String docStatus,
+                                          @FormDataParam("file") InputStream uploadedInputStream);
 }
