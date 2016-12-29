@@ -1,5 +1,6 @@
 package com.barclays.indiacp.quorum.utils;
 
+import com.barclays.indiacp.model.CPProgram;
 import com.barclays.indiacp.quorum.contract.code.SSContractCode;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCode;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCodeFactory;
@@ -16,6 +17,7 @@ import com.jpmorgan.cakeshop.client.proxy.ContractProxyBuilder;
 import com.jpmorgan.cakeshop.client.ws.TransactionEventHandler;
 import com.jpmorgan.cakeshop.model.ContractABI;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -31,20 +33,20 @@ public class CakeshopUtils {
         return contractApi;
     }
 
-    public static String createContract(String contractName) {
-        APIResponse<APIData<TransactionResult>, TransactionResult> res = getCakeshopContractApi().create(getContractCreateCommand(contractName));
+    public static String createContract(String contractName, Object... contractModel) {
+        APIResponse<APIData<TransactionResult>, TransactionResult> res = getCakeshopContractApi().create(getContractCreateCommand(contractName, contractModel));
         //TODO: fetch contract address from the APIResponse
         return "contract address";
     }
 
-    public static ContractCreateCommand getContractCreateCommand(String contractName) {
+    public static ContractCreateCommand getContractCreateCommand(String contractName, Object... contractModel) {
         SolidityContractCode contractCode = SolidityContractCodeFactory.getInstance(contractName);
         ContractCreateCommand contractCreateCommand = new ContractCreateCommand();
         contractCreateCommand.setCode(contractCode.getContractCode());
         contractCreateCommand.setBinary(contractCode.getContractBinary());
         contractCreateCommand.setCodeType(contractCode.getCodeType());
         contractCreateCommand.setFrom("0x2e219248f44546d966808cdd20cb6c36df6efa82");
-        contractCreateCommand.setArgs(contractCode.getConstructorArgs());
+        contractCreateCommand.setArgs(contractCode.getConstructorArgs(contractModel));
         return contractCreateCommand;
     }
 }

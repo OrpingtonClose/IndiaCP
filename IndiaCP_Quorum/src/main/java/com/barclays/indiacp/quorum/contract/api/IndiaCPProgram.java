@@ -28,9 +28,8 @@ public class IndiaCPProgram {
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response issueCPProgram(CPProgram cpProgram) {
-        String contractAddress = CakeshopUtils.createContract(this.getClass().getName());
+        String contractAddress = CakeshopUtils.createContract(this.getClass().getName(), cpProgram);
         return Response.status(Response.Status.OK).build();
-
     }
 
     @GET
