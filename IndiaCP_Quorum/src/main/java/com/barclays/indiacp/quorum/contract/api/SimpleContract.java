@@ -2,13 +2,11 @@ package com.barclays.indiacp.quorum.contract.api;
 
 import com.barclays.indiacp.quorum.contract.code.SSContractCode;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
-import com.jpmorgan.cakeshop.client.api.ContractApi;
-import com.jpmorgan.cakeshop.client.model.TransactionResult;
 import com.jpmorgan.cakeshop.client.model.req.ContractCreateCommand;
-import com.jpmorgan.cakeshop.client.model.res.APIData;
-import com.jpmorgan.cakeshop.client.model.res.APIResponse;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -16,20 +14,15 @@ import javax.ws.rs.core.Response;
  * Created by ritukedia on 28/12/16.
  */
 @Path("sscontract")
-public class SSContract {
-
-    private ContractApi contractApi;
-
-    public SSContract() {
-        contractApi = CakeshopUtils.getCakeshopContractApi();
-    }
+public class SimpleContract {
 
     @POST
     @Path("create")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(String jsonBody) {
-        APIResponse<APIData<TransactionResult>, TransactionResult> res = contractApi.create(getContractCreateCommand());
-        return null;
+
+        String contractAddress = CakeshopUtils.createContract(this.getClass().getName(), null);
+        return Response.status(Response.Status.OK).build();
     }
 
     public ContractCreateCommand getContractCreateCommand() {
