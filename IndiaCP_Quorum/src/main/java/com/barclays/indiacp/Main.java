@@ -1,5 +1,6 @@
 package com.barclays.indiacp;
 
+import com.barclays.indiacp.quorum.contract.code.SolidityContractCode;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.logging.LoggingFeature;
