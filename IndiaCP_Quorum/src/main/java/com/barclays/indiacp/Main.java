@@ -26,7 +26,7 @@ public class Main {
     public static HttpServer startServer() {
         // create a resource config that scans for JAX-RS resources and providers
         // in com.barclays.indiacp package
-        final ResourceConfig rc = new ResourceConfig().packages("com.barclays.indiacp");
+        final ResourceConfig rc = new ResourceConfig().packages("com.barclays.indiacp.quorum");
 
         Logger logger = Logger.getLogger(Main.class.getName());
         Feature feature = new LoggingFeature(logger, Level.INFO, null, null);

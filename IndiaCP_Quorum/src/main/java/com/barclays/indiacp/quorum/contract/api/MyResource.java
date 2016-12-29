@@ -1,4 +1,4 @@
-package com.barclays.indiacp;
+package com.barclays.indiacp.quorum.contract.api;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

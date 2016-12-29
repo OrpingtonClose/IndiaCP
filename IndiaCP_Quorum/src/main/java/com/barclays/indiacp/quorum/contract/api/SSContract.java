@@ -1,18 +1,16 @@
-package com.barclays.indiacp.quorum.contract;
+package com.barclays.indiacp.quorum.contract.api;
 
-import com.barclays.indiacp.quorum.contract.rest.CakeshopUtils;
+import com.barclays.indiacp.quorum.contract.code.SSContractCode;
+import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 import com.jpmorgan.cakeshop.client.api.ContractApi;
-import com.jpmorgan.cakeshop.client.model.Contract;
 import com.jpmorgan.cakeshop.client.model.TransactionResult;
 import com.jpmorgan.cakeshop.client.model.req.ContractCreateCommand;
 import com.jpmorgan.cakeshop.client.model.res.APIData;
 import com.jpmorgan.cakeshop.client.model.res.APIResponse;
 
 import javax.ws.rs.*;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 /**
  * Created by ritukedia on 28/12/16.

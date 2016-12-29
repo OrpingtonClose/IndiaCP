@@ -1,6 +1,10 @@
-package com.barclays.indiacp.quorum.contract;
+package com.barclays.indiacp.quorum.contract.api;
 
+import com.barclays.indiacp.model.CPProgram;
+import com.barclays.indiacp.quorum.utils.CakeshopUtils;
+import com.jpmorgan.cakeshop.client.api.ContractApi;
 import com.jpmorgan.cakeshop.client.model.TransactionResult;
+import com.jpmorgan.cakeshop.client.model.req.ContractCreateCommand;
 import com.jpmorgan.cakeshop.client.model.res.APIData;
 import com.jpmorgan.cakeshop.client.model.res.APIResponse;
 
@@ -23,9 +27,8 @@ public class IndiaCPProgram {
     @POST
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response issueCPProgram(IndiaCPProgram cpProgram) {
-//        APIResponse<APIData<TransactionResult>, TransactionResult> res = contractApi.create(getContractCreateCommand());
-//        return null;
+    public Response issueCPProgram(CPProgram cpProgram) {
+        String contractAddress = CakeshopUtils.createContract(this.getClass().getName());
         return Response.status(Response.Status.OK).build();
 
     }
@@ -75,4 +78,5 @@ public class IndiaCPProgram {
         this.request = request;
         this.userId = ""; //TODO: Parse the userId from the Request Header
     }
+
 }
