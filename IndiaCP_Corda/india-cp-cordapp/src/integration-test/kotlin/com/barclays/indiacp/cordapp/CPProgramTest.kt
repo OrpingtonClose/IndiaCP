@@ -27,7 +27,11 @@ import java.net.URL
  * TODO: Still need to put a shutdown hook for this test in tear down.
  *
  */
-class CPProgramTest : IntegrationTestCategory {
+class CPProgramTest : IntegrationTestCategory
+{
+
+    val programID:String = "CP_PROGRAM_1"
+
     fun Config.getHostAndPort(name: String): HostAndPort = HostAndPort.fromString(getString(name))!!
 
     @Test fun `runs CPProgram demo`()
@@ -49,8 +53,10 @@ class CPProgramTest : IntegrationTestCategory {
 
 //            putWait(120)
 
+            runAddISINGenDoc(issuer.config.getHostAndPort("webAddress"))
 
-            runIssueCPWithinCPProgram(issuer.config.getHostAndPort("webAddress"))
+
+//            runIssueCPWithinCPProgram(issuer.config.getHostAndPort("webAddress"))
 
             waitForAllNodesToFinish()
 
@@ -65,7 +71,7 @@ class CPProgramTest : IntegrationTestCategory {
         System.out.println("Target URL : " + url)
         
         val indiaCPProgram:String = "{\"issuer\": \"Issuer\", \"ipa\": \"Investor1\", \"depository\": \"Investor1\", " +
-                "\"program_id\": \"CP_PROGRAM_1\", \"name\": \"name\", \"type\": " +
+                "\"program_id\": \""+programID+"\", \"name\": \"name\", \"type\": " +
                 "\"type\", \"purpose\": \"no special purpose\", \"issuer_id\": " +
                 "\"Issuer\", \"issuer_name\": \"issuer_name-1\", \"issue_commencement_date\": \"2016-12-22\", " +
                 "\"program_size\": 100.0, \"program_allocated_value\": 0, \"program_currency\": \"INR\", \"maturity_days\"" +
@@ -82,7 +88,6 @@ class CPProgramTest : IntegrationTestCategory {
         // on the background.
 //        putWait(30)
 
-//        assert()
 
         var retflag : Boolean  = postJson(url, indiaCPProgram)
 
@@ -91,7 +96,7 @@ class CPProgramTest : IntegrationTestCategory {
             println("runIssueCPProgram is SUCCESSFUL.......")
             putWait(1)
         }
-
+        assert(retflag)
 
     }
 
@@ -108,7 +113,7 @@ class CPProgramTest : IntegrationTestCategory {
         System.out.println("Target URL : " + url)
 
                 val newCPJSON: String = "{\"issuer\": \"Issuer\", \"beneficiary\": \"Investor1\", \"ipa\": \"Investor1\", \"depository\": " +
-                        "\"Investor1\", \"cpProgramID\": \"CP_PROGRAM_1\", \"cpTradeID\": \"INDIA_CP_1\", " +
+                        "\"Investor1\", \"cpProgramID\": \""+programID+"\", \"cpTradeID\": \"INDIA_CP_1\", " +
                         "\"tradeDate\": \"19-12-2016\", \"valueDate\": \"23-12-2017\", \"faceValue\": 10, " +
                         "\"maturityDays\": 7, \"isin\": \"INCP123456-1\"}"
 
@@ -121,6 +126,7 @@ class CPProgramTest : IntegrationTestCategory {
                     println("runIssueCPProgram is SUCCESSFUL.......")
                     putWait(5)
                 }
+                assert(retflag)
     }
 
 
@@ -144,7 +150,7 @@ class CPProgramTest : IntegrationTestCategory {
                 println("Trigger CP ISSUE Within CP PROGRAM : REQUEST " + i)
 
                 val newCPJSON: String = "{\"issuer\": \"Issuer\", \"beneficiary\": \"Investor1\", \"ipa\": \"Investor1\", \"depository\": " +
-                        "\"Investor1\", \"cpProgramID\": \"CP_PROGRAM_1\", \"cpTradeID\": \"INDIA_CP_"+i+"\", " +
+                        "\"Investor1\", \"cpProgramID\": \""+programID+"\", \"cpTradeID\": \"INDIA_CP_"+i+"\", " +
                         "\"tradeDate\": \"19-12-2016\", \"valueDate\": \"23-12-2017\", \"faceValue\": 10, " +
                         "\"maturityDays\": 7, \"isin\": \"INCP123456-1\"}"
 
@@ -158,6 +164,8 @@ class CPProgramTest : IntegrationTestCategory {
                     putWait(5)
                 }
 
+//                assert(retflag)
+
             }
         }
     }
@@ -170,6 +178,34 @@ class CPProgramTest : IntegrationTestCategory {
 
         System.out.println("After Forceful sleep for "+s+" sec.....")
     }
+
+
+
+    private fun runAddISINGenDoc(nodeAddr: HostAndPort) {
+
+        println("\n\n\n\n\n\n\n\n")
+        println("------------------------ Running test case for runAddISINGenDoc -------------------------------")
+
+        val url = URL("http://$nodeAddr/api/indiacpprogram/issueCPWithinCPProgram/"+programID+"/docHashId/docStatus444")
+
+        System.out.println("Target URL : " + url)
+
+        val newCPJSON: String = ""
+
+//                assert(postJson(url, newCPJSON))
+
+        var retflag : Boolean  = postJson(url, newCPJSON)
+
+        if(retflag)
+        {
+            println("runAddISINGenDoc is SUCCESSFUL.......")
+            putWait(5)
+        }
+
+//        assert(retflag)
+
+    }
+
 
 
 }
