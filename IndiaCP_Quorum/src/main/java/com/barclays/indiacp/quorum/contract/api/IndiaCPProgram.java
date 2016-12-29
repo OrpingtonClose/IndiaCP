@@ -2,11 +2,7 @@ package com.barclays.indiacp.quorum.contract.api;
 
 import com.barclays.indiacp.model.CPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
-import com.jpmorgan.cakeshop.client.api.ContractApi;
-import com.jpmorgan.cakeshop.client.model.TransactionResult;
-import com.jpmorgan.cakeshop.client.model.req.ContractCreateCommand;
-import com.jpmorgan.cakeshop.client.model.res.APIData;
-import com.jpmorgan.cakeshop.client.model.res.APIResponse;
+import com.barclays.indiacp.quorum.utils.IndiaCPContractUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -14,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Created by ritukedia on 23/12/16.
@@ -35,16 +32,21 @@ public class IndiaCPProgram {
     @GET
     @Path("fetchAllCPProgram")
     public Response fetchAllCPProgram() {
+        ArrayList<CPProgram> cpProgramList = IndiaCPContractUtils.fetchCPPrograms();
         return Response.status(Response.Status.OK).build();
 
     }
 
     @GET
     @Path("fetchCPProgram/{cpProgramId}")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response fetchCPProgram(@PathParam("cpProgramId") String cpProgramId) {
+        CPProgram cpProgram = IndiaCPContractUtils.fetchCPProgram(cpProgramId);
         return Response.status(Response.Status.OK).build();
 
     }
+
+
 
     @POST
     @Path("addISIN/{cpProgramId}/{isin}")

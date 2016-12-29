@@ -29,7 +29,6 @@ public class SSContract {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(String jsonBody) {
         APIResponse<APIData<TransactionResult>, TransactionResult> res = contractApi.create(getContractCreateCommand());
-
         return null;
     }
 
@@ -42,4 +41,5 @@ public class SSContract {
         //contractCreateCommand.setArgs(new Object[]);
         return contractCreateCommand;
     }
+
 }
