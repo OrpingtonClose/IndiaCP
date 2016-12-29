@@ -2,10 +2,10 @@ package com.barclays.indiacp.quorum.contract.api;
 
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 import com.jpmorgan.cakeshop.client.api.ContractApi;
-import com.jpmorgan.cakeshop.client.model.req.ContractCreateCommand;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 /**

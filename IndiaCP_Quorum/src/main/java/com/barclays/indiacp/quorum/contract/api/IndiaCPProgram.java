@@ -2,11 +2,6 @@ package com.barclays.indiacp.quorum.contract.api;
 
 import com.barclays.indiacp.model.CPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
-import com.jpmorgan.cakeshop.client.api.ContractApi;
-import com.jpmorgan.cakeshop.client.model.TransactionResult;
-import com.jpmorgan.cakeshop.client.model.req.ContractCreateCommand;
-import com.jpmorgan.cakeshop.client.model.res.APIData;
-import com.jpmorgan.cakeshop.client.model.res.APIResponse;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
