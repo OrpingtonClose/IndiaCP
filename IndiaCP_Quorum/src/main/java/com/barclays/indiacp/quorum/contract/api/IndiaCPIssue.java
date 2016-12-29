@@ -14,12 +14,6 @@ import javax.ws.rs.core.Response;
 @Path("indiacpissue")
 public class IndiaCPIssue {
 
-    private final ContractApi contractApi;
-
-    public IndiaCPIssue() {
-        contractApi = CakeshopUtils.getCakeshopContractApi();
-    }
-
     @GET
     @Path("fetchAllCP")
     public Response fetchAllCP() {

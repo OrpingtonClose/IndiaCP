@@ -1,5 +1,6 @@
 package com.barclays.indiacp.quorum.contract.api;
 
+import com.barclays.indiacp.model.CPIssue;
 import com.barclays.indiacp.model.CPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 
@@ -51,7 +52,8 @@ public class IndiaCPProgram {
     @POST
     @Path("issueCP/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response issueCP(@PathParam("cpProgramId") String cpProgramId) {
+    public Response issueCP(@PathParam("cpProgramId") String cpProgramId, CPIssue cpIssue) {
+        String contractAddress = CakeshopUtils.createContract(this.getClass().getName(), cpIssue);
         return Response.status(Response.Status.OK).build();
 
     }
