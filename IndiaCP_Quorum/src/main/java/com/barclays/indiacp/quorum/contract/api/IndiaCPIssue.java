@@ -1,11 +1,10 @@
 package com.barclays.indiacp.quorum.contract.api;
 
+import com.barclays.indiacp.model.CPIssue;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
-import com.jpmorgan.cakeshop.client.api.ContractApi;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -13,6 +12,14 @@ import javax.ws.rs.core.Response;
  */
 @Path("indiacpissue")
 public class IndiaCPIssue {
+
+    @POST
+    @Path("issueCPIssue")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response issueCPIssue(CPIssue cpIssue) {
+        String contractAddress = CakeshopUtils.createContract(this.getClass().getSimpleName(), cpIssue);
+        return Response.status(Response.Status.OK).build();
+    }
 
     @GET
     @Path("fetchAllCP")
