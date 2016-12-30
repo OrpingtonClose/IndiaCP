@@ -7,9 +7,11 @@
     function config($stateProvider, $urlRouterProvider) {
         $stateProvider
             .state("main.dashboard", {
+            cache: false,
             url: "dashboard",
             templateUrl: "app/dashboard/dashboard.html",
-            controller: "app.dashboard.DashboardController"
+            controller: "app.dashboard.DashboardController",
+            controllerAs: "vm"
         })
             .state("index.playgames", {
             url: "playgames",

@@ -10,6 +10,8 @@ import java.util.*
 
 data class IndiaCPProgramJSON
 (
+    val orgUnit:String = "",
+
     val issuer: String = "",
 
     val ipa: String = "",

@@ -60,6 +60,10 @@ class IndiaCommercialPaperProgram : Contract {
             val maturityDate: Instant
     )
 
+    data class DocTerms(
+            val asset: Issued<Currency>
+    )
+
     override fun verify(tx: TransactionForContract) = verifyClause(tx, IndiaCommercialPaperProgram.Clauses.Group(), tx.commands.select<IndiaCommercialPaperProgram.Commands>())
 
     data class State(
@@ -203,6 +207,80 @@ class IndiaCommercialPaperProgram : Contract {
 
                         version = this.version
 
+                )
+                else -> throw IllegalArgumentException("Unrecognised schema $schema")
+            }
+        }
+    }
+
+
+
+    //Template for Document Audit History
+
+    //Adding Document Audit Schema so that we are able to keep Audit for all our document
+    data class DocState(
+
+            val issuer: Party,
+
+            var cpProgramID: String,
+
+            var docType: String,
+
+            var docSubType:String,
+
+
+            var docHash: String,
+
+
+            var doc_status: String,
+
+
+            var modifiedBy: String,
+
+
+            var lastModified: Instant
+    ): QueryableState, LinearState
+    {
+
+        override val contract = com.barclays.indiacp.cordapp.contract.INDIA_CP_PROGRAM_ID
+
+        override val linearId: UniqueIdentifier
+            get() = UniqueIdentifier(cpProgramID)
+
+
+        override val participants: List<CompositeKey>
+            get() = listOf(issuer).map { it.owningKey }
+
+        val token: Issued<IndiaCommercialPaperProgram.DocTerms>
+            get() = Issued(issuer.ref(CPUtils.getReference(cpProgramID)), IndiaCommercialPaperProgram.DocTerms((100.DOLLARS `issued by` DUMMY_CASH_ISSUER).token))
+
+        override fun toString() = "${Emoji.newspaper}DocumentAuditState object [PROGRAM_ID : $cpProgramID, " +
+                //                    "TRADE_ID: $cpTradeID, " +
+                "DOC_TYPE: $docType ])"
+
+        //Only the Issuer should be party to the full state of this transaction
+        val parties: List<Party>
+            get() = listOf(issuer)
+
+        override fun isRelevant(ourKeys: Set<PublicKey>): Boolean {
+            return parties.map { it.owningKey }.any { ck -> ck.containsAny(ourKeys) }
+        }
+
+        /** Object Relational Mapping support. */
+        override fun supportedSchemas(): Iterable<MappedSchema> = listOf(DocumentAuditSchemaV1)
+
+        /** Object Relational Mapping support. */
+        override fun generateMappedObject(schema: MappedSchema): PersistentState {
+            return when (schema) {
+                is DocumentAuditSchemaV1 -> DocumentAuditSchemaV1.PersistentDocumentAuditSchemaState(
+                        cpProgramID = this.cpProgramID,
+                        cpTradeID = "",
+                        doc_status = this.doc_status,
+                        docHash = this.docHash,
+                        docSubType = this.docSubType,
+                        docType = this.docType,
+                        lastModified = this.lastModified,
+                        modifiedBy = this.modifiedBy
                 )
                 else -> throw IllegalArgumentException("Unrecognised schema $schema")
             }
@@ -408,10 +486,28 @@ class IndiaCommercialPaperProgram : Contract {
      * an existing transaction because you aren't able to issue multiple pieces of CP in a single transaction
      * at the moment: this restriction is not fundamental and may be lifted later.
      */
-    fun generateIssue( indiaCPProgram: IndiaCommercialPaperProgram.State, notary: Party): TransactionBuilder {
+    fun generateIssue(orgProgramSF: StateAndRef<OrgLevelBorrowProgram.OrgState>,  newBorrowedValue: Amount<Issued<Currency>>,
+                      indiaCPProgramState: IndiaCommercialPaperProgram.State, notary: Party): TransactionBuilder {
 
-        val state = TransactionState(indiaCPProgram, notary)
-        return TransactionType.General.Builder(notary = notary).withItems(state, Command(IndiaCommercialPaperProgram.Commands.Issue(), indiaCPProgram.issuer.owningKey))
+        val ptx = TransactionType.General.Builder(notary)
+        ptx.addInputState(orgProgramSF)
+
+        val newVersion = Integer(orgProgramSF.state.data.version.toInt() + 1)
+
+        ptx.addOutputState(orgProgramSF.state.data.copy(
+                borrowedValue = newBorrowedValue,
+                version = newVersion
+        ))
+
+        //Now let us add India CP State into this transaction
+        val indiaCPState = TransactionState(indiaCPProgramState, notary)
+
+
+        ptx.addOutputState(indiaCPState)
+
+        return ptx
+//        val state = TransactionState(indiaCPProgram, notary)
+//        return TransactionType.General.Builder(notary = notary).withItems(state, Command(IndiaCommercialPaperProgram.Commands.Issue(), indiaCPProgram.issuer.owningKey))
     }
 
     /**
@@ -450,7 +546,7 @@ class IndiaCommercialPaperProgram : Contract {
                 version = newVersion
         ))
 
-        val docState = TransactionState(IndiaCommercialPaperDocuments.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "IPA_VERI_DOC", "",
+        val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "IPA_VERI_DOC", "",
                 ipaVerificationRequestDocId, "IPA_VERI",  "ISSUER_1", Instant.now()), notary)
 
 
@@ -476,7 +572,7 @@ class IndiaCommercialPaperProgram : Contract {
                 version = newVersion
         ))
 
-        val docState = TransactionState(IndiaCommercialPaperDocuments.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "IPA_CERT_DOC", "",
+        val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "IPA_CERT_DOC", "",
                 ipaCertificateDocId, "IPA_CERT",  "ISSUER_1", Instant.now()), notary)
 
 
@@ -503,7 +599,7 @@ class IndiaCommercialPaperProgram : Contract {
                 version = newVersion
         ))
 
-        val docState = TransactionState(IndiaCommercialPaperDocuments.DocState(issuer , indiaCPProgramSF.state.data.programId, "CPPROGRAM_ISIN_GEN_DOC", "",
+        val docState = TransactionState(IndiaCommercialPaperProgram.DocState(issuer , indiaCPProgramSF.state.data.programId, "CPPROGRAM_ISIN_GEN_DOC", "",
                 isinGenerationRequestDocId, "ISIN_GEN_DOC_STATUS",  "ISSUER_1", Instant.now()), notary)
 
 
@@ -528,7 +624,7 @@ class IndiaCommercialPaperProgram : Contract {
                 version = newVersion
         ))
 
-        val docState = TransactionState(IndiaCommercialPaperDocuments.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "CORP_ACT_DOC", "",
+        val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "CORP_ACT_DOC", "",
                 corporateActionFormDocId, "ISIN_GEN_DOC_STATUS",  "ISSUER_1", Instant.now()), notary)
 
 
@@ -554,7 +650,7 @@ class IndiaCommercialPaperProgram : Contract {
                 version = newVersion
         ))
 
-        val docState = TransactionState(IndiaCommercialPaperDocuments.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "ALLOT_LETTER_DOC", "",
+        val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "ALLOT_LETTER_DOC", "",
                 allotmentLetterDocId, "ALLOT_LETTER",  "ISSUER_1", Instant.now()), notary)
 
 
