@@ -13,6 +13,7 @@
         "app.dashboard",
         "app.dashboard.isingeneration",
         "app.dashboard.cpissue",
+        "app.dashboard.cpprogramcreate",
         "app.sitesettings",
         "app.usersettings",
         "app.users"
