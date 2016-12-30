@@ -27,7 +27,7 @@ public class IndiaCPProgram {
     @POST
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String issueCPProgram(Object cpProgramArgs) {
+    public String issueCPProgram(CPProgram cpProgramArgs) {
         return CakeshopUtils.createContract(this.getClass().getSimpleName(), cpProgramArgs);
     }
 
