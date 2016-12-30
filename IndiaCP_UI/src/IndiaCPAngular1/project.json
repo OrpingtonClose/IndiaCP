@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "Microsoft.AspNetCore.Mvc": "1.0.0",
+    "Microsoft.AspNetCore.Mvc": "1.1.0",
     "Microsoft.AspNetCore.Routing": "1.1.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0",
     "Microsoft.AspNetCore.Server.IISIntegration.Tools": "1.1.0-preview4-final",
@@ -21,7 +21,8 @@
     "Microsoft.AspNetCore.Identity": "1.1.0",
     "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0",
     "Angular-UI-Router": "0.2.8",
-    "AspNetCore.Identity.MongoDB": "1.0.0-rc2-2"
+    "AspNetCore.Identity.MongoDB": "1.0.0-rc2-2",
+    "IdentityServer4.AspNetIdentity": "1.0.0"
   },
 
   "tools": {

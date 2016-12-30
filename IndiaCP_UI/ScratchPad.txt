@@ -30,3 +30,6 @@ https://lostechies.com/jimmybogard/2016/10/21/contoso-university-updated-to-asp-
 
 Demostrate the $q service
 http://stackoverflow.com/questions/34443361/how-to-use-q-service-in-angular-js-for-login
+
+bootstrap
+modal-lg : 1200px

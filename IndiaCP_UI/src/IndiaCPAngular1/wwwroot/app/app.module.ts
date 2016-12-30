@@ -13,6 +13,7 @@
             "app.login",
             "app.main",
             "app.dashboard",
+            "app.dashboard.isingeneration",
             "app.sitesettings",
             "app.usersettings",
             "app.users"
