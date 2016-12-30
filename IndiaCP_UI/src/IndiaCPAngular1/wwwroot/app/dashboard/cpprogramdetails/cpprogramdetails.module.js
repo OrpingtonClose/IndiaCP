@@ -1,6 +1,6 @@
 (function () {
     "use strict";
     angular
-        .module("app.dashboard.issuecp", []);
+        .module("app.dashboard.cpprogramdetails", []);
 })();
 //# sourceMappingURL=cpprogramdetails.module.js.map

@@ -28,6 +28,54 @@ var app;
                     templateUrl: "app/dashboard/isingeneration/isingeneration.html"
                 });
             };
+            DashboardController.prototype.createCPISsue = function () {
+                this.$uibModal.open({
+                    animation: true,
+                    ariaLabelledBy: "modal-title",
+                    ariaDescribedBy: "modal-body",
+                    controller: "app.dashboard.cpissue.CPIssueController",
+                    controllerAs: "vm",
+                    size: "lg",
+                    backdrop: "static",
+                    templateUrl: "app/dashboard/cpissue/cpissue.html"
+                });
+            };
+            DashboardController.prototype.createCPProgram = function () {
+                this.$uibModal.open({
+                    animation: true,
+                    ariaLabelledBy: "modal-title",
+                    ariaDescribedBy: "modal-body",
+                    controller: "app.dashboard.cpprogramcreate.CPProgramCreateController",
+                    controllerAs: "vm",
+                    size: "lg",
+                    backdrop: "static",
+                    templateUrl: "app/dashboard/cpprogramcreate/cpprogramcreate.html"
+                });
+            };
+            DashboardController.prototype.showCPIssueDetails = function () {
+                this.$uibModal.open({
+                    animation: true,
+                    ariaLabelledBy: "modal-title",
+                    ariaDescribedBy: "modal-body",
+                    controller: "app.dashboard.cpissuedetails.CPIssueDetailsController",
+                    controllerAs: "vm",
+                    size: "lg",
+                    backdrop: "static",
+                    templateUrl: "app/dashboard/cpissuedetails/cpissuedetails.html"
+                });
+            };
+            DashboardController.prototype.showCPProgramDetails = function () {
+                this.$uibModal.open({
+                    animation: true,
+                    ariaLabelledBy: "modal-title",
+                    ariaDescribedBy: "modal-body",
+                    controller: "app.dashboard.cpprogramdetails.CPProgramDetailsController",
+                    controllerAs: "vm",
+                    size: "lg",
+                    backdrop: "static",
+                    templateUrl: "app/dashboard/cpprogramdetails/cpprogramdetails.html"
+                });
+            };
             return DashboardController;
         }());
         DashboardController.$inject = ["$http", "$scope", "$uibModal", "app.services.IssuerService"];

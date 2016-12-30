@@ -7,10 +7,16 @@ module app.dashboard.cpissue {
 
     class CPIssueController implements ICPIssueScope {
         isinDocPDF: string;
-        static $inject = ["$sce"]
-        constructor(protected $sce: ng.ISCEService) {
+        static $inject = ["$sce","$uibModalInstance","app.services.IssuerService"]
+        constructor(protected $sce: ng.ISCEService,
+                    protected $uibModalInstance:ng.ui.bootstrap.IModalServiceInstance,
+                    protected issuerService : app.services.IIssuerService) {
         }
         public issueCP(): void {
+           
+        }
+         public cancel():void{
+            this.$uibModalInstance.close();
         }
     }
 

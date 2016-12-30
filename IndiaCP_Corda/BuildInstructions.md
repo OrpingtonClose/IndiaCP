@@ -1,6 +1,6 @@
 1. Unzip india-commercial-paper.zip
 
-2. Installing Nodes:
+2. **Installing Nodes**:
 Via command line terminals - go to india-commercial-paper directory and run:
 ./gradlew deployNodes
 This will create 4 node directories under india-commercial-paper/build/indiacpdemo
@@ -9,7 +9,7 @@ issuer
 investor1
 investor2
 
-3. Starting Nodes:
+3. **Starting Nodes:**
 You could run all these nodes using the runnodes script in the same directory.
 However I am running them independently by opening 4 separate terminal windows and navigating to each node
 say for e.g. for launching the controller node:

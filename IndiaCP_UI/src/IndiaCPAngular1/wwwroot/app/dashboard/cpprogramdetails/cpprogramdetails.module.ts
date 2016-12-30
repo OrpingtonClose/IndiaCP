@@ -2,5 +2,5 @@
     "use strict";
 
     angular
-        .module("app.dashboard.issuecp", []);
+        .module("app.dashboard.cpprogramdetails", []);
 })();
