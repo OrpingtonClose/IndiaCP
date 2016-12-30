@@ -3,8 +3,8 @@ package com.barclays.indiacp.quorum.contract.api;
 import com.barclays.indiacp.model.CPIssue;
 import com.barclays.indiacp.model.CPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
-import com.barclays.indiacp.quorum.utils.IndiaCPContractUtils;
 import com.jpmorgan.cakeshop.client.model.Contract;
+import com.jpmorgan.cakeshop.client.model.Transaction;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -27,9 +27,8 @@ public class IndiaCPProgram {
     @POST
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response issueCPProgram(CPProgram cpProgram) {
-        String contractAddress = CakeshopUtils.createContract(this.getClass().getSimpleName(), cpProgram);
-        return Response.status(Response.Status.OK).build();
+    public String issueCPProgram(Object cpProgramArgs) {
+        return CakeshopUtils.createContract(this.getClass().getSimpleName(), cpProgramArgs);
     }
 
     @GET
