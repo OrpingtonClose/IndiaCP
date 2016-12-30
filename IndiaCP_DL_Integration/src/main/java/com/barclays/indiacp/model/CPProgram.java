@@ -32,7 +32,7 @@ import java.util.Date;
 /**
  * CPProgram
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-12-22T06:22:33.818Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-12-30T09:42:37.124Z")
 public class CPProgram   {
   @JsonProperty("program_id")
   private String programId = null;
@@ -40,11 +40,17 @@ public class CPProgram   {
   @JsonProperty("name")
   private String name = null;
 
+  @JsonProperty("user_id")
+  private String userId = null;
+
   @JsonProperty("type")
   private String type = null;
 
   @JsonProperty("purpose")
   private String purpose = null;
+
+  @JsonProperty("isin")
+  private String isin = null;
 
   @JsonProperty("issuer_id")
   private String issuerId = null;
@@ -94,6 +100,9 @@ public class CPProgram   {
   @JsonProperty("allotment_letter_doc_id")
   private String allotmentLetterDocId = null;
 
+  @JsonProperty("org_unit")
+  private String orgUnit = null;
+
   @JsonProperty("status")
   private String status = null;
 
@@ -139,6 +148,24 @@ public class CPProgram   {
     this.name = name;
   }
 
+  public CPProgram userId(String userId) {
+    this.userId = userId;
+    return this;
+  }
+
+   /**
+   * User identifier
+   * @return userId
+  **/
+  //@ApiModelProperty(value = "User identifier")
+  public String getUserId() {
+    return userId;
+  }
+
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
+
   public CPProgram type(String type) {
     this.type = type;
     return this;
@@ -173,6 +200,24 @@ public class CPProgram   {
 
   public void setPurpose(String purpose) {
     this.purpose = purpose;
+  }
+
+  public CPProgram isin(String isin) {
+    this.isin = isin;
+    return this;
+  }
+
+   /**
+   * Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.
+   * @return isin
+  **/
+  //@ApiModelProperty(value = "Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.")
+  public String getIsin() {
+    return isin;
+  }
+
+  public void setIsin(String isin) {
+    this.isin = isin;
   }
 
   public CPProgram issuerId(String issuerId) {
@@ -463,6 +508,24 @@ public class CPProgram   {
     this.allotmentLetterDocId = allotmentLetterDocId;
   }
 
+  public CPProgram orgUnit(String orgUnit) {
+    this.orgUnit = orgUnit;
+    return this;
+  }
+
+   /**
+   * Top level organizational borrowing limit contract
+   * @return orgUnit
+  **/
+  //@ApiModelProperty(value = "Top level organizational borrowing limit contract")
+  public String getOrgUnit() {
+    return orgUnit;
+  }
+
+  public void setOrgUnit(String orgUnit) {
+    this.orgUnit = orgUnit;
+  }
+
   public CPProgram status(String status) {
     this.status = status;
     return this;
@@ -519,7 +582,7 @@ public class CPProgram   {
 
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -529,8 +592,10 @@ public class CPProgram   {
     CPProgram cpProgram = (CPProgram) o;
     return Objects.equals(this.programId, cpProgram.programId) &&
         Objects.equals(this.name, cpProgram.name) &&
+        Objects.equals(this.userId, cpProgram.userId) &&
         Objects.equals(this.type, cpProgram.type) &&
         Objects.equals(this.purpose, cpProgram.purpose) &&
+        Objects.equals(this.isin, cpProgram.isin) &&
         Objects.equals(this.issuerId, cpProgram.issuerId) &&
         Objects.equals(this.issuerName, cpProgram.issuerName) &&
         Objects.equals(this.issueCommencementDate, cpProgram.issueCommencementDate) &&
@@ -547,6 +612,7 @@ public class CPProgram   {
         Objects.equals(this.ipaCertificateDocId, cpProgram.ipaCertificateDocId) &&
         Objects.equals(this.corporateActionFormDocId, cpProgram.corporateActionFormDocId) &&
         Objects.equals(this.allotmentLetterDocId, cpProgram.allotmentLetterDocId) &&
+        Objects.equals(this.orgUnit, cpProgram.orgUnit) &&
         Objects.equals(this.status, cpProgram.status) &&
         Objects.equals(this.version, cpProgram.version) &&
         Objects.equals(this.lastModified, cpProgram.lastModified);
@@ -554,7 +620,7 @@ public class CPProgram   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(programId, name, type, purpose, issuerId, issuerName, issueCommencementDate, programSize, programAllocatedValue, programCurrency, maturityDays, ipaId, ipaName, depositoryId, depositoryName, isinGenerationRequestDocId, ipaVerificationRequestDocId, ipaCertificateDocId, corporateActionFormDocId, allotmentLetterDocId, status, version, lastModified);
+    return Objects.hash(programId, name, userId, type, purpose, isin, issuerId, issuerName, issueCommencementDate, programSize, programAllocatedValue, programCurrency, maturityDays, ipaId, ipaName, depositoryId, depositoryName, isinGenerationRequestDocId, ipaVerificationRequestDocId, ipaCertificateDocId, corporateActionFormDocId, allotmentLetterDocId, orgUnit, status, version, lastModified);
   }
 
 
@@ -565,8 +631,10 @@ public class CPProgram   {
     
     sb.append("    programId: ").append(toIndentedString(programId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
+    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    purpose: ").append(toIndentedString(purpose)).append("\n");
+    sb.append("    isin: ").append(toIndentedString(isin)).append("\n");
     sb.append("    issuerId: ").append(toIndentedString(issuerId)).append("\n");
     sb.append("    issuerName: ").append(toIndentedString(issuerName)).append("\n");
     sb.append("    issueCommencementDate: ").append(toIndentedString(issueCommencementDate)).append("\n");
@@ -583,6 +651,7 @@ public class CPProgram   {
     sb.append("    ipaCertificateDocId: ").append(toIndentedString(ipaCertificateDocId)).append("\n");
     sb.append("    corporateActionFormDocId: ").append(toIndentedString(corporateActionFormDocId)).append("\n");
     sb.append("    allotmentLetterDocId: ").append(toIndentedString(allotmentLetterDocId)).append("\n");
+    sb.append("    orgUnit: ").append(toIndentedString(orgUnit)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    version: ").append(toIndentedString(version)).append("\n");
     sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
@@ -594,7 +663,7 @@ public class CPProgram   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }

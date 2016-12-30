@@ -14,6 +14,7 @@
             "app.main",
             "app.dashboard",
             "app.dashboard.isingeneration",
+            "app.dashboard.cpissue",
             "app.sitesettings",
             "app.usersettings",
             "app.users"

@@ -1,11 +1,13 @@
 package com.barclays.indiacp.quorum.utils;
 
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCode;
+import com.barclays.indiacp.quorum.contract.code.SolidityContract;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCodeFactory;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.jpmorgan.cakeshop.client.ClientManager;
 import com.jpmorgan.cakeshop.client.api.ContractApi;
+import com.jpmorgan.cakeshop.client.api.TransactionApi;
 import com.jpmorgan.cakeshop.client.model.Contract;
 import com.jpmorgan.cakeshop.client.model.Transaction;
 import com.jpmorgan.cakeshop.client.model.TransactionResult;
@@ -26,11 +28,13 @@ public class CakeshopUtils {
 
     private static ClientManager cakeshopManager;
     private static ContractApi contractApi;
+    private static TransactionApi transactionApi;
 
     static {
         // setup cakeshop manager
         cakeshopManager = ClientManager.create("http://52.172.42.128:8080/cakeshop");
         contractApi = cakeshopManager.getClient(ContractApi.class);
+        transactionApi = cakeshopManager.getClient(TransactionApi.class);
     }
 
 
@@ -42,25 +46,32 @@ public class CakeshopUtils {
         return result.getAttributes();
     }
 
+    //returns address of newly mined contract
     public static String createContract(String contractName, Object contractModel) {
+
         APIResponse<APIData<TransactionResult>, TransactionResult> res = contractApi.create(getContractCreateCommand(contractName, contractModel));
-        final ListenableFuture<Transaction> txFuture = cakeshopManager.waitForTx(res.getData());
-        txFuture.addListener(new Runnable() {
+        String txnID = res.getData().getId();
+
+        final ListenableFuture<Transaction> txFuture = cakeshopManager.waitForTx(txnID);
+        txFuture.addListener (new Runnable() {
             @Override
             public void run() {
                 try {
                     System.out.println("tx committed:\n" + txFuture.get().toString());
+
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
             }
         }, MoreExecutors.directExecutor());
-        //TODO: fetch contract address from the APIResponse
-        return "contract address";
+
+        Transaction confirmedTx = transactionApi.get(txnID).getData();
+        return confirmedTx.getContractAddress();
     }
 
+    // creates argument object to create contract.
     public static ContractCreateCommand getContractCreateCommand(String contractName, Object contractModel) {
-        SolidityContractCode contractCode = SolidityContractCodeFactory.getInstance(contractName);
+        SolidityContract contractCode = SolidityContractCodeFactory.getInstance(contractName);
         ContractCreateCommand contractCreateCommand = new ContractCreateCommand();
         contractCreateCommand.setCode(contractCode.getContractCode());
         contractCreateCommand.setBinary(contractCode.getContractBinary());

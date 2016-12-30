@@ -28,14 +28,16 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
-
 /**
  * CPIssue
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-12-22T06:22:33.818Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-12-30T09:42:37.124Z")
 public class CPIssue   {
   @JsonProperty("cp_program_id")
   private String cpProgramId = null;
+
+  @JsonProperty("user_id")
+  private String userId = null;
 
   @JsonProperty("cp_trade_id")
   private String cpTradeId = null;
@@ -86,7 +88,7 @@ public class CPIssue   {
   private String currency = null;
 
   @JsonProperty("notional_amount")
-  private Date notionalAmount = null;
+  private Float notionalAmount = null;
 
   @JsonProperty("rate")
   private Float rate = null;
@@ -125,6 +127,24 @@ public class CPIssue   {
 
   public void setCpProgramId(String cpProgramId) {
     this.cpProgramId = cpProgramId;
+  }
+
+  public CPIssue userId(String userId) {
+    this.userId = userId;
+    return this;
+  }
+
+   /**
+   * User identifier
+   * @return userId
+  **/
+  //@ApiModelProperty(value = "User identifier")
+  public String getUserId() {
+    return userId;
+  }
+
+  public void setUserId(String userId) {
+    this.userId = userId;
   }
 
   public CPIssue cpTradeId(String cpTradeId) {
@@ -415,7 +435,7 @@ public class CPIssue   {
     this.currency = currency;
   }
 
-  public CPIssue notionalAmount(Date notionalAmount) {
+  public CPIssue notionalAmount(Float notionalAmount) {
     this.notionalAmount = notionalAmount;
     return this;
   }
@@ -425,11 +445,11 @@ public class CPIssue   {
    * @return notionalAmount
   **/
   //@ApiModelProperty(value = "This is the amount that will be paid by the Issuer to the Investor on redemption")
-  public Date getNotionalAmount() {
+  public Float getNotionalAmount() {
     return notionalAmount;
   }
 
-  public void setNotionalAmount(Date notionalAmount) {
+  public void setNotionalAmount(Float notionalAmount) {
     this.notionalAmount = notionalAmount;
   }
 
@@ -561,7 +581,7 @@ public class CPIssue   {
 
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(java.lang.Object o) {
     if (this == o) {
       return true;
     }
@@ -570,6 +590,7 @@ public class CPIssue   {
     }
     CPIssue cpIssue = (CPIssue) o;
     return Objects.equals(this.cpProgramId, cpIssue.cpProgramId) &&
+        Objects.equals(this.userId, cpIssue.userId) &&
         Objects.equals(this.cpTradeId, cpIssue.cpTradeId) &&
         Objects.equals(this.bookId, cpIssue.bookId) &&
         Objects.equals(this.isin, cpIssue.isin) &&
@@ -598,7 +619,7 @@ public class CPIssue   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cpProgramId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, investorId, investorName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDate, currency, notionalAmount, rate, issuerSettlementDetails, investorSettlementDetails, dealConfirmationDocId, status, version, lastModified);
+    return Objects.hash(cpProgramId, userId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, investorId, investorName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDate, currency, notionalAmount, rate, issuerSettlementDetails, investorSettlementDetails, dealConfirmationDocId, status, version, lastModified);
   }
 
 
@@ -608,6 +629,7 @@ public class CPIssue   {
     sb.append("class CPIssue {\n");
     
     sb.append("    cpProgramId: ").append(toIndentedString(cpProgramId)).append("\n");
+    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    cpTradeId: ").append(toIndentedString(cpTradeId)).append("\n");
     sb.append("    bookId: ").append(toIndentedString(bookId)).append("\n");
     sb.append("    isin: ").append(toIndentedString(isin)).append("\n");
@@ -640,7 +662,7 @@ public class CPIssue   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
+  private String toIndentedString(java.lang.Object o) {
     if (o == null) {
       return "null";
     }

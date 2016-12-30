@@ -7,11 +7,11 @@ import java.util.HashMap;
  */
 public class SolidityContractCodeFactory {
 
-    private static HashMap<String, SolidityContractCode> contractCodeMap = new HashMap();
+    private static HashMap<String, SolidityContract> contractCodeMap = new HashMap();
 
-    public static SolidityContractCode getInstance(String contractName) {
+    public static SolidityContract getInstance(String contractName) {
         if (!contractCodeMap.containsKey(contractName)) {
-            contractCodeMap.put(contractName, SolidityContractCode.getSingleInstance(contractName));
+            contractCodeMap.put(contractName, SolidityContract.getSingleInstance(contractName));
         }
         return contractCodeMap.get(contractName);
     }

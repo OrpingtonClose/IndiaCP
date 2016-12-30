@@ -1,12 +1,9 @@
 package com.barclays.indiacp.quorum.utils;
 
-import com.barclays.indiacp.model.CPProgram;
-import com.barclays.indiacp.quorum.contract.code.SolidityContractCode;
-import com.jpmorgan.cakeshop.client.model.Contract;
+import com.barclays.indiacp.quorum.contract.code.SolidityContract;
 import com.jpmorgan.cakeshop.model.ContractABI;
 import com.jpmorgan.cakeshop.model.SolidityType;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +18,7 @@ public class IndiaCPContractUtils {
 //        return (CPProgram) CakeshopUtils.getContractState(cpProgramAddress);
 //    }
 
-    public static Object[] getConstructorArgs(SolidityContractCode contract, Object contractModel) {
+    public static Object[] getConstructorArgs(SolidityContract contract, Object contractModel) {
         try {
             List<Object> constructorArgs = new ArrayList<Object>();
             ContractABI.Constructor constructor = contract.getContractABI().getConstructor();
@@ -87,7 +84,7 @@ public class IndiaCPContractUtils {
         }
     }
 
-    public static <T> T populateContractModel(SolidityContractCode contract, String functionName, Class<T> contractModel, List<Object> dataAsList) {
+    public static <T> T populateContractModel(SolidityContract contract, String functionName, Class<T> contractModel, List<Object> dataAsList) {
         try {
             T contractModelInstance = instantiateObjectOfType(contractModel);
             ContractABI.Function function = contract.getContractABI().getFunction(functionName);
