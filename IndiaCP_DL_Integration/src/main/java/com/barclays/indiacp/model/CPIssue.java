@@ -120,7 +120,7 @@ public class CPIssue   {
    * Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program
    * @return cpProgramId
   **/
-  @ApiModelProperty(value = "Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program")
+  //@ApiModelProperty(value = "Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program")
   public String getCpProgramId() {
     return cpProgramId;
   }
@@ -138,7 +138,7 @@ public class CPIssue   {
    * User identifier
    * @return userId
   **/
-  @ApiModelProperty(value = "User identifier")
+  //@ApiModelProperty(value = "User identifier")
   public String getUserId() {
     return userId;
   }
@@ -156,7 +156,7 @@ public class CPIssue   {
    * Unique identifier representing a specific CP Issue under the umbrella CP Program
    * @return cpTradeId
   **/
-  @ApiModelProperty(value = "Unique identifier representing a specific CP Issue under the umbrella CP Program")
+  //@ApiModelProperty(value = "Unique identifier representing a specific CP Issue under the umbrella CP Program")
   public String getCpTradeId() {
     return cpTradeId;
   }
@@ -174,7 +174,7 @@ public class CPIssue   {
    * Internal Book Id that this trade is booked under
    * @return bookId
   **/
-  @ApiModelProperty(value = "Internal Book Id that this trade is booked under")
+  //@ApiModelProperty(value = "Internal Book Id that this trade is booked under")
   public String getBookId() {
     return bookId;
   }
@@ -192,7 +192,7 @@ public class CPIssue   {
    * Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.
    * @return isin
   **/
-  @ApiModelProperty(value = "Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.")
+  //@ApiModelProperty(value = "Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.")
   public String getIsin() {
     return isin;
   }
@@ -210,7 +210,7 @@ public class CPIssue   {
    * Unique identifier of the trader booking this trade
    * @return traderId
   **/
-  @ApiModelProperty(value = "Unique identifier of the trader booking this trade")
+  //@ApiModelProperty(value = "Unique identifier of the trader booking this trade")
   public String getTraderId() {
     return traderId;
   }
@@ -228,7 +228,7 @@ public class CPIssue   {
    * Unique identifier of the Issuer
    * @return issuerId
   **/
-  @ApiModelProperty(value = "Unique identifier of the Issuer")
+  //@ApiModelProperty(value = "Unique identifier of the Issuer")
   public String getIssuerId() {
     return issuerId;
   }
@@ -246,7 +246,7 @@ public class CPIssue   {
    * Display name of the Issuer
    * @return issuerName
   **/
-  @ApiModelProperty(value = "Display name of the Issuer")
+  //@ApiModelProperty(value = "Display name of the Issuer")
   public String getIssuerName() {
     return issuerName;
   }
@@ -264,7 +264,7 @@ public class CPIssue   {
    * Unique identifier of the Investor. This also uniquely identifies the Investor DL Node
    * @return investorId
   **/
-  @ApiModelProperty(value = "Unique identifier of the Investor. This also uniquely identifies the Investor DL Node")
+  //@ApiModelProperty(value = "Unique identifier of the Investor. This also uniquely identifies the Investor DL Node")
   public String getInvestorId() {
     return investorId;
   }
@@ -282,7 +282,7 @@ public class CPIssue   {
    * Display name of the Investor
    * @return investorName
   **/
-  @ApiModelProperty(value = "Display name of the Investor")
+  //@ApiModelProperty(value = "Display name of the Investor")
   public String getInvestorName() {
     return investorName;
   }
@@ -300,7 +300,7 @@ public class CPIssue   {
    * Unique identifier of the IPA
    * @return ipaId
   **/
-  @ApiModelProperty(value = "Unique identifier of the IPA")
+  //@ApiModelProperty(value = "Unique identifier of the IPA")
   public String getIpaId() {
     return ipaId;
   }
@@ -318,7 +318,7 @@ public class CPIssue   {
    * Display name of the IPA
    * @return ipaName
   **/
-  @ApiModelProperty(value = "Display name of the IPA")
+  //@ApiModelProperty(value = "Display name of the IPA")
   public String getIpaName() {
     return ipaName;
   }
@@ -336,7 +336,7 @@ public class CPIssue   {
    * Unique identifier of the Depository (NSDL)
    * @return depositoryId
   **/
-  @ApiModelProperty(value = "Unique identifier of the Depository (NSDL)")
+  //@ApiModelProperty(value = "Unique identifier of the Depository (NSDL)")
   public String getDepositoryId() {
     return depositoryId;
   }
@@ -354,7 +354,7 @@ public class CPIssue   {
    * Display name of the Depository
    * @return depositoryName
   **/
-  @ApiModelProperty(value = "Display name of the Depository")
+  //@ApiModelProperty(value = "Display name of the Depository")
   public String getDepositoryName() {
     return depositoryName;
   }
@@ -372,7 +372,7 @@ public class CPIssue   {
    * Date on which the trade was captured
    * @return tradeDate
   **/
-  @ApiModelProperty(value = "Date on which the trade was captured")
+  //@ApiModelProperty(value = "Date on which the trade was captured")
   public Date getTradeDate() {
     return tradeDate;
   }
@@ -390,7 +390,7 @@ public class CPIssue   {
    * Date on which the trade was settled and the Cash and CP securities were swapped between the Issuer and the Investor
    * @return valueDate
   **/
-  @ApiModelProperty(value = "Date on which the trade was settled and the Cash and CP securities were swapped between the Issuer and the Investor")
+  //@ApiModelProperty(value = "Date on which the trade was settled and the Cash and CP securities were swapped between the Issuer and the Investor")
   public Date getValueDate() {
     return valueDate;
   }
@@ -408,7 +408,7 @@ public class CPIssue   {
    * Date on which the CP will be matured and redeemed
    * @return maturityDate
   **/
-  @ApiModelProperty(value = "Date on which the CP will be matured and redeemed")
+  //@ApiModelProperty(value = "Date on which the CP will be matured and redeemed")
   public Date getMaturityDate() {
     return maturityDate;
   }
@@ -426,7 +426,7 @@ public class CPIssue   {
    * Currency of the issued CP Notes
    * @return currency
   **/
-  @ApiModelProperty(value = "Currency of the issued CP Notes")
+  //@ApiModelProperty(value = "Currency of the issued CP Notes")
   public String getCurrency() {
     return currency;
   }
@@ -444,7 +444,7 @@ public class CPIssue   {
    * This is the amount that will be paid by the Issuer to the Investor on redemption
    * @return notionalAmount
   **/
-  @ApiModelProperty(value = "This is the amount that will be paid by the Issuer to the Investor on redemption")
+  //@ApiModelProperty(value = "This is the amount that will be paid by the Issuer to the Investor on redemption")
   public Float getNotionalAmount() {
     return notionalAmount;
   }
@@ -462,7 +462,7 @@ public class CPIssue   {
    * Rate at which the yield is calculated
    * @return rate
   **/
-  @ApiModelProperty(value = "Rate at which the yield is calculated")
+  //@ApiModelProperty(value = "Rate at which the yield is calculated")
   public Float getRate() {
     return rate;
   }
@@ -480,7 +480,7 @@ public class CPIssue   {
    * Get issuerSettlementDetails
    * @return issuerSettlementDetails
   **/
-  @ApiModelProperty(value = "")
+  //@ApiModelProperty(value = "")
   public SettlementDetails getIssuerSettlementDetails() {
     return issuerSettlementDetails;
   }
@@ -498,7 +498,7 @@ public class CPIssue   {
    * Get investorSettlementDetails
    * @return investorSettlementDetails
   **/
-  @ApiModelProperty(value = "")
+  //@ApiModelProperty(value = "")
   public SettlementDetails getInvestorSettlementDetails() {
     return investorSettlementDetails;
   }
@@ -516,7 +516,7 @@ public class CPIssue   {
    * Unique identifier of the deal confirmation document signed by both the Issuer and the Investor
    * @return dealConfirmationDocId
   **/
-  @ApiModelProperty(value = "Unique identifier of the deal confirmation document signed by both the Issuer and the Investor")
+  //@ApiModelProperty(value = "Unique identifier of the deal confirmation document signed by both the Issuer and the Investor")
   public String getDealConfirmationDocId() {
     return dealConfirmationDocId;
   }
@@ -534,7 +534,7 @@ public class CPIssue   {
    * Current status of the CP Issue
    * @return status
   **/
-  @ApiModelProperty(value = "Current status of the CP Issue")
+  //@ApiModelProperty(value = "Current status of the CP Issue")
   public String getStatus() {
     return status;
   }
@@ -552,7 +552,7 @@ public class CPIssue   {
    * Current version of the CP Issue
    * @return version
   **/
-  @ApiModelProperty(value = "Current version of the CP Issue")
+  //@ApiModelProperty(value = "Current version of the CP Issue")
   public Integer getVersion() {
     return version;
   }
@@ -570,7 +570,7 @@ public class CPIssue   {
    * Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account
    * @return lastModified
   **/
-  @ApiModelProperty(value = "Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account")
+  //@ApiModelProperty(value = "Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account")
   public Date getLastModified() {
     return lastModified;
   }
