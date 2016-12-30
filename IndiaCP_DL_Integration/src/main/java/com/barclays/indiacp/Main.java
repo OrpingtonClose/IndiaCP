@@ -21,7 +21,7 @@ import java.util.Date;
  */
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://192.174.3.11:8181/indiacp/";
+    public static final String BASE_URI = "http://10.0.0.4:8181/indiacp/";
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.

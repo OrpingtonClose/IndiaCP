@@ -1,9 +1,6 @@
 package com.barclays.indiacp.cordapp.protocol.issuer
 
 import co.paralleluniverse.fibers.Suspendable
-import com.barclays.indiacp.cordapp.api.IndiaCPApi
-import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
-import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperDocuments
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.utilities.CPUtils
@@ -70,9 +67,10 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
 
         when (trig_stage) {
 
-            CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM -> {
-                progTrack = ProgressTracker(CP_PROGRAM_ISSUING, OBTAINING_NOTARY_SIGNATURE,
-                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+            CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM ->
+            {
+//                progTrack = ProgressTracker(CP_PROGRAM_ISSUING, OBTAINING_NOTARY_SIGNATURE,
+//                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
             }
             CP_PROGRAM_FLOW_STAGES.ADDISIN -> {
                 progTrack = ProgressTracker(CP_PROGRAM_ADD_ISIN, OBTAINING_NOTARY_SIGNATURE,
@@ -118,11 +116,13 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
 
                 CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM ->
                 {
-                    progressTracker.currentStep = CP_PROGRAM_ISSUING;
-                    val issuer = getPartyByName(newCPProgram.issuer)
-                    val ipa = getPartyByName(newCPProgram.ipa)
-                    val depository = getPartyByName(newCPProgram.depository)
-                    tx = generateCPProgram(newCPProgram, issuer, ipa, depository, notary);
+//                    progressTracker.currentStep = CP_PROGRAM_ISSUING;
+//                    val issuer = getPartyByName(newCPProgram.issuer)
+//                    val ipa = getPartyByName(newCPProgram.ipa)
+//                    val depository = getPartyByName(newCPProgram.depository)
+//                    tx = generateCPProgram(newCPProgram, issuer, ipa, depository, notary);
+                    throw Exception("CP program should be issued through IssueCPProgramWithInOrgLimitFlow")
+
 
                 }
 
@@ -185,33 +185,33 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
     }
 
 
-    /*
-    Method for creating a CP Program.
-     */
-    @Suspendable
-    private fun generateCPProgram(newCPProgram: IndiaCPProgramJSON, issuer : Party, ipa : Party, depository: Party, notary: NodeInfo) : TransactionBuilder
-    {
-        val tx = IndiaCommercialPaperProgram().generateIssue(
-                IndiaCommercialPaperProgram.State(issuer, ipa, depository,
-                        newCPProgram.program_id, newCPProgram.name, newCPProgram.type, newCPProgram.purpose,
-                        newCPProgram.issuer_id, newCPProgram.issuer_name,
-                        newCPProgram.issue_commencement_date.toInstant(),
-                        newCPProgram.program_size.DOLLARS `issued by` DUMMY_CASH_ISSUER,
-                        newCPProgram.program_allocated_value.DOLLARS `issued by` DUMMY_CASH_ISSUER,
-                        Currency.getInstance("INR"), //TODO fix the hardcoding to INR and DOLLAR
-                        newCPProgram.maturity_days.toInstant(), newCPProgram.ipa_id, newCPProgram.ipa_name,
-                        newCPProgram.depository_id, newCPProgram.depository_name,
-                        newCPProgram.isin, newCPProgram.isin_generation_request_doc_id,
-                        newCPProgram.ipa_verification_request_doc_id,
-                        newCPProgram.ipa_certificate_doc_id, newCPProgram.corporate_action_form_doc_id,
-                        newCPProgram.allotment_letter_doc_id,
-                        CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM.endStatus, //TODO: Add Status Enum
-                        Instant.now(),
-                        Integer(0)),
-                notary = notary.notaryIdentity)
-
-        return tx
-    }
+//    /*
+//    Method for creating a CP Program.
+//     */
+//    @Suspendable
+//    private fun generateCPProgram(newCPProgram: IndiaCPProgramJSON, issuer : Party, ipa : Party, depository: Party, notary: NodeInfo) : TransactionBuilder
+//    {
+//        val tx = IndiaCommercialPaperProgram().generateIssue(
+//                IndiaCommercialPaperProgram.State(issuer, ipa, depository,
+//                        newCPProgram.program_id, newCPProgram.name, newCPProgram.type, newCPProgram.purpose,
+//                        newCPProgram.issuer_id, newCPProgram.issuer_name,
+//                        newCPProgram.issue_commencement_date.toInstant(),
+//                        newCPProgram.program_size.DOLLARS `issued by` DUMMY_CASH_ISSUER,
+//                        newCPProgram.program_allocated_value.DOLLARS `issued by` DUMMY_CASH_ISSUER,
+//                        Currency.getInstance("INR"), //TODO fix the hardcoding to INR and DOLLAR
+//                        newCPProgram.maturity_days.toInstant(), newCPProgram.ipa_id, newCPProgram.ipa_name,
+//                        newCPProgram.depository_id, newCPProgram.depository_name,
+//                        newCPProgram.isin, newCPProgram.isin_generation_request_doc_id,
+//                        newCPProgram.ipa_verification_request_doc_id,
+//                        newCPProgram.ipa_certificate_doc_id, newCPProgram.corporate_action_form_doc_id,
+//                        newCPProgram.allotment_letter_doc_id,
+//                        CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM.endStatus, //TODO: Add Status Enum
+//                        Instant.now(),
+//                        Integer(0)),
+//                notary = notary.notaryIdentity)
+//
+//        return tx
+//    }
 
 
     /*

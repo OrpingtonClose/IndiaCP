@@ -13,7 +13,7 @@ import net.corda.node.services.transactions.SimpleNotaryService
 import net.corda.testing.IntegrationTestCategory
 import org.junit.Test
 import java.net.URL
-
+import java.util.*
 
 
 /**
@@ -27,10 +27,40 @@ import java.net.URL
  * TODO: Still need to put a shutdown hook for this test in tear down.
  *
  */
+
+val programID:String = "CP_PROGRAM_1"
+
+val orgUnit:String = "BARCLAYS_TEST_ORG"
+
+class TestResult(val testName:String, val retFlag: Boolean, val error:String = "")
+{
+    override fun toString(): String
+    {
+        var msg:String = ""
+
+        if(retFlag) {
+            msg =  testName + " is SUCCESSFUL......."
+        }
+
+        try
+        {
+            assert(retFlag)
+        }
+        catch(e:AssertionError)
+        {
+            msg = testName + " FAILED WITH ERROR ......" + error
+        }
+
+        return msg
+    }
+}
+
+
 class CPProgramTest : IntegrationTestCategory
 {
 
-    val programID:String = "CP_PROGRAM_1"
+    val testResults:ArrayList<TestResult> = ArrayList<TestResult>()
+
 
     fun Config.getHostAndPort(name: String): HostAndPort = HostAndPort.fromString(getString(name))!!
 
@@ -48,6 +78,8 @@ class CPProgramTest : IntegrationTestCategory
 
             System.out.println("------------------------------------------------------------------------------------------" )
 
+            runIssueOrgBorrowingContract(issuer.config.getHostAndPort("webAddress"))
+
 
             runIssueCPProgram(issuer.config.getHostAndPort("webAddress"))
 
@@ -55,8 +87,19 @@ class CPProgramTest : IntegrationTestCategory
 
             runAddISINGenDoc(issuer.config.getHostAndPort("webAddress"))
 
+            runAddISIN(issuer.config.getHostAndPort("webAddress"))
 
-//            runIssueCPWithinCPProgram(issuer.config.getHostAndPort("webAddress"))
+            runaddIPAVerificationDocs(issuer.config.getHostAndPort("webAddress"))
+
+            runIssueCPWithinCPProgram(issuer.config.getHostAndPort("webAddress"))
+
+            System.out.println("-----------------------------------------ALL TEST RUN COMPLETE-------------------------------------------------" )
+
+            for(test in testResults)
+            {
+                System.out.println(test);
+            }
+
 
             waitForAllNodesToFinish()
 
@@ -64,13 +107,48 @@ class CPProgramTest : IntegrationTestCategory
     }
 
 
+    private fun runIssueOrgBorrowingContract(nodeAddr: HostAndPort)
+    {
+        val url = URL("http://$nodeAddr/api/orglevelcontract/issueOrgLevelBorrowingProgram")
+
+        System.out.println("Target URL : " + url)
+
+        val superOrgProgram:String = "{\"issuer\": \"Issuer\"," +
+                " \"org_id\": \""+orgUnit+"\", \"name\": \"Barclays India Org\", \"purpose\": \"masti\", " +
+                "\"commencement_date\": \"2016-12-30\", " +
+                "\"borrowing_limit\": 1000, \"borrowed_value\": 0, \"program_currency\": \"INR\", " +
+                "\"user_id\" : \"JOHN RAMBO\" }"
+
+
+        //This is to hold program for some time so that we can check something
+        // on the background.
+//        putWait(30)
+
+
+        var retflag : Boolean  = false
+        var error:String = ""
+        try
+        {
+            retflag = postJson(url, superOrgProgram)
+        }catch (e:Exception)
+        {
+            error = e.toString()
+        }
+
+        testResults.add(TestResult("runIssueOrgBorrowingContract", retflag, error))
+
+    }
+
+
+
     private fun runIssueCPProgram(nodeAddr: HostAndPort)
     {
-        val url = URL("http://$nodeAddr/api/indiacpprogram/issueCPProgram")
+        val url = URL("http://$nodeAddr/api/orglevelcontract/issueCPProgramWithInOrg")
 
         System.out.println("Target URL : " + url)
         
-        val indiaCPProgram:String = "{\"issuer\": \"Issuer\", \"ipa\": \"Investor1\", \"depository\": \"Investor1\", " +
+        val indiaCPProgram:String = "{\"orgUnit\":\""+ orgUnit+"\", \"issuer\": \"Issuer\", \"ipa\": \"Investor1\", " +
+                "\"depository\": \"Investor1\", " +
                 "\"program_id\": \""+programID+"\", \"name\": \"name\", \"type\": " +
                 "\"type\", \"purpose\": \"no special purpose\", \"issuer_id\": " +
                 "\"Issuer\", \"issuer_name\": \"issuer_name-1\", \"issue_commencement_date\": \"2016-12-22\", " +
@@ -89,14 +167,17 @@ class CPProgramTest : IntegrationTestCategory
 //        putWait(30)
 
 
-        var retflag : Boolean  = postJson(url, indiaCPProgram)
-
-        if(retflag)
+        var retflag : Boolean  = false
+        var error:String = ""
+        try
         {
-            println("runIssueCPProgram is SUCCESSFUL.......")
-            putWait(1)
+            retflag = postJson(url, indiaCPProgram)
+        }catch (e:Exception)
+        {
+            error = e.toString()
         }
-        assert(retflag)
+
+        testResults.add(TestResult("runIssueCPProgram", retflag, error))
 
     }
 
@@ -119,14 +200,17 @@ class CPProgramTest : IntegrationTestCategory
 
 //                assert(postJson(url, newCPJSON))
 
-                var retflag : Boolean  = postJson(url, newCPJSON)
+        var retflag : Boolean  = true
+        var error:String = ""
+        try
+        {
+            retflag = postJson(url, newCPJSON)
+        }catch (e:Exception)
+        {
+            error = e.toString()
+        }
 
-                if(retflag)
-                {
-                    println("runIssueCPProgram is SUCCESSFUL.......")
-                    putWait(5)
-                }
-                assert(retflag)
+        testResults.add(TestResult("runIssueCPWithinCPProgram", retflag, error))
     }
 
 
@@ -154,17 +238,17 @@ class CPProgramTest : IntegrationTestCategory
                         "\"tradeDate\": \"19-12-2016\", \"valueDate\": \"23-12-2017\", \"faceValue\": 10, " +
                         "\"maturityDays\": 7, \"isin\": \"INCP123456-1\"}"
 
-//                assert(postJson(url, newCPJSON))
-
-                var retflag : Boolean  = postJson(url, newCPJSON)
-
-                if(retflag)
+                var retflag : Boolean  = true
+                var error:String = ""
+                try
                 {
-                    println("runIssueCPProgram is SUCCESSFUL.......")
-                    putWait(5)
+                    retflag = postJson(url, newCPJSON)
+                }catch (e:Exception)
+                {
+                    error = e.toString()
                 }
 
-//                assert(retflag)
+                testResults.add(TestResult("runIssueCPWithinCPProgramConcurrently", retflag, error))
 
             }
         }
@@ -186,23 +270,73 @@ class CPProgramTest : IntegrationTestCategory
         println("\n\n\n\n\n\n\n\n")
         println("------------------------ Running test case for runAddISINGenDoc -------------------------------")
 
-        val url = URL("http://$nodeAddr/api/indiacpprogram/issueCPWithinCPProgram/"+programID+"/docHashId/docStatus444")
+        val url = URL("http://$nodeAddr/api/indiacpprogram/addISINGenerationDocs/"+programID+"/docHashId/docStatus444")
 
         System.out.println("Target URL : " + url)
 
-        val newCPJSON: String = ""
+        val newCPJSON: String = "{}"
 
-//                assert(postJson(url, newCPJSON))
-
-        var retflag : Boolean  = postJson(url, newCPJSON)
-
-        if(retflag)
+        var retflag : Boolean  = true
+        var error:String = ""
+        try
         {
-            println("runAddISINGenDoc is SUCCESSFUL.......")
-            putWait(5)
+            retflag = postJson(url, newCPJSON)
+        }catch (e:Exception)
+        {
+            error = e.toString()
         }
 
-//        assert(retflag)
+        testResults.add(TestResult("runAddISINGenDoc", retflag, error))
+
+    }
+
+    private fun runAddISIN(nodeAddr: HostAndPort) {
+
+        println("\n\n\n\n\n\n\n\n")
+        println("------------------------ Running test case for runAddISINGenDoc -------------------------------")
+
+        val url = URL("http://$nodeAddr/api/indiacpprogram/addISIN/"+programID+"/test_isin/docHashId/docStatus444")
+
+        System.out.println("Target URL : " + url)
+
+        val newCPJSON: String = "{}"
+
+        var retflag : Boolean  = true
+        var error:String = ""
+        try
+        {
+            retflag = postJson(url, newCPJSON)
+        }catch (e:Exception)
+        {
+            error = e.toString()
+        }
+
+        testResults.add(TestResult("runAddISIN", retflag, error))
+
+    }
+
+    private fun runaddIPAVerificationDocs(nodeAddr: HostAndPort) {
+
+        println("\n\n\n\n\n\n\n\n")
+        println("------------------------ Running test case for runAddISINGenDoc -------------------------------")
+
+        val url = URL("http://$nodeAddr/api/indiacpprogram/addIPAVerificationDocs/"+programID+"/docHashId_ipa_ver/docStatus_ipa")
+
+        System.out.println("Target URL : " + url)
+
+        val newCPJSON: String = "{}"
+
+        var retflag : Boolean  = true
+        var error:String = ""
+        try
+        {
+            retflag = postJson(url, newCPJSON)
+        }catch (e:Exception)
+        {
+            error = e.toString()
+        }
+
+        testResults.add(TestResult("runaddIPAVerificationDocs", retflag, error))
 
     }
 
