@@ -1,10 +1,10 @@
 package com.barclays.indiacp.cordapp.api
 
 
+import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.dto.OrgLevelProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramWithInOrgLimitFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.OrgLevelBorrowProgramFlow
-import com.barclays.indiacp.model.CPProgram
 import net.corda.core.node.ServiceHub
 import net.corda.core.utilities.Emoji
 import net.corda.core.utilities.loggerFor
@@ -43,7 +43,7 @@ class OrgLevelBorrowingProgramApi(val services: ServiceHub) {
     @POST
     @Path("issueCPProgramWithInOrg")
     @Consumes(MediaType.APPLICATION_JSON)
-    fun issueCPProgramWithInOrg(indiaCPProgramJSON: CPProgram): Response {
+    fun issueCPProgramWithInOrg(indiaCPProgramJSON: IndiaCPProgramJSON): Response {
         try
         {
             val stx = services.invokeFlowAsync(IssueCPProgramWithInOrgLimitFlow::class.java, indiaCPProgramJSON).resultFuture.get()

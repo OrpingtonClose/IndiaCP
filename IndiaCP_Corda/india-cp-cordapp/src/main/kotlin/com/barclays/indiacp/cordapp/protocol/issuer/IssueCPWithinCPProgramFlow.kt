@@ -2,13 +2,15 @@ package com.barclays.indiacp.cordapp.protocol.issuer
 
 import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.api.IndiaCPApi
+import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
+import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
-import com.barclays.indiacp.model.CPIssue
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.contracts.*
 import net.corda.core.crypto.Party
 import net.corda.core.crypto.SecureHash
+import net.corda.core.days
 import net.corda.core.node.NodeInfo
 import net.corda.core.flows.FlowLogic
 import net.corda.core.node.services.linearHeadsOfType
@@ -26,7 +28,7 @@ import java.util.*
  * In the "real world", we'd probably have the offers sitting in the platform prior to the agreement step
  * or the protocol would have to reach out to external systems (or users) to verify the deals.
  */
-class IssueCPWithinCPProgramFlow(val newCP: CPIssue) : FlowLogic<SignedTransaction>() {
+class IssueCPWithinCPProgramFlow(val newCP: IndiaCPApi.CPJSONObject) : FlowLogic<SignedTransaction>() {
 
     companion object {
         val PROSPECTUS_HASH = SecureHash.parse("decd098666b9657314870e192ced0c3519c2c9d395507a238338f8d003929de9")
@@ -51,10 +53,10 @@ class IssueCPWithinCPProgramFlow(val newCP: CPIssue) : FlowLogic<SignedTransacti
         progressTracker.currentStep = CP_PROGRAM_ISSUE_CP
 
         val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
-        val issuer = getPartyByName(newCP.issuerId)
-        val beneficiary = getPartyByName(newCP.investorId)
-        val ipa = getPartyByName(newCP.ipaId)
-        val depository = getPartyByName(newCP.depositoryId)
+        val issuer = getPartyByName(newCP.issuer)
+        val beneficiary = getPartyByName(newCP.beneficiary)
+        val ipa = getPartyByName(newCP.ipa)
+        val depository = getPartyByName(newCP.depository)
 
 
 
@@ -74,9 +76,9 @@ class IssueCPWithinCPProgramFlow(val newCP: CPIssue) : FlowLogic<SignedTransacti
 //                maturityDate = Instant.now() + newCP.maturityDays.days,
 //                isin = newCP.isin)
 
-        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCP.cpProgramId)
+        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCP.cpProgramID)
 
-        val newProgAllowValue: Amount<Issued<Currency>> = indiaCPProgramSF.state.data.programAllocatedValue.plus((newCP.notionalAmount*1.0).DOLLARS `issued by` DUMMY_CASH_ISSUER);
+        val newProgAllowValue: Amount<Issued<Currency>> = indiaCPProgramSF.state.data.programAllocatedValue.plus(newCP.faceValue.DOLLARS `issued by` DUMMY_CASH_ISSUER);
 
         if(newProgAllowValue.quantity > indiaCPProgramSF.state.data.programSize.quantity)
         {

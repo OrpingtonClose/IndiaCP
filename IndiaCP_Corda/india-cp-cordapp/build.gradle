@@ -10,6 +10,7 @@ buildscript {
         classpath "net.corda.plugins:publish-utils:$gradle_plugins_version"
         classpath "net.corda.plugins:quasar-utils:$gradle_plugins_version"
         classpath "net.corda.plugins:cordformation:$gradle_plugins_version"
+
     }
 }
 
@@ -75,8 +76,8 @@ dependencies {
     compile("org.graphstream:gs-ui:1.3") {
         exclude group: "bouncycastle"
     }
-    
-    compile "com.barclays.indiacp:indiacp_dl_integration:1.0-SNAPSHOT"
+
+//    compile "com.barclays.indiacp:indiacp_dl_integration:1.0-SNAPSHOT"
 
     // Cordapp dependencies
     // Specify your cordapp's dependencies below, including dependent cordapps
