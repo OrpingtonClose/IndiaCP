@@ -84,9 +84,11 @@ public class IndiaCPContractUtils {
         }
     }
 
-    public static <T> T populateContractModel(SolidityContract contract, String functionName, Class<T> contractModel, List<Object> dataAsList) {
+    public static <T> T populateContractModel(T contractModelInstance, SolidityContract contract, String functionName, Class<T> contractModel, List<Object> dataAsList) {
         try {
-            T contractModelInstance = instantiateObjectOfType(contractModel);
+            if(contractModelInstance==null){
+                contractModelInstance = instantiateObjectOfType(contractModel);
+            }
             ContractABI.Function function = contract.getContractABI().getFunction(functionName);
             List<ContractABI.Entry.Param> functionParams = function.outputs;
             int i = 0;

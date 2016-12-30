@@ -4,7 +4,6 @@ import com.barclays.indiacp.model.CPIssue;
 import com.barclays.indiacp.model.CPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 import com.jpmorgan.cakeshop.client.model.Contract;
-import com.jpmorgan.cakeshop.client.model.Transaction;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -40,8 +39,23 @@ public class IndiaCPProgram {
 
         //fetch details of all IndiaCPProgram Contract instances
         ArrayList<CPProgram> cpProgramArrayList = new ArrayList<>();
+
+        //TODO find all method names which are required to fetch all the contents of CPPrograms
+        //Need to check if the code works
+        /*SolidityContract contract = null;
+        contract.getContractABI().findFunction(new org.apache.commons.collections4.Predicate<ContractABI.Function>() {
+            @Override
+            public boolean evaluate(ContractABI.Function f) {
+                return f.name.startsWith("fetchCPProgram");
+            }
+        });*/
+
+        //Temporarily hardcoded all fetch methods
+        String[] readMethodNames = {"fetchCPProgramTradeDetails", "fetchCPProgramDocuments",
+                "fetchCPProgramParties", "fetchCPProgramStatus"};
+
         for(Contract contract: contractList){
-            cpProgramArrayList.add(CakeshopUtils.readContract(this.getClass().getSimpleName(), contract.getAddress(), "fetchCPProgram", CPProgram.class));
+            cpProgramArrayList.add(CakeshopUtils.readContract(this.getClass().getSimpleName(), contract.getAddress(), CPProgram.class, readMethodNames));
         }
 
         return cpProgramArrayList;
