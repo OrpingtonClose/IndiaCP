@@ -21,9 +21,9 @@ module app.dashboard {
             this.fetchAllCPPrograms();
         }
         public fetchAllCPPrograms(): void {
-            // this.issuerService.fetchAllCPProgram("groggy").then(function (response) {
-            //     this.$scope.cpprograms = response;
-            // });
+            //this.issuerService.fetchAllCPProgram("groggy").then(function (response) {
+            //    this.$scope.cpprograms = response;
+            //});
         }
         public generateISINDocs(): void {
             this.$uibModal.open({

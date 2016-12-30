@@ -12,9 +12,9 @@ var app;
                 this.fetchAllCPPrograms();
             }
             DashboardController.prototype.fetchAllCPPrograms = function () {
-                // this.issuerService.fetchAllCPProgram("groggy").then(function (response) {
-                //     this.$scope.cpprograms = response;
-                // });
+                //this.issuerService.fetchAllCPProgram("groggy").then(function (response) {
+                //    this.$scope.cpprograms = response;
+                //});
             };
             DashboardController.prototype.generateISINDocs = function () {
                 this.$uibModal.open({
