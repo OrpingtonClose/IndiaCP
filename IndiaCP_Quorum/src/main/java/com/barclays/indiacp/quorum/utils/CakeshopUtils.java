@@ -1,8 +1,10 @@
 package com.barclays.indiacp.quorum.utils;
 
+import com.barclays.indiacp.model.CPProgram;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCode;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCodeFactory;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.jpmorgan.cakeshop.client.ClientManager;
 import com.jpmorgan.cakeshop.client.api.ContractApi;
 import com.jpmorgan.cakeshop.client.model.Contract;
@@ -10,6 +12,7 @@ import com.jpmorgan.cakeshop.client.model.Transaction;
 import com.jpmorgan.cakeshop.client.model.TransactionResult;
 import com.jpmorgan.cakeshop.client.model.req.ContractCompileCommand;
 import com.jpmorgan.cakeshop.client.model.req.ContractCreateCommand;
+import com.jpmorgan.cakeshop.client.model.req.ContractMethodCallCommand;
 import com.jpmorgan.cakeshop.client.model.res.APIData;
 import com.jpmorgan.cakeshop.client.model.res.APIResponse;
 
@@ -64,29 +67,46 @@ public class CakeshopUtils {
         contractCreateCommand.setBinary(contractCode.getContractBinary());
         contractCreateCommand.setCodeType(contractCode.getCodeType());
         contractCreateCommand.setFrom("0x2e219248f44546d966808cdd20cb6c36df6efa82");
-        contractCreateCommand.setArgs(contractModel == null? null: contractCode.getConstructorArgs(contractModel));
+        contractCreateCommand.setArgs(contractModel == null? null: IndiaCPContractUtils.getConstructorArgs(contractCode, contractModel));
         return contractCreateCommand;
 
     }
 
     public static List<Contract> listContractsByName(String nameFilter){
-        APIResponse<List<APIData<Contract>>, Contract> apiResponse = getCakeshopContractApi().list();
+        APIResponse<List<APIData<Contract>>, Contract> apiResponse = contractApi.list();
 
         ArrayList<Contract> filteredContracts = new ArrayList<>();
         for(Contract contract: apiResponse.getDataAsList()){
-            contract.getName().equalsIgnoreCase(nameFilter);
-            filteredContracts.add(contract);
+            if (contract.getName().equalsIgnoreCase(nameFilter)) {
+                filteredContracts.add(contract);
+            }
         }
-        return apiResponse.getDataAsList();
+        return filteredContracts;
     }
 
     public static Object getContractState(String contractAddress) {
 
-        APIResponse<APIData<Contract>, Contract> a = getCakeshopContractApi().get(contractAddress);
+        APIResponse<APIData<Contract>, Contract> a = contractApi.get(contractAddress);
 
         //TODO find state using read calls
         return new Object();
     }
 
 
+    public static <T>  T readContract(String contractName, String contractAddress, String readMethodName, Class<T> contractModel) {
+        APIResponse<List<Object>, Object> apiResponse = contractApi.read(getContractMethodCallCommand(contractAddress, readMethodName));
+
+        T contractModelObject = IndiaCPContractUtils.populateContractModel(SolidityContractCodeFactory.getInstance(contractName),
+                readMethodName,
+                contractModel,
+                apiResponse.getApiData());
+        return contractModelObject;
+    }
+
+    public static ContractMethodCallCommand getContractMethodCallCommand(String contractAddress, String methodName) {
+        ContractMethodCallCommand contractMethodCallCommand = new ContractMethodCallCommand();
+        contractMethodCallCommand.setAddress(contractAddress);
+        contractMethodCallCommand.setMethod(methodName);
+        return contractMethodCallCommand;
+    }
 }

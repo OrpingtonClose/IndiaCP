@@ -4,6 +4,7 @@ import com.barclays.indiacp.model.CPIssue;
 import com.barclays.indiacp.model.CPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 import com.barclays.indiacp.quorum.utils.IndiaCPContractUtils;
+import com.jpmorgan.cakeshop.client.model.Contract;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ritukedia on 23/12/16.
@@ -26,23 +28,31 @@ public class IndiaCPProgram {
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response issueCPProgram(CPProgram cpProgram) {
-        String contractAddress = CakeshopUtils.createContract(this.getClass().getName(), cpProgram);
+        String contractAddress = CakeshopUtils.createContract(this.getClass().getSimpleName(), cpProgram);
         return Response.status(Response.Status.OK).build();
     }
 
     @GET
     @Path("fetchAllCPProgram")
-    public Response fetchAllCPProgram() {
-        ArrayList<CPProgram> cpProgramList = IndiaCPContractUtils.fetchCPPrograms();
-        return Response.status(Response.Status.OK).build();
+    @Produces(MediaType.APPLICATION_JSON)
+    public ArrayList<CPProgram>  fetchAllCPProgram() {
+        //fetch all contract instances of IndiaCPProgram Contracts
+        List<Contract> contractList = CakeshopUtils.listContractsByName(this.getClass().getSimpleName());
 
+        //fetch details of all IndiaCPProgram Contract instances
+        ArrayList<CPProgram> cpProgramArrayList = new ArrayList<>();
+        for(Contract contract: contractList){
+            cpProgramArrayList.add(CakeshopUtils.readContract(this.getClass().getSimpleName(), contract.getAddress(), "fetchCPProgram", CPProgram.class));
+        }
+
+        return cpProgramArrayList;
     }
 
     @GET
     @Path("fetchCPProgram/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response fetchCPProgram(@PathParam("cpProgramId") String cpProgramId) {
-        CPProgram cpProgram = IndiaCPContractUtils.fetchCPProgram(cpProgramId);
+        //CPProgram cpProgram = IndiaCPContractUtils.fetchCPProgram(cpProgramId);
         return Response.status(Response.Status.OK).build();
 
     }
