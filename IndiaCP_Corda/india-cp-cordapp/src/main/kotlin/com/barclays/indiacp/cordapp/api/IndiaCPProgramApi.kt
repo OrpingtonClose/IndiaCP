@@ -1,10 +1,11 @@
 package com.barclays.indiacp.cordapp.api
 
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
-import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.CPProgramFlows
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPWithinCPProgramFlow
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
+import com.barclays.indiacp.model.CPIssue
+import com.barclays.indiacp.model.CPProgram
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.utilities.Emoji
@@ -29,7 +30,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @POST
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
-    fun issueCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON): Response {
+    fun issueCPProgram(indiaCPProgramJSON: CPProgram): Response {
         try {
             val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
@@ -46,7 +47,11 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                              @PathParam("docHashId") docHashId: String,
                              @PathParam("docStatus") docStatus: String): Response {
         try {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, isin_generation_request_doc_id = docHashId , isin_generation_request_doc_status = docStatus, status = CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC.endStatus)
+            val indiaCPProgramJSON:CPProgram = CPProgram()
+            indiaCPProgramJSON.programId = cpProgramId
+            indiaCPProgramJSON.isinGenerationRequestDocId = docHashId
+//            indiaCPProgramJSON.status = docStatus
+            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC.endStatus
 
             val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
@@ -73,7 +78,11 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     {
         try
         {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, isin = isin, isin_generation_request_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADDISIN.endStatus)
+            val indiaCPProgramJSON:CPProgram = CPProgram()
+            indiaCPProgramJSON.programId = cpProgramId
+            indiaCPProgramJSON.isin = isin
+            indiaCPProgramJSON.isinGenerationRequestDocId = docHashId
+            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADDISIN.endStatus
 
 
 
@@ -90,7 +99,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @Path("issueCPWithinCPProgram/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
     fun issueCPWintinCPProgram(@PathParam("cpProgramId") cpProgramId: String,
-                               newCP: IndiaCPApi.CPJSONObject
+                               newCP: CPIssue
                                ): Response {
         try {
 
@@ -110,7 +119,10 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                              @PathParam("docHashId") docHashId: String,
                              @PathParam("docStatus") docStatus: String): Response {
         try {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, ipa_verification_request_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.endStatus)
+            val indiaCPProgramJSON:CPProgram = CPProgram()
+            indiaCPProgramJSON.programId = cpProgramId
+            indiaCPProgramJSON.ipaVerificationRequestDocId = docHashId
+            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.endStatus
 
 
 
@@ -129,7 +141,10 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                                @PathParam("docHashId") docHashId: String,
                                @PathParam("docStatus") docStatus: String): Response {
         try {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, ipa_certificate_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC.endStatus)
+            val indiaCPProgramJSON:CPProgram = CPProgram()
+            indiaCPProgramJSON.programId = cpProgramId
+            indiaCPProgramJSON.ipaCertificateDocId = docHashId
+            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC.endStatus
 
 
 
@@ -148,7 +163,10 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                             @PathParam("docHashId") docHashId: String,
                             @PathParam("docStatus") docStatus: String): Response {
         try {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, corporate_action_form_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC.endStatus)
+            val indiaCPProgramJSON:CPProgram = CPProgram()
+            indiaCPProgramJSON.programId = cpProgramId
+            indiaCPProgramJSON.corporateActionFormDocId = docHashId
+            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC.endStatus
 
 
 
@@ -167,7 +185,10 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                              @PathParam("docHashId") docHashId: String,
                              @PathParam("docStatus") docStatus: String): Response {
         try {
-            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, allotment_letter_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC.endStatus)
+            val indiaCPProgramJSON:CPProgram = CPProgram()
+            indiaCPProgramJSON.programId = cpProgramId
+            indiaCPProgramJSON.allotmentLetterDocId = docHashId
+            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC.endStatus
 
 
 

@@ -1,5 +1,6 @@
 package com.barclays.indiacp.quorum.utils;
 
+import com.barclays.indiacp.quorum.contract.code.SolidityContractCode;
 import com.barclays.indiacp.quorum.contract.code.SolidityContract;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCodeFactory;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -31,7 +32,7 @@ public class CakeshopUtils {
 
     static {
         // setup cakeshop manager
-        cakeshopManager = ClientManager.create("http://localhost:8080/cakeshop");
+        cakeshopManager = ClientManager.create("http://52.172.42.128:8080/cakeshop");
         contractApi = cakeshopManager.getClient(ContractApi.class);
         transactionApi = cakeshopManager.getClient(TransactionApi.class);
     }

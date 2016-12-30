@@ -91,6 +91,12 @@ class CPProgramTest : IntegrationTestCategory
 
             runaddIPAVerificationDocs(issuer.config.getHostAndPort("webAddress"))
 
+            runAddIPACertifcateDoc(issuer.config.getHostAndPort("webAddress"))
+
+            runAddCorpActionFormDoc(issuer.config.getHostAndPort("webAddress"))
+
+            runAddAllotmentLetterDoc(issuer.config.getHostAndPort("webAddress"))
+
             runIssueCPWithinCPProgram(issuer.config.getHostAndPort("webAddress"))
 
             System.out.println("-----------------------------------------ALL TEST RUN COMPLETE-------------------------------------------------" )
@@ -340,6 +346,81 @@ class CPProgramTest : IntegrationTestCategory
 
     }
 
+    private fun runAddIPACertifcateDoc(nodeAddr: HostAndPort) {
+
+        println("\n\n\n\n\n\n\n\n")
+        println("------------------------ Running test case for runAddISINGenDoc -------------------------------")
+
+        val url = URL("http://$nodeAddr/api/indiacpprogram/addIPACertifcateDoc/"+programID+"/docHashId_ipa_cer/docStatus_ipa_cer")
+
+        System.out.println("Target URL : " + url)
+
+        val newCPJSON: String = "{}"
+
+        var retflag : Boolean  = true
+        var error:String = ""
+        try
+        {
+            retflag = postJson(url, newCPJSON)
+        }catch (e:Exception)
+        {
+            error = e.toString()
+        }
+
+        testResults.add(TestResult("runAddIPACertifcateDoc", retflag, error))
+
+    }
+
+    private fun runAddCorpActionFormDoc(nodeAddr: HostAndPort) {
+
+        println("\n\n\n\n\n\n\n\n")
+        println("------------------------ Running test case for runAddISINGenDoc -------------------------------")
+
+        val url = URL("http://$nodeAddr/api/indiacpprogram/addCorpActionFormDoc/"+programID+"/docHashId_corpAct/docStatus_corp")
+
+        System.out.println("Target URL : " + url)
+
+        val newCPJSON: String = "{}"
+
+        var retflag : Boolean  = true
+        var error:String = ""
+        try
+        {
+            retflag = postJson(url, newCPJSON)
+        }catch (e:Exception)
+        {
+            error = e.toString()
+        }
+
+        testResults.add(TestResult("runAddCorpActionFormDoc", retflag, error))
+
+    }
+
+
+    private fun runAddAllotmentLetterDoc(nodeAddr: HostAndPort) {
+
+        println("\n\n\n\n\n\n\n\n")
+        println("------------------------ Running test case for runAddISINGenDoc -------------------------------")
+
+        val url = URL("http://$nodeAddr/api/indiacpprogram/addAllotmentLetterDoc/"+programID+"/docHashId_corpAct/docStatus_corp")
+
+        System.out.println("Target URL : " + url)
+
+        val newCPJSON: String = "{}"
+
+        var retflag : Boolean  = true
+        var error:String = ""
+        try
+        {
+            retflag = postJson(url, newCPJSON)
+        }catch (e:Exception)
+        {
+            error = e.toString()
+        }
+
+        testResults.add(TestResult("runAddAllotmentLetterDoc", retflag, error))
+
+    }
 
 
 }
