@@ -2,9 +2,12 @@ package com.barclays.indiacp.cordapp.plugin
 
 import com.barclays.indiacp.cordapp.api.IndiaCPApi
 import com.barclays.indiacp.cordapp.api.IndiaCPProgramApi
+import com.barclays.indiacp.cordapp.api.OrgLevelBorrowingProgramApi
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
+import com.barclays.indiacp.cordapp.contract.OrgLevelBorrowProgram
 import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
+import com.barclays.indiacp.cordapp.dto.OrgLevelProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.*
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
 import com.esotericsoftware.kryo.Kryo
@@ -18,7 +21,7 @@ import java.util.function.Function
 class IndiaCPPlugin : CordaPluginRegistry() {
     // A list of classes that expose web APIs.
     //override val webApis = listOf(Function(::IndiaCPApi))
-    override val webApis: List<Class<*>> = listOf(IndiaCPApi::class.java, IndiaCPProgramApi::class.java)
+    override val webApis: List<Class<*>> = listOf(IndiaCPApi::class.java, IndiaCPProgramApi::class.java, OrgLevelBorrowingProgramApi::class.java)
 
     // A list of protocol that are required for this cordapp
     override val requiredFlows: Map<String, Set<String>> = mapOf(
@@ -37,7 +40,11 @@ class IndiaCPPlugin : CordaPluginRegistry() {
 
 
             //ISSUE CP within exsiting CP Program
-                    IssueCPWithinCPProgramFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name)
+                    IssueCPWithinCPProgramFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
+
+            //Org Level Borrowing Program Flow
+            OrgLevelBorrowProgramFlow::class.java.name to setOf(OrgLevelProgramJSON::class.java.name),
+            IssueCPProgramWithInOrgLimitFlow::class.java.name to setOf(IndiaCPProgramJSON::class.java.name)
 
 
     )
@@ -72,6 +79,10 @@ class IndiaCPPlugin : CordaPluginRegistry() {
             register(CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC::class.java)
 
 
+            //Entries for Org Level Program
+            register(OrgLevelProgramJSON::class.java)
+            register(OrgLevelBorrowProgram::class.java)
+            register(OrgLevelBorrowProgram.OrgState::class.java)
 
 
             //MM : Getting error due to this class not registered.
