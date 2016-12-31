@@ -1,7 +1,6 @@
 package com.barclays.indiacp.cordapp.contract
 
 import com.barclays.indiacp.cordapp.api.IndiaCPApi
-import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.schemas.DocumentAuditSchemaV1
 import com.barclays.indiacp.cordapp.schemas.IndiaCommercialPaperProgramSchemaV1
 import net.corda.contracts.asset.sumCashBy
@@ -18,6 +17,7 @@ import net.corda.core.schemas.QueryableState
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.Emoji
 import com.barclays.indiacp.cordapp.utilities.CPUtils
+import com.barclays.indiacp.model.CPIssue
 import net.corda.contracts.ICommercialPaperState
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.crypto.*
@@ -94,7 +94,7 @@ class IndiaCommercialPaperProgram : Contract {
 
             val programCurrency: Currency,
 
-            val maturityDate: Instant,
+            val maturityDate: Date,
 
             val ipaId: String,
 
@@ -143,7 +143,7 @@ class IndiaCommercialPaperProgram : Contract {
         }
 
         val token: Issued<IndiaCommercialPaperProgram.Terms>
-            get() = Issued(issuer.ref(CPUtils.getReference(programId)), IndiaCommercialPaperProgram.Terms(programSize.token, maturityDate))
+            get() = Issued(issuer.ref(CPUtils.getReference(programId)), IndiaCommercialPaperProgram.Terms(programSize.token, maturityDate.toInstant()))
 
         override fun toString() = "${Emoji.newspaper}IndiaCommercialPaperProgram(of $programSize issued by '$issuer' on '$issueCommencementDate' with a maturity period of '$maturityDate')"
 
@@ -325,7 +325,7 @@ class IndiaCommercialPaperProgram : Contract {
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
-                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
+                require(outputs.all { time < it.maturityDate.toInstant() }) { "maturity date is not in the past" }
 
                 return consumedCommands
             }
@@ -347,7 +347,7 @@ class IndiaCommercialPaperProgram : Contract {
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
-                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
+                require(outputs.all { time < it.maturityDate.toInstant() }) { "maturity date is not in the past" }
 
                 return consumedCommands
             }
@@ -369,7 +369,7 @@ class IndiaCommercialPaperProgram : Contract {
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
-                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
+                require(outputs.all { time < it.maturityDate.toInstant() }) { "maturity date is not in the past" }
 
                 return consumedCommands
             }
@@ -393,7 +393,7 @@ class IndiaCommercialPaperProgram : Contract {
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
-                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
+                require(outputs.all { time < it.maturityDate.toInstant() }) { "maturity date is not in the past" }
 
                 return consumedCommands
             }
@@ -415,7 +415,7 @@ class IndiaCommercialPaperProgram : Contract {
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
-                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
+                require(outputs.all { time < it.maturityDate.toInstant() }) { "maturity date is not in the past" }
 
                 return consumedCommands
             }
@@ -437,7 +437,7 @@ class IndiaCommercialPaperProgram : Contract {
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
-                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
+                require(outputs.all { time < it.maturityDate.toInstant() }) { "maturity date is not in the past" }
 
                 return consumedCommands
             }
@@ -459,7 +459,7 @@ class IndiaCommercialPaperProgram : Contract {
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
-                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
+                require(outputs.all { time < it.maturityDate.toInstant() }) { "maturity date is not in the past" }
 
                 return consumedCommands
             }
@@ -662,7 +662,7 @@ class IndiaCommercialPaperProgram : Contract {
     /**
      * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
      */
-    fun createCPIssueWithinCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, issuer: Party, beneficiary: Party, ipa: Party, depository: Party, notary: Party, programAllocatedValue : Amount<Issued<Currency>>, newCP: IndiaCPApi.CPJSONObject, status: String): TransactionBuilder {
+    fun createCPIssueWithinCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, issuer: Party, beneficiary: Party, ipa: Party, depository: Party, notary: Party, programAllocatedValue : Amount<Issued<Currency>>, newCP: CPIssue, status: String): TransactionBuilder {
 
         val ptx = TransactionType.General.Builder(notary)
         ptx.addInputState(indiaCPProgramSF)
@@ -677,8 +677,8 @@ class IndiaCommercialPaperProgram : Contract {
 
         //Now let us add India CP State into this transaction
         val indiaCPState = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
-                newCP.cpProgramID, newCP.cpTradeID, newCP.tradeDate, newCP.valueDate,
-                newCP.faceValue.DOLLARS `issued by` DUMMY_CASH_ISSUER, Instant.now() + newCP.maturityDays.days,
+                newCP.cpProgramId, newCP.traderId, newCP.tradeDate, newCP.valueDate,
+                (newCP.notionalAmount * 1.0).DOLLARS `issued by` DUMMY_CASH_ISSUER, newCP.maturityDate,
                 newCP.isin), notary)
 
 

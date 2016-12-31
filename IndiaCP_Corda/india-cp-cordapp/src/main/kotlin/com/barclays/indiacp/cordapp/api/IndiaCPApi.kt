@@ -5,6 +5,7 @@ import com.barclays.indiacp.cordapp.protocol.issuer.DealEntryFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.utilities.CPUtils
+import com.barclays.indiacp.model.CPIssue
 import net.corda.contracts.testing.fillWithSomeTestCash
 import net.corda.core.contracts.*
 import net.corda.node.services.messaging.CordaRPCOps
@@ -34,18 +35,18 @@ class IndiaCPApi(val services: ServiceHub) {
 
     data class CPReferenceAndAcceptablePrice(val cpRefId: String, val acceptablePrice: Int)
 
-    data class CPJSONObject(val issuer: String,
-                            val beneficiary: String,
-                            val ipa: String,
-                            val depository: String,
-                            val cpProgramID: String,
-                            val cpTradeID: String,
-                            val tradeDate: String,
-                            val valueDate: String,
-                            val faceValue: Double,
-                            val maturityDays: Int,
-                            val isin: String
-                            )
+//    data class CPJSONObject(val issuer: String,
+//                            val beneficiary: String,
+//                            val ipa: String,
+//                            val depository: String,
+//                            val cpProgramID: String,
+//                            val cpTradeID: String,
+//                            val tradeDate: String,
+//                            val valueDate: String,
+//                            val faceValue: Double,
+//                            val maturityDays: Int,
+//                            val isin: String
+//                            )
 
     data class SettlementDetailsJSONObject(
                             val partyType : String,
@@ -76,7 +77,7 @@ class IndiaCPApi(val services: ServiceHub) {
     @POST
     @Path("issueCP")
     @Consumes(MediaType.APPLICATION_JSON)
-    fun issueCP(newCP: CPJSONObject): Response {
+    fun issueCP(newCP: CPIssue): Response {
         try {
             val stx = services.invokeFlowAsync(IssueCPFlow::class.java, newCP).resultFuture.get()
             logger.info("CP Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
