@@ -6,18 +6,17 @@ import com.barclays.indiacp.cordapp.api.OrgLevelBorrowingProgramApi
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.contract.OrgLevelBorrowProgram
+import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.dto.OrgLevelProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.*
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
-import com.barclays.indiacp.model.CPIssue
-import com.barclays.indiacp.model.CPProgram
 import com.esotericsoftware.kryo.Kryo
 import net.corda.core.crypto.Party
 import net.corda.core.node.CordaPluginRegistry
 import net.corda.flows.NotaryError
 import net.corda.flows.NotaryException
 import java.util.*
-
+import java.util.function.Function
 
 class IndiaCPPlugin : CordaPluginRegistry() {
     // A list of classes that expose web APIs.
@@ -27,12 +26,12 @@ class IndiaCPPlugin : CordaPluginRegistry() {
     // A list of protocol that are required for this cordapp
     override val requiredFlows: Map<String, Set<String>> = mapOf(
             DealEntryFlow::class.java.name to setOf(String::class.java.name, Party::class.java.name),
-            IssueCPFlow::class.java.name to setOf(CPIssue::class.java.name),
+            IssueCPFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
             AddSettlementDetailsFlow::class.java.name to setOf(String::class.java.name, IndiaCPApi.SettlementDetailsJSONObject::class.java.name),
 
 
             //Each flow needs to be indivisually registered in this format.
-            CPProgramFlows::class.java.name to setOf(CPProgram::class.java.name, CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM::class.java.name,
+            CPProgramFlows::class.java.name to setOf(IndiaCPProgramJSON::class.java.name, CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM::class.java.name,
                     CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC::class.java.name, CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC::class.java.name,
                     CP_PROGRAM_FLOW_STAGES.ADDISIN::class.java.name, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC::class.java.name,
                     CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC::class.java.name, CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC::class.java.name,
@@ -41,18 +40,18 @@ class IndiaCPPlugin : CordaPluginRegistry() {
 
 
             //ISSUE CP within exsiting CP Program
-                    IssueCPWithinCPProgramFlow::class.java.name to setOf(CPIssue::class.java.name),
+                    IssueCPWithinCPProgramFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
 
             //Org Level Borrowing Program Flow
             OrgLevelBorrowProgramFlow::class.java.name to setOf(OrgLevelProgramJSON::class.java.name),
-            IssueCPProgramWithInOrgLimitFlow::class.java.name to setOf(CPProgram::class.java.name)
+            IssueCPProgramWithInOrgLimitFlow::class.java.name to setOf(IndiaCPProgramJSON::class.java.name)
 
 
     )
 
     override fun registerRPCKryoTypes(kryo: Kryo): Boolean {
         kryo.apply {
-            register(CPIssue::class.java)
+            register(IndiaCPApi.CPJSONObject::class.java)
             register(IndiaCommercialPaper::class.java)
             register(IndiaCommercialPaper.State::class.java)
             register(IndiaCommercialPaper.SettlementDetails::class.java)
@@ -64,7 +63,7 @@ class IndiaCPPlugin : CordaPluginRegistry() {
 
             //MM For India CP Propgram
             register(Date::class.java)
-            register(CPProgram::class.java)
+            register(IndiaCPProgramJSON::class.java)
             register(IndiaCommercialPaperProgram::class.java)
             register(IndiaCommercialPaperProgram.State::class.java)
             //Just this is not enought. it needs all inside values as well somehow.

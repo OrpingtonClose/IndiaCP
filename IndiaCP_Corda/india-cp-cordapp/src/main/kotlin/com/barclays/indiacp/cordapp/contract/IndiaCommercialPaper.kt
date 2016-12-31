@@ -67,10 +67,10 @@ class IndiaCommercialPaper : Contract {
             val depository: Party,
             val cpProgramID: String,
             val cpTradeID: String,
-            val tradeDate: Date,
-            val valueDate: Date,
+            val tradeDate: String,
+            val valueDate: String,
             val faceValue: Amount<Issued<Currency>>,
-            val maturityDate: Date,
+            val maturityDate: Instant,
             var isin: String,
             var version: Integer = Integer(1),
             var hashDealConfirmationDoc: String? = null,
@@ -99,7 +99,7 @@ class IndiaCommercialPaper : Contract {
         }
 
         val token: Issued<IndiaCommercialPaper.Terms>
-            get() = Issued(issuer.ref(CPUtils.getReference(ref)), IndiaCommercialPaper.Terms(faceValue.token, maturityDate.toInstant()))
+            get() = Issued(issuer.ref(CPUtils.getReference(ref)), IndiaCommercialPaper.Terms(faceValue.token, maturityDate))
 
         override fun toString() = "${Emoji.newspaper}CommercialPaper($cpProgramID:$cpTradeID of $faceValue redeemable on $maturityDate by '$issuer', owned by ${beneficiary.owningKey.toString()})"
 
@@ -189,7 +189,7 @@ class IndiaCommercialPaper : Contract {
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
-                require(outputs.all { time < it.maturityDate.toInstant() }) { "maturity date is not in the past" }
+                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
 
                 return consumedCommands
             }
@@ -232,7 +232,7 @@ class IndiaCommercialPaper : Contract {
                 val received = tx.outputs.sumCashBy(input.beneficiary.owningKey)
                 val time = timestamp?.after ?: throw IllegalArgumentException("Redemptions must be timestamped")
                 requireThat {
-                    "the paper must have matured" by (time >= input.maturityDate.toInstant())
+                    "the paper must have matured" by (time >= input.maturityDate)
                     "the received amount equals the face value" by (received == input.faceValue)
                     "the paper must be destroyed" by outputs.isEmpty()
                     "the transaction is signed by the beneficiary of the CP" by (input.beneficiary.owningKey in command.signers)
@@ -278,8 +278,8 @@ class IndiaCommercialPaper : Contract {
      * at the moment: this restriction is not fundamental and may be lifted later.
      */
     fun generateIssue(issuer: Party, beneficiary: Party, ipa: Party, depository: Party, notary: Party,
-                      cpProgramID: String, cpTradeID: String, tradeDate: Date, valueDate: Date,
-                      faceValue: Amount<Issued<Currency>>, maturityDate: Date,
+                      cpProgramID: String, cpTradeID: String, tradeDate: String, valueDate: String,
+                      faceValue: Amount<Issued<Currency>>, maturityDate: Instant,
                       isin: String): TransactionBuilder {
 
         val state = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
@@ -295,8 +295,8 @@ class IndiaCommercialPaper : Contract {
      * at the moment: this restriction is not fundamental and may be lifted later.
      */
     fun generateAgreement(issuer: Party, beneficiary: Party, ipa: Party, depository: Party,
-                      cpProgramID: String, cpTradeID: String, tradeDate: Date, valueDate: Date,
-                      faceValue: Amount<Issued<Currency>>, maturityDate: Date,
+                      cpProgramID: String, cpTradeID: String, tradeDate: String, valueDate: String,
+                      faceValue: Amount<Issued<Currency>>, maturityDate: Instant,
                       isin: String, notary: Party): TransactionBuilder {
 
         val state = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
