@@ -10,7 +10,7 @@ buildscript {
         classpath "net.corda.plugins:publish-utils:$gradle_plugins_version"
         classpath "net.corda.plugins:quasar-utils:$gradle_plugins_version"
         classpath "net.corda.plugins:cordformation:$gradle_plugins_version"
-
+        classpath "com.barclays.indiacp:indiacp_swagger_specification:1.0-SNAPSHOT"
     }
 }
 
@@ -70,6 +70,8 @@ dependencies {
 
     // Javax is required for webapis
     compile "org.glassfish.jersey.core:jersey-server:${jersey_version}"
+
+    compile "com.barclays.indiacp:indiacp_swagger_specification:1.0-SNAPSHOT"
 
     // GraphStream: For visualisation (required by ExampleClientRPC app)
     compile "org.graphstream:gs-core:1.3"

@@ -28,12 +28,14 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 
 /**
  * IndiaCPDocumentDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T17:41:21.538Z")
 public class IndiaCPDocumentDetails   {
   @JsonProperty("cp_program_id")
   private String cpProgramId = null;
@@ -68,7 +70,7 @@ public class IndiaCPDocumentDetails   {
    * Unique identifier of the CP Program that this document is associated with
    * @return cpProgramId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the CP Program that this document is associated with")
+  @ApiModelProperty(value = "Unique identifier of the CP Program that this document is associated with")
   public String getCpProgramId() {
     return cpProgramId;
   }
@@ -86,7 +88,7 @@ public class IndiaCPDocumentDetails   {
    * Unique identifier of the CP Issue that this document is associated with
    * @return cpIssueId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the CP Issue that this document is associated with")
+  @ApiModelProperty(value = "Unique identifier of the CP Issue that this document is associated with")
   public String getCpIssueId() {
     return cpIssueId;
   }
@@ -104,7 +106,7 @@ public class IndiaCPDocumentDetails   {
    * Type of Document. Possible Values are ISIN_DOC, IPA_DOC, DEAL_CONFIRMATION_DOC, ALLOTMENT_LETTER, CORPORATE_ACTION_FORM
    * @return docType
   **/
-  //@ApiModelProperty(value = "Type of Document. Possible Values are ISIN_DOC, IPA_DOC, DEAL_CONFIRMATION_DOC, ALLOTMENT_LETTER, CORPORATE_ACTION_FORM")
+  @ApiModelProperty(value = "Type of Document. Possible Values are ISIN_DOC, IPA_DOC, DEAL_CONFIRMATION_DOC, ALLOTMENT_LETTER, CORPORATE_ACTION_FORM")
   public String getDocType() {
     return docType;
   }
@@ -122,7 +124,7 @@ public class IndiaCPDocumentDetails   {
    * Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA
    * @return docSubType
   **/
-  //@ApiModelProperty(value = "Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA")
+  @ApiModelProperty(value = "Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA")
   public String getDocSubType() {
     return docSubType;
   }
@@ -140,7 +142,7 @@ public class IndiaCPDocumentDetails   {
    * SHA256 Hash of the Content of the Document. This hash uniquely identifies the document.
    * @return docHash
   **/
-  //@ApiModelProperty(value = "SHA256 Hash of the Content of the Document. This hash uniquely identifies the document.")
+  @ApiModelProperty(value = "SHA256 Hash of the Content of the Document. This hash uniquely identifies the document.")
   public String getDocHash() {
     return docHash;
   }
@@ -158,7 +160,7 @@ public class IndiaCPDocumentDetails   {
    * The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL
    * @return docStatus
   **/
-  //@ApiModelProperty(value = "The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL")
+  @ApiModelProperty(value = "The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL")
   public String getDocStatus() {
     return docStatus;
   }
@@ -176,7 +178,7 @@ public class IndiaCPDocumentDetails   {
    * Unique identifier of the Logged-in User that performed the action. This is required for Audit History
    * @return modifiedBy
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Logged-in User that performed the action. This is required for Audit History")
+  @ApiModelProperty(value = "Unique identifier of the Logged-in User that performed the action. This is required for Audit History")
   public String getModifiedBy() {
     return modifiedBy;
   }
@@ -194,7 +196,7 @@ public class IndiaCPDocumentDetails   {
    * Last Modified Date for this CPIssue. This is required for Audit History
    * @return lastModified
   **/
-  //@ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
+  @ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
   public Date getLastModified() {
     return lastModified;
   }

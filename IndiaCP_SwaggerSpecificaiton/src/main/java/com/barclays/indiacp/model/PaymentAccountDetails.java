@@ -28,11 +28,13 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * PaymentAccountDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T17:41:21.538Z")
 public class PaymentAccountDetails   {
   @JsonProperty("creditor_name")
   private String creditorName = null;
@@ -58,7 +60,7 @@ public class PaymentAccountDetails   {
    * Name in which the payment has to be made. For e.g. Barclays Investments & Loans (India) Ltd CP
    * @return creditorName
   **/
-  //@ApiModelProperty(value = "Name in which the payment has to be made. For e.g. Barclays Investments & Loans (India) Ltd CP")
+  @ApiModelProperty(value = "Name in which the payment has to be made. For e.g. Barclays Investments & Loans (India) Ltd CP")
   public String getCreditorName() {
     return creditorName;
   }
@@ -76,7 +78,7 @@ public class PaymentAccountDetails   {
    * Bank account no. at the IPA Bank
    * @return bankAccountNo
   **/
-  //@ApiModelProperty(value = "Bank account no. at the IPA Bank")
+  @ApiModelProperty(value = "Bank account no. at the IPA Bank")
   public String getBankAccountNo() {
     return bankAccountNo;
   }
@@ -94,7 +96,7 @@ public class PaymentAccountDetails   {
    * Bank account type. For e.g. current account
    * @return bankAccountType
   **/
-  //@ApiModelProperty(value = "Bank account type. For e.g. current account")
+  @ApiModelProperty(value = "Bank account type. For e.g. current account")
   public String getBankAccountType() {
     return bankAccountType;
   }
@@ -112,7 +114,7 @@ public class PaymentAccountDetails   {
    * Name of the IPA Bank
    * @return bankName
   **/
-  //@ApiModelProperty(value = "Name of the IPA Bank")
+  @ApiModelProperty(value = "Name of the IPA Bank")
   public String getBankName() {
     return bankName;
   }
@@ -130,7 +132,7 @@ public class PaymentAccountDetails   {
    * RTGS IFSC code of the IPA Bank to receive payments
    * @return rtgsIfscCode
   **/
-  //@ApiModelProperty(value = "RTGS IFSC code of the IPA Bank to receive payments")
+  @ApiModelProperty(value = "RTGS IFSC code of the IPA Bank to receive payments")
   public String getRtgsIfscCode() {
     return rtgsIfscCode;
   }

@@ -18,6 +18,7 @@ import net.corda.core.schemas.QueryableState
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.Emoji
 import com.barclays.indiacp.cordapp.utilities.CPUtils
+import com.barclays.indiacp.model.IndiaCPIssue
 import net.corda.contracts.ICommercialPaperState
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.crypto.*
@@ -662,7 +663,7 @@ class IndiaCommercialPaperProgram : Contract {
     /**
      * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
      */
-    fun createCPIssueWithinCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, issuer: Party, beneficiary: Party, ipa: Party, depository: Party, notary: Party, programAllocatedValue : Amount<Issued<Currency>>, newCP: IndiaCPApi.CPJSONObject, status: String): TransactionBuilder {
+    fun createCPIssueWithinCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, issuer: Party, beneficiary: Party, ipa: Party, depository: Party, notary: Party, programAllocatedValue : Amount<Issued<Currency>>, newCP: IndiaCPIssue, status: String): TransactionBuilder {
 
         val ptx = TransactionType.General.Builder(notary)
         ptx.addInputState(indiaCPProgramSF)
@@ -677,8 +678,8 @@ class IndiaCommercialPaperProgram : Contract {
 
         //Now let us add India CP State into this transaction
         val indiaCPState = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
-                newCP.cpProgramID, newCP.cpTradeID, newCP.tradeDate, newCP.valueDate,
-                newCP.faceValue.DOLLARS `issued by` DUMMY_CASH_ISSUER, Instant.now() + newCP.maturityDays.days,
+                newCP.cpProgramId, newCP.cpTradeId, newCP.tradeDate, newCP.valueDate,
+                (newCP.facevaluePerUnit * newCP.noOfUnits).DOLLARS `issued by` DUMMY_CASH_ISSUER, Instant.now() + newCP.maturityDays.days,
                 newCP.isin), notary)
 
 

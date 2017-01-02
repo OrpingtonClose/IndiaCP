@@ -506,11 +506,11 @@
                     "type": "string",
                     "description": "Display name of the Issuer"
                 },
-                "investor_id": {
+                "beneficiary_id": {
                     "type": "string",
                     "description": "Unique identifier of the Investor. This also uniquely identifies the Investor DL Node"
                 },
-                "investor_name": {
+                "beneficiary_name": {
                     "type": "string",
                     "description": "Display name of the Investor"
                 },
@@ -540,19 +540,21 @@
                     "format": "date",
                     "description": "Date on which the trade was settled and the Cash and CP securities were swapped between the Issuer and the Investor"
                 },
-                "maturity_date": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "Date on which the CP will be matured and redeemed"
+                "maturity_days": {
+                    "type": "integer",
+                    "description": "Tenor of the CP maturity calculated from value date"
                 },
                 "currency": {
                     "type": "string",
                     "description": "Currency of the issued CP Notes"
                 },
-                "notional_amount": {
-                    "type": "number",
-                    "format": "float",
-                    "description": "This is the amount that will be paid by the Issuer to the Investor on redemption"
+                "facevalue_per_unit": {
+                    "type": "integer",
+                    "description": "Face Value per Unit * No_Of_Units is the amount that will be paid by the Issuer to the Investor on redemption"
+                },
+                "no_of_units": {
+                    "type": "integer",
+                    "description": "No. of CP Units Issued"
                 },
                 "rate": {
                     "type": "number",

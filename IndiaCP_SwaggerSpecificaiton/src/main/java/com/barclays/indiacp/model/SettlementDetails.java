@@ -28,11 +28,13 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * SettlementDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T17:41:21.538Z")
 public class SettlementDetails   {
   @JsonProperty("paymentAccountDetails")
   private PaymentAccountDetails paymentAccountDetails = null;
@@ -49,7 +51,7 @@ public class SettlementDetails   {
    * Get paymentAccountDetails
    * @return paymentAccountDetails
   **/
-  //@ApiModelProperty(value = "")
+  @ApiModelProperty(value = "")
   public PaymentAccountDetails getPaymentAccountDetails() {
     return paymentAccountDetails;
   }
@@ -67,7 +69,7 @@ public class SettlementDetails   {
    * Get depositoryAccountDetails
    * @return depositoryAccountDetails
   **/
-  //@ApiModelProperty(value = "")
+  @ApiModelProperty(value = "")
   public DepositoryAccountDetails getDepositoryAccountDetails() {
     return depositoryAccountDetails;
   }

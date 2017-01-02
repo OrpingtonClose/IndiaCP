@@ -28,12 +28,14 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 
 /**
  * IndiaCPIssue
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T17:41:21.538Z")
 public class IndiaCPIssue   {
   @JsonProperty("cp_program_id")
   private String cpProgramId = null;
@@ -59,11 +61,11 @@ public class IndiaCPIssue   {
   @JsonProperty("issuer_name")
   private String issuerName = null;
 
-  @JsonProperty("investor_id")
-  private String investorId = null;
+  @JsonProperty("beneficiary_id")
+  private String beneficiaryId = null;
 
-  @JsonProperty("investor_name")
-  private String investorName = null;
+  @JsonProperty("beneficiary_name")
+  private String beneficiaryName = null;
 
   @JsonProperty("ipa_id")
   private String ipaId = null;
@@ -83,14 +85,17 @@ public class IndiaCPIssue   {
   @JsonProperty("value_date")
   private Date valueDate = null;
 
-  @JsonProperty("maturity_date")
-  private Date maturityDate = null;
+  @JsonProperty("maturity_days")
+  private Integer maturityDays = null;
 
   @JsonProperty("currency")
   private String currency = null;
 
-  @JsonProperty("notional_amount")
-  private Float notionalAmount = null;
+  @JsonProperty("facevalue_per_unit")
+  private Integer facevaluePerUnit = null;
+
+  @JsonProperty("no_of_units")
+  private Integer noOfUnits = null;
 
   @JsonProperty("rate")
   private Float rate = null;
@@ -125,7 +130,7 @@ public class IndiaCPIssue   {
    * Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program
    * @return cpProgramId
   **/
-  //@ApiModelProperty(value = "Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program")
+  @ApiModelProperty(value = "Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program")
   public String getCpProgramId() {
     return cpProgramId;
   }
@@ -143,7 +148,7 @@ public class IndiaCPIssue   {
    * User identifier
    * @return userId
   **/
-  //@ApiModelProperty(value = "User identifier")
+  @ApiModelProperty(value = "User identifier")
   public String getUserId() {
     return userId;
   }
@@ -161,7 +166,7 @@ public class IndiaCPIssue   {
    * Unique identifier representing a specific CP Issue under the umbrella CP Program
    * @return cpTradeId
   **/
-  //@ApiModelProperty(value = "Unique identifier representing a specific CP Issue under the umbrella CP Program")
+  @ApiModelProperty(value = "Unique identifier representing a specific CP Issue under the umbrella CP Program")
   public String getCpTradeId() {
     return cpTradeId;
   }
@@ -179,7 +184,7 @@ public class IndiaCPIssue   {
    * Internal Book Id that this trade is booked under
    * @return bookId
   **/
-  //@ApiModelProperty(value = "Internal Book Id that this trade is booked under")
+  @ApiModelProperty(value = "Internal Book Id that this trade is booked under")
   public String getBookId() {
     return bookId;
   }
@@ -197,7 +202,7 @@ public class IndiaCPIssue   {
    * Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.
    * @return isin
   **/
-  //@ApiModelProperty(value = "Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.")
+  @ApiModelProperty(value = "Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.")
   public String getIsin() {
     return isin;
   }
@@ -215,7 +220,7 @@ public class IndiaCPIssue   {
    * Unique identifier of the trader booking this trade
    * @return traderId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the trader booking this trade")
+  @ApiModelProperty(value = "Unique identifier of the trader booking this trade")
   public String getTraderId() {
     return traderId;
   }
@@ -233,7 +238,7 @@ public class IndiaCPIssue   {
    * Unique identifier of the Issuer
    * @return issuerId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Issuer")
+  @ApiModelProperty(value = "Unique identifier of the Issuer")
   public String getIssuerId() {
     return issuerId;
   }
@@ -251,7 +256,7 @@ public class IndiaCPIssue   {
    * Display name of the Issuer
    * @return issuerName
   **/
-  //@ApiModelProperty(value = "Display name of the Issuer")
+  @ApiModelProperty(value = "Display name of the Issuer")
   public String getIssuerName() {
     return issuerName;
   }
@@ -260,40 +265,40 @@ public class IndiaCPIssue   {
     this.issuerName = issuerName;
   }
 
-  public IndiaCPIssue investorId(String investorId) {
-    this.investorId = investorId;
+  public IndiaCPIssue beneficiaryId(String beneficiaryId) {
+    this.beneficiaryId = beneficiaryId;
     return this;
   }
 
    /**
    * Unique identifier of the Investor. This also uniquely identifies the Investor DL Node
-   * @return investorId
+   * @return beneficiaryId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Investor. This also uniquely identifies the Investor DL Node")
-  public String getInvestorId() {
-    return investorId;
+  @ApiModelProperty(value = "Unique identifier of the Investor. This also uniquely identifies the Investor DL Node")
+  public String getBeneficiaryId() {
+    return beneficiaryId;
   }
 
-  public void setInvestorId(String investorId) {
-    this.investorId = investorId;
+  public void setBeneficiaryId(String beneficiaryId) {
+    this.beneficiaryId = beneficiaryId;
   }
 
-  public IndiaCPIssue investorName(String investorName) {
-    this.investorName = investorName;
+  public IndiaCPIssue beneficiaryName(String beneficiaryName) {
+    this.beneficiaryName = beneficiaryName;
     return this;
   }
 
    /**
    * Display name of the Investor
-   * @return investorName
+   * @return beneficiaryName
   **/
-  //@ApiModelProperty(value = "Display name of the Investor")
-  public String getInvestorName() {
-    return investorName;
+  @ApiModelProperty(value = "Display name of the Investor")
+  public String getBeneficiaryName() {
+    return beneficiaryName;
   }
 
-  public void setInvestorName(String investorName) {
-    this.investorName = investorName;
+  public void setBeneficiaryName(String beneficiaryName) {
+    this.beneficiaryName = beneficiaryName;
   }
 
   public IndiaCPIssue ipaId(String ipaId) {
@@ -305,7 +310,7 @@ public class IndiaCPIssue   {
    * Unique identifier of the IPA
    * @return ipaId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the IPA")
+  @ApiModelProperty(value = "Unique identifier of the IPA")
   public String getIpaId() {
     return ipaId;
   }
@@ -323,7 +328,7 @@ public class IndiaCPIssue   {
    * Display name of the IPA
    * @return ipaName
   **/
-  //@ApiModelProperty(value = "Display name of the IPA")
+  @ApiModelProperty(value = "Display name of the IPA")
   public String getIpaName() {
     return ipaName;
   }
@@ -341,7 +346,7 @@ public class IndiaCPIssue   {
    * Unique identifier of the Depository (NSDL)
    * @return depositoryId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Depository (NSDL)")
+  @ApiModelProperty(value = "Unique identifier of the Depository (NSDL)")
   public String getDepositoryId() {
     return depositoryId;
   }
@@ -359,7 +364,7 @@ public class IndiaCPIssue   {
    * Display name of the Depository
    * @return depositoryName
   **/
-  //@ApiModelProperty(value = "Display name of the Depository")
+  @ApiModelProperty(value = "Display name of the Depository")
   public String getDepositoryName() {
     return depositoryName;
   }
@@ -377,7 +382,7 @@ public class IndiaCPIssue   {
    * Date on which the trade was captured
    * @return tradeDate
   **/
-  //@ApiModelProperty(value = "Date on which the trade was captured")
+  @ApiModelProperty(value = "Date on which the trade was captured")
   public Date getTradeDate() {
     return tradeDate;
   }
@@ -395,7 +400,7 @@ public class IndiaCPIssue   {
    * Date on which the trade was settled and the Cash and CP securities were swapped between the Issuer and the Investor
    * @return valueDate
   **/
-  //@ApiModelProperty(value = "Date on which the trade was settled and the Cash and CP securities were swapped between the Issuer and the Investor")
+  @ApiModelProperty(value = "Date on which the trade was settled and the Cash and CP securities were swapped between the Issuer and the Investor")
   public Date getValueDate() {
     return valueDate;
   }
@@ -404,22 +409,22 @@ public class IndiaCPIssue   {
     this.valueDate = valueDate;
   }
 
-  public IndiaCPIssue maturityDate(Date maturityDate) {
-    this.maturityDate = maturityDate;
+  public IndiaCPIssue maturityDays(Integer maturityDays) {
+    this.maturityDays = maturityDays;
     return this;
   }
 
    /**
-   * Date on which the CP will be matured and redeemed
-   * @return maturityDate
+   * Tenor of the CP maturity calculated from value date
+   * @return maturityDays
   **/
-  //@ApiModelProperty(value = "Date on which the CP will be matured and redeemed")
-  public Date getMaturityDate() {
-    return maturityDate;
+  @ApiModelProperty(value = "Tenor of the CP maturity calculated from value date")
+  public Integer getMaturityDays() {
+    return maturityDays;
   }
 
-  public void setMaturityDate(Date maturityDate) {
-    this.maturityDate = maturityDate;
+  public void setMaturityDays(Integer maturityDays) {
+    this.maturityDays = maturityDays;
   }
 
   public IndiaCPIssue currency(String currency) {
@@ -431,7 +436,7 @@ public class IndiaCPIssue   {
    * Currency of the issued CP Notes
    * @return currency
   **/
-  //@ApiModelProperty(value = "Currency of the issued CP Notes")
+  @ApiModelProperty(value = "Currency of the issued CP Notes")
   public String getCurrency() {
     return currency;
   }
@@ -440,22 +445,40 @@ public class IndiaCPIssue   {
     this.currency = currency;
   }
 
-  public IndiaCPIssue notionalAmount(Float notionalAmount) {
-    this.notionalAmount = notionalAmount;
+  public IndiaCPIssue facevaluePerUnit(Integer facevaluePerUnit) {
+    this.facevaluePerUnit = facevaluePerUnit;
     return this;
   }
 
    /**
-   * This is the amount that will be paid by the Issuer to the Investor on redemption
-   * @return notionalAmount
+   * Face Value per Unit * No_Of_Units is the amount that will be paid by the Issuer to the Investor on redemption
+   * @return facevaluePerUnit
   **/
-  //@ApiModelProperty(value = "This is the amount that will be paid by the Issuer to the Investor on redemption")
-  public Float getNotionalAmount() {
-    return notionalAmount;
+  @ApiModelProperty(value = "Face Value per Unit * No_Of_Units is the amount that will be paid by the Issuer to the Investor on redemption")
+  public Integer getFacevaluePerUnit() {
+    return facevaluePerUnit;
   }
 
-  public void setNotionalAmount(Float notionalAmount) {
-    this.notionalAmount = notionalAmount;
+  public void setFacevaluePerUnit(Integer facevaluePerUnit) {
+    this.facevaluePerUnit = facevaluePerUnit;
+  }
+
+  public IndiaCPIssue noOfUnits(Integer noOfUnits) {
+    this.noOfUnits = noOfUnits;
+    return this;
+  }
+
+   /**
+   * No. of CP Units Issued
+   * @return noOfUnits
+  **/
+  @ApiModelProperty(value = "No. of CP Units Issued")
+  public Integer getNoOfUnits() {
+    return noOfUnits;
+  }
+
+  public void setNoOfUnits(Integer noOfUnits) {
+    this.noOfUnits = noOfUnits;
   }
 
   public IndiaCPIssue rate(Float rate) {
@@ -467,7 +490,7 @@ public class IndiaCPIssue   {
    * Rate at which the yield is calculated
    * @return rate
   **/
-  //@ApiModelProperty(value = "Rate at which the yield is calculated")
+  @ApiModelProperty(value = "Rate at which the yield is calculated")
   public Float getRate() {
     return rate;
   }
@@ -485,7 +508,7 @@ public class IndiaCPIssue   {
    * Get issuerSettlementDetails
    * @return issuerSettlementDetails
   **/
-  //@ApiModelProperty(value = "")
+  @ApiModelProperty(value = "")
   public SettlementDetails getIssuerSettlementDetails() {
     return issuerSettlementDetails;
   }
@@ -503,7 +526,7 @@ public class IndiaCPIssue   {
    * Get investorSettlementDetails
    * @return investorSettlementDetails
   **/
-  //@ApiModelProperty(value = "")
+  @ApiModelProperty(value = "")
   public SettlementDetails getInvestorSettlementDetails() {
     return investorSettlementDetails;
   }
@@ -521,7 +544,7 @@ public class IndiaCPIssue   {
    * Unique identifier of the deal confirmation document signed by both the Issuer and the Investor
    * @return dealConfirmationDocId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the deal confirmation document signed by both the Issuer and the Investor")
+  @ApiModelProperty(value = "Unique identifier of the deal confirmation document signed by both the Issuer and the Investor")
   public String getDealConfirmationDocId() {
     return dealConfirmationDocId;
   }
@@ -539,7 +562,7 @@ public class IndiaCPIssue   {
    * Current status of the CP Issue
    * @return status
   **/
-  //@ApiModelProperty(value = "Current status of the CP Issue")
+  @ApiModelProperty(value = "Current status of the CP Issue")
   public String getStatus() {
     return status;
   }
@@ -557,7 +580,7 @@ public class IndiaCPIssue   {
    * Current version of the CP Issue
    * @return version
   **/
-  //@ApiModelProperty(value = "Current version of the CP Issue")
+  @ApiModelProperty(value = "Current version of the CP Issue")
   public Integer getVersion() {
     return version;
   }
@@ -575,7 +598,7 @@ public class IndiaCPIssue   {
    * Unique identifier of the Logged-in User that performed the action. This is required for Audit History
    * @return modifiedBy
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Logged-in User that performed the action. This is required for Audit History")
+  @ApiModelProperty(value = "Unique identifier of the Logged-in User that performed the action. This is required for Audit History")
   public String getModifiedBy() {
     return modifiedBy;
   }
@@ -593,7 +616,7 @@ public class IndiaCPIssue   {
    * Last Modified Date for this CPIssue. This is required for Audit History
    * @return lastModified
   **/
-  //@ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
+  @ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
   public Date getLastModified() {
     return lastModified;
   }
@@ -620,17 +643,18 @@ public class IndiaCPIssue   {
         Objects.equals(this.traderId, indiaCPIssue.traderId) &&
         Objects.equals(this.issuerId, indiaCPIssue.issuerId) &&
         Objects.equals(this.issuerName, indiaCPIssue.issuerName) &&
-        Objects.equals(this.investorId, indiaCPIssue.investorId) &&
-        Objects.equals(this.investorName, indiaCPIssue.investorName) &&
+        Objects.equals(this.beneficiaryId, indiaCPIssue.beneficiaryId) &&
+        Objects.equals(this.beneficiaryName, indiaCPIssue.beneficiaryName) &&
         Objects.equals(this.ipaId, indiaCPIssue.ipaId) &&
         Objects.equals(this.ipaName, indiaCPIssue.ipaName) &&
         Objects.equals(this.depositoryId, indiaCPIssue.depositoryId) &&
         Objects.equals(this.depositoryName, indiaCPIssue.depositoryName) &&
         Objects.equals(this.tradeDate, indiaCPIssue.tradeDate) &&
         Objects.equals(this.valueDate, indiaCPIssue.valueDate) &&
-        Objects.equals(this.maturityDate, indiaCPIssue.maturityDate) &&
+        Objects.equals(this.maturityDays, indiaCPIssue.maturityDays) &&
         Objects.equals(this.currency, indiaCPIssue.currency) &&
-        Objects.equals(this.notionalAmount, indiaCPIssue.notionalAmount) &&
+        Objects.equals(this.facevaluePerUnit, indiaCPIssue.facevaluePerUnit) &&
+        Objects.equals(this.noOfUnits, indiaCPIssue.noOfUnits) &&
         Objects.equals(this.rate, indiaCPIssue.rate) &&
         Objects.equals(this.issuerSettlementDetails, indiaCPIssue.issuerSettlementDetails) &&
         Objects.equals(this.investorSettlementDetails, indiaCPIssue.investorSettlementDetails) &&
@@ -643,7 +667,7 @@ public class IndiaCPIssue   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cpProgramId, userId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, investorId, investorName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDate, currency, notionalAmount, rate, issuerSettlementDetails, investorSettlementDetails, dealConfirmationDocId, status, version, modifiedBy, lastModified);
+    return Objects.hash(cpProgramId, userId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, beneficiaryId, beneficiaryName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDays, currency, facevaluePerUnit, noOfUnits, rate, issuerSettlementDetails, investorSettlementDetails, dealConfirmationDocId, status, version, modifiedBy, lastModified);
   }
 
 
@@ -660,17 +684,18 @@ public class IndiaCPIssue   {
     sb.append("    traderId: ").append(toIndentedString(traderId)).append("\n");
     sb.append("    issuerId: ").append(toIndentedString(issuerId)).append("\n");
     sb.append("    issuerName: ").append(toIndentedString(issuerName)).append("\n");
-    sb.append("    investorId: ").append(toIndentedString(investorId)).append("\n");
-    sb.append("    investorName: ").append(toIndentedString(investorName)).append("\n");
+    sb.append("    beneficiaryId: ").append(toIndentedString(beneficiaryId)).append("\n");
+    sb.append("    beneficiaryName: ").append(toIndentedString(beneficiaryName)).append("\n");
     sb.append("    ipaId: ").append(toIndentedString(ipaId)).append("\n");
     sb.append("    ipaName: ").append(toIndentedString(ipaName)).append("\n");
     sb.append("    depositoryId: ").append(toIndentedString(depositoryId)).append("\n");
     sb.append("    depositoryName: ").append(toIndentedString(depositoryName)).append("\n");
     sb.append("    tradeDate: ").append(toIndentedString(tradeDate)).append("\n");
     sb.append("    valueDate: ").append(toIndentedString(valueDate)).append("\n");
-    sb.append("    maturityDate: ").append(toIndentedString(maturityDate)).append("\n");
+    sb.append("    maturityDays: ").append(toIndentedString(maturityDays)).append("\n");
     sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
-    sb.append("    notionalAmount: ").append(toIndentedString(notionalAmount)).append("\n");
+    sb.append("    facevaluePerUnit: ").append(toIndentedString(facevaluePerUnit)).append("\n");
+    sb.append("    noOfUnits: ").append(toIndentedString(noOfUnits)).append("\n");
     sb.append("    rate: ").append(toIndentedString(rate)).append("\n");
     sb.append("    issuerSettlementDetails: ").append(toIndentedString(issuerSettlementDetails)).append("\n");
     sb.append("    investorSettlementDetails: ").append(toIndentedString(investorSettlementDetails)).append("\n");
