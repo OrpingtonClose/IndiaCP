@@ -1,5 +1,6 @@
 package com.barclays.indiacp.dl.integration;
 
+import com.barclays.indiacp.model.IndiaCPDocumentDetails;
 import com.barclays.indiacp.model.IndiaCPProgram;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 

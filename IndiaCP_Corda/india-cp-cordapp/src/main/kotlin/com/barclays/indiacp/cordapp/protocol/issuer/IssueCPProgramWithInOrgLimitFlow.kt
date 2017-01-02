@@ -57,7 +57,7 @@ class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: IndiaCPProgramJSON) : F
         val depository = getPartyByName(newCPProgram.depository)
 
 
-        val indiaCPProgramSF: StateAndRef<OrgLevelBorrowProgram.OrgState> = getOrgProgramStateandRef(newCPProgram.orgUnit)
+        val indiaCPProgramSF: StateAndRef<OrgLevelBorrowProgram.OrgState> = getOrgProgramStateandRef(newCPProgram.org_unit)
 
         val newBorrowedValue: Amount<Issued<Currency>> = indiaCPProgramSF.state.data.borrowedValue.plus(newCPProgram.program_size.DOLLARS `issued by` DUMMY_CASH_ISSUER);
 
