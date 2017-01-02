@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 /**
  * PaymentAccountDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-12-22T06:22:33.818Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
 public class PaymentAccountDetails   {
   @JsonProperty("creditor_name")
   private String creditorName = null;

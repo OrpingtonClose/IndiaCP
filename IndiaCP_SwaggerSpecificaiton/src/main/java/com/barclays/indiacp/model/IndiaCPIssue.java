@@ -27,12 +27,14 @@ package com.barclays.indiacp.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Date;
+
 /**
- * CPIssue
+ * IndiaCPIssue
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-12-30T09:42:37.124Z")
-public class CPIssue   {
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+public class IndiaCPIssue   {
   @JsonProperty("cp_program_id")
   private String cpProgramId = null;
 
@@ -108,10 +110,13 @@ public class CPIssue   {
   @JsonProperty("version")
   private Integer version = null;
 
+  @JsonProperty("modified_by")
+  private String modifiedBy = null;
+
   @JsonProperty("last_modified")
   private Date lastModified = null;
 
-  public CPIssue cpProgramId(String cpProgramId) {
+  public IndiaCPIssue cpProgramId(String cpProgramId) {
     this.cpProgramId = cpProgramId;
     return this;
   }
@@ -129,7 +134,7 @@ public class CPIssue   {
     this.cpProgramId = cpProgramId;
   }
 
-  public CPIssue userId(String userId) {
+  public IndiaCPIssue userId(String userId) {
     this.userId = userId;
     return this;
   }
@@ -147,7 +152,7 @@ public class CPIssue   {
     this.userId = userId;
   }
 
-  public CPIssue cpTradeId(String cpTradeId) {
+  public IndiaCPIssue cpTradeId(String cpTradeId) {
     this.cpTradeId = cpTradeId;
     return this;
   }
@@ -165,7 +170,7 @@ public class CPIssue   {
     this.cpTradeId = cpTradeId;
   }
 
-  public CPIssue bookId(String bookId) {
+  public IndiaCPIssue bookId(String bookId) {
     this.bookId = bookId;
     return this;
   }
@@ -183,7 +188,7 @@ public class CPIssue   {
     this.bookId = bookId;
   }
 
-  public CPIssue isin(String isin) {
+  public IndiaCPIssue isin(String isin) {
     this.isin = isin;
     return this;
   }
@@ -201,7 +206,7 @@ public class CPIssue   {
     this.isin = isin;
   }
 
-  public CPIssue traderId(String traderId) {
+  public IndiaCPIssue traderId(String traderId) {
     this.traderId = traderId;
     return this;
   }
@@ -219,7 +224,7 @@ public class CPIssue   {
     this.traderId = traderId;
   }
 
-  public CPIssue issuerId(String issuerId) {
+  public IndiaCPIssue issuerId(String issuerId) {
     this.issuerId = issuerId;
     return this;
   }
@@ -237,7 +242,7 @@ public class CPIssue   {
     this.issuerId = issuerId;
   }
 
-  public CPIssue issuerName(String issuerName) {
+  public IndiaCPIssue issuerName(String issuerName) {
     this.issuerName = issuerName;
     return this;
   }
@@ -255,7 +260,7 @@ public class CPIssue   {
     this.issuerName = issuerName;
   }
 
-  public CPIssue investorId(String investorId) {
+  public IndiaCPIssue investorId(String investorId) {
     this.investorId = investorId;
     return this;
   }
@@ -273,7 +278,7 @@ public class CPIssue   {
     this.investorId = investorId;
   }
 
-  public CPIssue investorName(String investorName) {
+  public IndiaCPIssue investorName(String investorName) {
     this.investorName = investorName;
     return this;
   }
@@ -291,7 +296,7 @@ public class CPIssue   {
     this.investorName = investorName;
   }
 
-  public CPIssue ipaId(String ipaId) {
+  public IndiaCPIssue ipaId(String ipaId) {
     this.ipaId = ipaId;
     return this;
   }
@@ -309,7 +314,7 @@ public class CPIssue   {
     this.ipaId = ipaId;
   }
 
-  public CPIssue ipaName(String ipaName) {
+  public IndiaCPIssue ipaName(String ipaName) {
     this.ipaName = ipaName;
     return this;
   }
@@ -327,7 +332,7 @@ public class CPIssue   {
     this.ipaName = ipaName;
   }
 
-  public CPIssue depositoryId(String depositoryId) {
+  public IndiaCPIssue depositoryId(String depositoryId) {
     this.depositoryId = depositoryId;
     return this;
   }
@@ -345,7 +350,7 @@ public class CPIssue   {
     this.depositoryId = depositoryId;
   }
 
-  public CPIssue depositoryName(String depositoryName) {
+  public IndiaCPIssue depositoryName(String depositoryName) {
     this.depositoryName = depositoryName;
     return this;
   }
@@ -363,7 +368,7 @@ public class CPIssue   {
     this.depositoryName = depositoryName;
   }
 
-  public CPIssue tradeDate(Date tradeDate) {
+  public IndiaCPIssue tradeDate(Date tradeDate) {
     this.tradeDate = tradeDate;
     return this;
   }
@@ -381,7 +386,7 @@ public class CPIssue   {
     this.tradeDate = tradeDate;
   }
 
-  public CPIssue valueDate(Date valueDate) {
+  public IndiaCPIssue valueDate(Date valueDate) {
     this.valueDate = valueDate;
     return this;
   }
@@ -399,7 +404,7 @@ public class CPIssue   {
     this.valueDate = valueDate;
   }
 
-  public CPIssue maturityDate(Date maturityDate) {
+  public IndiaCPIssue maturityDate(Date maturityDate) {
     this.maturityDate = maturityDate;
     return this;
   }
@@ -417,7 +422,7 @@ public class CPIssue   {
     this.maturityDate = maturityDate;
   }
 
-  public CPIssue currency(String currency) {
+  public IndiaCPIssue currency(String currency) {
     this.currency = currency;
     return this;
   }
@@ -435,7 +440,7 @@ public class CPIssue   {
     this.currency = currency;
   }
 
-  public CPIssue notionalAmount(Float notionalAmount) {
+  public IndiaCPIssue notionalAmount(Float notionalAmount) {
     this.notionalAmount = notionalAmount;
     return this;
   }
@@ -453,7 +458,7 @@ public class CPIssue   {
     this.notionalAmount = notionalAmount;
   }
 
-  public CPIssue rate(Float rate) {
+  public IndiaCPIssue rate(Float rate) {
     this.rate = rate;
     return this;
   }
@@ -471,7 +476,7 @@ public class CPIssue   {
     this.rate = rate;
   }
 
-  public CPIssue issuerSettlementDetails(SettlementDetails issuerSettlementDetails) {
+  public IndiaCPIssue issuerSettlementDetails(SettlementDetails issuerSettlementDetails) {
     this.issuerSettlementDetails = issuerSettlementDetails;
     return this;
   }
@@ -489,7 +494,7 @@ public class CPIssue   {
     this.issuerSettlementDetails = issuerSettlementDetails;
   }
 
-  public CPIssue investorSettlementDetails(SettlementDetails investorSettlementDetails) {
+  public IndiaCPIssue investorSettlementDetails(SettlementDetails investorSettlementDetails) {
     this.investorSettlementDetails = investorSettlementDetails;
     return this;
   }
@@ -507,7 +512,7 @@ public class CPIssue   {
     this.investorSettlementDetails = investorSettlementDetails;
   }
 
-  public CPIssue dealConfirmationDocId(String dealConfirmationDocId) {
+  public IndiaCPIssue dealConfirmationDocId(String dealConfirmationDocId) {
     this.dealConfirmationDocId = dealConfirmationDocId;
     return this;
   }
@@ -525,7 +530,7 @@ public class CPIssue   {
     this.dealConfirmationDocId = dealConfirmationDocId;
   }
 
-  public CPIssue status(String status) {
+  public IndiaCPIssue status(String status) {
     this.status = status;
     return this;
   }
@@ -543,7 +548,7 @@ public class CPIssue   {
     this.status = status;
   }
 
-  public CPIssue version(Integer version) {
+  public IndiaCPIssue version(Integer version) {
     this.version = version;
     return this;
   }
@@ -561,16 +566,34 @@ public class CPIssue   {
     this.version = version;
   }
 
-  public CPIssue lastModified(Date lastModified) {
+  public IndiaCPIssue modifiedBy(String modifiedBy) {
+    this.modifiedBy = modifiedBy;
+    return this;
+  }
+
+   /**
+   * Unique identifier of the Logged-in User that performed the action. This is required for Audit History
+   * @return modifiedBy
+  **/
+  //@ApiModelProperty(value = "Unique identifier of the Logged-in User that performed the action. This is required for Audit History")
+  public String getModifiedBy() {
+    return modifiedBy;
+  }
+
+  public void setModifiedBy(String modifiedBy) {
+    this.modifiedBy = modifiedBy;
+  }
+
+  public IndiaCPIssue lastModified(Date lastModified) {
     this.lastModified = lastModified;
     return this;
   }
 
    /**
-   * Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account
+   * Last Modified Date for this CPIssue. This is required for Audit History
    * @return lastModified
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account")
+  //@ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
   public Date getLastModified() {
     return lastModified;
   }
@@ -581,52 +604,53 @@ public class CPIssue   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CPIssue cpIssue = (CPIssue) o;
-    return Objects.equals(this.cpProgramId, cpIssue.cpProgramId) &&
-        Objects.equals(this.userId, cpIssue.userId) &&
-        Objects.equals(this.cpTradeId, cpIssue.cpTradeId) &&
-        Objects.equals(this.bookId, cpIssue.bookId) &&
-        Objects.equals(this.isin, cpIssue.isin) &&
-        Objects.equals(this.traderId, cpIssue.traderId) &&
-        Objects.equals(this.issuerId, cpIssue.issuerId) &&
-        Objects.equals(this.issuerName, cpIssue.issuerName) &&
-        Objects.equals(this.investorId, cpIssue.investorId) &&
-        Objects.equals(this.investorName, cpIssue.investorName) &&
-        Objects.equals(this.ipaId, cpIssue.ipaId) &&
-        Objects.equals(this.ipaName, cpIssue.ipaName) &&
-        Objects.equals(this.depositoryId, cpIssue.depositoryId) &&
-        Objects.equals(this.depositoryName, cpIssue.depositoryName) &&
-        Objects.equals(this.tradeDate, cpIssue.tradeDate) &&
-        Objects.equals(this.valueDate, cpIssue.valueDate) &&
-        Objects.equals(this.maturityDate, cpIssue.maturityDate) &&
-        Objects.equals(this.currency, cpIssue.currency) &&
-        Objects.equals(this.notionalAmount, cpIssue.notionalAmount) &&
-        Objects.equals(this.rate, cpIssue.rate) &&
-        Objects.equals(this.issuerSettlementDetails, cpIssue.issuerSettlementDetails) &&
-        Objects.equals(this.investorSettlementDetails, cpIssue.investorSettlementDetails) &&
-        Objects.equals(this.dealConfirmationDocId, cpIssue.dealConfirmationDocId) &&
-        Objects.equals(this.status, cpIssue.status) &&
-        Objects.equals(this.version, cpIssue.version) &&
-        Objects.equals(this.lastModified, cpIssue.lastModified);
+    IndiaCPIssue indiaCPIssue = (IndiaCPIssue) o;
+    return Objects.equals(this.cpProgramId, indiaCPIssue.cpProgramId) &&
+        Objects.equals(this.userId, indiaCPIssue.userId) &&
+        Objects.equals(this.cpTradeId, indiaCPIssue.cpTradeId) &&
+        Objects.equals(this.bookId, indiaCPIssue.bookId) &&
+        Objects.equals(this.isin, indiaCPIssue.isin) &&
+        Objects.equals(this.traderId, indiaCPIssue.traderId) &&
+        Objects.equals(this.issuerId, indiaCPIssue.issuerId) &&
+        Objects.equals(this.issuerName, indiaCPIssue.issuerName) &&
+        Objects.equals(this.investorId, indiaCPIssue.investorId) &&
+        Objects.equals(this.investorName, indiaCPIssue.investorName) &&
+        Objects.equals(this.ipaId, indiaCPIssue.ipaId) &&
+        Objects.equals(this.ipaName, indiaCPIssue.ipaName) &&
+        Objects.equals(this.depositoryId, indiaCPIssue.depositoryId) &&
+        Objects.equals(this.depositoryName, indiaCPIssue.depositoryName) &&
+        Objects.equals(this.tradeDate, indiaCPIssue.tradeDate) &&
+        Objects.equals(this.valueDate, indiaCPIssue.valueDate) &&
+        Objects.equals(this.maturityDate, indiaCPIssue.maturityDate) &&
+        Objects.equals(this.currency, indiaCPIssue.currency) &&
+        Objects.equals(this.notionalAmount, indiaCPIssue.notionalAmount) &&
+        Objects.equals(this.rate, indiaCPIssue.rate) &&
+        Objects.equals(this.issuerSettlementDetails, indiaCPIssue.issuerSettlementDetails) &&
+        Objects.equals(this.investorSettlementDetails, indiaCPIssue.investorSettlementDetails) &&
+        Objects.equals(this.dealConfirmationDocId, indiaCPIssue.dealConfirmationDocId) &&
+        Objects.equals(this.status, indiaCPIssue.status) &&
+        Objects.equals(this.version, indiaCPIssue.version) &&
+        Objects.equals(this.modifiedBy, indiaCPIssue.modifiedBy) &&
+        Objects.equals(this.lastModified, indiaCPIssue.lastModified);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cpProgramId, userId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, investorId, investorName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDate, currency, notionalAmount, rate, issuerSettlementDetails, investorSettlementDetails, dealConfirmationDocId, status, version, lastModified);
+    return Objects.hash(cpProgramId, userId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, investorId, investorName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDate, currency, notionalAmount, rate, issuerSettlementDetails, investorSettlementDetails, dealConfirmationDocId, status, version, modifiedBy, lastModified);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class CPIssue {\n");
+    sb.append("class IndiaCPIssue {\n");
     
     sb.append("    cpProgramId: ").append(toIndentedString(cpProgramId)).append("\n");
     sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
@@ -653,6 +677,7 @@ public class CPIssue   {
     sb.append("    dealConfirmationDocId: ").append(toIndentedString(dealConfirmationDocId)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    version: ").append(toIndentedString(version)).append("\n");
+    sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");
     sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -662,7 +687,7 @@ public class CPIssue   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

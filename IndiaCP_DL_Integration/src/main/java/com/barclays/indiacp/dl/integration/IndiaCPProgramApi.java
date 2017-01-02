@@ -1,5 +1,6 @@
 package com.barclays.indiacp.dl.integration;
 
+import com.barclays.indiacp.model.IndiaCPProgram;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
@@ -8,41 +9,48 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.zip.ZipFile;
 
 /**
  * Created by ritukedia on 23/12/16.
  */
 @Path("indiacpprogram")
-public interface IndiaCPProgram {
+public interface IndiaCPProgramApi {
 
     @POST
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response issueCPProgram(String jsonBody);
+    @Produces(MediaType.APPLICATION_JSON)
+    public IndiaCPProgram issueCPProgram(String jsonBody);
 
     @GET
     @Path("fetchAllCPProgram")
-    public Response fetchAllCPProgram();
+    @Produces(MediaType.APPLICATION_JSON)
+    public ArrayList<IndiaCPProgram> fetchAllCPProgram();
 
     @GET
     @Path("fetchCPProgram/{cpProgramId}")
-    public Response fetchCPProgram(@PathParam("cpProgramId") String cpProgramId);
+    @Produces(MediaType.APPLICATION_JSON)
+    public IndiaCPProgram fetchCPProgram(@PathParam("cpProgramId") String cpProgramId);
 
     @POST
     @Path("addISIN/{cpProgramId}/{isin}")
-    public Response addISIN(@PathParam("cpProgramId") String cpProgramId);
+    @Produces(MediaType.APPLICATION_JSON)
+    public IndiaCPProgram addISIN(@PathParam("cpProgramId") String cpProgramId);
 
     @POST
-    @Path("issueCP/{cpProgramId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response issueCP(@PathParam("cpProgramId") String cpProgramId);
+    @Path("addDoc")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public IndiaCPProgram addDoc(IndiaCPDocumentDetails docDetails,
+                                 @FormDataParam("file") InputStream uploadedInputStream);
 
     @POST
     @Path("addISINGenerationDocs/{cpProgramId}/{docHash}/{docStatus}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    //@UploadsDocument
-    public Response addISINGenerationDocs(@PathParam("cpProgramId") String cpProgramId,
+    @Produces(MediaType.APPLICATION_JSON)
+    public IndiaCPProgram addISINGenerationDocs(@PathParam("cpProgramId") String cpProgramId,
                                           @PathParam("docHash") String docHash,
                                           @PathParam("docStatus") String docStatus,
                                           @FormDataParam("file") InputStream uploadedInputStream);

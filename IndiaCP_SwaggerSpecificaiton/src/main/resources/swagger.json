@@ -14,7 +14,7 @@
         "application/json"
     ],
     "paths": {
-        "/cpprogram/{issuer}": {
+        "/indiacpprogram/issueCPProgram": {
             "post": {
                 "summary": "Issue new CP Program",
                 "description": "This creates a new CP Program with the details provided",
@@ -28,18 +28,8 @@
                         "required": true,
                         "schema":
                         {
-                         "type": "array",
-                         "items":{
-                          "$ref" : "#/definitions/CPProgram"
+                          "$ref" : "#/definitions/IndiaCPProgram"
                         }
-                        }
-                    },
-                    {
-                        "name": "issuer",
-                        "in": "path",
-                        "description": "Issuer id that uniquely maps to the issuer DL node",
-                        "required": true,
-                        "type": "string"
                     }
                 ],
                 "tags": [
@@ -49,7 +39,7 @@
                     "200": {
                         "description": "Creates a new CP Program",
                         "schema": {
-                            "$ref": "#/definitions/CPProgram"
+                            "$ref": "#/definitions/IndiaCPProgram"
                         }
                     },
                     "default": {
@@ -61,19 +51,12 @@
                 }
             }
         },
-        "/cpprograms/{issuer}": {
+        "/indiacpprogram/fetchAllCPProgram": {
             "get": {
-                "summary": "Fetch All CPPrograms for the current Issuer",
+                "summary": "Fetch All CPPrograms for the current Issuer. The current Issuer is assumed from the DL Node that this request is forwarded to.",
                 "description": "Returns all the CP Programs for the current issuer\n",
                 "operationId": "fetchAllCPProgram",
                 "parameters": [
-                    {
-                        "name": "issuer",
-                        "in": "path",
-                        "description": "issuer id that uniquely maps to the issuer DL node",
-                        "required": true,
-                        "type": "string"
-                    }
                 ],
                 "tags": [
                     "Issuer"
@@ -84,7 +67,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/CPProgram"
+                                "$ref": "#/definitions/IndiaCPProgram"
                             }
                         }
                     },
@@ -97,19 +80,12 @@
                 }
             }
         },
-        "/cpprogram/{issuer}/{cpProgramId}": {
+        "/indiacpprogram/fetchCPProgram/{cpProgramId}": {
             "get": {
-                "summary": "Get CP Program details by Id",
+                "summary": "Get CP Program details by Id. The current Issuer is assumed from the DL Node that this request is forwarded to.",
                 "description": "This returns a single CP Program identified by an Id provided by the call\n",
                 "operationId": "fetchCPProgram",
                 "parameters": [
-                    {
-                        "name": "issuer",
-                        "in": "path",
-                        "description": "issuer id that uniquely maps to the issuer DL node",
-                        "required": true,
-                        "type": "string"
-                    },
                     {
                         "name": "cpProgramId",
                         "in": "path",
@@ -125,7 +101,86 @@
                     "200": {
                         "description": "Returns a CP Program",
                         "schema": {
-                            "$ref": "#/definitions/CPProgram"
+                            "$ref": "#/definitions/IndiaCPProgram"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/indiacpprogram/addDoc": {
+            "post": {
+                "summary": "Uploads and attaches the provided document to the CPProgram on the DL",
+                "description": "Uploads and attaches the provided document to the CPProgram on the DL",
+                "operationId": "addDoc",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                  "multipart/form-data"
+                ],
+                "parameters": [
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "description": "Document Attachment",
+                        "required": true,
+                        "type": "file"
+                    }
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns a CP Program",
+                        "schema": {
+                            "$ref": "#/definitions/IndiaCPProgram"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/indiacpprogram/addISIN/{cpProgramId}/{isin}": {
+            "post": {
+                "summary": "Adds the ISIN to the India CP Program",
+                "description": "Adds the ISIN to the India CP Program",
+                "operationId": "addISIN",
+                "parameters": [
+                    {
+                        "name": "cpProgramId",
+                        "in": "path",
+                        "description": "CP Program ID that uniquely identifies the CP Program issued by the Issuer",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "isin",
+                        "in": "path",
+                        "description": "ISIN generated by NSDL",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns a CP Program",
+                        "schema": {
+                            "$ref": "#/definitions/IndiaCPProgram"
                         }
                     },
                     "default": {
@@ -167,7 +222,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/CPIssue"
+                                "$ref": "#/definitions/IndiaCPIssue"
                             }
                         }
                     },
@@ -203,7 +258,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/CPIssue"
+                                "$ref": "#/definitions/IndiaCPIssue"
                             }
                         }
                     },
@@ -244,7 +299,7 @@
                     "200": {
                         "description": "Get All Open CP Issues for the given Issuer/Investor. Open CP Issues refers to the Issues that are yet to mature",
                         "schema": {
-                                "$ref": "#/definitions/CPIssue"
+                                "$ref": "#/definitions/IndiaCPIssue"
                         }
                     },
                     "default": {
@@ -285,7 +340,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/CPProgram"
+                                "$ref": "#/definitions/IndiaCPProgram"
                             }
                         }
                     },
@@ -300,7 +355,7 @@
         }
     },
     "definitions": {
-        "CPProgram": {
+        "IndiaCPProgram": {
             "type": "object",
             "properties": {
                 "program_id": {
@@ -405,14 +460,18 @@
                     "type": "integer",
                     "description": "Current version of the CP Program"
                 },
+                "modified_by": {
+                    "type": "string",
+                    "description": "Unique identifier of the Logged-in User that performed the action. This is required for Audit History"
+                },
                 "last_modified": {
                     "type": "string",
                     "format": "date",
-                    "description": "Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account"
+                    "description": "Last Modified Date for this CPIssue. This is required for Audit History"
                 }
             }
         },
-        "CPIssue": {
+        "IndiaCPIssue": {
             "type": "object",
             "properties": {
                 "cp_program_id": {
@@ -518,10 +577,52 @@
                     "type": "integer",
                     "description": "Current version of the CP Issue"
                 },
+                "modified_by": {
+                    "type": "string",
+                    "description": "Unique identifier of the Logged-in User that performed the action. This is required for Audit History"
+                },
                 "last_modified": {
                     "type": "string",
                     "format": "date",
-                    "description": "Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account"
+                    "description": "Last Modified Date for this CPIssue. This is required for Audit History"
+                }
+            }
+        },
+        "IndiaCPDocumentDetails": {
+            "type": "object",
+            "properties": {
+                "cp_program_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the CP Program that this document is associated with"
+                },
+                "cp_issue_id": {
+                    "type": "string",
+                    "description": "Unique identifier of the CP Issue that this document is associated with"
+                },
+                "doc_type": {
+                    "type": "string",
+                    "description": "Type of Document. Possible Values are ISIN_DOC, IPA_DOC, DEAL_CONFIRMATION_DOC, ALLOTMENT_LETTER, CORPORATE_ACTION_FORM"
+                },
+                "doc_sub_type": {
+                    "type": "string",
+                    "description": "Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA"
+                },
+                "doc_hash": {
+                    "type": "string",
+                    "description": "SHA256 Hash of the Content of the Document. This hash uniquely identifies the document."
+                },
+                "doc_status": {
+                    "type": "string",
+                    "description": "The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL"
+                },
+                "modified_by": {
+                    "type": "string",
+                    "description": "Unique identifier of the Logged-in User that performed the action. This is required for Audit History"
+                },
+                "last_modified": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "Last Modified Date for this CPIssue. This is required for Audit History"
                 }
             }
         },

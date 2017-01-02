@@ -1,10 +1,9 @@
 package com.barclays.indiacp;
 
-import com.barclays.indiacp.dl.integration.IndiaCPIssue;
-import com.barclays.indiacp.dl.integration.IndiaCPIssueFactory;
-import com.barclays.indiacp.dl.integration.IndiaCPProgram;
-import com.barclays.indiacp.dl.integration.IndiaCPProgramFactory;
-import org.apache.commons.io.IOUtils;
+import com.barclays.indiacp.dl.integration.IndiaCPIssueApi;
+import com.barclays.indiacp.dl.integration.IndiaCPIssueApiFactory;
+import com.barclays.indiacp.dl.integration.IndiaCPProgramApi;
+import com.barclays.indiacp.dl.integration.IndiaCPProgramApiFactory;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -13,7 +12,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.*;
 import java.net.URI;
-import java.util.Date;
 
 /**
  * Main class.
@@ -31,16 +29,16 @@ public class Main {
         // create a resource config that scans for JAX-RS resources and providers
         // in com.barclays.indiacp.dl.integration package
         ResourceConfig rc = new ResourceConfig();
-        rc.register(IndiaCPProgram.class).register(new AbstractBinder() {
+        rc.register(IndiaCPProgramApi.class).register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bindFactory(new IndiaCPProgramFactory()).to(IndiaCPProgram.class);
+                bindFactory(new IndiaCPProgramApiFactory()).to(IndiaCPProgramApi.class);
             }
         });
-        rc.register(IndiaCPIssue.class).register(new AbstractBinder() {
+        rc.register(IndiaCPIssueApi.class).register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bindFactory(new IndiaCPIssueFactory()).to(IndiaCPIssue.class);
+                bindFactory(new IndiaCPIssueApiFactory()).to(IndiaCPIssueApi.class);
             }
         });
         rc.register(MultiPartFeature.class);
