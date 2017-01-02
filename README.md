@@ -140,7 +140,7 @@ Infrastructure
 ### Machine’s and IP’s
 
 -   Ubuntu machine hosting the DL’s and Integration layer:
-    **52.172.24.128**
+    **52.172.42.128**
 
 -   UI Website: <http://finwizui.azurewebsites.net/>
 
@@ -148,7 +148,7 @@ Infrastructure
 
 Ubuntu admin
 
--   IP: **52.172.24.128**
+-   IP: **52.172.42.128**
 
 -   Username : indiacp
 
@@ -190,28 +190,29 @@ Link: <http://finwizui.azurewebsites.net/>
 >
 > <https://finwiz.visualstudio.com/IndiaCP/_build/index?context=Mine&path=%5C&definitionId=3&_a=completed>
 
-1.  Fire of a build using the Queue new build option
+1.  Fire of a build using the **Queue new build** option against the
+    **IndiaCP\_CordaBuild** build definition.
 
     ![](media/image1.png){width="4.680555555555555in"
     height="1.4981299212598425in"}
 
 ### Ethereum
 
-SSH to the Azure Ubuntu Box : **52.172.24.128**
+SSH to the Azure Ubuntu Box : **52.172.42.128**
 
 \*\*\*\*\*\*\*\*\*The entire code is copied to the folder
 **eth-indiacp** in the home directory.\*\*\*\*\*\*\*\*
 
-This can be done through the IndiaCP\_EthBuild build definition on the
-visual studio team project. The build and run steps need to be automated
-still.
+This can be done through the **IndiaCP\_EthBuild** build definition on
+the visual studio team project. The build and run steps are still needed
+to be automated.(connect with Suraj and Nikhil)
 
 ![](media/image2.png){width="6.268055555555556in"
 height="1.1118055555555555in"}
 
 ### DL Integration Layer 
 
-1.  SSH to the Azure Ubuntu Box : **52.172.24.128**
+1.  SSH to the Azure Ubuntu Box : **52.172.42.128**
 
 2.  Execute the following steps in order
 
