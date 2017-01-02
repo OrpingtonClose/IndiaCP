@@ -3,6 +3,8 @@ package com.barclays.indiacp.quorum.utils;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCode;
 import com.barclays.indiacp.quorum.contract.code.SolidityContract;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCodeFactory;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.jpmorgan.cakeshop.client.ClientManager;
@@ -32,11 +34,14 @@ public class CakeshopUtils {
 
     static {
         // setup cakeshop manager
-        cakeshopManager = ClientManager.create("http://52.172.42.128:8080/cakeshop");
+        cakeshopManager = ClientManager.create("http://localhost:8080/cakeshop");
         contractApi = cakeshopManager.getClient(ContractApi.class);
         transactionApi = cakeshopManager.getClient(TransactionApi.class);
     }
 
+    public static String getAddrFromTxId (String txnID) {
+        return transactionApi.get(txnID).getData().getContractAddress();
+    }
 
     //Takes solidity string, returns compiled binary
     public static Contract compileSolidity(String contractCode) {
@@ -48,25 +53,17 @@ public class CakeshopUtils {
 
     //returns address of newly mined contract
     public static String createContract(String contractName, Object contractModel) {
-
         APIResponse<APIData<TransactionResult>, TransactionResult> res = contractApi.create(getContractCreateCommand(contractName, contractModel));
         String txnID = res.getData().getId();
-
+        //wait till commit happens - TODO: check if this commit is to contractregistry or actual chain.
         final ListenableFuture<Transaction> txFuture = cakeshopManager.waitForTx(txnID);
-        txFuture.addListener (new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    System.out.println("tx committed:\n" + txFuture.get().toString());
+        txFuture.addListener(() -> {
+                try { System.out.println("Transaction committed:\n" + txFuture.get().toString()); } //use as logger
+                catch (InterruptedException|ExecutionException e) { e.printStackTrace(); }
+                },
+                MoreExecutors.directExecutor());
 
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, MoreExecutors.directExecutor());
-
-        Transaction confirmedTx = transactionApi.get(txnID).getData();
-        return confirmedTx.getContractAddress();
+        return getAddrFromTxId(txnID);
     }
 
     // creates argument object to create contract.

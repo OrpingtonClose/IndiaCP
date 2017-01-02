@@ -4,7 +4,6 @@ import com.barclays.indiacp.model.CPIssue;
 import com.barclays.indiacp.model.CPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 import com.jpmorgan.cakeshop.client.model.Contract;
-import com.jpmorgan.cakeshop.client.model.Transaction;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -28,7 +27,9 @@ public class IndiaCPProgram {
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
     public String issueCPProgram(CPProgram cpProgramArgs) {
-        return CakeshopUtils.createContract(this.getClass().getSimpleName(), cpProgramArgs);
+        String addr = CakeshopUtils.createContract(this.getClass().getSimpleName(), cpProgramArgs);
+        System.out.println("Newly created contract mined at: "+addr);
+        return addr;
     }
 
     @GET
