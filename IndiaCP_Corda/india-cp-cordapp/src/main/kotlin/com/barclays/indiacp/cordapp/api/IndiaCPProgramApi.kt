@@ -5,6 +5,7 @@ import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.CPProgramFlows
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPWithinCPProgramFlow
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
+import com.barclays.indiacp.model.IndiaCPIssue
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.utilities.Emoji
@@ -90,7 +91,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @Path("issueCPWithinCPProgram/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
     fun issueCPWintinCPProgram(@PathParam("cpProgramId") cpProgramId: String,
-                               newCP: IndiaCPApi.CPJSONObject
+                               newCP: IndiaCPIssue
                                ): Response {
         try {
 

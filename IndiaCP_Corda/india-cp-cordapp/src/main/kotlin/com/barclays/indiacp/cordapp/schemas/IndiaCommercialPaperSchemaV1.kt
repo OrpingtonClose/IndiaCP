@@ -3,6 +3,7 @@ package com.barclays.indiacp.cordapp.schemas
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.schemas.PersistentState
 import java.time.Instant
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -49,10 +50,10 @@ object IndiaCommercialPaperSchemaV1 : MappedSchema(schemaFamily = IndiaCommercia
             var cpTradeID: String,
 
             @Column(name = "trade_date")
-            var tradeDate: String,
+            var tradeDate: Date,
 
             @Column(name = "value_date")
-            var valueDate: String,
+            var valueDate: Date,
 
             @Column(name = "isin", nullable=true)
             var isin: String,

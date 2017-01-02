@@ -10,6 +10,10 @@ import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.dto.OrgLevelProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.*
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
+import com.barclays.indiacp.model.DepositoryAccountDetails
+import com.barclays.indiacp.model.IndiaCPIssue
+import com.barclays.indiacp.model.PaymentAccountDetails
+import com.barclays.indiacp.model.SettlementDetails
 import com.esotericsoftware.kryo.Kryo
 import net.corda.core.crypto.Party
 import net.corda.core.node.CordaPluginRegistry
@@ -26,8 +30,8 @@ class IndiaCPPlugin : CordaPluginRegistry() {
     // A list of protocol that are required for this cordapp
     override val requiredFlows: Map<String, Set<String>> = mapOf(
             DealEntryFlow::class.java.name to setOf(String::class.java.name, Party::class.java.name),
-            IssueCPFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
-            AddSettlementDetailsFlow::class.java.name to setOf(String::class.java.name, IndiaCPApi.SettlementDetailsJSONObject::class.java.name),
+            IssueCPFlow::class.java.name to setOf(IndiaCPIssue::class.java.name),
+            AddSettlementDetailsFlow::class.java.name to setOf(String::class.java.name, SettlementDetails::class.java.name),
 
 
             //Each flow needs to be indivisually registered in this format.
@@ -40,24 +44,22 @@ class IndiaCPPlugin : CordaPluginRegistry() {
 
 
             //ISSUE CP within exsiting CP Program
-                    IssueCPWithinCPProgramFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
+            IssueCPWithinCPProgramFlow::class.java.name to setOf(IndiaCPIssue::class.java.name),
 
             //Org Level Borrowing Program Flow
             OrgLevelBorrowProgramFlow::class.java.name to setOf(OrgLevelProgramJSON::class.java.name),
             IssueCPProgramWithInOrgLimitFlow::class.java.name to setOf(IndiaCPProgramJSON::class.java.name)
-
-
     )
 
     override fun registerRPCKryoTypes(kryo: Kryo): Boolean {
         kryo.apply {
-            register(IndiaCPApi.CPJSONObject::class.java)
+            register(IndiaCPIssue::class.java)
             register(IndiaCommercialPaper::class.java)
             register(IndiaCommercialPaper.State::class.java)
             register(IndiaCommercialPaper.SettlementDetails::class.java)
-            register(IndiaCPApi.SettlementDetailsJSONObject::class.java)
-            register(IndiaCPApi.PaymentAccountDetailsJSONObject::class.java)
-            register(IndiaCPApi.DepositoryAccountDetailsJSONObject::class.java)
+            register(SettlementDetails::class.java)
+            register(PaymentAccountDetails::class.java)
+            register(DepositoryAccountDetails::class.java)
             register(IndiaCPApi.CPReferenceAndAcceptablePrice::class.java)
             register(IndiaCPApi.Cash::class.java)
 

@@ -67,8 +67,8 @@ class IndiaCommercialPaper : Contract {
             val depository: Party,
             val cpProgramID: String,
             val cpTradeID: String,
-            val tradeDate: String,
-            val valueDate: String,
+            val tradeDate: Date,
+            val valueDate: Date,
             val faceValue: Amount<Issued<Currency>>,
             val maturityDate: Instant,
             var isin: String,
@@ -278,7 +278,7 @@ class IndiaCommercialPaper : Contract {
      * at the moment: this restriction is not fundamental and may be lifted later.
      */
     fun generateIssue(issuer: Party, beneficiary: Party, ipa: Party, depository: Party, notary: Party,
-                      cpProgramID: String, cpTradeID: String, tradeDate: String, valueDate: String,
+                      cpProgramID: String, cpTradeID: String, tradeDate: Date, valueDate: Date,
                       faceValue: Amount<Issued<Currency>>, maturityDate: Instant,
                       isin: String): TransactionBuilder {
 
@@ -295,7 +295,7 @@ class IndiaCommercialPaper : Contract {
      * at the moment: this restriction is not fundamental and may be lifted later.
      */
     fun generateAgreement(issuer: Party, beneficiary: Party, ipa: Party, depository: Party,
-                      cpProgramID: String, cpTradeID: String, tradeDate: String, valueDate: String,
+                      cpProgramID: String, cpTradeID: String, tradeDate: Date, valueDate: Date,
                       faceValue: Amount<Issued<Currency>>, maturityDate: Instant,
                       isin: String, notary: Party): TransactionBuilder {
 

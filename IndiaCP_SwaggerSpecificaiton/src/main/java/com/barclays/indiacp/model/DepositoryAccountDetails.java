@@ -28,11 +28,13 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * DepositoryAccountDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T17:41:21.538Z")
 public class DepositoryAccountDetails   {
   @JsonProperty("dp_id")
   private String dpId = null;
@@ -52,7 +54,7 @@ public class DepositoryAccountDetails   {
    * Unique identifier of the DP Account at the Depository
    * @return dpId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the DP Account at the Depository")
+  @ApiModelProperty(value = "Unique identifier of the DP Account at the Depository")
   public String getDpId() {
     return dpId;
   }
@@ -70,7 +72,7 @@ public class DepositoryAccountDetails   {
    * Name under which the DP Account is registered. For e.g. Barclays Securities India Pvt Ltd
    * @return dpName
   **/
-  //@ApiModelProperty(value = "Name under which the DP Account is registered. For e.g. Barclays Securities India Pvt Ltd")
+  @ApiModelProperty(value = "Name under which the DP Account is registered. For e.g. Barclays Securities India Pvt Ltd")
   public String getDpName() {
     return dpName;
   }
@@ -88,7 +90,7 @@ public class DepositoryAccountDetails   {
    * Unique identifier of the Client at the Depository
    * @return clientId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Client at the Depository")
+  @ApiModelProperty(value = "Unique identifier of the Client at the Depository")
   public String getClientId() {
     return clientId;
   }

@@ -4,6 +4,7 @@ import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.api.IndiaCPApi
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.utilities.CPUtils
+import com.barclays.indiacp.model.SettlementDetails
 import net.corda.core.TransientProperty
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.TransactionState
@@ -26,7 +27,7 @@ import java.time.Instant
  */
 
 
-class AddSettlementDetailsFlow(val cpRefId: String, val settlementDetails: IndiaCPApi.SettlementDetailsJSONObject) : FlowLogic<SignedTransaction>() {
+class AddSettlementDetailsFlow(val cpRefId: String, val settlementDetails: SettlementDetails) : FlowLogic<SignedTransaction>() {
 
     companion object {
         //val PROSPECTUS_HASH = SecureHash.parse("decd098666b9657314870e192ced0c3519c2c9d395507a238338f8d003929de9")
@@ -54,17 +55,17 @@ class AddSettlementDetailsFlow(val cpRefId: String, val settlementDetails: India
 //        cpReference = StateAndRef(state, cpReference.ref)
 
         val settlementDetails: IndiaCommercialPaper.SettlementDetails = IndiaCommercialPaper.SettlementDetails(
-                partyType = settlementDetails.partyType,
+                partyType = "", //TODO: Fix IT - The Settlement Details Object is tagged through the JSON
                 paymentAccountDetails = IndiaCommercialPaper.PaymentAccountDetails(
-                        creditorName = settlementDetails.paymentAccountDetailsJSONObject.creditorName,
-                        bankAccountDetails = settlementDetails.paymentAccountDetailsJSONObject.bankAccountDetails,
-                        bankName = settlementDetails.paymentAccountDetailsJSONObject.bankName,
-                        rtgsCode = settlementDetails.paymentAccountDetailsJSONObject.rtgsCode
+                        creditorName = settlementDetails.paymentAccountDetails.creditorName,
+                        bankAccountDetails = settlementDetails.paymentAccountDetails.bankAccountNo,
+                        bankName = settlementDetails.paymentAccountDetails.bankName,
+                        rtgsCode = settlementDetails.paymentAccountDetails.rtgsIfscCode
                 ),
                 depositoryAccountDetails = IndiaCommercialPaper.DepositoryAccountDetails (
-                        dpName = settlementDetails.depositoryAccountDetailsJSONObject.dpName,
-                        clientId =  settlementDetails.depositoryAccountDetailsJSONObject.clientId,
-                        dpID =  settlementDetails.depositoryAccountDetailsJSONObject.dpID)
+                        dpName = settlementDetails.depositoryAccountDetails.dpName,
+                        clientId =  settlementDetails.depositoryAccountDetails.clientId,
+                        dpID =  settlementDetails.depositoryAccountDetails.dpId)
         )
 
         val notaryNode = serviceHub.networkMapCache.notaryNodes.filter { it.notaryIdentity == cpReference.state.notary }.single()
