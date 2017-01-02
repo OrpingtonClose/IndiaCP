@@ -71,5 +71,8 @@
 
   "tooling": {
     "defaultNamespace": "IndiaCPAngular2"
+  },
+  "configurations": {
+    "Angular1_Build": {}
   }
 }

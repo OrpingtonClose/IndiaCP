@@ -27,13 +27,14 @@ package com.barclays.indiacp.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Date;
 
 /**
- * CPProgram
+ * IndiaCPProgram
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-12-30T09:42:37.124Z")
-public class CPProgram   {
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+public class IndiaCPProgram   {
   @JsonProperty("program_id")
   private String programId = null;
 
@@ -109,10 +110,13 @@ public class CPProgram   {
   @JsonProperty("version")
   private Integer version = null;
 
+  @JsonProperty("modified_by")
+  private String modifiedBy = null;
+
   @JsonProperty("last_modified")
   private Date lastModified = null;
 
-  public CPProgram programId(String programId) {
+  public IndiaCPProgram programId(String programId) {
     this.programId = programId;
     return this;
   }
@@ -130,7 +134,7 @@ public class CPProgram   {
     this.programId = programId;
   }
 
-  public CPProgram name(String name) {
+  public IndiaCPProgram name(String name) {
     this.name = name;
     return this;
   }
@@ -148,7 +152,7 @@ public class CPProgram   {
     this.name = name;
   }
 
-  public CPProgram userId(String userId) {
+  public IndiaCPProgram userId(String userId) {
     this.userId = userId;
     return this;
   }
@@ -166,7 +170,7 @@ public class CPProgram   {
     this.userId = userId;
   }
 
-  public CPProgram type(String type) {
+  public IndiaCPProgram type(String type) {
     this.type = type;
     return this;
   }
@@ -184,7 +188,7 @@ public class CPProgram   {
     this.type = type;
   }
 
-  public CPProgram purpose(String purpose) {
+  public IndiaCPProgram purpose(String purpose) {
     this.purpose = purpose;
     return this;
   }
@@ -202,7 +206,7 @@ public class CPProgram   {
     this.purpose = purpose;
   }
 
-  public CPProgram isin(String isin) {
+  public IndiaCPProgram isin(String isin) {
     this.isin = isin;
     return this;
   }
@@ -220,7 +224,7 @@ public class CPProgram   {
     this.isin = isin;
   }
 
-  public CPProgram issuerId(String issuerId) {
+  public IndiaCPProgram issuerId(String issuerId) {
     this.issuerId = issuerId;
     return this;
   }
@@ -238,7 +242,7 @@ public class CPProgram   {
     this.issuerId = issuerId;
   }
 
-  public CPProgram issuerName(String issuerName) {
+  public IndiaCPProgram issuerName(String issuerName) {
     this.issuerName = issuerName;
     return this;
   }
@@ -256,7 +260,7 @@ public class CPProgram   {
     this.issuerName = issuerName;
   }
 
-  public CPProgram issueCommencementDate(Date issueCommencementDate) {
+  public IndiaCPProgram issueCommencementDate(Date issueCommencementDate) {
     this.issueCommencementDate = issueCommencementDate;
     return this;
   }
@@ -274,7 +278,7 @@ public class CPProgram   {
     this.issueCommencementDate = issueCommencementDate;
   }
 
-  public CPProgram programSize(Integer programSize) {
+  public IndiaCPProgram programSize(Integer programSize) {
     this.programSize = programSize;
     return this;
   }
@@ -292,7 +296,7 @@ public class CPProgram   {
     this.programSize = programSize;
   }
 
-  public CPProgram programAllocatedValue(Double programAllocatedValue) {
+  public IndiaCPProgram programAllocatedValue(Double programAllocatedValue) {
     this.programAllocatedValue = programAllocatedValue;
     return this;
   }
@@ -310,7 +314,7 @@ public class CPProgram   {
     this.programAllocatedValue = programAllocatedValue;
   }
 
-  public CPProgram programCurrency(String programCurrency) {
+  public IndiaCPProgram programCurrency(String programCurrency) {
     this.programCurrency = programCurrency;
     return this;
   }
@@ -328,7 +332,7 @@ public class CPProgram   {
     this.programCurrency = programCurrency;
   }
 
-  public CPProgram maturityDays(Integer maturityDays) {
+  public IndiaCPProgram maturityDays(Integer maturityDays) {
     this.maturityDays = maturityDays;
     return this;
   }
@@ -346,7 +350,7 @@ public class CPProgram   {
     this.maturityDays = maturityDays;
   }
 
-  public CPProgram ipaId(String ipaId) {
+  public IndiaCPProgram ipaId(String ipaId) {
     this.ipaId = ipaId;
     return this;
   }
@@ -364,7 +368,7 @@ public class CPProgram   {
     this.ipaId = ipaId;
   }
 
-  public CPProgram ipaName(String ipaName) {
+  public IndiaCPProgram ipaName(String ipaName) {
     this.ipaName = ipaName;
     return this;
   }
@@ -382,7 +386,7 @@ public class CPProgram   {
     this.ipaName = ipaName;
   }
 
-  public CPProgram depositoryId(String depositoryId) {
+  public IndiaCPProgram depositoryId(String depositoryId) {
     this.depositoryId = depositoryId;
     return this;
   }
@@ -400,7 +404,7 @@ public class CPProgram   {
     this.depositoryId = depositoryId;
   }
 
-  public CPProgram depositoryName(String depositoryName) {
+  public IndiaCPProgram depositoryName(String depositoryName) {
     this.depositoryName = depositoryName;
     return this;
   }
@@ -418,7 +422,7 @@ public class CPProgram   {
     this.depositoryName = depositoryName;
   }
 
-  public CPProgram isinGenerationRequestDocId(String isinGenerationRequestDocId) {
+  public IndiaCPProgram isinGenerationRequestDocId(String isinGenerationRequestDocId) {
     this.isinGenerationRequestDocId = isinGenerationRequestDocId;
     return this;
   }
@@ -436,7 +440,7 @@ public class CPProgram   {
     this.isinGenerationRequestDocId = isinGenerationRequestDocId;
   }
 
-  public CPProgram ipaVerificationRequestDocId(String ipaVerificationRequestDocId) {
+  public IndiaCPProgram ipaVerificationRequestDocId(String ipaVerificationRequestDocId) {
     this.ipaVerificationRequestDocId = ipaVerificationRequestDocId;
     return this;
   }
@@ -454,7 +458,7 @@ public class CPProgram   {
     this.ipaVerificationRequestDocId = ipaVerificationRequestDocId;
   }
 
-  public CPProgram ipaCertificateDocId(String ipaCertificateDocId) {
+  public IndiaCPProgram ipaCertificateDocId(String ipaCertificateDocId) {
     this.ipaCertificateDocId = ipaCertificateDocId;
     return this;
   }
@@ -472,7 +476,7 @@ public class CPProgram   {
     this.ipaCertificateDocId = ipaCertificateDocId;
   }
 
-  public CPProgram corporateActionFormDocId(String corporateActionFormDocId) {
+  public IndiaCPProgram corporateActionFormDocId(String corporateActionFormDocId) {
     this.corporateActionFormDocId = corporateActionFormDocId;
     return this;
   }
@@ -490,7 +494,7 @@ public class CPProgram   {
     this.corporateActionFormDocId = corporateActionFormDocId;
   }
 
-  public CPProgram allotmentLetterDocId(String allotmentLetterDocId) {
+  public IndiaCPProgram allotmentLetterDocId(String allotmentLetterDocId) {
     this.allotmentLetterDocId = allotmentLetterDocId;
     return this;
   }
@@ -508,7 +512,7 @@ public class CPProgram   {
     this.allotmentLetterDocId = allotmentLetterDocId;
   }
 
-  public CPProgram orgUnit(String orgUnit) {
+  public IndiaCPProgram orgUnit(String orgUnit) {
     this.orgUnit = orgUnit;
     return this;
   }
@@ -526,7 +530,7 @@ public class CPProgram   {
     this.orgUnit = orgUnit;
   }
 
-  public CPProgram status(String status) {
+  public IndiaCPProgram status(String status) {
     this.status = status;
     return this;
   }
@@ -544,7 +548,7 @@ public class CPProgram   {
     this.status = status;
   }
 
-  public CPProgram version(Integer version) {
+  public IndiaCPProgram version(Integer version) {
     this.version = version;
     return this;
   }
@@ -562,16 +566,34 @@ public class CPProgram   {
     this.version = version;
   }
 
-  public CPProgram lastModified(Date lastModified) {
+  public IndiaCPProgram modifiedBy(String modifiedBy) {
+    this.modifiedBy = modifiedBy;
+    return this;
+  }
+
+   /**
+   * Unique identifier of the Logged-in User that performed the action. This is required for Audit History
+   * @return modifiedBy
+  **/
+  //@ApiModelProperty(value = "Unique identifier of the Logged-in User that performed the action. This is required for Audit History")
+  public String getModifiedBy() {
+    return modifiedBy;
+  }
+
+  public void setModifiedBy(String modifiedBy) {
+    this.modifiedBy = modifiedBy;
+  }
+
+  public IndiaCPProgram lastModified(Date lastModified) {
     this.lastModified = lastModified;
     return this;
   }
 
    /**
-   * Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account
+   * Last Modified Date for this CPIssue. This is required for Audit History
    * @return lastModified
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account")
+  //@ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
   public Date getLastModified() {
     return lastModified;
   }
@@ -582,52 +604,53 @@ public class CPProgram   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CPProgram cpProgram = (CPProgram) o;
-    return Objects.equals(this.programId, cpProgram.programId) &&
-        Objects.equals(this.name, cpProgram.name) &&
-        Objects.equals(this.userId, cpProgram.userId) &&
-        Objects.equals(this.type, cpProgram.type) &&
-        Objects.equals(this.purpose, cpProgram.purpose) &&
-        Objects.equals(this.isin, cpProgram.isin) &&
-        Objects.equals(this.issuerId, cpProgram.issuerId) &&
-        Objects.equals(this.issuerName, cpProgram.issuerName) &&
-        Objects.equals(this.issueCommencementDate, cpProgram.issueCommencementDate) &&
-        Objects.equals(this.programSize, cpProgram.programSize) &&
-        Objects.equals(this.programAllocatedValue, cpProgram.programAllocatedValue) &&
-        Objects.equals(this.programCurrency, cpProgram.programCurrency) &&
-        Objects.equals(this.maturityDays, cpProgram.maturityDays) &&
-        Objects.equals(this.ipaId, cpProgram.ipaId) &&
-        Objects.equals(this.ipaName, cpProgram.ipaName) &&
-        Objects.equals(this.depositoryId, cpProgram.depositoryId) &&
-        Objects.equals(this.depositoryName, cpProgram.depositoryName) &&
-        Objects.equals(this.isinGenerationRequestDocId, cpProgram.isinGenerationRequestDocId) &&
-        Objects.equals(this.ipaVerificationRequestDocId, cpProgram.ipaVerificationRequestDocId) &&
-        Objects.equals(this.ipaCertificateDocId, cpProgram.ipaCertificateDocId) &&
-        Objects.equals(this.corporateActionFormDocId, cpProgram.corporateActionFormDocId) &&
-        Objects.equals(this.allotmentLetterDocId, cpProgram.allotmentLetterDocId) &&
-        Objects.equals(this.orgUnit, cpProgram.orgUnit) &&
-        Objects.equals(this.status, cpProgram.status) &&
-        Objects.equals(this.version, cpProgram.version) &&
-        Objects.equals(this.lastModified, cpProgram.lastModified);
+    IndiaCPProgram indiaCPProgram = (IndiaCPProgram) o;
+    return Objects.equals(this.programId, indiaCPProgram.programId) &&
+        Objects.equals(this.name, indiaCPProgram.name) &&
+        Objects.equals(this.userId, indiaCPProgram.userId) &&
+        Objects.equals(this.type, indiaCPProgram.type) &&
+        Objects.equals(this.purpose, indiaCPProgram.purpose) &&
+        Objects.equals(this.isin, indiaCPProgram.isin) &&
+        Objects.equals(this.issuerId, indiaCPProgram.issuerId) &&
+        Objects.equals(this.issuerName, indiaCPProgram.issuerName) &&
+        Objects.equals(this.issueCommencementDate, indiaCPProgram.issueCommencementDate) &&
+        Objects.equals(this.programSize, indiaCPProgram.programSize) &&
+        Objects.equals(this.programAllocatedValue, indiaCPProgram.programAllocatedValue) &&
+        Objects.equals(this.programCurrency, indiaCPProgram.programCurrency) &&
+        Objects.equals(this.maturityDays, indiaCPProgram.maturityDays) &&
+        Objects.equals(this.ipaId, indiaCPProgram.ipaId) &&
+        Objects.equals(this.ipaName, indiaCPProgram.ipaName) &&
+        Objects.equals(this.depositoryId, indiaCPProgram.depositoryId) &&
+        Objects.equals(this.depositoryName, indiaCPProgram.depositoryName) &&
+        Objects.equals(this.isinGenerationRequestDocId, indiaCPProgram.isinGenerationRequestDocId) &&
+        Objects.equals(this.ipaVerificationRequestDocId, indiaCPProgram.ipaVerificationRequestDocId) &&
+        Objects.equals(this.ipaCertificateDocId, indiaCPProgram.ipaCertificateDocId) &&
+        Objects.equals(this.corporateActionFormDocId, indiaCPProgram.corporateActionFormDocId) &&
+        Objects.equals(this.allotmentLetterDocId, indiaCPProgram.allotmentLetterDocId) &&
+        Objects.equals(this.orgUnit, indiaCPProgram.orgUnit) &&
+        Objects.equals(this.status, indiaCPProgram.status) &&
+        Objects.equals(this.version, indiaCPProgram.version) &&
+        Objects.equals(this.modifiedBy, indiaCPProgram.modifiedBy) &&
+        Objects.equals(this.lastModified, indiaCPProgram.lastModified);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(programId, name, userId, type, purpose, isin, issuerId, issuerName, issueCommencementDate, programSize, programAllocatedValue, programCurrency, maturityDays, ipaId, ipaName, depositoryId, depositoryName, isinGenerationRequestDocId, ipaVerificationRequestDocId, ipaCertificateDocId, corporateActionFormDocId, allotmentLetterDocId, orgUnit, status, version, lastModified);
+    return Objects.hash(programId, name, userId, type, purpose, isin, issuerId, issuerName, issueCommencementDate, programSize, programAllocatedValue, programCurrency, maturityDays, ipaId, ipaName, depositoryId, depositoryName, isinGenerationRequestDocId, ipaVerificationRequestDocId, ipaCertificateDocId, corporateActionFormDocId, allotmentLetterDocId, orgUnit, status, version, modifiedBy, lastModified);
   }
 
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class CPProgram {\n");
+    sb.append("class IndiaCPProgram {\n");
     
     sb.append("    programId: ").append(toIndentedString(programId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
@@ -654,6 +677,7 @@ public class CPProgram   {
     sb.append("    orgUnit: ").append(toIndentedString(orgUnit)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    version: ").append(toIndentedString(version)).append("\n");
+    sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");
     sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
     sb.append("}");
     return sb.toString();
@@ -663,7 +687,7 @@ public class CPProgram   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

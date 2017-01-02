@@ -40,7 +40,7 @@ import org.json.simple.parser.ParseException;
  * Created by ritukedia on 24/12/16.
  */
 @Path("indiacpdocuments")
-public class IndiaCPDocuments {
+public class IndiaCPDocumentsApi {
 
     @POST
     @Path("generateISINDocuments")
@@ -255,7 +255,7 @@ public class IndiaCPDocuments {
 //    @Consumes(MediaType.MULTIPART_FORM_DATA)
 //    public Response uploadDoc(InputStream uploadedInputStream){
 //
-//        Logger logger = Logger.getLogger(IndiaCPProgram.class.getName());
+//        Logger logger = Logger.getLogger(IndiaCPProgramApi.class.getName());
 //        Client jerseyClient = ClientBuilder.newClient();
 //        //Client jerseyClient = ClientBuilder.newClient(new ClientConfig().register(org.glassfish.jersey.jsonp.internal.JsonProcessingAutoDiscoverable.class));
 //        //Feature feature = new LoggingFeature(logger, Level.INFO, null, null);

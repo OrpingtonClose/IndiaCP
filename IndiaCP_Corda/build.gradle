@@ -23,6 +23,8 @@ buildscript {
 
         // Can run 'gradle dependencyUpdates' to find new versions of things.
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
+
+//        classpath "com.barclays.indiacp:indiacp_dl_integration:1.0-SNAPSHOT"
     }
 
 }

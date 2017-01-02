@@ -33,3 +33,6 @@ http://stackoverflow.com/questions/34443361/how-to-use-q-service-in-angular-js-f
 
 bootstrap
 modal-lg : 1200px
+
+Test your API's
+https://apigee.com/about/blog/developer/swagger-test-templates-test-your-apis
