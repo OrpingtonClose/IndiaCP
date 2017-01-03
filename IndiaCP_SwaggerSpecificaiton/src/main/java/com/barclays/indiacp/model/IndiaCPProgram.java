@@ -35,16 +35,13 @@ import java.util.Date;
 /**
  * IndiaCPProgram
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T04:48:43.472Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
 public class IndiaCPProgram   {
   @JsonProperty("program_id")
   private String programId = null;
 
   @JsonProperty("name")
   private String name = null;
-
-  @JsonProperty("user_id")
-  private String userId = null;
 
   @JsonProperty("type")
   private String type = null;
@@ -103,9 +100,6 @@ public class IndiaCPProgram   {
   @JsonProperty("allotment_letter_doc_id")
   private String allotmentLetterDocId = null;
 
-  @JsonProperty("org_unit")
-  private String orgUnit = null;
-
   @JsonProperty("status")
   private String status = null;
 
@@ -152,24 +146,6 @@ public class IndiaCPProgram   {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public IndiaCPProgram userId(String userId) {
-    this.userId = userId;
-    return this;
-  }
-
-   /**
-   * User identifier
-   * @return userId
-  **/
-  @ApiModelProperty(value = "User identifier")
-  public String getUserId() {
-    return userId;
-  }
-
-  public void setUserId(String userId) {
-    this.userId = userId;
   }
 
   public IndiaCPProgram type(String type) {
@@ -514,24 +490,6 @@ public class IndiaCPProgram   {
     this.allotmentLetterDocId = allotmentLetterDocId;
   }
 
-  public IndiaCPProgram orgUnit(String orgUnit) {
-    this.orgUnit = orgUnit;
-    return this;
-  }
-
-   /**
-   * Top level organizational borrowing limit contract
-   * @return orgUnit
-  **/
-  @ApiModelProperty(value = "Top level organizational borrowing limit contract")
-  public String getOrgUnit() {
-    return orgUnit;
-  }
-
-  public void setOrgUnit(String orgUnit) {
-    this.orgUnit = orgUnit;
-  }
-
   public IndiaCPProgram status(String status) {
     this.status = status;
     return this;
@@ -616,7 +574,6 @@ public class IndiaCPProgram   {
     IndiaCPProgram indiaCPProgram = (IndiaCPProgram) o;
     return Objects.equals(this.programId, indiaCPProgram.programId) &&
         Objects.equals(this.name, indiaCPProgram.name) &&
-        Objects.equals(this.userId, indiaCPProgram.userId) &&
         Objects.equals(this.type, indiaCPProgram.type) &&
         Objects.equals(this.purpose, indiaCPProgram.purpose) &&
         Objects.equals(this.isin, indiaCPProgram.isin) &&
@@ -636,7 +593,6 @@ public class IndiaCPProgram   {
         Objects.equals(this.ipaCertificateDocId, indiaCPProgram.ipaCertificateDocId) &&
         Objects.equals(this.corporateActionFormDocId, indiaCPProgram.corporateActionFormDocId) &&
         Objects.equals(this.allotmentLetterDocId, indiaCPProgram.allotmentLetterDocId) &&
-        Objects.equals(this.orgUnit, indiaCPProgram.orgUnit) &&
         Objects.equals(this.status, indiaCPProgram.status) &&
         Objects.equals(this.version, indiaCPProgram.version) &&
         Objects.equals(this.modifiedBy, indiaCPProgram.modifiedBy) &&
@@ -645,7 +601,7 @@ public class IndiaCPProgram   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(programId, name, userId, type, purpose, isin, issuerId, issuerName, issueCommencementDate, programSize, programAllocatedValue, programCurrency, maturityDays, ipaId, ipaName, depositoryId, depositoryName, isinGenerationRequestDocId, ipaVerificationRequestDocId, ipaCertificateDocId, corporateActionFormDocId, allotmentLetterDocId, orgUnit, status, version, modifiedBy, lastModified);
+    return Objects.hash(programId, name, type, purpose, isin, issuerId, issuerName, issueCommencementDate, programSize, programAllocatedValue, programCurrency, maturityDays, ipaId, ipaName, depositoryId, depositoryName, isinGenerationRequestDocId, ipaVerificationRequestDocId, ipaCertificateDocId, corporateActionFormDocId, allotmentLetterDocId, status, version, modifiedBy, lastModified);
   }
 
 
@@ -656,7 +612,6 @@ public class IndiaCPProgram   {
     
     sb.append("    programId: ").append(toIndentedString(programId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    purpose: ").append(toIndentedString(purpose)).append("\n");
     sb.append("    isin: ").append(toIndentedString(isin)).append("\n");
@@ -676,7 +631,6 @@ public class IndiaCPProgram   {
     sb.append("    ipaCertificateDocId: ").append(toIndentedString(ipaCertificateDocId)).append("\n");
     sb.append("    corporateActionFormDocId: ").append(toIndentedString(corporateActionFormDocId)).append("\n");
     sb.append("    allotmentLetterDocId: ").append(toIndentedString(allotmentLetterDocId)).append("\n");
-    sb.append("    orgUnit: ").append(toIndentedString(orgUnit)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    version: ").append(toIndentedString(version)).append("\n");
     sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");

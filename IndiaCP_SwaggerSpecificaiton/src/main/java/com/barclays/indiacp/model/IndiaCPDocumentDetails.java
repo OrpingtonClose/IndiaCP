@@ -28,6 +28,7 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
@@ -35,7 +36,7 @@ import java.util.Date;
 /**
  * IndiaCPDocumentDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T04:48:43.472Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
 public class IndiaCPDocumentDetails   {
   @JsonProperty("cp_program_id")
   private String cpProgramId = null;
@@ -43,8 +44,49 @@ public class IndiaCPDocumentDetails   {
   @JsonProperty("cp_issue_id")
   private String cpIssueId = null;
 
+  /**
+   * Type of Legal Documents exchanged and signed/countersigned by participants in the CPProgram
+   */
+  public enum DocTypeEnum {
+    CREDIT_RATING_DOC("CREDIT_RATING_DOC"),
+    
+    BOARD_RESOLUTION_BORROWING_LIMIT_DOC("BOARD_RESOLUTION_BORROWING_LIMIT_DOC"),
+    
+    DEPOSITORY_DOCS("DEPOSITORY_DOCS"),
+    
+    IPA_DOCS("IPA_DOCS"),
+    
+    IPA_CERTIFICATE_DOC("IPA_CERTIFICATE_DOC"),
+    
+    CORPORATE_ACTION_FORM("CORPORATE_ACTION_FORM"),
+    
+    DEAL_CONFIRMATION_DOC("DEAL_CONFIRMATION_DOC");
+
+    private String value;
+
+    DocTypeEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static DocTypeEnum fromValue(String text) {
+      for (DocTypeEnum b : DocTypeEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
   @JsonProperty("doc_type")
-  private String docType = null;
+  private DocTypeEnum docType = null;
 
   @JsonProperty("doc_sub_type")
   private String docSubType = null;
@@ -100,21 +142,21 @@ public class IndiaCPDocumentDetails   {
     this.cpIssueId = cpIssueId;
   }
 
-  public IndiaCPDocumentDetails docType(String docType) {
+  public IndiaCPDocumentDetails docType(DocTypeEnum docType) {
     this.docType = docType;
     return this;
   }
 
    /**
-   * Type of Document. Possible Values are ISIN_DOC, IPA_DOC, DEAL_CONFIRMATION_DOC, ALLOTMENT_LETTER, CORPORATE_ACTION_FORM
+   * Type of Legal Documents exchanged and signed/countersigned by participants in the CPProgram
    * @return docType
   **/
-  @ApiModelProperty(value = "Type of Document. Possible Values are ISIN_DOC, IPA_DOC, DEAL_CONFIRMATION_DOC, ALLOTMENT_LETTER, CORPORATE_ACTION_FORM")
-  public String getDocType() {
+  @ApiModelProperty(value = "Type of Legal Documents exchanged and signed/countersigned by participants in the CPProgram")
+  public DocTypeEnum getDocType() {
     return docType;
   }
 
-  public void setDocType(String docType) {
+  public void setDocType(DocTypeEnum docType) {
     this.docType = docType;
   }
 

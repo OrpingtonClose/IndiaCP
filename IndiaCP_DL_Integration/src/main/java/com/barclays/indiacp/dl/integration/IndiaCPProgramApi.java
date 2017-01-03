@@ -47,19 +47,6 @@ public interface IndiaCPProgramApi {
     public IndiaCPProgram addDocs(@FormDataParam("metadata") ArrayList<IndiaCPDocumentDetails> docDetails,
                                  @FormDataParam("file") InputStream uploadedInputStream);
 
-    @POST
-    @Path("getDocs/{docHash}")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram getDocs(@PathParam("docHash") String docHash);
-
-    @POST
-    @Path("getDoc/{docHash}/{docSubType}")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram getDoc(@PathParam("docHash") String docHash,
-                                 @PathParam("docSubType") String docSubType);
-
     @Context
     public void setRequest(Request request);
 }

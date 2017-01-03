@@ -35,13 +35,10 @@ import java.util.Date;
 /**
  * IndiaCPIssue
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T04:48:43.472Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
 public class IndiaCPIssue   {
   @JsonProperty("cp_program_id")
   private String cpProgramId = null;
-
-  @JsonProperty("user_id")
-  private String userId = null;
 
   @JsonProperty("cp_trade_id")
   private String cpTradeId = null;
@@ -106,6 +103,9 @@ public class IndiaCPIssue   {
   @JsonProperty("investor_settlement_details")
   private SettlementDetails investorSettlementDetails = null;
 
+  @JsonProperty("ipa_settlement_details")
+  private SettlementDetails ipaSettlementDetails = null;
+
   @JsonProperty("deal_confirmation_doc_id")
   private String dealConfirmationDocId = null;
 
@@ -137,24 +137,6 @@ public class IndiaCPIssue   {
 
   public void setCpProgramId(String cpProgramId) {
     this.cpProgramId = cpProgramId;
-  }
-
-  public IndiaCPIssue userId(String userId) {
-    this.userId = userId;
-    return this;
-  }
-
-   /**
-   * User identifier
-   * @return userId
-  **/
-  @ApiModelProperty(value = "User identifier")
-  public String getUserId() {
-    return userId;
-  }
-
-  public void setUserId(String userId) {
-    this.userId = userId;
   }
 
   public IndiaCPIssue cpTradeId(String cpTradeId) {
@@ -535,6 +517,24 @@ public class IndiaCPIssue   {
     this.investorSettlementDetails = investorSettlementDetails;
   }
 
+  public IndiaCPIssue ipaSettlementDetails(SettlementDetails ipaSettlementDetails) {
+    this.ipaSettlementDetails = ipaSettlementDetails;
+    return this;
+  }
+
+   /**
+   * Get ipaSettlementDetails
+   * @return ipaSettlementDetails
+  **/
+  @ApiModelProperty(value = "")
+  public SettlementDetails getIpaSettlementDetails() {
+    return ipaSettlementDetails;
+  }
+
+  public void setIpaSettlementDetails(SettlementDetails ipaSettlementDetails) {
+    this.ipaSettlementDetails = ipaSettlementDetails;
+  }
+
   public IndiaCPIssue dealConfirmationDocId(String dealConfirmationDocId) {
     this.dealConfirmationDocId = dealConfirmationDocId;
     return this;
@@ -636,7 +636,6 @@ public class IndiaCPIssue   {
     }
     IndiaCPIssue indiaCPIssue = (IndiaCPIssue) o;
     return Objects.equals(this.cpProgramId, indiaCPIssue.cpProgramId) &&
-        Objects.equals(this.userId, indiaCPIssue.userId) &&
         Objects.equals(this.cpTradeId, indiaCPIssue.cpTradeId) &&
         Objects.equals(this.bookId, indiaCPIssue.bookId) &&
         Objects.equals(this.isin, indiaCPIssue.isin) &&
@@ -658,6 +657,7 @@ public class IndiaCPIssue   {
         Objects.equals(this.rate, indiaCPIssue.rate) &&
         Objects.equals(this.issuerSettlementDetails, indiaCPIssue.issuerSettlementDetails) &&
         Objects.equals(this.investorSettlementDetails, indiaCPIssue.investorSettlementDetails) &&
+        Objects.equals(this.ipaSettlementDetails, indiaCPIssue.ipaSettlementDetails) &&
         Objects.equals(this.dealConfirmationDocId, indiaCPIssue.dealConfirmationDocId) &&
         Objects.equals(this.status, indiaCPIssue.status) &&
         Objects.equals(this.version, indiaCPIssue.version) &&
@@ -667,7 +667,7 @@ public class IndiaCPIssue   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cpProgramId, userId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, beneficiaryId, beneficiaryName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDays, currency, facevaluePerUnit, noOfUnits, rate, issuerSettlementDetails, investorSettlementDetails, dealConfirmationDocId, status, version, modifiedBy, lastModified);
+    return Objects.hash(cpProgramId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, beneficiaryId, beneficiaryName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDays, currency, facevaluePerUnit, noOfUnits, rate, issuerSettlementDetails, investorSettlementDetails, ipaSettlementDetails, dealConfirmationDocId, status, version, modifiedBy, lastModified);
   }
 
 
@@ -677,7 +677,6 @@ public class IndiaCPIssue   {
     sb.append("class IndiaCPIssue {\n");
     
     sb.append("    cpProgramId: ").append(toIndentedString(cpProgramId)).append("\n");
-    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    cpTradeId: ").append(toIndentedString(cpTradeId)).append("\n");
     sb.append("    bookId: ").append(toIndentedString(bookId)).append("\n");
     sb.append("    isin: ").append(toIndentedString(isin)).append("\n");
@@ -699,6 +698,7 @@ public class IndiaCPIssue   {
     sb.append("    rate: ").append(toIndentedString(rate)).append("\n");
     sb.append("    issuerSettlementDetails: ").append(toIndentedString(issuerSettlementDetails)).append("\n");
     sb.append("    investorSettlementDetails: ").append(toIndentedString(investorSettlementDetails)).append("\n");
+    sb.append("    ipaSettlementDetails: ").append(toIndentedString(ipaSettlementDetails)).append("\n");
     sb.append("    dealConfirmationDocId: ").append(toIndentedString(dealConfirmationDocId)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    version: ").append(toIndentedString(version)).append("\n");

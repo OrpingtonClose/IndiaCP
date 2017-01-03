@@ -25,6 +25,20 @@ public interface IndiaCPIssueApi {
     @Produces(MediaType.APPLICATION_JSON)
     public IndiaCPIssue issueCP(@PathParam("cpProgramId") String cpProgramId, String jsonBody);
 
+    @POST
+    @Path("addSettlementDetails/{cpIssueId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public IndiaCPIssue addSettlementDetails(@PathParam("cpIssueId") String cpIssueId,
+                                             String jsonBody);
+
+    @POST
+    @Path("cancelCP/{cpIssueId}/{cancellationReason}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public IndiaCPIssue cancelCP(@PathParam("cpIssueId") String cpIssueId,
+                                 @PathParam("cancellationReason") String cancellationReason);
+
     @GET
     @Path("fetchAllCP/{cpProgramId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -41,12 +55,11 @@ public interface IndiaCPIssueApi {
     public IndiaCPIssue fetchCP(@PathParam("cpIssueId") String cpIssueId);
 
     @POST
-    @Path("addDoc")
+    @Path("addDocs/{cpIssueId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram addDoc(IndiaCPDocumentDetails docDetails,
-                                 @FormDataParam("file") InputStream uploadedInputStream);
-
+    public IndiaCPProgram addDocs(@FormDataParam("metadata") ArrayList<IndiaCPDocumentDetails> docDetails,
+                                  @FormDataParam("file") InputStream uploadedInputStream);
 
     @Context
     public void setRequest(Request request);
