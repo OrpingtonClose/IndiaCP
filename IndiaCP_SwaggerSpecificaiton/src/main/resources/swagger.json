@@ -113,7 +113,7 @@
                 }
             }
         },
-        "/indiacpprogram/addDoc": {
+        "/indiacpprogram/addDocs": {
             "post": {
                 "summary": "Uploads and attaches the provided document to the CPProgram on the DL",
                 "description": "Uploads and attaches the provided document to the CPProgram on the DL",
@@ -199,19 +199,11 @@
                 }
             }
         },
-        "/cpissues/{issuer}/{cpProgramId}": {
+        "/indiacpprogram/getTransactionHistory/{cpProgramId}": {
             "get": {
-                "summary": "Get CP Issues allotted under a given CP Program",
-                "description": "This returns all the CP Issues under the umbrella CP Program identified by an Id provided by the call\n",
-                "operationId": "fetchAllCPForCPProgram",
+                "summary": "Complete audit log of all changes/versions of given CP Program",
+                "description": "A given CP Program once initiated undergoes various changes as it progresses through the trade lifecycle of generating ISIN, generating Deal Confirmations with each identified Investor, getting IPA Verification till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.",
                 "parameters": [
-                    {
-                        "name": "issuer",
-                        "in": "path",
-                        "description": "issuer id that uniquely maps to the issuer DL node",
-                        "required": true,
-                        "type": "string"
-                    },
                     {
                         "name": "cpProgramId",
                         "in": "path",
@@ -221,7 +213,208 @@
                     }
                 ],
                 "tags": [
+                    "Issuer, Investor, IPA, Depository"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of all versions of the given CP Program",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/IndiaCPProgram"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/indiacpissue/issueCP": {
+            "post": {
+                "summary": "Issue new CP under a CPProgram",
+                "description": "This creates a new CP with the details provided",
+                "operationId": "issueCP",
+                "consumes": [ "application/json"],
+                "parameters": [
+                    {
+                        "name": "cp_details",
+                        "in": "body",
+                        "description": "Details of the CP to be Issued",
+                        "required": true,
+                        "schema":
+                        {
+                            "$ref" : "#/definitions/IndiaCPIssue"
+                        }
+                    }
+                ],
+                "tags": [
                     "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Creates a new CP Issue",
+                        "schema": {
+                            "$ref": "#/definitions/IndiaCPIssue"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/indiacpissue/addSettlementDetails/{cpIssueId}": {
+            "post": {
+                "summary": "Amend an issued CP by adding settlement details to it",
+                "description": "This amends an issued CP with Settlement Details",
+                "operationId": "addSettlementDetails",
+                "consumes": [ "application/json"],
+                "parameters": [
+                    {
+                        "name": "cpIssueId",
+                        "in": "path",
+                        "description": "Unique identifier of the CP Issue",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "settlement_details",
+                        "in": "body",
+                        "description": "Settlement Details",
+                        "required": true,
+                        "schema":
+                        {
+                            "$ref" : "#/definitions/SettlementDetails"
+                        }
+                    }
+
+                ],
+                "tags": [
+                    "Issuer, Investor, IPA"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Amended the CP Issue with the Settlement Details",
+                        "schema": {
+                            "$ref": "#/definitions/IndiaCPIssue"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/indiacpissue/addDocs": {
+            "post": {
+                "summary": "Uploads and attaches the provided document to the CP on the DL",
+                "description": "Uploads and attaches the provided document to the CP on the DL",
+                "operationId": "addDocs",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "parameters": [
+                    {
+                        "name": "metadata",
+                        "in": "formData",
+                        "description": "Document Attachment Details",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "description": "Document Attachment",
+                        "required": true,
+                        "type": "file"
+                    }
+                ],
+                "tags": [
+                    "Issuer, Investor, IPA, Depository"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns a CP Issue",
+                        "schema": {
+                            "$ref": "#/definitions/IndiaCPIssue"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/indiacpissue/cancelCP/{cpIssueId}/{cancellationReason}": {
+            "post": {
+                "summary": "Cancels a CP providing the reason for the cancellation",
+                "description": "Cancels a CP providing the reason for the cancellation",
+                "operationId": "cancelCP",
+                "parameters": [
+                    {
+                        "name": "cpIssueId",
+                        "in": "path",
+                        "description": "CP Issue ID that uniquely identifies the CP to be cancelled",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "cancellationReason",
+                        "in": "path",
+                        "description": "Reason for cancellation",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Issuer, Investor, IPA, Depository"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns a CP Issue"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/fetchAllCP/{cpProgramId}": {
+            "get": {
+                "summary": "Get CP Issues allotted under a given CP Program",
+                "description": "This returns all the CP Issues under the umbrella CP Program identified by an Id provided by the call\n",
+                "operationId": "fetchAllCP",
+                "parameters": [
+                    {
+                        "name": "cpProgramId",
+                        "in": "path",
+                        "description": "CP Program ID that uniquely identifies the CP Program issued by the Issuer",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "tags": [
+                    "Issuer", "Investor"
                 ],
                 "responses": {
                     "200": {
@@ -242,19 +435,12 @@
                 }
             }
         },
-        "/cpissues/open/{entity}": {
+        "/fetchAllCP": {
             "get": {
                 "summary": "Get All Open CP Issues for the given Issuer/Investor. Open CP Issues refers to the Issues that are yet to mature",
-                "description": "This returns all the CP Issues under the umbrella CP Program identified by an Id provided by the call\n",
-                "operationId": "fetchAllCP",
+                "description": "This returns all the Open CP Issues for the given DL Node",
+                "operationId": "fetchAllCPOnThisNode",
                 "parameters": [
-                    {
-                        "name": "entity",
-                        "in": "path",
-                        "description": "issuer or investor id that uniquely maps to the DL node",
-                        "required": true,
-                        "type": "string"
-                    }
                 ],
                 "tags": [
                     "Issuer", "Investor"
@@ -278,19 +464,12 @@
                 }
             }
         },
-        "/cpissue/{entity}/{cpIssueId}": {
+        "/fetchCP/{cpIssueId}": {
             "get": {
-                "summary": "Get All Open CP Issues for the given Issuer/Investor. Open CP Issues refers to the Issues that are yet to mature",
-                "description": "This returns all the CP Issues under the umbrella CP Program identified by an Id provided by the call\n",
+                "summary": "Get CP Issue for the given Issuer/Investor",
+                "description": "This returns the CP Issue identified by an Id provided by the call\n",
                 "operationId": "fetchCP",
                 "parameters": [
-                    {
-                        "name": "entity",
-                        "in": "path",
-                        "description": "issuer or investor id that uniquely maps to the DL node",
-                        "required": true,
-                        "type": "string"
-                    },
                     {
                         "name": "cpIssueId",
                         "in": "path",
@@ -304,7 +483,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Get All Open CP Issues for the given Issuer/Investor. Open CP Issues refers to the Issues that are yet to mature",
+                        "description": "Get CP Issue for the given Issuer/Investor",
                         "schema": {
                                 "$ref": "#/definitions/IndiaCPIssue"
                         }
@@ -318,36 +497,29 @@
                 }
             }
         },
-        "/transactionhistory/{issuer}/{cpProgramId}": {
+        "/indiacpissue/getTransactionHistory/{cpIssueId}": {
             "get": {
-                "summary": "Complete audit log of all changes/versions of given CP Program",
-                "description": "A given CP Program once initiated undergoes various changes as it progresses through the trade lifecycle of generating ISIN, generating Deal Confirmations with each identified Investor, getting IPA Verification till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.",
+                "summary": "Complete audit log of all changes/versions of given CP Issue",
+                "description": "A given CP Issue once initiated undergoes various changes as it progresses through the trade lifecycle of adding settlement details, Deal Confirmations till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.",
                 "parameters": [
                     {
-                        "name": "issuer",
+                        "name": "cpIssueId",
                         "in": "path",
-                        "description": "issuer id that uniquely maps to the DL node",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "cpProgramId",
-                        "in": "path",
-                        "description": "CP Program ID that uniquely identifies the CP Program issued by the Issuer",
+                        "description": "CP Issue ID that uniquely identifies the CP issued by the Issuer",
                         "required": true,
                         "type": "string"
                     }
                 ],
                 "tags": [
-                    "User"
+                    "Issuer, Investor, IPA, Depository"
                 ],
                 "responses": {
                     "200": {
-                        "description": "An array of all versions of the given CP Program",
+                        "description": "An array of all versions of the given CP Issues",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/IndiaCPProgram"
+                                "$ref": "#/definitions/IndiaCPIssue"
                             }
                         }
                     },

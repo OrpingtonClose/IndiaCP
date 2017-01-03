@@ -23,42 +23,42 @@ public interface IndiaCPIssueApi {
     @Path("issueCP/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPIssue issueCP(@PathParam("cpProgramId") String cpProgramId, String jsonBody);
+    public Response issueCP(@PathParam("cpProgramId") String cpProgramId, String jsonBody);
 
     @POST
     @Path("addSettlementDetails/{cpIssueId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPIssue addSettlementDetails(@PathParam("cpIssueId") String cpIssueId,
+    public Response addSettlementDetails(@PathParam("cpIssueId") String cpIssueId,
                                              String jsonBody);
 
     @POST
     @Path("cancelCP/{cpIssueId}/{cancellationReason}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPIssue cancelCP(@PathParam("cpIssueId") String cpIssueId,
+    public Response cancelCP(@PathParam("cpIssueId") String cpIssueId,
                                  @PathParam("cancellationReason") String cancellationReason);
 
     @GET
     @Path("fetchAllCP/{cpProgramId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<IndiaCPIssue> fetchAllCP(@PathParam("cpProgramId") String cpProgramId);
+    public Response fetchAllCP(@PathParam("cpProgramId") String cpProgramId);
 
     @GET
     @Path("fetchAllCP")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<IndiaCPIssue> fetchAllCP();
+    public Response fetchAllCP();
 
     @GET
     @Path("fetchCP/{cpIssueId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPIssue fetchCP(@PathParam("cpIssueId") String cpIssueId);
+    public Response fetchCP(@PathParam("cpIssueId") String cpIssueId);
 
     @POST
     @Path("addDocs/{cpIssueId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram addDocs(@FormDataParam("metadata") ArrayList<IndiaCPDocumentDetails> docDetails,
+    public Response addDocs(@FormDataParam("metadata") ArrayList<IndiaCPDocumentDetails> docDetails,
                                   @FormDataParam("file") InputStream uploadedInputStream);
 
     @Context

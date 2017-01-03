@@ -1,6 +1,7 @@
 package com.barclays.indiacp.dl.integration;
 
 import com.barclays.indiacp.dl.utils.DLConfig;
+import com.barclays.indiacp.model.IndiaCPProgram;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.MultiPart;
@@ -67,12 +68,18 @@ public class DLRestProxyHandler implements InvocationHandler {
         }
 
         if (method.isAnnotationPresent(javax.ws.rs.GET.class)) {
-           return dlRestEndPoint.path(methodEndPoint).request().get();
+            Response response = dlRestEndPoint.path(methodEndPoint).request().get();
+            return response;
+            //return response.readEntity(String.class);
         } else if (method.isAnnotationPresent(javax.ws.rs.POST.class)) {
             if (jsonString != null) {
-                return dlRestEndPoint.path(methodEndPoint).request().post(Entity.json(jsonString));
+                Response response = dlRestEndPoint.path(methodEndPoint).request().post(Entity.json(jsonString));
+                return response;
+                //return response.readEntity(String.class);
             } else {
-                return dlRestEndPoint.path(methodEndPoint).request().post(Entity.text(""));
+                Response response = dlRestEndPoint.path(methodEndPoint).request().post(Entity.text(""));
+                return response;
+                //return response.readEntity(String.class);
             }
         }
 
@@ -81,6 +88,9 @@ public class DLRestProxyHandler implements InvocationHandler {
 
     private boolean requiresAttachmentUpload(Method method) {
         Consumes consumesAnnotation = method.getAnnotation(javax.ws.rs.Consumes.class);
+        if (consumesAnnotation == null) {
+            return false;
+        }
         String[] mediaTypes = consumesAnnotation.value();
         for (String mediaType: mediaTypes) {
             if (mediaType.equals(MediaType.MULTIPART_FORM_DATA)) {

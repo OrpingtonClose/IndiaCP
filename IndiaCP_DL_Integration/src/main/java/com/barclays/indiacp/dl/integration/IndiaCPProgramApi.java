@@ -23,12 +23,12 @@ public interface IndiaCPProgramApi {
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram issueCPProgram(String jsonBody);
+    public Response issueCPProgram(String jsonBody);
 
     @GET
     @Path("fetchAllCPProgram")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<IndiaCPProgram> fetchAllCPProgram();
+    public Response fetchAllCPProgram();
 
     @GET
     @Path("fetchCPProgram/{cpProgramId}")
@@ -38,13 +38,13 @@ public interface IndiaCPProgramApi {
     @POST
     @Path("addISIN/{cpProgramId}/{isin}")
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram addISIN(@PathParam("cpProgramId") String cpProgramId);
+    public Response addISIN(@PathParam("cpProgramId") String cpProgramId);
 
     @POST
     @Path("addDocs/{cpProgramId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram addDocs(@FormDataParam("metadata") ArrayList<IndiaCPDocumentDetails> docDetails,
+    public Response addDocs(@FormDataParam("metadata") ArrayList<IndiaCPDocumentDetails> docDetails,
                                  @FormDataParam("file") InputStream uploadedInputStream);
 
     @Context

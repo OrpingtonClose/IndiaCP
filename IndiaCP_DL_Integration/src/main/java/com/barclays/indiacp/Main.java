@@ -56,9 +56,9 @@ public class Main {
      */
   public static void main(String[] args) throws IOException {
       String scheme = "http";
-      String host = System.getProperty("host");
-      String port = System.getProperty("port");
-      String path = System.getProperty("path");
+      String host = "localhost";//System.getProperty("host");
+      String port = "8888";//System.getProperty("port");
+      String path = "indiacp";//System.getProperty("path");
       BASE_URI = scheme + "://" + host + ":" + port + "/" + path + "/";
       final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "

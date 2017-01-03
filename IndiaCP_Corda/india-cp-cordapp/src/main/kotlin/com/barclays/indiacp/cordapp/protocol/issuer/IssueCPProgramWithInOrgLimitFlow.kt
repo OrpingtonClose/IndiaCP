@@ -51,11 +51,15 @@ class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: IndiaCPProgram) : FlowL
     override fun call(): SignedTransaction {
         progressTracker.currentStep = ORG_CPPROGRAM_ISSUE
 
-        val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
-        val issuer = getPartyByName(newCPProgram.issuerId)
-        val ipa = getPartyByName(newCPProgram.ipaId)
-        val depository = getPartyByName(newCPProgram.depositoryId)
+        logger.info("Inside IssueCPProgramWithInOrgLimitFlow");
+        logger.info("Issuer ID Get Method Access: " + newCPProgram.getIssuerId());
+        logger.info("Issuer ID Field Access: " + newCPProgram.issuerId);
 
+        val issuer = getPartyByName(newCPProgram.getIssuerId())
+        val ipa = getPartyByName(newCPProgram.getIpaId())
+        val depository = getPartyByName(newCPProgram.getDepositoryId())
+
+        val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
 
         val indiaCPProgramSF: StateAndRef<OrgLevelBorrowProgram.OrgState> = getOrgProgramStateandRef(newCPProgram.issuerId)
 
