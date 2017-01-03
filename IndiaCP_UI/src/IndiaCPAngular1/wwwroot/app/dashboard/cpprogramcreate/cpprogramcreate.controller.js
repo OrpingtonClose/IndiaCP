@@ -10,7 +10,7 @@ var app;
                     this.$sce = $sce;
                     this.issuerService = issuerService;
                 }
-                CPProgramCreateController.prototype.issueCPProgram = function () {
+                CPProgramCreateController.prototype.createCPProgram = function () {
                     // this.issuerService.issueCPProgram
                 };
                 return CPProgramCreateController;
