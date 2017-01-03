@@ -34,7 +34,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * PaymentAccountDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T17:41:21.538Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T04:48:43.472Z")
 public class PaymentAccountDetails   {
   @JsonProperty("creditor_name")
   private String creditorName = null;
