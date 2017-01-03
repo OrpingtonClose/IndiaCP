@@ -46,17 +46,12 @@ namespace IndiaCPAngular1
                 options.ViewLocationFormats.Add("~/wwwroot/app/{0}.html");
             });
 
-            services.AddIdentityServer()
-                .AddTemporarySigningCredential()
-                .AddInMemoryApiResources(Config.GetApiResources())
-                .AddInMemoryClients(Config.GetClients());
-
             //services.AddIdentityServer()
-            //   .AddInMemoryClients(Clients.Get())
-            //   .AddInMemoryIdentityResources(Resources.GetIdentityResources())
-            //   .AddInMemoryApiResources(Resources.GetApiResources())
-            //   .AddInMemoryUsers(Users.Get())
-            //   .AddTemporarySigningCredential();
+            //    .AddTemporarySigningCredential()
+            //    .AddInMemoryApiResources(Config.GetApiResources())
+            //    .AddInMemoryClients(Config.GetClients());
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,15 +70,9 @@ namespace IndiaCPAngular1
                     await next();
                 }
             });
-            app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
-            {
-                RequireHttpsMetadata = false,
-                ApiName = "api1"
-            });
-
+            
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
-            app.UseIdentityServer();
-        }
+          }
     }
 }

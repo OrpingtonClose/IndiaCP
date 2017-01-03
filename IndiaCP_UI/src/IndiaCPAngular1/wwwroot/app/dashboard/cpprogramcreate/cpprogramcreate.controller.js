@@ -6,14 +6,16 @@ var app;
         (function (cpprogramcreate) {
             "use strict";
             var CPProgramCreateController = (function () {
-                function CPProgramCreateController($sce) {
+                function CPProgramCreateController($sce, issuerService) {
                     this.$sce = $sce;
+                    this.issuerService = issuerService;
                 }
-                CPProgramCreateController.prototype.issueCP = function () {
+                CPProgramCreateController.prototype.createCPProgram = function () {
+                    // this.issuerService.issueCPProgram
                 };
                 return CPProgramCreateController;
             }());
-            CPProgramCreateController.$inject = ["$sce"];
+            CPProgramCreateController.$inject = ["$sce", "app.services.IIssuerService"];
             angular
                 .module("app.dashboard.cpprogramcreate")
                 .controller("app.dashboard.cpprogramcreate.CPProgramCreateController", CPProgramCreateController);
