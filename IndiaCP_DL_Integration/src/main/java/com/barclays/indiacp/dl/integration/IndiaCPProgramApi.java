@@ -44,8 +44,9 @@ public interface IndiaCPProgramApi {
     @Path("addDocs/{cpProgramId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addDocs(@FormDataParam("metadata") ArrayList<IndiaCPDocumentDetails> docDetails,
-                                 @FormDataParam("file") InputStream uploadedInputStream);
+    public Response addDocs(@PathParam("cpProgramId") String cpProgramId,
+                            @FormDataParam("documentDetails") ArrayList<IndiaCPDocumentDetails> docDetails,
+                            @FormDataParam("file") InputStream uploadedInputStream);
 
     @Context
     public void setRequest(Request request);

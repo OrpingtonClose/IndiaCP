@@ -15,7 +15,7 @@ import java.net.URI;
 
 /**
  * Main class.
- * mvn exec:exec -Dexec.executable="java" -Dexec.args="-classpath %classpath -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044 com.barclays.indiacp.Main"
+ * mvn exec:exec -Dexec.executable="java" -Dhost=localhost -Dport=5555 -Dpath=indiacp -Dexec.args="-classpath %classpath -Dhost=localhost -Dport=5555 -Dpath=indiacp -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044 com.barclays.indiacp.Main"
  */
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
@@ -59,6 +59,14 @@ public class Main {
       String host = System.getProperty("host");
       String port = System.getProperty("port");
       String path = System.getProperty("path");
+      if (host == null || port == null || path == null) {
+          System.out.println("FAILURE: Cannot Start HTTP Server. Host and Port are not configured correctly.");
+          System.out.println("Use the following command replacing the host and port to match the system requirements you are running on:\n" +
+          "mvn exec:exec -Dexec.executable=\"java\" -Dexec.args=\"-classpath %classpath -Dhost=localhost -Dport=5555 -Dpath=indiacp com.barclays.indiacp.Main\"");
+          System.out.println("OR\nUse the following command to start in the Debug Mode:\n" +
+                  "mvn exec:exec -Dexec.executable=\"java\" -Dexec.args=\"-classpath %classpath -Dhost=localhost -Dport=5555 -Dpath=indiacp -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044 com.barclays.indiacp.Main\"");
+          System.exit(0);
+      }
       BASE_URI = scheme + "://" + host + ":" + port + "/" + path + "/";
       final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
