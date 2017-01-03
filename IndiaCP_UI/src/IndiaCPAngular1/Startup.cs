@@ -6,6 +6,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
+using IdentityServer4;
+
+
+using IdentityServer4;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
 
 namespace IndiaCPAngular1
 {
@@ -36,11 +47,16 @@ namespace IndiaCPAngular1
             });
 
             services.AddIdentityServer()
-                    .AddInMemoryClients(new List<Client>())
-                    .AddInMemoryIdentityResources(new List<IdentityResource>())
-                    .AddInMemoryApiResources(new List<ApiResource>())
-                    //.AddInMemoryUsers(new List<InMemoryUser>())
-                    .AddTemporarySigningCredential();
+                .AddTemporarySigningCredential()
+                .AddInMemoryApiResources(Config.GetApiResources())
+                .AddInMemoryClients(Config.GetClients());
+
+            //services.AddIdentityServer()
+            //   .AddInMemoryClients(Clients.Get())
+            //   .AddInMemoryIdentityResources(Resources.GetIdentityResources())
+            //   .AddInMemoryApiResources(Resources.GetApiResources())
+            //   .AddInMemoryUsers(Users.Get())
+            //   .AddTemporarySigningCredential();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,6 +75,12 @@ namespace IndiaCPAngular1
                     await next();
                 }
             });
+            app.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
+            {
+                RequireHttpsMetadata = false,
+                ApiName = "api1"
+            });
+
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
             app.UseIdentityServer();
