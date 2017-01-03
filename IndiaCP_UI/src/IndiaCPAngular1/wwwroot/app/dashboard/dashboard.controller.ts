@@ -12,6 +12,7 @@ module app.dashboard {
 
     class DashboardController implements IDashboardScope {
         loggedinUser: app.users.IUser;
+        cpPrograms : app.models.IndiaCPProgram[];
 
         static $inject = ["$http", "$scope", "$uibModal","app.services.IssuerService"];
         constructor(protected $http: ng.IHttpService,
@@ -21,9 +22,10 @@ module app.dashboard {
             this.fetchAllCPPrograms();
         }
         public fetchAllCPPrograms(): void {
-            //this.issuerService.fetchAllCPProgram("groggy").then(function (response) {
-            //    this.$scope.cpprograms = response;
-            //});
+            var vm = this;
+            this.issuerService.fetchAllCPProgram().then(function (response) {
+                  vm.cpPrograms = response.data;
+            });
         }
         public generateISINDocs(): void {
             this.$uibModal.open({
