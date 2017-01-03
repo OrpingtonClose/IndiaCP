@@ -19,7 +19,7 @@ import com.barclays.indiacp.model.PaymentAccountDetails
 import com.barclays.indiacp.model.DepositoryAccountDetails
 
 
-@Path("indiacp")
+@Path("indiacpissue")
 class IndiaCPApi(val services: ServiceHub) {
 
     val notaryName = "Controller" //todo: remove hardcoding

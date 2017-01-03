@@ -126,6 +126,13 @@
                 ],
                 "parameters": [
                     {
+                        "name": "metadata",
+                        "in": "formData",
+                        "description": "Document Attachment Details",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "file",
                         "in": "formData",
                         "description": "Document Attachment",
@@ -607,7 +614,11 @@
                 },
                 "doc_sub_type": {
                     "type": "string",
-                    "description": "Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA"
+                    "description": "Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others."
+                },
+                "doc_extension": {
+                    "type": "string",
+                    "description": "File extension of the document. E.g. PDF. The doc_sub_type.doc_extension would be the full file name in the zipped file uploaded to the DL."
                 },
                 "doc_hash": {
                     "type": "string",

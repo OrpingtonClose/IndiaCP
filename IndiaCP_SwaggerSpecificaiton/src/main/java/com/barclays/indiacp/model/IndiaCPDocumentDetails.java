@@ -35,7 +35,7 @@ import java.util.Date;
 /**
  * IndiaCPDocumentDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T17:41:21.538Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T04:48:43.472Z")
 public class IndiaCPDocumentDetails   {
   @JsonProperty("cp_program_id")
   private String cpProgramId = null;
@@ -48,6 +48,9 @@ public class IndiaCPDocumentDetails   {
 
   @JsonProperty("doc_sub_type")
   private String docSubType = null;
+
+  @JsonProperty("doc_extension")
+  private String docExtension = null;
 
   @JsonProperty("doc_hash")
   private String docHash = null;
@@ -121,16 +124,34 @@ public class IndiaCPDocumentDetails   {
   }
 
    /**
-   * Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA
+   * Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.
    * @return docSubType
   **/
-  @ApiModelProperty(value = "Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA")
+  @ApiModelProperty(value = "Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.")
   public String getDocSubType() {
     return docSubType;
   }
 
   public void setDocSubType(String docSubType) {
     this.docSubType = docSubType;
+  }
+
+  public IndiaCPDocumentDetails docExtension(String docExtension) {
+    this.docExtension = docExtension;
+    return this;
+  }
+
+   /**
+   * File extension of the document. E.g. PDF. The doc_sub_type.doc_extension would be the full file name in the zipped file uploaded to the DL.
+   * @return docExtension
+  **/
+  @ApiModelProperty(value = "File extension of the document. E.g. PDF. The doc_sub_type.doc_extension would be the full file name in the zipped file uploaded to the DL.")
+  public String getDocExtension() {
+    return docExtension;
+  }
+
+  public void setDocExtension(String docExtension) {
+    this.docExtension = docExtension;
   }
 
   public IndiaCPDocumentDetails docHash(String docHash) {
@@ -219,6 +240,7 @@ public class IndiaCPDocumentDetails   {
         Objects.equals(this.cpIssueId, indiaCPDocumentDetails.cpIssueId) &&
         Objects.equals(this.docType, indiaCPDocumentDetails.docType) &&
         Objects.equals(this.docSubType, indiaCPDocumentDetails.docSubType) &&
+        Objects.equals(this.docExtension, indiaCPDocumentDetails.docExtension) &&
         Objects.equals(this.docHash, indiaCPDocumentDetails.docHash) &&
         Objects.equals(this.docStatus, indiaCPDocumentDetails.docStatus) &&
         Objects.equals(this.modifiedBy, indiaCPDocumentDetails.modifiedBy) &&
@@ -227,7 +249,7 @@ public class IndiaCPDocumentDetails   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cpProgramId, cpIssueId, docType, docSubType, docHash, docStatus, modifiedBy, lastModified);
+    return Objects.hash(cpProgramId, cpIssueId, docType, docSubType, docExtension, docHash, docStatus, modifiedBy, lastModified);
   }
 
 
@@ -240,6 +262,7 @@ public class IndiaCPDocumentDetails   {
     sb.append("    cpIssueId: ").append(toIndentedString(cpIssueId)).append("\n");
     sb.append("    docType: ").append(toIndentedString(docType)).append("\n");
     sb.append("    docSubType: ").append(toIndentedString(docSubType)).append("\n");
+    sb.append("    docExtension: ").append(toIndentedString(docExtension)).append("\n");
     sb.append("    docHash: ").append(toIndentedString(docHash)).append("\n");
     sb.append("    docStatus: ").append(toIndentedString(docStatus)).append("\n");
     sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");
