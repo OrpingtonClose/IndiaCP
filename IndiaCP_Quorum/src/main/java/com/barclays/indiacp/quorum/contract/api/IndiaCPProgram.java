@@ -58,7 +58,6 @@ public class IndiaCPProgram {
     }
 
 
-
     @POST
     @Path("addISIN/{cpProgramId}/{isin}")
     public Response addISIN(@PathParam("cpProgramId") String cpProgramId) {
@@ -70,9 +69,13 @@ public class IndiaCPProgram {
     @Path("issueCP/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response issueCP(@PathParam("cpProgramId") String cpProgramId, CPIssue cpIssue) {
-        String contractAddress = CakeshopUtils.createContract(this.getClass().getName(), cpIssue);
-        return Response.status(Response.Status.OK).build();
-
+        //get cp program contract by program id
+        // read allocated value
+        // do checks:
+            // cpIssue.amount < cpProg.alloc_val
+        // issueCP()
+            // if committed: reduce alloc_val, append cpIssueId to cpProg
+            // else: throw exception, log error
     }
 
     @POST
