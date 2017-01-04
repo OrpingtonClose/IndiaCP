@@ -1,7 +1,7 @@
 module app.models {
     "use strict";
 
-    export interface DepositoryAccountDetails {
+    export class DepositoryAccountDetails {
         /**
          * Unique identifier of the DP Account at the Depository
          */

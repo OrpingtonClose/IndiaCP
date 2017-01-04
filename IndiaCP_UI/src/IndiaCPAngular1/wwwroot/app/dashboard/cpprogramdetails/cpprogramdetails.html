@@ -10,49 +10,49 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label class="control-label">Program Description</label>
-                    <input class="form-control input-sm" type="text" />
+                    <input class="form-control input-sm" ng-model="vm.cpprogram.type" type="text" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Type </label>
-                    <input class="form-control" type="text" />
+                    <input class="form-control" type="text" ng-model="vm.cpprogram.type" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Allotment Date</label>
-                    <input class="form-control input-sm" type="date" />
+                    <input class="form-control input-sm" type="date" ng-model="vm.cpprogram.maturityDate" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Program Value</label>
-                    <input class="form-control input-sm" type="text" />
+                    <input class="form-control input-sm" type="text" ng-model="vm.cpprogram.programAllocatedValue.quantity" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">IPA Name</label>
-                    <input class="form-control input-sm" type="text" />
+                    <input class="form-control input-sm" type="text" ng-model="vm.cpprogram.ipaName" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Depository Name</label>
-                    <input class="form-control input-sm" type="text" />
+                    <input class="form-control input-sm" type="text" ng-model="vm.cpprogram.depositoryName" />
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
                     <label class="control-label">Issuer </label>
-                    <input class="form-control input-sm" type="text" />
+                    <input class="form-control input-sm" type="text" ng-model="vm.cpprogram.issuerName" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">CP Program ID</label>
-                    <input class="form-control input-sm" type="text" />
+                    <input class="form-control input-sm" type="text" ng-model="vm.cpprogram.programId" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Purpose </label>
-                    <input class="form-control" type="text" />
+                    <input class="form-control" type="text" ng-model="vm.cpprogram.purpose"/>
                 </div>
                 <div class="form-group">
                     <label class="control-label">Maturity Date</label>
-                    <input class="form-control input-sm" type="date" />
+                    <input class="form-control input-sm" type="date"  ng-model="vm.cpprogram.maturityDate" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Currency </label>
-                    <input class="form-control input-sm" type="text" />
+                    <input class="form-control input-sm" type="text" ng-model="vm.cpprogram.programCurrency" />
                 </div>
             </div>
         </div>
@@ -103,7 +103,7 @@
                 <div class="form-group">
                     <div class="form-group">
                         <button class="btn btn-default" type="button">Update </button>
-                        <button class="btn btn-default" type="button">Cancel </button>
+                        <button class="btn btn-default" ng-click="vm.cancel()" type="button">Cancel </button>
                     </div>
                 </div>
             </div>

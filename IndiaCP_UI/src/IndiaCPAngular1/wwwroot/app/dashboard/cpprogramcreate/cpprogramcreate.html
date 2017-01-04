@@ -5,33 +5,29 @@
         <div class="col-md-6">
             <form>
                 <div class="form-group">
-                    <label class="control-label">Issuer </label>
-                    <input type="text" class="form-control input-sm" ng-model="vm.cpprogram.issuer_name" value="issuer1-UI" />
+                    <label class="control-label">Issuer</label>
+                    <input type="text" value="Barclays Investments and Loans Limited" class="form-control input-sm" />
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Program Description</label>
-                    <input type="text" class="form-control input-sm" ng-model="vm.cpprogram.purpose" /></input>
+                    <label class="control-label">Program Name</label>
+                    <input type="text" class="form-control input-sm" ng-model="vm.cpprogram.name" ng-change="vm.updateProgramId()" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">CP Program ID</label>
-                    <input type="text" class="form-control input-sm" /></input>
+                    <input type="text" class="form-control input-sm" ng-value="vm.cpprogram.programId" disabled ng-model="vm.cpprogram.programId"/>
                 </div>
                 <div class="form-group">
                     <label class="control-label">Type </label>
-                    <input type="text" ng-model="vm.cpprogram.type" class="form-control" />
+                    <input type="text" class="form-control" ng-model="vm.cpprogram.type" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Purpose </label>
-                    <input type="text" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label class="control-label">Allotment Date</label>
-                    <input type="date" class="form-control input-sm" />
+                    <input type="text" class="form-control" ng-model="vm.cpprogram.purpose"/>
                 </div>
                 <div class="form-group">
                     <div class="form-group">
                         <button class="btn btn-default" ng-click="vm.createCPProgram()" type="button">Create </button>
-                        <button class="btn btn-default" type="button">Cancel </button>
+                        <button class="btn btn-default" ng-click="vm.cancel()" type="button">Cancel </button>
                     </div>
                 </div>
             </form>
@@ -39,24 +35,33 @@
         <div class="col-md-6">
             <form>
                 <div class="form-group">
-                    <label class="control-label">Maturity Date</label>
-                    <input type="date" class="form-control input-sm" />
+                    <label class="control-label">Commencement Date</label>
+                    <input type="date" class="form-control input-sm" ng-model="vm.cpprogram.issueCommencementDate" />
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Program Value</label>
-                    <input type="text" class="form-control input-sm" />
+                    <label class="control-label">Maturity Days</label>
+                    <input type="text" class="form-control input-sm" ng-model="vm.cpprogram.maturityDays" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Program Ceiling</label>
+                    <input type="text" class="form-control input-sm" ng-model="vm.cpprogram.programSize" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Currency </label>
-                    <input type="text" class="form-control input-sm" />
+                    <input type="text" class="form-control input-sm" ng-model="vm.cpprogram.programCurrency" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">IPA Name</label>
-                    <input type="text" class="form-control input-sm" />
+                    <select class="form-control" ng-model="vm.cpprogram.ipaId">
+                            <option value="Issuer" ng-selected="true">HDFC</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label class="control-label">Depository Name</label>
-                    <input type="text" class="form-control input-sm" />
+                    <select class="form-control" ng-model="vm.cpprogram.depositoryId">
+                            <option value="Issuer" ng-selected="true">NSDL</option>
+                            <option value="Issuer1">CDSL</option>
+                    </select>
                 </div>
             </form>
         </div>
