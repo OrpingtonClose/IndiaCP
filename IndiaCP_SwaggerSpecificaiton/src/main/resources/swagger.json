@@ -113,7 +113,7 @@
                 }
             }
         },
-        "/indiacpprogram/addDocs": {
+        "/indiacpprogram/addDocs/{cpProgramId}": {
             "post": {
                 "summary": "Uploads and attaches the provided document to the CPProgram on the DL",
                 "description": "Uploads and attaches the provided document to the CPProgram on the DL",
@@ -125,6 +125,13 @@
                   "multipart/form-data"
                 ],
                 "parameters": [
+                    {
+                        "name": "cpProgramId",
+                        "in": "path",
+                        "description": "CP Program ID that uniquely identifies the CP Program issued by the Issuer",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "metadata",
                         "in": "formData",
@@ -316,7 +323,7 @@
                 }
             }
         },
-        "/indiacpissue/addDocs": {
+        "/indiacpissue/addDocs/{cpIssueId}": {
             "post": {
                 "summary": "Uploads and attaches the provided document to the CP on the DL",
                 "description": "Uploads and attaches the provided document to the CP on the DL",
@@ -328,6 +335,13 @@
                     "multipart/form-data"
                 ],
                 "parameters": [
+                    {
+                        "name": "cpIssueId",
+                        "in": "path",
+                        "description": "Unique identifier of the CP Issue",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "metadata",
                         "in": "formData",
@@ -852,13 +866,13 @@
                     "type": "string",
                     "description": "Type of Legal Documents exchanged and signed/countersigned by participants in the CPProgram",
                     "enum": [
-                        "CREDITRATINGDOC",
-                        "BOARDRESOLUTIONBORROWINGLIMITDOC",
-                        "DEPOSITORYDOCS",
-                        "IPADOCS",
-                        "IPACERTIFICATEDOC",
-                        "CORPORATEACTIONFORM",
-                        "DEALCONFIRMATIONDOC"
+                        "CREDIT_RATING_DOC",
+                        "BOARD_RESOLUTION_BORROWING_LIMIT_DOC",
+                        "DEPOSITORY_DOCS",
+                        "IPA_DOCS",
+                        "IPA_CERTIFICATE_DOC",
+                        "CORPORATE_ACTION_FORM",
+                        "DEAL_CONFIRMATION_DOC"
                     ]
                 },
                 "docSubType": {

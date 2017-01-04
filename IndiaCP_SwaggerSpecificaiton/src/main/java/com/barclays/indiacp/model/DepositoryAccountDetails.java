@@ -35,12 +35,12 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * DepositoryAccountDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-04T11:02:40.426Z")
 public class DepositoryAccountDetails   {
-  @JsonProperty("dp_id")
+  @JsonProperty("dpId")
   private String dpId = null;
 
-  @JsonProperty("dp_name")
+  @JsonProperty("dpName")
   private String dpName = null;
 
   /**
@@ -74,10 +74,10 @@ public class DepositoryAccountDetails   {
     }
   }
 
-  @JsonProperty("dp_type")
+  @JsonProperty("dpType")
   private DpTypeEnum dpType = null;
 
-  @JsonProperty("client_id")
+  @JsonProperty("clientId")
   private String clientId = null;
 
   public DepositoryAccountDetails dpId(String dpId) {

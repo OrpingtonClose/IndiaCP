@@ -36,12 +36,12 @@ import java.util.Date;
 /**
  * IndiaCPDocumentDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-04T11:02:40.426Z")
 public class IndiaCPDocumentDetails   {
-  @JsonProperty("cp_program_id")
+  @JsonProperty("cpProgramId")
   private String cpProgramId = null;
 
-  @JsonProperty("cp_issue_id")
+  @JsonProperty("cpIssueId")
   private String cpIssueId = null;
 
   /**
@@ -85,25 +85,25 @@ public class IndiaCPDocumentDetails   {
     }
   }
 
-  @JsonProperty("doc_type")
+  @JsonProperty("docType")
   private DocTypeEnum docType = null;
 
-  @JsonProperty("doc_sub_type")
+  @JsonProperty("docSubType")
   private String docSubType = null;
 
-  @JsonProperty("doc_extension")
+  @JsonProperty("docExtension")
   private String docExtension = null;
 
-  @JsonProperty("doc_hash")
+  @JsonProperty("docHash")
   private String docHash = null;
 
-  @JsonProperty("doc_status")
+  @JsonProperty("docStatus")
   private String docStatus = null;
 
-  @JsonProperty("modified_by")
+  @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
-  @JsonProperty("last_modified")
+  @JsonProperty("lastModified")
   private Date lastModified = null;
 
   public IndiaCPDocumentDetails cpProgramId(String cpProgramId) {
@@ -166,10 +166,10 @@ public class IndiaCPDocumentDetails   {
   }
 
    /**
-   * Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.
+   * Sub-Type of the Document. May or may not be applicable. For e.g. for IPADOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.
    * @return docSubType
   **/
-  @ApiModelProperty(value = "Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.")
+  @ApiModelProperty(value = "Sub-Type of the Document. May or may not be applicable. For e.g. for IPADOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.")
   public String getDocSubType() {
     return docSubType;
   }
@@ -184,10 +184,10 @@ public class IndiaCPDocumentDetails   {
   }
 
    /**
-   * File extension of the document. E.g. PDF. The doc_sub_type.doc_extension would be the full file name in the zipped file uploaded to the DL.
+   * File extension of the document. E.g. PDF. The docSubType.docExtension would be the full file name in the zipped file uploaded to the DL.
    * @return docExtension
   **/
-  @ApiModelProperty(value = "File extension of the document. E.g. PDF. The doc_sub_type.doc_extension would be the full file name in the zipped file uploaded to the DL.")
+  @ApiModelProperty(value = "File extension of the document. E.g. PDF. The docSubType.docExtension would be the full file name in the zipped file uploaded to the DL.")
   public String getDocExtension() {
     return docExtension;
   }
@@ -220,10 +220,10 @@ public class IndiaCPDocumentDetails   {
   }
 
    /**
-   * The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL
+   * The current status of the document. Possible values are UNSIGNED, SIGNEDBYISSUER, SIGNEDBYINVESTOR, SIGNEDBYIPA, SIGNEDBYNSDL
    * @return docStatus
   **/
-  @ApiModelProperty(value = "The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL")
+  @ApiModelProperty(value = "The current status of the document. Possible values are UNSIGNED, SIGNEDBYISSUER, SIGNEDBYINVESTOR, SIGNEDBYIPA, SIGNEDBYNSDL")
   public String getDocStatus() {
     return docStatus;
   }

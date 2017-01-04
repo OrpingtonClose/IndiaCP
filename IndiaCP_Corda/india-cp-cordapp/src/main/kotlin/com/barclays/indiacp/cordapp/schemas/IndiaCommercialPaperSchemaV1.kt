@@ -1,12 +1,18 @@
 package com.barclays.indiacp.cordapp.schemas
 
+import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
+import com.barclays.indiacp.model.SettlementDetails
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.schemas.PersistentState
 import java.time.Instant
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.OneToMany
 import javax.persistence.Table
+import javax.persistence.FetchType
+import org.hibernate.annotations.Cascade
+import org.hibernate.annotations.CascadeType
 
 /**
  * An object used to fully qualify the [IndiaCommercialPaperSchema] family name (i.e. independent of version).
@@ -18,7 +24,7 @@ object IndiaCommercialPaperSchema
  * First version of a India commercial paper contract ORM schema that maps all fields of the [IndiaCommercialPaper] contract state
  * as it stood at the time of writing.
  */
-object IndiaCommercialPaperSchemaV1 : MappedSchema(schemaFamily = IndiaCommercialPaperSchema.javaClass, version = 1, mappedTypes = listOf(PersistentIndiaCommericalPaperState::class.java)) {
+object IndiaCommercialPaperSchemaV1 : MappedSchema(schemaFamily = IndiaCommercialPaperSchema.javaClass, version = 1, mappedTypes = listOf(PersistentIndiaCommericalPaperState::class.java, PersistentSettlementSchemaState::class.java, PersistentDepositoryAccountSchemaState::class.java)) {
     @Entity
     @Table(name = "indiacp_states")
     class PersistentIndiaCommericalPaperState(
@@ -62,7 +68,11 @@ object IndiaCommercialPaperSchemaV1 : MappedSchema(schemaFamily = IndiaCommercia
             var version: Integer,
 
             @Column(name = "hash_deal_confirmation_doc", nullable=true)
-            var hashDealConfirmationDoc: String?
+            var hashDealConfirmationDoc: String?,
+
+            @OneToMany(fetch = FetchType.LAZY, mappedBy = "cpDetails")
+            @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+            var settlementDetails: List<PersistentSettlementSchemaState>?
 
     ) : PersistentState()
 }

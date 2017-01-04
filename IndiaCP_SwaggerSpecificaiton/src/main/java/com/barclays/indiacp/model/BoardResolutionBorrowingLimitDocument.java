@@ -35,24 +35,24 @@ import java.util.Date;
 /**
  * BoardResolutionBorrowingLimitDocument
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-04T11:02:40.426Z")
 public class BoardResolutionBorrowingLimitDocument   {
-  @JsonProperty("legal_entity_id")
+  @JsonProperty("legalEntityId")
   private String legalEntityId = null;
 
-  @JsonProperty("board_resolution_borrowing_limit")
+  @JsonProperty("boardResolutionBorrowingLimit")
   private Integer boardResolutionBorrowingLimit = null;
 
-  @JsonProperty("board_resolution_issuance_date")
+  @JsonProperty("boardResolutionIssuanceDate")
   private Date boardResolutionIssuanceDate = null;
 
-  @JsonProperty("board_resolution_expiry_date")
+  @JsonProperty("boardResolutionExpiryDate")
   private Date boardResolutionExpiryDate = null;
 
-  @JsonProperty("modified_by")
+  @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
-  @JsonProperty("last_modified")
+  @JsonProperty("lastModified")
   private Date lastModified = null;
 
   public BoardResolutionBorrowingLimitDocument legalEntityId(String legalEntityId) {

@@ -35,33 +35,33 @@ import java.util.Date;
 /**
  * LegalEntityCreditRatingDocument
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-04T11:02:40.426Z")
 public class LegalEntityCreditRatingDocument   {
-  @JsonProperty("legal_entity_id")
+  @JsonProperty("legalEntityId")
   private String legalEntityId = null;
 
-  @JsonProperty("credit_rating_agency_name")
+  @JsonProperty("creditRatingAgencyName")
   private String creditRatingAgencyName = null;
 
-  @JsonProperty("credit_rating_amount")
+  @JsonProperty("creditRatingAmount")
   private Integer creditRatingAmount = null;
 
-  @JsonProperty("credit_rating")
+  @JsonProperty("creditRating")
   private String creditRating = null;
 
-  @JsonProperty("credit_rating_issuance_date")
+  @JsonProperty("creditRatingIssuanceDate")
   private Date creditRatingIssuanceDate = null;
 
-  @JsonProperty("credit_rating_effective_date")
+  @JsonProperty("creditRatingEffectiveDate")
   private Date creditRatingEffectiveDate = null;
 
-  @JsonProperty("credit_rating_expiry_date")
+  @JsonProperty("creditRatingExpiryDate")
   private Date creditRatingExpiryDate = null;
 
-  @JsonProperty("modified_by")
+  @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
-  @JsonProperty("last_modified")
+  @JsonProperty("lastModified")
   private Date lastModified = null;
 
   public LegalEntityCreditRatingDocument legalEntityId(String legalEntityId) {

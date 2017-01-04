@@ -4,6 +4,7 @@ import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.protocol.issuer.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.DealEntryFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
+import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPWithinCPProgramFlow
 import net.corda.contracts.testing.fillWithSomeTestCash
 import net.corda.core.contracts.DOLLARS
 import net.corda.core.node.ServiceHub
@@ -37,16 +38,33 @@ class IndiaCPApi(val services: ServiceHub) {
     @POST
     @Path("issueCP")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     fun issueCP(newCP: IndiaCPIssue): Response {
         try {
-            val stx = services.invokeFlowAsync(IssueCPFlow::class.java, newCP).resultFuture.get()
-            logger.info("CP Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
+
+            val stx = services.invokeFlowAsync(IssueCPWithinCPProgramFlow::class.java, newCP).resultFuture.get()
+            logger.info("Issue CP Within a CP Program\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+
+            return Response.status(Response.Status.OK).entity(getCP(newCP.cpProgramId)).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
         }
     }
+
+//    @POST
+//    @Path("issueCP")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    fun issueCP(newCP: IndiaCPIssue): Response {
+//        try {
+//            val stx = services.invokeFlowAsync(IssueCPFlow::class.java, newCP).resultFuture.get()
+//            logger.info("CP Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+//            return Response.status(Response.Status.OK).build()
+//        } catch (ex: Throwable) {
+//            logger.info("Exception when creating deal: ${ex.toString()}")
+//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+//        }
+//    }
 
     @POST
     @Path("addSettlementDetails/{cpIssueId}")
@@ -131,12 +149,29 @@ class IndiaCPApi(val services: ServiceHub) {
     @GET
     @Path("fetchAllCP")
     @Produces(MediaType.APPLICATION_JSON)
-    fun fetchAllCP(): Array<IndiaCommercialPaper.State>?  {
+    fun fetchAllCP(): Response  {
         try {
-            return getAllCP()
+            val cpArray = getAllCP()
+
+            return Response.status(Response.Status.OK).entity(cpArray).build()
         } catch (ex: Throwable) {
             logger.info("Exception when fetching ecp: ${ex.toString()}")
-            return null
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+        }
+    }
+
+    @GET
+    @Path("fetchAllCP/{cpProgramId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    fun fetchAllCP(@PathParam("cpProgramId") cpProgramId: String): Response  {
+        try {
+            val cpArray = getAllCP()
+            val cpArrayForGiveCPProgram = if(cpArray != null) cpArray.filter { it.cpProgramID == cpProgramId } else cpArray
+
+            return Response.status(Response.Status.OK).entity(cpArrayForGiveCPProgram).build()
+        } catch (ex: Throwable) {
+            logger.info("Exception when fetching ecp: ${ex.toString()}")
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
         }
     }
 
@@ -150,10 +185,17 @@ class IndiaCPApi(val services: ServiceHub) {
     }
 
     @GET
-    @Path("fetchCP/{ref}")
+    @Path("fetchCP/{cpIssueId}")
     @Produces(MediaType.APPLICATION_JSON)
-    fun fetchCPWithRef(@PathParam("ref") ref: String): IndiaCommercialPaper.State? {
-        return getCP(ref)
+    fun fetchCP(@PathParam("cpIssueId") cpIssueId: String): Response {
+        try {
+            val cp = getCP(cpIssueId)
+
+            return Response.status(Response.Status.OK).entity(cp).build()
+        } catch (ex: Throwable) {
+            logger.info("Exception when fetching ecp: ${ex.toString()}")
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+        }
     }
 
     private fun getCP(ref: String): IndiaCommercialPaper.State? {
