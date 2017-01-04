@@ -2,9 +2,10 @@ package com.barclays.indiacp.cordapp.protocol.issuer
 
 import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
-import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
+//import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
+import com.barclays.indiacp.model.IndiaCPDocumentDetails
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.contracts.*
 import net.corda.core.crypto.Party
@@ -28,7 +29,8 @@ import java.util.*
  * In the "real world", we'd probably have the offers sitting in the platform prior to the agreement step
  * or the protocol would have to reach out to external systems (or users) to verify the deals.
  */
-class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
+class CPProgramFlows( val cpProgramId: String,
+        val docDetails:ArrayList<IndiaCPDocumentDetails>,
                      val trig_stage : CP_PROGRAM_FLOW_STAGES
                         ) : FlowLogic<SignedTransaction>() {
 
@@ -67,15 +69,15 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
 
         when (trig_stage) {
 
-            CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM ->
-            {
-//                progTrack = ProgressTracker(CP_PROGRAM_ISSUING, OBTAINING_NOTARY_SIGNATURE,
+//            CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM ->
+//            {
+////                progTrack = ProgressTracker(CP_PROGRAM_ISSUING, OBTAINING_NOTARY_SIGNATURE,
+////                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+//            }
+//            CP_PROGRAM_FLOW_STAGES.ADDISIN -> {
+//                progTrack = ProgressTracker(CP_PROGRAM_ADD_ISIN, OBTAINING_NOTARY_SIGNATURE,
 //                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
-            }
-            CP_PROGRAM_FLOW_STAGES.ADDISIN -> {
-                progTrack = ProgressTracker(CP_PROGRAM_ADD_ISIN, OBTAINING_NOTARY_SIGNATURE,
-                        NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
-            }
+//            }
 
             CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC -> {
                 progTrack = ProgressTracker(ADD_ISIN_GEN_DOC, OBTAINING_NOTARY_SIGNATURE,
@@ -125,36 +127,36 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
 
 
                 }
-
-                CP_PROGRAM_FLOW_STAGES.ADDISIN -> {
-                    progressTracker.currentStep = CP_PROGRAM_ADD_ISIN;
-                    tx = addIsinToCPProgram(newCPProgram, notary);
-
-                }
-
-                CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC -> {
-                    progressTracker.currentStep = ADD_ISIN_GEN_DOC;
-                    tx = addIsinGenDocToCPProgram(newCPProgram, notary);
-                }
+//
+//                CP_PROGRAM_FLOW_STAGES.ADDISIN -> {
+//                    progressTracker.currentStep = CP_PROGRAM_ADD_ISIN;
+//                    tx = addIsinToCPProgram(cpProgramId, notary, CP_PROGRAM_FLOW_STAGES.ADDISIN.endStatus );
+//
+//                }
+//
+//                CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC -> {
+//                    progressTracker.currentStep = ADD_ISIN_GEN_DOC;
+//                    tx = addIsinGenDocToCPProgram(newCPProgram, notary);
+//                }
 
                 CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC -> {
                     progressTracker.currentStep = ADD_IPA_VERI_DOC;
-                    tx = addIPAVerificationDocToCPProgram(newCPProgram, notary);
+                    tx = addIPAVerificationDocToCPProgram(cpProgramId, docDetails, notary, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.endStatus );
                 }
 
                 CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC -> {
                     progressTracker.currentStep = ADD_IPA_CERT_DOC;
-                    tx = addIPACertifcateDocToCPProgram(newCPProgram, notary);
+                    tx = addIPACertifcateDocToCPProgram(cpProgramId, docDetails, notary, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.endStatus );
                 }
 
                 CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC -> {
                     progressTracker.currentStep = ADD_CORP_ACT_FORM_DOC;
-                    tx = addCorpActionFormDocToCPProgram(newCPProgram, notary);
+                    tx = addCorpActionFormDocToCPProgram(cpProgramId, docDetails, notary, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.endStatus );
                 }
 
                 CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC -> {
                     progressTracker.currentStep = ADD_ALLOT_LETTER_DOC;
-                    tx = addAllotmentLetterDocToCPProgram(newCPProgram, notary);
+                    tx = addAllotmentLetterDocToCPProgram(cpProgramId, docDetails, notary, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.endStatus);
                 }
             }
 
@@ -214,26 +216,26 @@ class CPProgramFlows(val newCPProgram: IndiaCPProgramJSON,
 //    }
 
 
-    /*
-    Method for adding ISIN & supporting document into CP Program.
-     */
-    private fun addIsinToCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON, notary: NodeInfo) : TransactionBuilder
-    {
-        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCPProgram.program_id)
-
-        val tx = IndiaCommercialPaperProgram().addIsinToCPProgram(indiaCPProgramSF, notary.notaryIdentity, indiaCPProgramJSON.isin, indiaCPProgramJSON.status)
-        return tx
-    }
+//    /*
+//    Method for adding ISIN & supporting document into CP Program.
+//     */
+//    private fun addIsinToCPProgram(cpProgramId:String, isin:String, notary: NodeInfo, status :String) : TransactionBuilder
+//    {
+//        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
+//
+//        val tx = IndiaCommercialPaperProgram().addIsinToCPProgram(indiaCPProgramSF, notary.notaryIdentity, isin , status)
+//        return tx
+//    }
 
 
     /*
 Method for adding ISIN & supporting document into CP Program.
  */
-    private fun addIsinGenDocToCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON, notary: NodeInfo) : TransactionBuilder
+    private fun addIsinGenDocToCPProgram(cpProgramId:String, docDetails:ArrayList<IndiaCPDocumentDetails>, notary: NodeInfo, status :String) : TransactionBuilder
     {
-        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCPProgram.program_id)
+        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
 
-        val tx = IndiaCommercialPaperProgram().addIsinGenDocToCPProgram(indiaCPProgramSF, indiaCPProgramSF.state.data.issuer, notary.notaryIdentity, indiaCPProgramJSON.isin_generation_request_doc_id, indiaCPProgramJSON.status)
+        val tx = IndiaCommercialPaperProgram().addIsinGenDocToCPProgram(indiaCPProgramSF, indiaCPProgramSF.state.data.issuer, notary.notaryIdentity, docDetails, status)
 
         return tx
     }
@@ -241,11 +243,11 @@ Method for adding ISIN & supporting document into CP Program.
      /*
             Method for uploading IPA Verification document hash a CP Program.
      */
-    private fun addIPAVerificationDocToCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON, notary: NodeInfo) : TransactionBuilder
+    private fun addIPAVerificationDocToCPProgram(cpProgramId:String, docDetails:ArrayList<IndiaCPDocumentDetails>, notary: NodeInfo, status :String) : TransactionBuilder
     {
-        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCPProgram.program_id)
+        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
 
-        val tx = IndiaCommercialPaperProgram().addIPAVerificationDocToCPProgram(indiaCPProgramSF, notary.notaryIdentity, indiaCPProgramJSON.ipa_verification_request_doc_id, indiaCPProgramJSON.status)
+        val tx = IndiaCommercialPaperProgram().addIPAVerificationDocToCPProgram(indiaCPProgramSF, notary.notaryIdentity, docDetails, status)
         return tx
     }
 
@@ -253,11 +255,12 @@ Method for adding ISIN & supporting document into CP Program.
     /*
        Method for uploading IPA Certificate document hash a CP Program.
 */
-    private fun addIPACertifcateDocToCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON, notary: NodeInfo) : TransactionBuilder
+    private fun addIPACertifcateDocToCPProgram(cpProgramId:String, docDetails:ArrayList<IndiaCPDocumentDetails>, notary: NodeInfo, status :String) : TransactionBuilder
     {
-        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCPProgram.program_id)
 
-        val tx = IndiaCommercialPaperProgram().addIPACertifcateDocToCPProgram(indiaCPProgramSF, notary.notaryIdentity, indiaCPProgramJSON.ipa_certificate_doc_id, indiaCPProgramJSON.status)
+        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
+
+        val tx = IndiaCommercialPaperProgram().addIPACertifcateDocToCPProgram(indiaCPProgramSF, notary.notaryIdentity, docDetails, status)
         return tx
     }
 
@@ -265,11 +268,11 @@ Method for adding ISIN & supporting document into CP Program.
     /*
        Method for uploading Corporate Action Verification document hash a CP Program.
 */
-    private fun addCorpActionFormDocToCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON, notary: NodeInfo) : TransactionBuilder
+    private fun addCorpActionFormDocToCPProgram(cpProgramId:String, docDetails:ArrayList<IndiaCPDocumentDetails>, notary: NodeInfo, status :String) : TransactionBuilder
     {
-        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCPProgram.program_id)
+        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
 
-        val tx = IndiaCommercialPaperProgram().addCorpActionFormDocToCPProgram(indiaCPProgramSF, notary.notaryIdentity, indiaCPProgramJSON.corporate_action_form_doc_id, indiaCPProgramJSON.status)
+        val tx = IndiaCommercialPaperProgram().addCorpActionFormDocToCPProgram(indiaCPProgramSF, notary.notaryIdentity, docDetails, status)
         return tx
     }
 
@@ -277,11 +280,11 @@ Method for adding ISIN & supporting document into CP Program.
     /*
        Method for uploading Corporate Action Verification document hash a CP Program.
 */
-    private fun addAllotmentLetterDocToCPProgram(indiaCPProgramJSON: IndiaCPProgramJSON, notary: NodeInfo) : TransactionBuilder
+    private fun addAllotmentLetterDocToCPProgram(cpProgramId:String, docDetails:ArrayList<IndiaCPDocumentDetails>, notary: NodeInfo, status :String) : TransactionBuilder
     {
-        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCPProgram.program_id)
+        val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
 
-        val tx = IndiaCommercialPaperProgram().addAllotmentLetterDocToCPProgram(indiaCPProgramSF, notary.notaryIdentity, indiaCPProgramJSON.allotment_letter_doc_id, indiaCPProgramJSON.status)
+        val tx = IndiaCommercialPaperProgram().addAllotmentLetterDocToCPProgram(indiaCPProgramSF, notary.notaryIdentity, docDetails, status)
         return tx
     }
 

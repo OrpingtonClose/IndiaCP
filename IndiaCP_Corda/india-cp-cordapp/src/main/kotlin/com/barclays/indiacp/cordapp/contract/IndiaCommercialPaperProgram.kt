@@ -1,7 +1,7 @@
 package com.barclays.indiacp.cordapp.contract
 
 import com.barclays.indiacp.cordapp.api.IndiaCPApi
-import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
+//import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.schemas.DocumentAuditSchemaV1
 import com.barclays.indiacp.cordapp.schemas.IndiaCommercialPaperProgramSchemaV1
 import net.corda.contracts.asset.sumCashBy
@@ -18,6 +18,7 @@ import net.corda.core.schemas.QueryableState
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.Emoji
 import com.barclays.indiacp.cordapp.utilities.CPUtils
+import com.barclays.indiacp.model.IndiaCPDocumentDetails
 import com.barclays.indiacp.model.IndiaCPIssue
 import net.corda.contracts.ICommercialPaperState
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER
@@ -534,24 +535,29 @@ class IndiaCommercialPaperProgram : Contract {
     /**
      * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
      */
-    fun addIPAVerificationDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, ipaVerificationRequestDocId: String, status: String): TransactionBuilder {
+    fun addIPAVerificationDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, docDetails:ArrayList<IndiaCPDocumentDetails>, status: String): TransactionBuilder {
 
         val ptx = TransactionType.General.Builder(notary)
         ptx.addInputState(indiaCPProgramSF)
 
         val newVersion = Integer(indiaCPProgramSF.state.data.version.toInt() + 1)
 
+        val docHash:String = docDetails[0].docHash
+
         ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-                ipaVerificationRequestDocId = ipaVerificationRequestDocId,
+                ipaVerificationRequestDocId = docHash,
                 status = status,
                 version = newVersion
         ))
 
-        val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "IPA_VERI_DOC", "",
-                ipaVerificationRequestDocId, "IPA_VERI",  "ISSUER_1", Instant.now()), notary)
+        for(doc in docDetails)
+        {
+            val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer, indiaCPProgramSF.state.data.programId, doc.docType.toString(), doc.docSubType,
+                    doc.docHash, doc.docStatus, doc.modifiedBy, Instant.now()), notary)
 
 
-        ptx.addOutputState(docState)
+            ptx.addOutputState(docState)
+        }
 
         return ptx
     }
@@ -560,24 +566,29 @@ class IndiaCommercialPaperProgram : Contract {
     /**
      * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
      */
-    fun addIPACertifcateDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, ipaCertificateDocId: String, status: String): TransactionBuilder {
+    fun addIPACertifcateDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, docDetails:ArrayList<IndiaCPDocumentDetails>, status: String): TransactionBuilder {
 
         val ptx = TransactionType.General.Builder(notary)
         ptx.addInputState(indiaCPProgramSF)
 
         val newVersion = Integer(indiaCPProgramSF.state.data.version.toInt() + 1)
 
+        val docHash:String = docDetails[0].docHash
+
         ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-                ipaCertificateDocId = ipaCertificateDocId,
+                ipaCertificateDocId = docHash,
                 status = status,
                 version = newVersion
         ))
 
-        val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "IPA_CERT_DOC", "",
-                ipaCertificateDocId, "IPA_CERT",  "ISSUER_1", Instant.now()), notary)
+        for(doc in docDetails)
+        {
+            val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer, indiaCPProgramSF.state.data.programId, doc.docType.toString(), doc.docSubType,
+                    doc.docHash, doc.docStatus, doc.modifiedBy, Instant.now()), notary)
 
 
-        ptx.addOutputState(docState)
+            ptx.addOutputState(docState)
+        }
 
         return ptx
     }
@@ -587,24 +598,30 @@ class IndiaCommercialPaperProgram : Contract {
      * Returns a transaction that that updates the ISIN on to the CP Program.
      * It should also stamp the ISIN Generated proof document on to DL
      */
-    fun addIsinGenDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, issuer: Party, notary: Party, isinGenerationRequestDocId: String, status: String): TransactionBuilder {
+    fun addIsinGenDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, issuer: Party, notary: Party, docDetails:ArrayList<IndiaCPDocumentDetails>, status:String): TransactionBuilder {
 
         val ptx = TransactionType.General.Builder(notary)
         ptx.addInputState(indiaCPProgramSF)
 
         val newVersion = Integer(indiaCPProgramSF.state.data.version.toInt() + 1)
 
+        val docHash = docDetails[0].docHash
+
+
         ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-                isinGenerationRequestDocId = isinGenerationRequestDocId,
+                isinGenerationRequestDocId = docHash,
                 status = status,
                 version = newVersion
         ))
 
-        val docState = TransactionState(IndiaCommercialPaperProgram.DocState(issuer , indiaCPProgramSF.state.data.programId, "CPPROGRAM_ISIN_GEN_DOC", "",
-                isinGenerationRequestDocId, "ISIN_GEN_DOC_STATUS",  "ISSUER_1", Instant.now()), notary)
+        for(doc in docDetails)
+        {
+            val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer, indiaCPProgramSF.state.data.programId, doc.docType.toString(), doc.docSubType,
+                    doc.docHash, doc.docStatus, doc.modifiedBy, Instant.now()), notary)
 
 
-        ptx.addOutputState(docState)
+            ptx.addOutputState(docState)
+        }
 
         return ptx
     }
@@ -612,24 +629,29 @@ class IndiaCommercialPaperProgram : Contract {
     /**
      * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
      */
-    fun addCorpActionFormDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, corporateActionFormDocId: String, status: String): TransactionBuilder {
+    fun addCorpActionFormDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, docDetails:ArrayList<IndiaCPDocumentDetails>, status: String): TransactionBuilder {
 
         val ptx = TransactionType.General.Builder(notary)
         ptx.addInputState(indiaCPProgramSF)
 
         val newVersion = Integer(indiaCPProgramSF.state.data.version.toInt() + 1)
 
+        val docHash = docDetails[0].docHash
+
         ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-                corporateActionFormDocId = corporateActionFormDocId,
+                corporateActionFormDocId = docHash,
                 status = status,
                 version = newVersion
         ))
 
-        val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "CORP_ACT_DOC", "",
-                corporateActionFormDocId, "ISIN_GEN_DOC_STATUS",  "ISSUER_1", Instant.now()), notary)
+        for(doc in docDetails)
+        {
+            val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer, indiaCPProgramSF.state.data.programId, doc.docType.toString(), doc.docSubType,
+                    doc.docHash, doc.docStatus, doc.modifiedBy, Instant.now()), notary)
 
 
-        ptx.addOutputState(docState)
+            ptx.addOutputState(docState)
+        }
 
         return ptx
     }
@@ -638,24 +660,29 @@ class IndiaCommercialPaperProgram : Contract {
     /**
      * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
      */
-    fun addAllotmentLetterDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, allotmentLetterDocId: String, status: String): TransactionBuilder {
+    fun addAllotmentLetterDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, docDetails:ArrayList<IndiaCPDocumentDetails>, status: String): TransactionBuilder {
 
         val ptx = TransactionType.General.Builder(notary)
         ptx.addInputState(indiaCPProgramSF)
 
         val newVersion = Integer(indiaCPProgramSF.state.data.version.toInt() + 1)
 
+        val docHash = docDetails[0].docHash
+
         ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-                allotmentLetterDocId = allotmentLetterDocId,
+                allotmentLetterDocId = docHash,
                 status = status,
                 version = newVersion
         ))
 
-        val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer , indiaCPProgramSF.state.data.programId, "ALLOT_LETTER_DOC", "",
-                allotmentLetterDocId, "ALLOT_LETTER",  "ISSUER_1", Instant.now()), notary)
+        for(doc in docDetails)
+        {
+            val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer, indiaCPProgramSF.state.data.programId, doc.docType.toString(), doc.docSubType,
+                    doc.docHash, doc.docStatus, doc.modifiedBy, Instant.now()), notary)
 
 
-        ptx.addOutputState(docState)
+            ptx.addOutputState(docState)
+        }
 
         return ptx
     }

@@ -1,7 +1,7 @@
 package com.barclays.indiacp.cordapp.api
 
 
-import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
+//import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.dto.OrgLevelProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramWithInOrgLimitFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.OrgLevelBorrowProgramFlow
@@ -40,19 +40,19 @@ class OrgLevelBorrowingProgramApi(val services: ServiceHub) {
     }
 
 
-    @POST
-    @Path("issueCPProgramWithInOrg")
-    @Consumes(MediaType.APPLICATION_JSON)
-    fun issueCPProgramWithInOrg(indiaCPProgramJSON: IndiaCPProgramJSON): Response {
-        try
-        {
-            val stx = services.invokeFlowAsync(IssueCPProgramWithInOrgLimitFlow::class.java, indiaCPProgramJSON).resultFuture.get()
-            logger.info("CP Program Issued within ORG \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
-        } catch (ex: Throwable) {
-            logger.info("Exception when creating Org Borrowing Program deal: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
-        }
-    }
+//    @POST
+//    @Path("issueCPProgramWithInOrg")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    fun issueCPProgramWithInOrg(indiaCPProgramJSON: IndiaCPProgramJSON): Response {
+//        try
+//        {
+//            val stx = services.invokeFlowAsync(IssueCPProgramWithInOrgLimitFlow::class.java, indiaCPProgramJSON).resultFuture.get()
+//            logger.info("CP Program Issued within ORG \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+//            return Response.status(Response.Status.OK).build()
+//        } catch (ex: Throwable) {
+//            logger.info("Exception when creating Org Borrowing Program deal: ${ex.toString()}")
+//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+//        }
+//    }
 
 }

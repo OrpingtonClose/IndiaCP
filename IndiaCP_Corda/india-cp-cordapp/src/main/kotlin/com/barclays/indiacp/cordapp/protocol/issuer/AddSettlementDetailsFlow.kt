@@ -54,19 +54,21 @@ class AddSettlementDetailsFlow(val cpRefId: String, val settlementDetails: Settl
 //        val state = serviceHub.loadState(cpReference.ref) as TransactionState<IndiaCommercialPaper.State>
 //        cpReference = StateAndRef(state, cpReference.ref)
 
-        val settlementDetails: IndiaCommercialPaper.SettlementDetails = IndiaCommercialPaper.SettlementDetails(
-                partyType = "", //TODO: Fix IT - The Settlement Details Object is tagged through the JSON
-                paymentAccountDetails = IndiaCommercialPaper.PaymentAccountDetails(
-                        creditorName = settlementDetails.paymentAccountDetails.creditorName,
-                        bankAccountDetails = settlementDetails.paymentAccountDetails.bankAccountNo,
-                        bankName = settlementDetails.paymentAccountDetails.bankName,
-                        rtgsCode = settlementDetails.paymentAccountDetails.rtgsIfscCode
-                ),
-                depositoryAccountDetails = IndiaCommercialPaper.DepositoryAccountDetails (
-                        dpName = settlementDetails.depositoryAccountDetails.dpName,
-                        clientId =  settlementDetails.depositoryAccountDetails.clientId,
-                        dpID =  settlementDetails.depositoryAccountDetails.dpId)
-        )
+//        val settlementDetails: IndiaCommercialPaper.SettlementDetails = IndiaCommercialPaper.SettlementDetails(
+//                partyType = "", //TODO: Fix IT - The Settlement Details Object is tagged through the JSON
+//                paymentAccountDetails = IndiaCommercialPaper.PaymentAccountDetails(
+//                        creditorName = settlementDetails.paymentAccountDetails.creditorName,
+//                        bankAccountDetails = settlementDetails.paymentAccountDetails.bankAccountNo,
+//                        bankName = settlementDetails.paymentAccountDetails.bankName,
+//                        rtgsCode = settlementDetails.paymentAccountDetails.rtgsIfscCode
+//                ),
+//                depositoryAccountDetails = IndiaCommercialPaper.DepositoryAccountDetails (
+//                        dpName = settlementDetails.depositoryAccountDetails.dpName,
+//                        clientId =  settlementDetails.depositoryAccountDetails.clientId,
+//                        dpID =  settlementDetails.depositoryAccountDetails.dpId)
+//        )
+
+        val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
 
         val notaryNode = serviceHub.networkMapCache.notaryNodes.filter { it.notaryIdentity == cpReference.state.notary }.single()
 
@@ -74,7 +76,11 @@ class AddSettlementDetailsFlow(val cpRefId: String, val settlementDetails: Settl
 
         val ptx = TransactionType.General.Builder(notaryNode.notaryIdentity)
 
-        val tx = IndiaCommercialPaper().addSettlementDetails(ptx, cpReference, settlementDetails)
+//        val tx = IndiaCommercialPaper().addSettlementDetails(ptx, cpReference, settlementDetails)
+
+
+        //MM: just to compile for now. THIS IS JUST A HACK FOR NOW.....
+        val tx = TransactionType.General.Builder(notary = notary.notaryIdentity)
 
         // Attach the prospectus.
         //tx.addAttachment(serviceHub.storageService.attachments.openAttachment(PROSPECTUS_HASH)!!.id)
