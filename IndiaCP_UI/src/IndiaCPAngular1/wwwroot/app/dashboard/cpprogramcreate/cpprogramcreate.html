@@ -6,11 +6,11 @@
             <form>
                 <div class="form-group">
                     <label class="control-label">Issuer </label>
-                    <input type="text" class="form-control input-sm" />
+                    <input type="text" class="form-control input-sm" ng-model="vm.cpprogram.issuer_name" value="issuer1-UI" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Program Description</label>
-                    <input type="text" class="form-control input-sm" />{{cpprogram.purpose}}</input>
+                    <input type="text" class="form-control input-sm" ng-model="vm.cpprogram.purpose" /></input>
                 </div>
                 <div class="form-group">
                     <label class="control-label">CP Program ID</label>
@@ -18,7 +18,7 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">Type </label>
-                    <input type="text" class="form-control" />
+                    <input type="text" ng-model="vm.cpprogram.type" class="form-control" />
                 </div>
                 <div class="form-group">
                     <label class="control-label">Purpose </label>

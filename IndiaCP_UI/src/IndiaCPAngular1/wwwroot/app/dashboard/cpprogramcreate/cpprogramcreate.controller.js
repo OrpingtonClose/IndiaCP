@@ -11,11 +11,15 @@ var app;
                     this.issuerService = issuerService;
                 }
                 CPProgramCreateController.prototype.createCPProgram = function () {
-                    // this.issuerService.issueCPProgram
+                    this.issuerService.issueCPProgram(this.cpprogram).then(function () {
+                        console.log("CPProgram created");
+                    }, function (error) {
+                        console.log("CPProgram not created." + error);
+                    });
                 };
                 return CPProgramCreateController;
             }());
-            CPProgramCreateController.$inject = ["$sce", "app.services.IIssuerService"];
+            CPProgramCreateController.$inject = ["$sce", "app.services.IssuerService"];
             angular
                 .module("app.dashboard.cpprogramcreate")
                 .controller("app.dashboard.cpprogramcreate.CPProgramCreateController", CPProgramCreateController);
