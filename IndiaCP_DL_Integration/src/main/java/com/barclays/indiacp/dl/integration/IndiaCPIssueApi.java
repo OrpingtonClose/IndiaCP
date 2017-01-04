@@ -23,30 +23,44 @@ public interface IndiaCPIssueApi {
     @Path("issueCP/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPIssue issueCP(@PathParam("cpProgramId") String cpProgramId, String jsonBody);
+    public Response issueCP(@PathParam("cpProgramId") String cpProgramId, String jsonBody);
+
+    @POST
+    @Path("addSettlementDetails/{cpIssueId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addSettlementDetails(@PathParam("cpIssueId") String cpIssueId,
+                                             String jsonBody);
+
+    @POST
+    @Path("cancelCP/{cpIssueId}/{cancellationReason}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cancelCP(@PathParam("cpIssueId") String cpIssueId,
+                                 @PathParam("cancellationReason") String cancellationReason);
 
     @GET
     @Path("fetchAllCP/{cpProgramId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<IndiaCPIssue> fetchAllCP(@PathParam("cpProgramId") String cpProgramId);
+    public Response fetchAllCP(@PathParam("cpProgramId") String cpProgramId);
 
     @GET
     @Path("fetchAllCP")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<IndiaCPIssue> fetchAllCP();
+    public Response fetchAllCP();
 
     @GET
     @Path("fetchCP/{cpIssueId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPIssue fetchCP(@PathParam("cpIssueId") String cpIssueId);
+    public Response fetchCP(@PathParam("cpIssueId") String cpIssueId);
 
     @POST
-    @Path("addDoc")
+    @Path("addDocs/{cpIssueId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram addDoc(IndiaCPDocumentDetails docDetails,
-                                 @FormDataParam("file") InputStream uploadedInputStream);
-
+    public Response addDocs(@PathParam("cpIssueId") String cpIssueId,
+                            @FormDataParam("documentDetails") ArrayList<IndiaCPDocumentDetails> docDetails,
+                            @FormDataParam("file") InputStream uploadedInputStream);
 
     @Context
     public void setRequest(Request request);

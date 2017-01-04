@@ -28,12 +28,15 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 
 /**
  * IndiaCPDocumentDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
 public class IndiaCPDocumentDetails   {
   @JsonProperty("cp_program_id")
   private String cpProgramId = null;
@@ -41,11 +44,55 @@ public class IndiaCPDocumentDetails   {
   @JsonProperty("cp_issue_id")
   private String cpIssueId = null;
 
+  /**
+   * Type of Legal Documents exchanged and signed/countersigned by participants in the CPProgram
+   */
+  public enum DocTypeEnum {
+    CREDIT_RATING_DOC("CREDIT_RATING_DOC"),
+    
+    BOARD_RESOLUTION_BORROWING_LIMIT_DOC("BOARD_RESOLUTION_BORROWING_LIMIT_DOC"),
+    
+    DEPOSITORY_DOCS("DEPOSITORY_DOCS"),
+    
+    IPA_DOCS("IPA_DOCS"),
+    
+    IPA_CERTIFICATE_DOC("IPA_CERTIFICATE_DOC"),
+    
+    CORPORATE_ACTION_FORM("CORPORATE_ACTION_FORM"),
+    
+    DEAL_CONFIRMATION_DOC("DEAL_CONFIRMATION_DOC");
+
+    private String value;
+
+    DocTypeEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static DocTypeEnum fromValue(String text) {
+      for (DocTypeEnum b : DocTypeEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
   @JsonProperty("doc_type")
-  private String docType = null;
+  private DocTypeEnum docType = null;
 
   @JsonProperty("doc_sub_type")
   private String docSubType = null;
+
+  @JsonProperty("doc_extension")
+  private String docExtension = null;
 
   @JsonProperty("doc_hash")
   private String docHash = null;
@@ -68,7 +115,7 @@ public class IndiaCPDocumentDetails   {
    * Unique identifier of the CP Program that this document is associated with
    * @return cpProgramId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the CP Program that this document is associated with")
+  @ApiModelProperty(value = "Unique identifier of the CP Program that this document is associated with")
   public String getCpProgramId() {
     return cpProgramId;
   }
@@ -86,7 +133,7 @@ public class IndiaCPDocumentDetails   {
    * Unique identifier of the CP Issue that this document is associated with
    * @return cpIssueId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the CP Issue that this document is associated with")
+  @ApiModelProperty(value = "Unique identifier of the CP Issue that this document is associated with")
   public String getCpIssueId() {
     return cpIssueId;
   }
@@ -95,21 +142,21 @@ public class IndiaCPDocumentDetails   {
     this.cpIssueId = cpIssueId;
   }
 
-  public IndiaCPDocumentDetails docType(String docType) {
+  public IndiaCPDocumentDetails docType(DocTypeEnum docType) {
     this.docType = docType;
     return this;
   }
 
    /**
-   * Type of Document. Possible Values are ISIN_DOC, IPA_DOC, DEAL_CONFIRMATION_DOC, ALLOTMENT_LETTER, CORPORATE_ACTION_FORM
+   * Type of Legal Documents exchanged and signed/countersigned by participants in the CPProgram
    * @return docType
   **/
-  //@ApiModelProperty(value = "Type of Document. Possible Values are ISIN_DOC, IPA_DOC, DEAL_CONFIRMATION_DOC, ALLOTMENT_LETTER, CORPORATE_ACTION_FORM")
-  public String getDocType() {
+  @ApiModelProperty(value = "Type of Legal Documents exchanged and signed/countersigned by participants in the CPProgram")
+  public DocTypeEnum getDocType() {
     return docType;
   }
 
-  public void setDocType(String docType) {
+  public void setDocType(DocTypeEnum docType) {
     this.docType = docType;
   }
 
@@ -119,16 +166,34 @@ public class IndiaCPDocumentDetails   {
   }
 
    /**
-   * Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA
+   * Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.
    * @return docSubType
   **/
-  //@ApiModelProperty(value = "Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA")
+  @ApiModelProperty(value = "Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.")
   public String getDocSubType() {
     return docSubType;
   }
 
   public void setDocSubType(String docSubType) {
     this.docSubType = docSubType;
+  }
+
+  public IndiaCPDocumentDetails docExtension(String docExtension) {
+    this.docExtension = docExtension;
+    return this;
+  }
+
+   /**
+   * File extension of the document. E.g. PDF. The doc_sub_type.doc_extension would be the full file name in the zipped file uploaded to the DL.
+   * @return docExtension
+  **/
+  @ApiModelProperty(value = "File extension of the document. E.g. PDF. The doc_sub_type.doc_extension would be the full file name in the zipped file uploaded to the DL.")
+  public String getDocExtension() {
+    return docExtension;
+  }
+
+  public void setDocExtension(String docExtension) {
+    this.docExtension = docExtension;
   }
 
   public IndiaCPDocumentDetails docHash(String docHash) {
@@ -140,7 +205,7 @@ public class IndiaCPDocumentDetails   {
    * SHA256 Hash of the Content of the Document. This hash uniquely identifies the document.
    * @return docHash
   **/
-  //@ApiModelProperty(value = "SHA256 Hash of the Content of the Document. This hash uniquely identifies the document.")
+  @ApiModelProperty(value = "SHA256 Hash of the Content of the Document. This hash uniquely identifies the document.")
   public String getDocHash() {
     return docHash;
   }
@@ -158,7 +223,7 @@ public class IndiaCPDocumentDetails   {
    * The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL
    * @return docStatus
   **/
-  //@ApiModelProperty(value = "The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL")
+  @ApiModelProperty(value = "The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL")
   public String getDocStatus() {
     return docStatus;
   }
@@ -176,7 +241,7 @@ public class IndiaCPDocumentDetails   {
    * Unique identifier of the Logged-in User that performed the action. This is required for Audit History
    * @return modifiedBy
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Logged-in User that performed the action. This is required for Audit History")
+  @ApiModelProperty(value = "Unique identifier of the Logged-in User that performed the action. This is required for Audit History")
   public String getModifiedBy() {
     return modifiedBy;
   }
@@ -194,7 +259,7 @@ public class IndiaCPDocumentDetails   {
    * Last Modified Date for this CPIssue. This is required for Audit History
    * @return lastModified
   **/
-  //@ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
+  @ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
   public Date getLastModified() {
     return lastModified;
   }
@@ -217,6 +282,7 @@ public class IndiaCPDocumentDetails   {
         Objects.equals(this.cpIssueId, indiaCPDocumentDetails.cpIssueId) &&
         Objects.equals(this.docType, indiaCPDocumentDetails.docType) &&
         Objects.equals(this.docSubType, indiaCPDocumentDetails.docSubType) &&
+        Objects.equals(this.docExtension, indiaCPDocumentDetails.docExtension) &&
         Objects.equals(this.docHash, indiaCPDocumentDetails.docHash) &&
         Objects.equals(this.docStatus, indiaCPDocumentDetails.docStatus) &&
         Objects.equals(this.modifiedBy, indiaCPDocumentDetails.modifiedBy) &&
@@ -225,7 +291,7 @@ public class IndiaCPDocumentDetails   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cpProgramId, cpIssueId, docType, docSubType, docHash, docStatus, modifiedBy, lastModified);
+    return Objects.hash(cpProgramId, cpIssueId, docType, docSubType, docExtension, docHash, docStatus, modifiedBy, lastModified);
   }
 
 
@@ -238,6 +304,7 @@ public class IndiaCPDocumentDetails   {
     sb.append("    cpIssueId: ").append(toIndentedString(cpIssueId)).append("\n");
     sb.append("    docType: ").append(toIndentedString(docType)).append("\n");
     sb.append("    docSubType: ").append(toIndentedString(docSubType)).append("\n");
+    sb.append("    docExtension: ").append(toIndentedString(docExtension)).append("\n");
     sb.append("    docHash: ").append(toIndentedString(docHash)).append("\n");
     sb.append("    docStatus: ").append(toIndentedString(docStatus)).append("\n");
     sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");

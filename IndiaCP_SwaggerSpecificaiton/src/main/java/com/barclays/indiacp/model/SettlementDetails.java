@@ -28,17 +28,76 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * SettlementDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
 public class SettlementDetails   {
+  /**
+   * partyType
+   */
+  public enum PartyTypeEnum {
+    ISSUER("ISSUER"),
+    
+    INVESTOR("INVESTOR"),
+    
+    IPA("IPA");
+
+    private String value;
+
+    PartyTypeEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static PartyTypeEnum fromValue(String text) {
+      for (PartyTypeEnum b : PartyTypeEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
+  @JsonProperty("partyType")
+  private PartyTypeEnum partyType = null;
+
   @JsonProperty("paymentAccountDetails")
   private PaymentAccountDetails paymentAccountDetails = null;
 
   @JsonProperty("depositoryAccountDetails")
-  private DepositoryAccountDetails depositoryAccountDetails = null;
+  private List<DepositoryAccountDetails> depositoryAccountDetails = new ArrayList<DepositoryAccountDetails>();
+
+  public SettlementDetails partyType(PartyTypeEnum partyType) {
+    this.partyType = partyType;
+    return this;
+  }
+
+   /**
+   * partyType
+   * @return partyType
+  **/
+  @ApiModelProperty(value = "partyType")
+  public PartyTypeEnum getPartyType() {
+    return partyType;
+  }
+
+  public void setPartyType(PartyTypeEnum partyType) {
+    this.partyType = partyType;
+  }
 
   public SettlementDetails paymentAccountDetails(PaymentAccountDetails paymentAccountDetails) {
     this.paymentAccountDetails = paymentAccountDetails;
@@ -49,7 +108,7 @@ public class SettlementDetails   {
    * Get paymentAccountDetails
    * @return paymentAccountDetails
   **/
-  //@ApiModelProperty(value = "")
+  @ApiModelProperty(value = "")
   public PaymentAccountDetails getPaymentAccountDetails() {
     return paymentAccountDetails;
   }
@@ -58,8 +117,13 @@ public class SettlementDetails   {
     this.paymentAccountDetails = paymentAccountDetails;
   }
 
-  public SettlementDetails depositoryAccountDetails(DepositoryAccountDetails depositoryAccountDetails) {
+  public SettlementDetails depositoryAccountDetails(List<DepositoryAccountDetails> depositoryAccountDetails) {
     this.depositoryAccountDetails = depositoryAccountDetails;
+    return this;
+  }
+
+  public SettlementDetails addDepositoryAccountDetailsItem(DepositoryAccountDetails depositoryAccountDetailsItem) {
+    this.depositoryAccountDetails.add(depositoryAccountDetailsItem);
     return this;
   }
 
@@ -67,12 +131,12 @@ public class SettlementDetails   {
    * Get depositoryAccountDetails
    * @return depositoryAccountDetails
   **/
-  //@ApiModelProperty(value = "")
-  public DepositoryAccountDetails getDepositoryAccountDetails() {
+  @ApiModelProperty(value = "")
+  public List<DepositoryAccountDetails> getDepositoryAccountDetails() {
     return depositoryAccountDetails;
   }
 
-  public void setDepositoryAccountDetails(DepositoryAccountDetails depositoryAccountDetails) {
+  public void setDepositoryAccountDetails(List<DepositoryAccountDetails> depositoryAccountDetails) {
     this.depositoryAccountDetails = depositoryAccountDetails;
   }
 
@@ -86,13 +150,14 @@ public class SettlementDetails   {
       return false;
     }
     SettlementDetails settlementDetails = (SettlementDetails) o;
-    return Objects.equals(this.paymentAccountDetails, settlementDetails.paymentAccountDetails) &&
+    return Objects.equals(this.partyType, settlementDetails.partyType) &&
+        Objects.equals(this.paymentAccountDetails, settlementDetails.paymentAccountDetails) &&
         Objects.equals(this.depositoryAccountDetails, settlementDetails.depositoryAccountDetails);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(paymentAccountDetails, depositoryAccountDetails);
+    return Objects.hash(partyType, paymentAccountDetails, depositoryAccountDetails);
   }
 
 
@@ -101,6 +166,7 @@ public class SettlementDetails   {
     StringBuilder sb = new StringBuilder();
     sb.append("class SettlementDetails {\n");
     
+    sb.append("    partyType: ").append(toIndentedString(partyType)).append("\n");
     sb.append("    paymentAccountDetails: ").append(toIndentedString(paymentAccountDetails)).append("\n");
     sb.append("    depositoryAccountDetails: ").append(toIndentedString(depositoryAccountDetails)).append("\n");
     sb.append("}");

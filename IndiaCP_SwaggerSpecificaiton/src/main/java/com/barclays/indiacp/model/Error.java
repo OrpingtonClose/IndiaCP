@@ -28,11 +28,13 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Error
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
 public class Error   {
   @JsonProperty("code")
   private Integer code = null;
@@ -52,7 +54,7 @@ public class Error   {
    * Get code
    * @return code
   **/
-  //@ApiModelProperty(value = "")
+  @ApiModelProperty(value = "")
   public Integer getCode() {
     return code;
   }
@@ -70,7 +72,7 @@ public class Error   {
    * Get message
    * @return message
   **/
-  //@ApiModelProperty(value = "")
+  @ApiModelProperty(value = "")
   public String getMessage() {
     return message;
   }
@@ -88,7 +90,7 @@ public class Error   {
    * Get fields
    * @return fields
   **/
-  //@ApiModelProperty(value = "")
+  @ApiModelProperty(value = "")
   public String getFields() {
     return fields;
   }

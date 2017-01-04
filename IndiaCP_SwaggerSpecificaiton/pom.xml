@@ -24,12 +24,11 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.swagger/swagger-annotations -->
-        <!--<dependency>
+        <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>1.5.0</version>
-            <scope>compile</scope>
-        </dependency>-->
+        </dependency>
 
     </dependencies>
 

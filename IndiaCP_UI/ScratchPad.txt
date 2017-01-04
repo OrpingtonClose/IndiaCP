@@ -36,3 +36,6 @@ modal-lg : 1200px
 
 Test your API's
 https://apigee.com/about/blog/developer/swagger-test-templates-test-your-apis
+
+502.5 Error on azure webapp
+https://github.com/aspnet/Home/issues/1842

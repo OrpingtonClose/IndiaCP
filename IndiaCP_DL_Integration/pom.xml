@@ -111,6 +111,23 @@
                 <version>1.2.1</version>
                 <goals>
                     <goal>java</goal>
+                    <configuration>
+                        <mainClass>com.barclays.indiacp.Main</mainClass>
+                        <systemProperties>
+                            <property>
+                                <key>host</key>
+                                <value>localhost</value>
+                            </property>
+                            <property>
+                                <key>port</key>
+                                <value>8888</value>
+                            </property>
+                            <property>
+                                <key>path</key>
+                                <value>indiacp</value>
+                            </property>
+                        </systemProperties>
+                    </configuration>
                 </goals>
 <!--                <executions>
                     <execution>
@@ -119,23 +136,6 @@
                         </goals>
                     </execution>
                 </executions>-->
-                <configuration>
-                    <mainClass>com.barclays.indiacp.Main</mainClass>
-                    <systemProperties>
-                        <property>
-                            <key>host</key>
-                            <value>localhost</value>
-                        </property>
-                        <property>
-                            <key>port</key>
-                            <value>8888</value>
-                        </property>
-                        <property>
-                            <key>path</key>
-                            <value>indiacp</value>
-                        </property>
-                    </systemProperties>
-                </configuration>
             </plugin>
         </plugins>
     </build>

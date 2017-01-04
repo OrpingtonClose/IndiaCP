@@ -1,6 +1,10 @@
 package com.barclays.indiacp.dl.integration;
 
 import com.barclays.indiacp.dl.utils.DLConfig;
+import com.barclays.indiacp.model.IndiaCPDocumentDetails;
+import com.barclays.indiacp.model.IndiaCPProgram;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.MultiPart;
@@ -22,6 +26,8 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -54,33 +60,65 @@ public class DLRestProxyHandler implements InvocationHandler {
 
         String   methodEndPoint = getMethodEndPoint(method, args);
 
+        String jsonString = null;
         String docHash = null;
         if (requiresAttachmentUpload(method)) {
             //upload attachment to DL
             docHash = uploadAttachmentToDL(method.getName(), args);
-            applyPathParamToMethodPath(methodEndPoint, "docHash", docHash);
+            //set docHash in the documentDetails metadata before posting it to the DL
+            jsonString = setDocHash(args, docHash);
         }
 
-        String jsonString = null;
         if (methodHasJSONBodyParam(method)) {
             jsonString = getJSONToPost(method, args);
         }
 
         if (method.isAnnotationPresent(javax.ws.rs.GET.class)) {
-           return dlRestEndPoint.path(methodEndPoint).request().get();
+            Response response = dlRestEndPoint.path(methodEndPoint).request().get();
+            return response;
         } else if (method.isAnnotationPresent(javax.ws.rs.POST.class)) {
             if (jsonString != null) {
-                return dlRestEndPoint.path(methodEndPoint).request().post(Entity.json(jsonString));
+                Response response = dlRestEndPoint.path(methodEndPoint).request().post(Entity.json(jsonString));
+                return response;
             } else {
-                return dlRestEndPoint.path(methodEndPoint).request().post(Entity.text(""));
+                Response response = dlRestEndPoint.path(methodEndPoint).request().post(Entity.text(""));
+                return response;
             }
         }
 
         throw new UnsupportedOperationException(method.getAnnotations() + " Not Supported");
     }
 
+    private String setDocHash(Object[] args, String docHash) {
+        List<IndiaCPDocumentDetails> docDetails = null;
+        for (Object arg : args) {
+            if (arg instanceof List<?>
+                    && ((List) arg).size() >= 1
+                    && ((List) arg).get(0) instanceof IndiaCPDocumentDetails) {
+                docDetails = (List<IndiaCPDocumentDetails>) arg;
+            }
+        }
+        if (docDetails == null) {
+            throw new RuntimeException("Expected IndiaCPDocumentDetails to be posted along with the document to be uploaded. But none found! Check the post api call.");
+        }
+
+        for (IndiaCPDocumentDetails docDetail: docDetails) {
+            docDetail.setDocHash(docHash);
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(docDetails);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Unable to serialize IndiaCPDocumentDetails Object to JSON");
+        }
+    }
+
     private boolean requiresAttachmentUpload(Method method) {
         Consumes consumesAnnotation = method.getAnnotation(javax.ws.rs.Consumes.class);
+        if (consumesAnnotation == null) {
+            return false;
+        }
         String[] mediaTypes = consumesAnnotation.value();
         for (String mediaType: mediaTypes) {
             if (mediaType.equals(MediaType.MULTIPART_FORM_DATA)) {

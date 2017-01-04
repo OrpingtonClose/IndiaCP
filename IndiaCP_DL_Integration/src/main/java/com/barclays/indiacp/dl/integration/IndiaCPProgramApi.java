@@ -23,12 +23,12 @@ public interface IndiaCPProgramApi {
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram issueCPProgram(String jsonBody);
+    public Response issueCPProgram(String jsonBody);
 
     @GET
     @Path("fetchAllCPProgram")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<IndiaCPProgram> fetchAllCPProgram();
+    public Response fetchAllCPProgram();
 
     @GET
     @Path("fetchCPProgram/{cpProgramId}")
@@ -38,23 +38,15 @@ public interface IndiaCPProgramApi {
     @POST
     @Path("addISIN/{cpProgramId}/{isin}")
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram addISIN(@PathParam("cpProgramId") String cpProgramId);
+    public Response addISIN(@PathParam("cpProgramId") String cpProgramId);
 
     @POST
-    @Path("addDoc")
+    @Path("addDocs/{cpProgramId}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram addDoc(IndiaCPDocumentDetails docDetails,
-                                 @FormDataParam("file") InputStream uploadedInputStream);
-
-    @POST
-    @Path("addISINGenerationDocs/{cpProgramId}/{docHash}/{docStatus}")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram addISINGenerationDocs(@PathParam("cpProgramId") String cpProgramId,
-                                          @PathParam("docHash") String docHash,
-                                          @PathParam("docStatus") String docStatus,
-                                          @FormDataParam("file") InputStream uploadedInputStream);
+    public Response addDocs(@PathParam("cpProgramId") String cpProgramId,
+                            @FormDataParam("documentDetails") ArrayList<IndiaCPDocumentDetails> docDetails,
+                            @FormDataParam("file") InputStream uploadedInputStream);
 
     @Context
     public void setRequest(Request request);

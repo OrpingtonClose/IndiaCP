@@ -28,21 +28,20 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 
 /**
  * IndiaCPProgram
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-02T12:26:07.652Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
 public class IndiaCPProgram   {
   @JsonProperty("program_id")
   private String programId = null;
 
   @JsonProperty("name")
   private String name = null;
-
-  @JsonProperty("user_id")
-  private String userId = null;
 
   @JsonProperty("type")
   private String type = null;
@@ -101,9 +100,6 @@ public class IndiaCPProgram   {
   @JsonProperty("allotment_letter_doc_id")
   private String allotmentLetterDocId = null;
 
-  @JsonProperty("org_unit")
-  private String orgUnit = null;
-
   @JsonProperty("status")
   private String status = null;
 
@@ -125,7 +121,7 @@ public class IndiaCPProgram   {
    * Unique identifier representing a specific CP Program raised by an Issuer
    * @return programId
   **/
-  //@ApiModelProperty(value = "Unique identifier representing a specific CP Program raised by an Issuer")
+  @ApiModelProperty(value = "Unique identifier representing a specific CP Program raised by an Issuer")
   public String getProgramId() {
     return programId;
   }
@@ -143,31 +139,13 @@ public class IndiaCPProgram   {
    * Name of the CP Program
    * @return name
   **/
-  //@ApiModelProperty(value = "Name of the CP Program")
+  @ApiModelProperty(value = "Name of the CP Program")
   public String getName() {
     return name;
   }
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public IndiaCPProgram userId(String userId) {
-    this.userId = userId;
-    return this;
-  }
-
-   /**
-   * User identifier
-   * @return userId
-  **/
-  //@ApiModelProperty(value = "User identifier")
-  public String getUserId() {
-    return userId;
-  }
-
-  public void setUserId(String userId) {
-    this.userId = userId;
   }
 
   public IndiaCPProgram type(String type) {
@@ -179,7 +157,7 @@ public class IndiaCPProgram   {
    * Type of the CP Program
    * @return type
   **/
-  //@ApiModelProperty(value = "Type of the CP Program")
+  @ApiModelProperty(value = "Type of the CP Program")
   public String getType() {
     return type;
   }
@@ -197,7 +175,7 @@ public class IndiaCPProgram   {
    * Purpose of the CP Program
    * @return purpose
   **/
-  //@ApiModelProperty(value = "Purpose of the CP Program")
+  @ApiModelProperty(value = "Purpose of the CP Program")
   public String getPurpose() {
     return purpose;
   }
@@ -215,7 +193,7 @@ public class IndiaCPProgram   {
    * Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.
    * @return isin
   **/
-  //@ApiModelProperty(value = "Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.")
+  @ApiModelProperty(value = "Unique CP Security Identifier No. In India this is issued by NSDL for Commercial Paper type of securities.")
   public String getIsin() {
     return isin;
   }
@@ -233,7 +211,7 @@ public class IndiaCPProgram   {
    * Unique identifier of the Issuer. This will also uniquely map to the DL Node of the Issuer
    * @return issuerId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Issuer. This will also uniquely map to the DL Node of the Issuer")
+  @ApiModelProperty(value = "Unique identifier of the Issuer. This will also uniquely map to the DL Node of the Issuer")
   public String getIssuerId() {
     return issuerId;
   }
@@ -251,7 +229,7 @@ public class IndiaCPProgram   {
    * Display name of the Issuer
    * @return issuerName
   **/
-  //@ApiModelProperty(value = "Display name of the Issuer")
+  @ApiModelProperty(value = "Display name of the Issuer")
   public String getIssuerName() {
     return issuerName;
   }
@@ -269,7 +247,7 @@ public class IndiaCPProgram   {
    * Date when the CP Program was initiated. India regulations mandate that a program should be fully allocated within 2 weeks of commencement.
    * @return issueCommencementDate
   **/
-  //@ApiModelProperty(value = "Date when the CP Program was initiated. India regulations mandate that a program should be fully allocated within 2 weeks of commencement.")
+  @ApiModelProperty(value = "Date when the CP Program was initiated. India regulations mandate that a program should be fully allocated within 2 weeks of commencement.")
   public Date getIssueCommencementDate() {
     return issueCommencementDate;
   }
@@ -287,7 +265,7 @@ public class IndiaCPProgram   {
    * Total borrowing amount under this CP Program
    * @return programSize
   **/
-  //@ApiModelProperty(value = "Total borrowing amount under this CP Program")
+  @ApiModelProperty(value = "Total borrowing amount under this CP Program")
   public Integer getProgramSize() {
     return programSize;
   }
@@ -305,7 +283,7 @@ public class IndiaCPProgram   {
    * Amount already allocated to the CP program
    * @return programAllocatedValue
   **/
-  //@ApiModelProperty(value = "Amount already allocated to the CP program")
+  @ApiModelProperty(value = "Amount already allocated to the CP program")
   public Double getProgramAllocatedValue() {
     return programAllocatedValue;
   }
@@ -323,7 +301,7 @@ public class IndiaCPProgram   {
    * Currency of the issue of CP notes
    * @return programCurrency
   **/
-  //@ApiModelProperty(value = "Currency of the issue of CP notes")
+  @ApiModelProperty(value = "Currency of the issue of CP notes")
   public String getProgramCurrency() {
     return programCurrency;
   }
@@ -341,7 +319,7 @@ public class IndiaCPProgram   {
    * No of days to maturity from the value date
    * @return maturityDays
   **/
-  //@ApiModelProperty(value = "No of days to maturity from the value date")
+  @ApiModelProperty(value = "No of days to maturity from the value date")
   public Integer getMaturityDays() {
     return maturityDays;
   }
@@ -359,7 +337,7 @@ public class IndiaCPProgram   {
    * Unique identifier of the IPA. This will also uniquely map to the DL Node of the IPA
    * @return ipaId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the IPA. This will also uniquely map to the DL Node of the IPA")
+  @ApiModelProperty(value = "Unique identifier of the IPA. This will also uniquely map to the DL Node of the IPA")
   public String getIpaId() {
     return ipaId;
   }
@@ -377,7 +355,7 @@ public class IndiaCPProgram   {
    * Display name of the IPA
    * @return ipaName
   **/
-  //@ApiModelProperty(value = "Display name of the IPA")
+  @ApiModelProperty(value = "Display name of the IPA")
   public String getIpaName() {
     return ipaName;
   }
@@ -395,7 +373,7 @@ public class IndiaCPProgram   {
    * Unique identifier of the Depository (NSDL). This will also uniquely map to the DL Node of the Depository
    * @return depositoryId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Depository (NSDL). This will also uniquely map to the DL Node of the Depository")
+  @ApiModelProperty(value = "Unique identifier of the Depository (NSDL). This will also uniquely map to the DL Node of the Depository")
   public String getDepositoryId() {
     return depositoryId;
   }
@@ -413,7 +391,7 @@ public class IndiaCPProgram   {
    * Display name of the Depository
    * @return depositoryName
   **/
-  //@ApiModelProperty(value = "Display name of the Depository")
+  @ApiModelProperty(value = "Display name of the Depository")
   public String getDepositoryName() {
     return depositoryName;
   }
@@ -431,7 +409,7 @@ public class IndiaCPProgram   {
    * Unique identifier of the documents sent to the depository to generate ISIN
    * @return isinGenerationRequestDocId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the documents sent to the depository to generate ISIN")
+  @ApiModelProperty(value = "Unique identifier of the documents sent to the depository to generate ISIN")
   public String getIsinGenerationRequestDocId() {
     return isinGenerationRequestDocId;
   }
@@ -449,7 +427,7 @@ public class IndiaCPProgram   {
    * Unique identifier of the documents sent to the IPA to certify the CP Program
    * @return ipaVerificationRequestDocId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the documents sent to the IPA to certify the CP Program")
+  @ApiModelProperty(value = "Unique identifier of the documents sent to the IPA to certify the CP Program")
   public String getIpaVerificationRequestDocId() {
     return ipaVerificationRequestDocId;
   }
@@ -467,7 +445,7 @@ public class IndiaCPProgram   {
    * Unique identifier of the IPA certificate issued by the IPA on verification of the CP Program and supporting Issuer documents
    * @return ipaCertificateDocId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the IPA certificate issued by the IPA on verification of the CP Program and supporting Issuer documents")
+  @ApiModelProperty(value = "Unique identifier of the IPA certificate issued by the IPA on verification of the CP Program and supporting Issuer documents")
   public String getIpaCertificateDocId() {
     return ipaCertificateDocId;
   }
@@ -485,7 +463,7 @@ public class IndiaCPProgram   {
    * Unique identifier of the Corporate Action Form generated by the Issuer to allot CP
    * @return corporateActionFormDocId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Corporate Action Form generated by the Issuer to allot CP")
+  @ApiModelProperty(value = "Unique identifier of the Corporate Action Form generated by the Issuer to allot CP")
   public String getCorporateActionFormDocId() {
     return corporateActionFormDocId;
   }
@@ -503,31 +481,13 @@ public class IndiaCPProgram   {
    * Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account
    * @return allotmentLetterDocId
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account")
+  @ApiModelProperty(value = "Unique identifier of the Allotment Letter generated by IPA for CP transfer to Investor DP account")
   public String getAllotmentLetterDocId() {
     return allotmentLetterDocId;
   }
 
   public void setAllotmentLetterDocId(String allotmentLetterDocId) {
     this.allotmentLetterDocId = allotmentLetterDocId;
-  }
-
-  public IndiaCPProgram orgUnit(String orgUnit) {
-    this.orgUnit = orgUnit;
-    return this;
-  }
-
-   /**
-   * Top level organizational borrowing limit contract
-   * @return orgUnit
-  **/
-  //@ApiModelProperty(value = "Top level organizational borrowing limit contract")
-  public String getOrgUnit() {
-    return orgUnit;
-  }
-
-  public void setOrgUnit(String orgUnit) {
-    this.orgUnit = orgUnit;
   }
 
   public IndiaCPProgram status(String status) {
@@ -539,7 +499,7 @@ public class IndiaCPProgram   {
    * Current status of the CP Program
    * @return status
   **/
-  //@ApiModelProperty(value = "Current status of the CP Program")
+  @ApiModelProperty(value = "Current status of the CP Program")
   public String getStatus() {
     return status;
   }
@@ -557,7 +517,7 @@ public class IndiaCPProgram   {
    * Current version of the CP Program
    * @return version
   **/
-  //@ApiModelProperty(value = "Current version of the CP Program")
+  @ApiModelProperty(value = "Current version of the CP Program")
   public Integer getVersion() {
     return version;
   }
@@ -575,7 +535,7 @@ public class IndiaCPProgram   {
    * Unique identifier of the Logged-in User that performed the action. This is required for Audit History
    * @return modifiedBy
   **/
-  //@ApiModelProperty(value = "Unique identifier of the Logged-in User that performed the action. This is required for Audit History")
+  @ApiModelProperty(value = "Unique identifier of the Logged-in User that performed the action. This is required for Audit History")
   public String getModifiedBy() {
     return modifiedBy;
   }
@@ -593,7 +553,7 @@ public class IndiaCPProgram   {
    * Last Modified Date for this CPIssue. This is required for Audit History
    * @return lastModified
   **/
-  //@ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
+  @ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
   public Date getLastModified() {
     return lastModified;
   }
@@ -614,7 +574,6 @@ public class IndiaCPProgram   {
     IndiaCPProgram indiaCPProgram = (IndiaCPProgram) o;
     return Objects.equals(this.programId, indiaCPProgram.programId) &&
         Objects.equals(this.name, indiaCPProgram.name) &&
-        Objects.equals(this.userId, indiaCPProgram.userId) &&
         Objects.equals(this.type, indiaCPProgram.type) &&
         Objects.equals(this.purpose, indiaCPProgram.purpose) &&
         Objects.equals(this.isin, indiaCPProgram.isin) &&
@@ -634,7 +593,6 @@ public class IndiaCPProgram   {
         Objects.equals(this.ipaCertificateDocId, indiaCPProgram.ipaCertificateDocId) &&
         Objects.equals(this.corporateActionFormDocId, indiaCPProgram.corporateActionFormDocId) &&
         Objects.equals(this.allotmentLetterDocId, indiaCPProgram.allotmentLetterDocId) &&
-        Objects.equals(this.orgUnit, indiaCPProgram.orgUnit) &&
         Objects.equals(this.status, indiaCPProgram.status) &&
         Objects.equals(this.version, indiaCPProgram.version) &&
         Objects.equals(this.modifiedBy, indiaCPProgram.modifiedBy) &&
@@ -643,7 +601,7 @@ public class IndiaCPProgram   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(programId, name, userId, type, purpose, isin, issuerId, issuerName, issueCommencementDate, programSize, programAllocatedValue, programCurrency, maturityDays, ipaId, ipaName, depositoryId, depositoryName, isinGenerationRequestDocId, ipaVerificationRequestDocId, ipaCertificateDocId, corporateActionFormDocId, allotmentLetterDocId, orgUnit, status, version, modifiedBy, lastModified);
+    return Objects.hash(programId, name, type, purpose, isin, issuerId, issuerName, issueCommencementDate, programSize, programAllocatedValue, programCurrency, maturityDays, ipaId, ipaName, depositoryId, depositoryName, isinGenerationRequestDocId, ipaVerificationRequestDocId, ipaCertificateDocId, corporateActionFormDocId, allotmentLetterDocId, status, version, modifiedBy, lastModified);
   }
 
 
@@ -654,7 +612,6 @@ public class IndiaCPProgram   {
     
     sb.append("    programId: ").append(toIndentedString(programId)).append("\n");
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    userId: ").append(toIndentedString(userId)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    purpose: ").append(toIndentedString(purpose)).append("\n");
     sb.append("    isin: ").append(toIndentedString(isin)).append("\n");
@@ -674,7 +631,6 @@ public class IndiaCPProgram   {
     sb.append("    ipaCertificateDocId: ").append(toIndentedString(ipaCertificateDocId)).append("\n");
     sb.append("    corporateActionFormDocId: ").append(toIndentedString(corporateActionFormDocId)).append("\n");
     sb.append("    allotmentLetterDocId: ").append(toIndentedString(allotmentLetterDocId)).append("\n");
-    sb.append("    orgUnit: ").append(toIndentedString(orgUnit)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    version: ").append(toIndentedString(version)).append("\n");
     sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");

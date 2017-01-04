@@ -1,12 +1,10 @@
 package com.barclays.indiacp.dl.integration;
 
 import com.barclays.indiacp.dl.utils.DLConfig;
+import com.barclays.indiacp.model.IndiaCPProgram;
 import jdk.nashorn.internal.parser.JSONParser;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -243,6 +241,26 @@ public class IndiaCPDocumentsApi {
 
         return Response.status(Response.Status.OK).build();
     }
+
+    @POST
+    @Path("getDocs/{docHash}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getDocs(@PathParam("docHash") String docHash) {
+
+        //TODO - return entire zip
+        return Response.status(Response.Status.OK).build();
+    }
+
+    @POST
+    @Path("getDoc/{docHash}/{docSubType}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getDoc(@PathParam("docHash") String docHash,
+                                 @PathParam("docSubType") String docSubType) {
+        //TODO - return individual sub document from the zip based on the docSubType which should be the same as the file name inside the zip
+        return Response.status(Response.Status.OK).build();
+    }
+
+
 
     public static String encodeFileToBase64Binary(String fileName) throws IOException {
         File file = new File(fileName);

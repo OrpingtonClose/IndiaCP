@@ -3,13 +3,13 @@ package com.barclays.indiacp.cordapp.protocol.issuer
 import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.contract.OrgLevelBorrowProgram
-import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
-import com.barclays.indiacp.cordapp.dto.OrgLevelProgramJSON
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
+import com.barclays.indiacp.model.IndiaCPProgram
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.contracts.*
 import net.corda.core.crypto.Party
 import net.corda.core.crypto.SecureHash
+import net.corda.core.days
 import net.corda.core.node.NodeInfo
 import net.corda.core.flows.FlowLogic
 import net.corda.core.node.services.linearHeadsOfType
@@ -27,7 +27,7 @@ import java.util.*
  * In the "real world", we'd probably have the offers sitting in the platform prior to the agreement step
  * or the protocol would have to reach out to external systems (or users) to verify the deals.
  */
-class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: IndiaCPProgramJSON) : FlowLogic<SignedTransaction>() {
+class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: IndiaCPProgram) : FlowLogic<SignedTransaction>() {
 
     companion object {
         val PROSPECTUS_HASH = SecureHash.parse("decd098666b9657314870e192ced0c3519c2c9d395507a238338f8d003929de9")
@@ -51,15 +51,19 @@ class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: IndiaCPProgramJSON) : F
     override fun call(): SignedTransaction {
         progressTracker.currentStep = ORG_CPPROGRAM_ISSUE
 
+        logger.info("Inside IssueCPProgramWithInOrgLimitFlow");
+        logger.info("Issuer ID Get Method Access: " + newCPProgram.getIssuerId());
+        logger.info("Issuer ID Field Access: " + newCPProgram.issuerId);
+
+        val issuer = getPartyByName(newCPProgram.getIssuerId())
+        val ipa = getPartyByName(newCPProgram.getIpaId())
+        val depository = getPartyByName(newCPProgram.getDepositoryId())
+
         val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
-        val issuer = getPartyByName(newCPProgram.issuer)
-        val ipa = getPartyByName(newCPProgram.ipa)
-        val depository = getPartyByName(newCPProgram.depository)
 
+        val indiaCPProgramSF: StateAndRef<OrgLevelBorrowProgram.OrgState> = getOrgProgramStateandRef(newCPProgram.issuerId)
 
-        val indiaCPProgramSF: StateAndRef<OrgLevelBorrowProgram.OrgState> = getOrgProgramStateandRef(newCPProgram.org_unit)
-
-        val newBorrowedValue: Amount<Issued<Currency>> = indiaCPProgramSF.state.data.borrowedValue.plus(newCPProgram.program_size.DOLLARS `issued by` DUMMY_CASH_ISSUER);
+        val newBorrowedValue: Amount<Issued<Currency>> = indiaCPProgramSF.state.data.borrowedValue.plus(newCPProgram.programSize.DOLLARS `issued by` DUMMY_CASH_ISSUER);
 
         if(newBorrowedValue.quantity > indiaCPProgramSF.state.data.borrowingLimit.quantity)
         {
@@ -75,18 +79,18 @@ class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: IndiaCPProgramJSON) : F
 
         val tx = IndiaCommercialPaperProgram().generateIssue(indiaCPProgramSF, newBorrowedValue,
                 IndiaCommercialPaperProgram.State(issuer, ipa, depository,
-                        newCPProgram.program_id, newCPProgram.name, newCPProgram.type, newCPProgram.purpose,
-                        newCPProgram.issuer_id, newCPProgram.issuer_name,
-                        newCPProgram.issue_commencement_date.toInstant(),
-                        newCPProgram.program_size.DOLLARS `issued by` DUMMY_CASH_ISSUER,
-                        newCPProgram.program_allocated_value.DOLLARS `issued by` DUMMY_CASH_ISSUER,
+                        newCPProgram.programId, newCPProgram.name, newCPProgram.type, newCPProgram.purpose,
+                        newCPProgram.issuerId, newCPProgram.issuerName,
+                        newCPProgram.issueCommencementDate.toInstant(),
+                        newCPProgram.programSize.DOLLARS `issued by` DUMMY_CASH_ISSUER,
+                        newCPProgram.programAllocatedValue.DOLLARS `issued by` DUMMY_CASH_ISSUER,
                         Currency.getInstance("INR"), //TODO fix the hardcoding to INR and DOLLAR
-                        newCPProgram.maturity_days.toInstant(), newCPProgram.ipa_id, newCPProgram.ipa_name,
-                        newCPProgram.depository_id, newCPProgram.depository_name,
-                        newCPProgram.isin, newCPProgram.isin_generation_request_doc_id,
-                        newCPProgram.ipa_verification_request_doc_id,
-                        newCPProgram.ipa_certificate_doc_id, newCPProgram.corporate_action_form_doc_id,
-                        newCPProgram.allotment_letter_doc_id,
+                        Instant.now() + newCPProgram.maturityDays.days, newCPProgram.ipaId, newCPProgram.ipaName,
+                        newCPProgram.depositoryId, newCPProgram.depositoryName,
+                        newCPProgram.isin, newCPProgram.isinGenerationRequestDocId,
+                        newCPProgram.ipaVerificationRequestDocId,
+                        newCPProgram.ipaCertificateDocId, newCPProgram.corporateActionFormDocId,
+                        newCPProgram.allotmentLetterDocId,
                         CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM.endStatus, //TODO: Add Status Enum
                         Instant.now(),
                         Integer(0)),

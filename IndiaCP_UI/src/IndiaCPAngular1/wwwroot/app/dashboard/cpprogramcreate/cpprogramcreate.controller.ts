@@ -2,15 +2,18 @@ module app.dashboard.cpprogramcreate {
     "use strict";
 
     interface ICPProgramCreateScope {
-        issueCP(): void;
+        createCPProgram(): void;
     }
 
     class CPProgramCreateController implements ICPProgramCreateScope {
         isinDocPDF: string;
-        static $inject = ["$sce"]
-        constructor(protected $sce: ng.ISCEService) {
+        cpprogram: app.models.IndiaCPProgram;
+        static $inject = ["$sce","app.services.IIssuerService"]
+        constructor(protected $sce: ng.ISCEService,
+                    protected issuerService : app.services.IIssuerService) {
         }
-        public issueCP(): void {
+        public createCPProgram(): void {
+            // this.issuerService.issueCPProgram
         }
     }
 
