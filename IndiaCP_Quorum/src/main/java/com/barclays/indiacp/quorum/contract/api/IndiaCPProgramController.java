@@ -1,7 +1,7 @@
 package com.barclays.indiacp.quorum.contract.api;
 
-import com.barclays.indiacp.model.CPIssue;
-import com.barclays.indiacp.model.CPProgram;
+import com.barclays.indiacp.model.IndiaCPIssue;
+import com.barclays.indiacp.model.IndiaCPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 import com.jpmorgan.cakeshop.client.model.Contract;
 
@@ -18,7 +18,7 @@ import java.util.List;
  * Created by ritukedia on 23/12/16.
  */
 @Path("indiacpprogram")
-public class IndiaCPProgram {
+public class IndiaCPProgramController {
 
     Request request;
     String userId;
@@ -26,19 +26,19 @@ public class IndiaCPProgram {
     @POST
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String issueCPProgram(CPProgram cpProgramArgs) {
-        return CakeshopUtils.createContract(this.getClass().getSimpleName(), cpProgramArgs);
+    public String issueCPProgram(IndiaCPProgram indiaCPProgramArgs) {
+        return CakeshopUtils.createContract(this.getClass().getSimpleName(), indiaCPProgramArgs);
     }
 
     @GET
     @Path("fetchAllCPProgram")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<CPProgram>  fetchAllCPProgram() {
-        //fetch all contract instances of IndiaCPProgram Contracts
+    public ArrayList<IndiaCPProgram>  fetchAllCPProgram() {
+        //fetch all contract instances of IndiaCPProgramController Contracts
         List<Contract> contractList = CakeshopUtils.listContractsByName(this.getClass().getSimpleName());
 
-        //fetch details of all IndiaCPProgram Contract instances
-        ArrayList<CPProgram> cpProgramArrayList = new ArrayList<>();
+        //fetch details of all IndiaCPProgramController Contract instances
+        ArrayList<IndiaCPProgram> indiaCPProgramArrayList = new ArrayList<>();
 
         //TODO find all method names which are required to fetch all the contents of CPPrograms
         //Need to check if the code works
@@ -55,10 +55,10 @@ public class IndiaCPProgram {
                 "fetchCPProgramParties", "fetchCPProgramStatus"};
 
         for(Contract contract: contractList){
-            cpProgramArrayList.add(CakeshopUtils.readContract(this.getClass().getSimpleName(), contract.getAddress(), CPProgram.class, readMethodNames));
+            indiaCPProgramArrayList.add(CakeshopUtils.readContract(this.getClass().getSimpleName(), contract.getAddress(), IndiaCPProgram.class, readMethodNames));
         }
 
-        return cpProgramArrayList;
+        return indiaCPProgramArrayList;
     }
 
     @GET
@@ -71,7 +71,7 @@ public class IndiaCPProgram {
         String[] readMethodNames = {"fetchCPProgramTradeDetails", "fetchCPProgramDocuments",
                 "fetchCPProgramParties", "fetchCPProgramStatus"};
 
-        CPProgram cpProgram = CakeshopUtils.readContract(this.getClass().getSimpleName(), contractAddress, CPProgram.class, readMethodNames);
+        IndiaCPProgram indiaCPProgram = CakeshopUtils.readContract(this.getClass().getSimpleName(), contractAddress, IndiaCPProgram.class, readMethodNames);
         return Response.status(Response.Status.OK).build();
 
     }
@@ -87,7 +87,7 @@ public class IndiaCPProgram {
     @POST
     @Path("issueCP/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response issueCP(@PathParam("cpProgramId") String cpProgramId, CPIssue cpIssue) {
+    public Response issueCP(@PathParam("cpProgramId") String cpProgramId, IndiaCPIssue cpIssue) {
         String contractAddress = CakeshopUtils.createContract(this.getClass().getName(), cpIssue);
         return Response.status(Response.Status.OK).build();
 
