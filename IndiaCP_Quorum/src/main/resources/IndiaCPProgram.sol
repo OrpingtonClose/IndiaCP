@@ -1,31 +1,31 @@
 contract IndiaCPProgram{
 
-  string public programId;
-  string public name;
-  string public _type;
-  string public purpose;
-  string public issueCommencementDate;
-  string public programCurrency;
-  uint public programSize;
-  uint public programAllocatedValue;
-  uint public maturityDays;
+  string programId;
+  string name;
+  string _type;
+  string purpose;
+  uint issueCommencementDate;
+  string programCurrency;
+  uint programSize;
+  uint programAllocatedValue;
+  uint maturityDays;
 
   //Document Hash Identifiers
-  string public isinGenerationDocId;
-  string public ipaVerificationDocId;
-  string public ipaCertificateDocId;
-  string public corporateActionFormDocId;
-  string public allotmentLetterDocId;
+  string isinGenerationDocId;
+  string ipaVerificationDocId;
+  string ipaCertificateDocId;
+  string corporateActionFormDocId;
+  string allotmentLetterDocId;
 
   //Populate through network mapping service
-  address public issuerAddress;
-  address public ipaAddress;
-  address public depositoryAddress;
+  address issuerAddress;
+  address ipaAddress;
+  address depositoryAddress;
 
   //status fields
-  uint public version;
-  string public status;
-  uint public lastModified;
+  uint version;
+  string status;
+  uint lastModifiedDate;
 
   function IndiaCPProgram(string _programId, string _name, string __type, string _purpose, uint _programSize, uint _maturityDays){
     programId = _programId;
@@ -42,12 +42,13 @@ contract IndiaCPProgram{
     //ipaAddress = "";
     version = 1;
     status = "Initiated";
-    lastModified = now;
+    lastModifiedDate = now;
+    issueCommencementDate=lastModifiedDate;
 
   }
 
 
-  function fetchCPProgramTradeDetails() constant returns (string _programId, string _name, string __type, string _purpose, string issueCommencementDate, string programCurrency, uint programSize, uint programAllocatedValue) {
+  function fetchCPProgramTradeDetails() constant returns (string _programId, string _name, string __type, string _purpose, uint _issueCommencementDate, string _programCurrency, uint _programSize, uint _programAllocatedValue) {
     return (programId, name, _type, purpose, issueCommencementDate, programCurrency, programSize, programAllocatedValue);
   }
 
@@ -59,8 +60,8 @@ contract IndiaCPProgram{
     return (issuerAddress, ipaAddress, depositoryAddress);
   }
 
-  function fetchCPProgramStatus() constant returns (uint _version, string _status, uint _lastModified) {
-    return (version, status, lastModified);
+  function fetchCPProgramStatus() constant returns (uint _version, string _status, uint _lastModifiedDate) {
+    return (version, status, lastModifiedDate);
   }
 
 }

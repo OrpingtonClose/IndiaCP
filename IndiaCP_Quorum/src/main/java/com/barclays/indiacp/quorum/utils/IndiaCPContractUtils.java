@@ -6,6 +6,7 @@ import com.jpmorgan.cakeshop.model.SolidityType;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,10 +14,6 @@ import java.util.List;
  */
 public class IndiaCPContractUtils {
 
-//    public static CPProgram getContractBy(String cpProgramAddress) {
-//
-//        return (CPProgram) CakeshopUtils.getContractState(cpProgramAddress);
-//    }
 
     public static Object[] getConstructorArgs(SolidityContract contract, Object contractModel) {
         try {
@@ -94,11 +91,23 @@ public class IndiaCPContractUtils {
             int i = 0;
             for (ContractABI.Entry.Param param : functionParams) {
                 String argName = param.getName();
-                SolidityType argType = param.getType();
                 String setterMethodName = getSetterMethodName(argName);
 
-                Method method = contractModel.getMethod(setterMethodName, getJavaType(argType));
-                method.invoke(contractModelInstance, dataAsList.get(i++));
+                Method method;
+
+                if(argName.endsWith("Date")){
+                    method = contractModel.getMethod(setterMethodName, Date.class);
+                    method.invoke(contractModelInstance, new Date(((Integer) dataAsList.get(i++)).longValue()));
+
+
+                }
+                else{
+                    SolidityType argType = param.getType();
+                    method = contractModel.getMethod(setterMethodName, getJavaType(argType));
+                    method.invoke(contractModelInstance, dataAsList.get(i++));
+                }
+
+
             }
             return contractModelInstance;
         } catch (Exception e) {

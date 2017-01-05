@@ -65,11 +65,16 @@ public class IndiaCPProgram {
     @Path("fetchCPProgram/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response fetchCPProgram(@PathParam("cpProgramId") String cpProgramId) {
-        //CPProgram cpProgram = IndiaCPContractUtils.fetchCPProgram(cpProgramId);
+        //TODO Get contract address from mapping service
+        String contractAddress = cpProgramId;
+
+        String[] readMethodNames = {"fetchCPProgramTradeDetails", "fetchCPProgramDocuments",
+                "fetchCPProgramParties", "fetchCPProgramStatus"};
+
+        CPProgram cpProgram = CakeshopUtils.readContract(this.getClass().getSimpleName(), contractAddress, CPProgram.class, readMethodNames);
         return Response.status(Response.Status.OK).build();
 
     }
-
 
 
     @POST
