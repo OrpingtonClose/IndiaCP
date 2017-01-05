@@ -32,7 +32,7 @@ var app;
             function IssuerService($http, $httpParamSerializer) {
                 this.$http = $http;
                 this.$httpParamSerializer = $httpParamSerializer;
-                this.basePath = "http://52.172.44.10:8181/indiacp";
+                this.basePath = "http://52.172.46.253:8181/indiacp";
                 this.defaultHeaders = {};
             }
             IssuerService.prototype.extendObj = function (objA, objB) {

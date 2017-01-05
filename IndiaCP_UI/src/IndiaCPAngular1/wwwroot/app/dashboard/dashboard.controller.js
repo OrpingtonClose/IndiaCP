@@ -42,7 +42,8 @@ var app;
                 });
             };
             DashboardController.prototype.createCPProgram = function () {
-                this.$uibModal.open({
+                var _this = this;
+                var modalInstance = this.$uibModal.open({
                     animation: true,
                     ariaLabelledBy: "modal-title",
                     ariaDescribedBy: "modal-body",
@@ -51,6 +52,9 @@ var app;
                     size: "lg",
                     backdrop: "static",
                     templateUrl: "app/dashboard/cpprogramcreate/cpprogramcreate.html"
+                });
+                modalInstance.closed.then(function () {
+                    _this.fetchAllCPPrograms();
                 });
             };
             DashboardController.prototype.showCPIssueDetails = function () {
@@ -65,7 +69,7 @@ var app;
                     templateUrl: "app/dashboard/cpissuedetails/cpissuedetails.html"
                 });
             };
-            DashboardController.prototype.showCPProgramDetails = function () {
+            DashboardController.prototype.showCPProgramDetails = function (cpProgramId) {
                 this.$uibModal.open({
                     animation: true,
                     ariaLabelledBy: "modal-title",
@@ -74,7 +78,12 @@ var app;
                     controllerAs: "vm",
                     size: "lg",
                     backdrop: "static",
-                    templateUrl: "app/dashboard/cpprogramdetails/cpprogramdetails.html"
+                    templateUrl: "app/dashboard/cpprogramdetails/cpprogramdetails.html",
+                    resolve: {
+                        programId: function () {
+                            return cpProgramId;
+                        }
+                    }
                 });
             };
             return DashboardController;

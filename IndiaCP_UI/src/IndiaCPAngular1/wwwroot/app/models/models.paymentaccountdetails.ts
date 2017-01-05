@@ -2,7 +2,7 @@ module app.models {
     "use strict";
 
     
-    export interface PaymentAccountDetails {
+    export class PaymentAccountDetails {
         /**
          * Name in which the payment has to be made. For e.g. Barclays Investments & Loans (India) Ltd CP
          */

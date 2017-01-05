@@ -41,7 +41,7 @@ module app.services {
      }
 
      class IssuerService implements IIssuerService {
-        protected basePath = "http://52.172.44.10:8181/indiacp";
+        protected basePath = "http://52.172.46.253:8181/indiacp";
         public defaultHeaders : any = {};
 
         static $inject: string[] = ["$http", "$httpParamSerializer"];
