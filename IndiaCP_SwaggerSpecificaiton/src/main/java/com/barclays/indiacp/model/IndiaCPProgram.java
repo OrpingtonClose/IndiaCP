@@ -35,7 +35,7 @@ import java.util.Date;
 /**
  * IndiaCPProgram
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-04T11:02:40.426Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-05T14:40:19.760Z")
 public class IndiaCPProgram   {
   @JsonProperty("programId")
   private String programId = null;
@@ -65,7 +65,7 @@ public class IndiaCPProgram   {
   private Integer programSize = null;
 
   @JsonProperty("programAllocatedValue")
-  private Double programAllocatedValue = null;
+  private Integer programAllocatedValue = null;
 
   @JsonProperty("programCurrency")
   private String programCurrency = null;
@@ -274,7 +274,7 @@ public class IndiaCPProgram   {
     this.programSize = programSize;
   }
 
-  public IndiaCPProgram programAllocatedValue(Double programAllocatedValue) {
+  public IndiaCPProgram programAllocatedValue(Integer programAllocatedValue) {
     this.programAllocatedValue = programAllocatedValue;
     return this;
   }
@@ -284,11 +284,11 @@ public class IndiaCPProgram   {
    * @return programAllocatedValue
   **/
   @ApiModelProperty(value = "Amount already allocated to the CP program")
-  public Double getProgramAllocatedValue() {
+  public Integer getProgramAllocatedValue() {
     return programAllocatedValue;
   }
 
-  public void setProgramAllocatedValue(Double programAllocatedValue) {
+  public void setProgramAllocatedValue(Integer programAllocatedValue) {
     this.programAllocatedValue = programAllocatedValue;
   }
 

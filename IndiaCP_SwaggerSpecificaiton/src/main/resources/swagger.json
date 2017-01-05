@@ -666,8 +666,7 @@
                     "description": "Total borrowing amount under this CP Program"
                 },
                 "programAllocatedValue": {
-                    "type": "number",
-                    "format": "double",
+                    "type": "integer",
                     "description": "Amount already allocated to the CP program"
                 },
                 "programCurrency": {
