@@ -111,7 +111,9 @@ class IndiaCommercialPaper : Contract {
         /** Object Relational Mapping support. */
         override fun generateMappedObject(schema: MappedSchema): PersistentState {
             return when (schema) {
-                is IndiaCommercialPaperSchemaV1 -> IndiaCommercialPaperSchemaV1.PersistentIndiaCommericalPaperState(
+                is IndiaCommercialPaperSchemaV1 ->
+                {
+                    val cpPersistedObject = IndiaCommercialPaperSchemaV1.PersistentIndiaCommericalPaperState(
                         issuanceParty = this.issuer.owningKey.toBase58String(),
                         beneficiaryParty = this.beneficiary.owningKey.toBase58String(),
                         ipaParty = this.ipa.owningKey.toBase58String(),
@@ -126,10 +128,20 @@ class IndiaCommercialPaper : Contract {
                         isin = this.isin,
                         version = this.version,
                         hashDealConfirmationDoc = this.hashDealConfirmationDoc,
-                        settlementDetails = getSettlementPersistedStates(this.issuerSettlementDetails, this.investorSettlementDetails, this.ipaSettlementDetails)
-                )
+                        settlementDetails = getSettlementPersistedStates(this.issuerSettlementDetails, this.investorSettlementDetails, this.ipaSettlementDetails))
+
+                    cpPersistedObject.settlementDetails = cpPersistedObject.settlementDetails?.map {setCPDetails(it, cpPersistedObject)}
+
+                    return cpPersistedObject
+
+                }
                 else -> throw IllegalArgumentException("Unrecognised schema $schema")
             }
+        }
+
+        private fun  setCPDetails(it: PersistentSettlementSchemaState, cpPersistedObject: IndiaCommercialPaperSchemaV1.PersistentIndiaCommericalPaperState): PersistentSettlementSchemaState {
+            it.cpDetails = cpPersistedObject
+            return it
         }
 
         private fun  getSettlementPersistedStates(issuerSettlementDetails: IndiaCommercialPaper.SettlementDetails?, investorSettlementDetails: IndiaCommercialPaper.SettlementDetails?, ipaSettlementDetails: IndiaCommercialPaper.SettlementDetails?): List<PersistentSettlementSchemaState>? {
@@ -148,16 +160,22 @@ class IndiaCommercialPaper : Contract {
             if (settlementDetails == null) {
                 return null
             }
-            return PersistentSettlementSchemaState (
+            val persistentSD =  PersistentSettlementSchemaState (
                     party_type = settlementDetails.partyType,
                     creditorName = settlementDetails.paymentAccountDetails?.creditorName,
                     bankAccountDetails = settlementDetails.paymentAccountDetails?.bankAccountDetails,
                     bankName = settlementDetails.paymentAccountDetails?.bankName,
                     rtgsCode = settlementDetails.paymentAccountDetails?.rtgsCode,
-                    depositoryAccounts = settlementDetails.depositoryAccountDetails?.map { getDepositoryAccountPersistedState(it) },
-                    id = Long.MIN_VALUE, //TODO this is auto generated but passing it for the time being because of compilation errors
-                    cpDetails = null //TODO this is auto bound but passing it for the time being because of compilation errors
+                    depositoryAccounts = settlementDetails.depositoryAccountDetails?.map { getDepositoryAccountPersistedState(it) }
             )
+            persistentSD.depositoryAccounts = persistentSD.depositoryAccounts?.map {setSettlementDetails(it, persistentSD)}
+
+            return persistentSD
+        }
+
+        private fun  setSettlementDetails(it: PersistentDepositoryAccountSchemaState, persistentSD: PersistentSettlementSchemaState): PersistentDepositoryAccountSchemaState {
+            it.settlementDetails = persistentSD
+            return it
         }
 
         private fun  getDepositoryAccountPersistedState(depositoryAccountDetails: DepositoryAccountDetails): PersistentDepositoryAccountSchemaState {
@@ -165,9 +183,7 @@ class IndiaCommercialPaper : Contract {
                     dpID = depositoryAccountDetails.dpID,
                     dpName = depositoryAccountDetails.dpName,
                     dpType = depositoryAccountDetails.dpType,
-                    clientId = depositoryAccountDetails.clientId,
-                    id = Long.MIN_VALUE, //TODO this is auto generated but passing it for the time being because of compilation errors
-                    settlementDetails = null //TODO this is auto bound but passing it for the time being because of compilation errors
+                    clientId = depositoryAccountDetails.clientId
             )
         }
     }

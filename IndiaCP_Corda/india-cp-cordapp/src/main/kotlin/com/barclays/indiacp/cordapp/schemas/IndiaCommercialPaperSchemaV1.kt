@@ -12,7 +12,6 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.persistence.FetchType
 import org.hibernate.annotations.Cascade
-import org.hibernate.annotations.CascadeType
 
 /**
  * An object used to fully qualify the [IndiaCommercialPaperSchema] family name (i.e. independent of version).
@@ -70,8 +69,7 @@ object IndiaCommercialPaperSchemaV1 : MappedSchema(schemaFamily = IndiaCommercia
             @Column(name = "hash_deal_confirmation_doc", nullable=true)
             var hashDealConfirmationDoc: String?,
 
-            @OneToMany(fetch = FetchType.LAZY, mappedBy = "cpDetails")
-            @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+            @OneToMany(fetch = FetchType.LAZY, mappedBy = "cpDetails", cascade = arrayOf(javax.persistence.CascadeType.ALL))
             var settlementDetails: List<PersistentSettlementSchemaState>?
 
     ) : PersistentState()

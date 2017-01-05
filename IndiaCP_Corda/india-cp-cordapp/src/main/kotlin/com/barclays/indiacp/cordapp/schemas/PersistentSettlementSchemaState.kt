@@ -1,5 +1,7 @@
 package com.barclays.indiacp.cordapp.schemas
 
+import org.hibernate.annotations.Cascade
+import org.hibernate.annotations.CascadeType
 import javax.persistence.*
 
 @Entity
@@ -9,7 +11,7 @@ class PersistentSettlementSchemaState(
         @Id
         @GeneratedValue
         @Column(name = "settlement_id")
-        var id: Long?,
+        var id: Long? = null,
 
         @Column(name = "party_type")
         var party_type: String,
@@ -27,9 +29,9 @@ class PersistentSettlementSchemaState(
         var rtgsCode: String?,
 
         @ManyToOne (fetch = FetchType.LAZY)
-        @JoinColumn(referencedColumnName = "cp_trade_id")
-        var cpDetails: IndiaCommercialPaperSchemaV1.PersistentIndiaCommericalPaperState?,
+        @JoinColumns(JoinColumn(referencedColumnName="transaction_id"), JoinColumn(referencedColumnName = "output_index"))
+        var cpDetails: IndiaCommercialPaperSchemaV1.PersistentIndiaCommericalPaperState? = null,
 
-        @OneToMany(fetch = FetchType.LAZY, mappedBy = "settlementDetails", cascade = arrayOf(CascadeType.PERSIST))
+        @OneToMany(fetch = FetchType.LAZY, mappedBy = "settlementDetails", cascade = arrayOf(javax.persistence.CascadeType.ALL))
         var depositoryAccounts: List<PersistentDepositoryAccountSchemaState>?
 )

@@ -1,5 +1,6 @@
 package com.barclays.indiacp.cordapp.schemas
 
+import org.hibernate.annotations.Cascade
 import javax.persistence.*
 
 @Entity
@@ -9,7 +10,7 @@ class PersistentDepositoryAccountSchemaState(
         @Id
         @GeneratedValue
         @Column(name = "id")
-        var id: Long?,
+        var id: Long? = null,
 
         @Column(name = "dpID")
         var dpID: String?,
@@ -25,6 +26,6 @@ class PersistentDepositoryAccountSchemaState(
 
         @ManyToOne (fetch = FetchType.LAZY)
         @JoinColumn(referencedColumnName = "settlement_id")
-        var settlementDetails: PersistentSettlementSchemaState?
+        var settlementDetails: PersistentSettlementSchemaState? = null
 
 )
