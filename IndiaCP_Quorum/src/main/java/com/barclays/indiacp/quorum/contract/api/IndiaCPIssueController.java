@@ -17,7 +17,7 @@ public class IndiaCPIssueController {
     @Path("issueCPIssue")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response issueCPIssue(IndiaCPIssue indiaCPIssue) {
-        String contractAddress = CakeshopUtils.createContract(this.getClass().getSimpleName(), indiaCPIssue);
+        String contractAddress = CakeshopUtils.createContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), indiaCPIssue);
         return Response.status(Response.Status.OK).build();
     }
 

@@ -27,7 +27,7 @@ public class IndiaCPProgramController {
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
     public String issueCPProgram(IndiaCPProgram indiaCPProgramArgs) {
-        return CakeshopUtils.createContract(this.getClass().getSimpleName(), indiaCPProgramArgs);
+        return CakeshopUtils.createContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), indiaCPProgramArgs);
     }
 
     @GET
@@ -35,7 +35,7 @@ public class IndiaCPProgramController {
     @Produces(MediaType.APPLICATION_JSON)
     public ArrayList<IndiaCPProgram>  fetchAllCPProgram() {
         //fetch all contract instances of IndiaCPProgramController Contracts
-        List<Contract> contractList = CakeshopUtils.listContractsByName(this.getClass().getSimpleName());
+        List<Contract> contractList = CakeshopUtils.listContractsByName(this.getClass().getSimpleName().replaceFirst("Controller", ""));
 
         //fetch details of all IndiaCPProgramController Contract instances
         ArrayList<IndiaCPProgram> indiaCPProgramArrayList = new ArrayList<>();
@@ -55,7 +55,7 @@ public class IndiaCPProgramController {
                 "fetchCPProgramParties", "fetchCPProgramStatus"};
 
         for(Contract contract: contractList){
-            indiaCPProgramArrayList.add(CakeshopUtils.readContract(this.getClass().getSimpleName(), contract.getAddress(), IndiaCPProgram.class, readMethodNames));
+            indiaCPProgramArrayList.add(CakeshopUtils.readContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), contract.getAddress(), IndiaCPProgram.class, readMethodNames));
         }
 
         return indiaCPProgramArrayList;
