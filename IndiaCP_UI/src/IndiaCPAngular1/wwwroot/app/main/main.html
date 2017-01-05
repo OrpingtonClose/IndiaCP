@@ -51,7 +51,7 @@
                         </a>
                     </li>
                     <li class="navbar-icon">
-                        <a href="#" target="_blank" title="Node Monitor">
+                        <a uib-popover-template="myPopoverTemplate.html" popover-title="Node Monitor">
                             <span class="glyphicon glyphicon-random" aria-hidden="true"></span>
                             <span class="visible-xs">Network Monitor</span>
                         </a>
@@ -67,17 +67,20 @@
                             <li class="divider"></li>
                             <li>
                                 <a href="/">
-                                    <span class="glyphicon glyphicon-off offset-right icon-shift-down" aria-hidden="true"></span>
-                                    Sign out
+                                    <span class="glyphicon glyphicon-off offset-right icon-shift-down" aria-hidden="true"></span>                                    Sign out
                                 </a>
                             </li>
                         </ul>
-                    </li><!-- .dropdown -->
-                </ul><!-- .nav -->
+                    </li>
+                    <!-- .dropdown -->
+                </ul>
+                <!-- .nav -->
 
-            </div><!-- .collapsible -->
+            </div>
+            <!-- .collapsible -->
 
-        </div><!-- .container -->
+        </div>
+        <!-- .container -->
     </nav>
 
 </header>
@@ -88,10 +91,20 @@
             <div class="col-md-9">
 
                 IndiaCP
-                <span class="footer-divider">|</span>
-                Built on <a href="http://www.bootstrap-ui.com" target="_blank">Team Finwiz</a>
+                <span class="footer-divider">|</span> Built on <a href="http://www.bootstrap-ui.com" target="_blank">Team Finwiz</a>
 
             </div>
-        </div><!-- .row -->
-    </div><!-- .container -->
+        </div>
+        <!-- .row -->
+    </div>
+    <!-- .container -->
 </footer>
+
+
+<script type="text/ng-template" id="myPopoverTemplate.html">
+        <div>Network Simulator</div>
+        <div class="form-group">
+          <label>Popup Title:</label>
+          <input type="text" class="form-control">ok working</input> 
+        </div>
+</script>

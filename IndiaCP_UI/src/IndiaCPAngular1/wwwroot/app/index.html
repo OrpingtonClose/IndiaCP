@@ -4,7 +4,7 @@
     <base href="/">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AspNetCoreSPA</title>
+    <title>India Commercial Paper</title>
 
     <!-- bower:css -->
     <!--<link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.css" />-->
@@ -31,14 +31,16 @@
     <script src="../lib/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="../lib/ngstorage/ngStorage.js"></script>
     <script src="../lib/raphael/raphael.js"></script>
-    <script src="../lib/justgage-toorshia/justgage.js"></script>
-    <script src="../lib/angular-justgage/ng-justgage.js"></script>
+    <script src="../lib/justgage-bower/justgage.js"></script>
+    <script src="../lib/angular-gage/dist/angular-gage.js"></script>
+    <script src="../lib/angular-uuid4/angular-uuid4.js"></script>
     <!-- endbower -->
     <!-- inject:js -->
     <script src="/app/app.core.module.js"></script>
     <script src="/app/app.module.js"></script>
     <script src="/app/app.config.js"></script>
     <script src="/app/main/main.module.js"></script>
+    <script src="/app/models/models.module.js"></script>
     <script src="/app/blocks/blocks.module.js"></script>
     <script src="/app/login/login.module.js"></script>
     <script src="/app/dashboard/dashboard.module.js"></script>
@@ -46,12 +48,21 @@
     <script src="/app/usersettings/usersettings.module.js"></script>
     <script src="/app/sitesettings/sitesettings.module.js"></script>
     <script src="/app/dashboard/isingeneration/isingeneration.module.js"></script>
+    <script src="/app/dashboard/cpprogramcreate/cpprogramcreate.module.js"></script>
+    <script src="/app/dashboard/cpprogramdetails/cpprogramdetails.module.js"></script>
+    <script src="/app/dashboard/cpissue/cpissue.module.js"></script>
     <script src="/app/users/users.module.js"></script>
     <script src="/app/services/services.module.js"></script>
     <script src="/app/services/auth.service.js"></script>
     <script src="/app/services/issuer.service.js"></script>
     <script src="/app/services/investor.service.js"></script>
     <script src="/app/services/user.service.js"></script>
+    <script src="/app/models/models.depositoryaccountdetails.js"></script>
+    <script src="/app/models/models.indiacpissue.js"></script>
+    <script src="/app/models/models.indiacpdocumentdetails.js"></script>
+    <script src="/app/models/models.paymentaccountdetails.js"></script>
+    <script src="/app/models/models.indiacpprogram.js"></script>
+    <script src="/app/models/models.settlementdetails.js"></script>
     <script src="/app/login/login.routes.js"></script>
     <script src="/app/main/main.routes.js"></script>
     <script src="/app/dashboard/dashboard.routes.js"></script>
@@ -62,6 +73,9 @@
     <script src="/app/layout/navigation.controller.js"></script>
     <script src="/app/usersettings/usersettings.controller.js"></script>
     <script src="/app/dashboard/isingeneration/isingeneration.controller.js"></script>
+    <script src="/app/dashboard/cpprogramcreate/cpprogramcreate.controller.js"></script>
+    <script src="/app/dashboard/cpissue/cpissue.controller.js"></script>
+    <script src="/app/dashboard/cpprogramdetails/cpprogramdetails.controller.js"></script>
     <script src="/app/app.run.js"></script>
     <!-- endinject -->
 </body>

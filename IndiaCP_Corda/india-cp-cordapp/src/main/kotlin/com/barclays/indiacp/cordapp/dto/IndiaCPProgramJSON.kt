@@ -10,7 +10,9 @@
 //
 //data class IndiaCPProgramJSON
 //(
-//    val orgUnit:String = "",
+//    val org_unit:String = "",
+//
+//    val user_id : String = "",
 //
 //    val issuer: String = "",
 //
@@ -63,6 +65,8 @@
 //    val allotment_letter_doc_id: String = "",
 //
 //    val status : String,
+//
+//    val modified_by : String = "",
 //
 //    val last_modified : Date = Date(),
 //

@@ -3,9 +3,8 @@ package com.barclays.indiacp.cordapp.protocol.issuer
 import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.contract.OrgLevelBorrowProgram
-import com.barclays.indiacp.cordapp.dto.OrgLevelProgramJSON
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
-import com.barclays.indiacp.model.CPProgram
+import com.barclays.indiacp.model.IndiaCPProgram
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.contracts.*
 import net.corda.core.crypto.Party
@@ -28,7 +27,7 @@ import java.util.*
  * In the "real world", we'd probably have the offers sitting in the platform prior to the agreement step
  * or the protocol would have to reach out to external systems (or users) to verify the deals.
  */
-class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: CPProgram) : FlowLogic<SignedTransaction>() {
+class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: IndiaCPProgram) : FlowLogic<SignedTransaction>() {
 
     companion object {
         val PROSPECTUS_HASH = SecureHash.parse("decd098666b9657314870e192ced0c3519c2c9d395507a238338f8d003929de9")
@@ -52,13 +51,17 @@ class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: CPProgram) : FlowLogic<
     override fun call(): SignedTransaction {
         progressTracker.currentStep = ORG_CPPROGRAM_ISSUE
 
+        logger.info("Inside IssueCPProgramWithInOrgLimitFlow");
+        logger.info("Issuer ID Get Method Access: " + newCPProgram.getIssuerId());
+        logger.info("Issuer ID Field Access: " + newCPProgram.issuerId);
+
+        val issuer = getPartyByName(newCPProgram.getIssuerId())
+        val ipa = getPartyByName(newCPProgram.getIpaId())
+        val depository = getPartyByName(newCPProgram.getDepositoryId())
+
         val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
-        val issuer = getPartyByName(newCPProgram.issuerId)
-        val ipa = getPartyByName(newCPProgram.ipaId)
-        val depository = getPartyByName(newCPProgram.depositoryId)
 
-
-        val indiaCPProgramSF: StateAndRef<OrgLevelBorrowProgram.OrgState> = getOrgProgramStateandRef(newCPProgram.orgUnit)
+        val indiaCPProgramSF: StateAndRef<OrgLevelBorrowProgram.OrgState> = getOrgProgramStateandRef(newCPProgram.issuerId)
 
         val newBorrowedValue: Amount<Issued<Currency>> = indiaCPProgramSF.state.data.borrowedValue.plus(newCPProgram.programSize.DOLLARS `issued by` DUMMY_CASH_ISSUER);
 
@@ -80,15 +83,18 @@ class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: CPProgram) : FlowLogic<
                         newCPProgram.issuerId, newCPProgram.issuerName,
                         newCPProgram.issueCommencementDate.toInstant(),
                         newCPProgram.programSize.DOLLARS `issued by` DUMMY_CASH_ISSUER,
-                        newCPProgram.programAllocatedValue.DOLLARS `issued by` DUMMY_CASH_ISSUER,
+                        if(newCPProgram.programAllocatedValue != null) (newCPProgram.programAllocatedValue!!.DOLLARS `issued by` DUMMY_CASH_ISSUER) else (0.DOLLARS `issued by` DUMMY_CASH_ISSUER),
                         Currency.getInstance("INR"), //TODO fix the hardcoding to INR and DOLLAR
-                        Date.from(Instant.now() + newCPProgram.maturityDays.days), newCPProgram.ipaId, newCPProgram.ipaName,
+                        Instant.now() + newCPProgram.maturityDays.days, newCPProgram.ipaId, newCPProgram.ipaName,
                         newCPProgram.depositoryId, newCPProgram.depositoryName,
-                        newCPProgram.isin, newCPProgram.isinGenerationRequestDocId,
+                        newCPProgram.isin,
+                        newCPProgram.isinGenerationRequestDocId,
                         newCPProgram.ipaVerificationRequestDocId,
-                        newCPProgram.ipaCertificateDocId, newCPProgram.corporateActionFormDocId,
+                        newCPProgram.ipaCertificateDocId,
+                        newCPProgram.corporateActionFormDocId,
                         newCPProgram.allotmentLetterDocId,
                         CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM.endStatus, //TODO: Add Status Enum
+                        "", //TODO: ModifiedBy should be the logged in user
                         Instant.now(),
                         Integer(0)),
                 notary = notary.notaryIdentity)

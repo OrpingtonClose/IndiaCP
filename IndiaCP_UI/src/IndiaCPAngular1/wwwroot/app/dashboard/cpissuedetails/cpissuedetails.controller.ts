@@ -2,12 +2,25 @@ module app.dashboard.cpissuedetails {
     "use strict";
 
     interface ICPIssueDetailsScope {
-        issueCP(): void;
+        issueCPForProgram(): void;
     }
+
 
     class CPIssueDetailsController implements ICPIssueDetailsScope {
         isinDocPDF: string;
-        public issueCP(): void {
+        issueCP: app.models.IndiaCPIssue;
+        static $inject = ["$uibModalInstance", "app.services.IssuerService", "cpProgram"]
+        constructor(
+            protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
+            protected issuerService: app.services.IIssuerService,
+            protected cpProgram: any) {
+        }
+        public issueCPForProgram(): void {
+            
+        }
+
+        public cancel(): void {
+            this.$uibModalInstance.close();
         }
     }
 

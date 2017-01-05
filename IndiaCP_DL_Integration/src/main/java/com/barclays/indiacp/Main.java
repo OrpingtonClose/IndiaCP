@@ -1,10 +1,9 @@
 package com.barclays.indiacp;
 
-import com.barclays.indiacp.dl.integration.IndiaCPIssue;
-import com.barclays.indiacp.dl.integration.IndiaCPIssueFactory;
-import com.barclays.indiacp.dl.integration.IndiaCPProgram;
-import com.barclays.indiacp.dl.integration.IndiaCPProgramFactory;
-import org.apache.commons.io.IOUtils;
+import com.barclays.indiacp.dl.integration.IndiaCPIssueApi;
+import com.barclays.indiacp.dl.integration.IndiaCPIssueApiFactory;
+import com.barclays.indiacp.dl.integration.IndiaCPProgramApi;
+import com.barclays.indiacp.dl.integration.IndiaCPProgramApiFactory;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -13,15 +12,14 @@ import org.glassfish.jersey.server.ResourceConfig;
 
 import java.io.*;
 import java.net.URI;
-import java.util.Date;
 
 /**
  * Main class.
- * mvn exec:exec -Dexec.executable="java" -Dexec.args="-classpath %classpath -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1044 com.barclays.indiacp.Main"
+ * mvn exec:exec -Dexec.executable="java" -Dhost=localhost -Dport=5555 -Dpath=indiacp -Dexec.args="-classpath %classpath -Dhost=localhost -Dport=5555 -Dpath=indiacp -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044 com.barclays.indiacp.Main"
  */
 public class Main {
     // Base URI the Grizzly HTTP server will listen on
-    public static final String BASE_URI = "http://10.0.0.4:8181/indiacp/";
+    public static String BASE_URI = null;
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -31,16 +29,16 @@ public class Main {
         // create a resource config that scans for JAX-RS resources and providers
         // in com.barclays.indiacp.dl.integration package
         ResourceConfig rc = new ResourceConfig();
-        rc.register(IndiaCPProgram.class).register(new AbstractBinder() {
+        rc.register(IndiaCPProgramApi.class).register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bindFactory(new IndiaCPProgramFactory()).to(IndiaCPProgram.class);
+                bindFactory(new IndiaCPProgramApiFactory()).to(IndiaCPProgramApi.class);
             }
         });
-        rc.register(IndiaCPIssue.class).register(new AbstractBinder() {
+        rc.register(IndiaCPIssueApi.class).register(new AbstractBinder() {
             @Override
             protected void configure() {
-                bindFactory(new IndiaCPIssueFactory()).to(IndiaCPIssue.class);
+                bindFactory(new IndiaCPIssueApiFactory()).to(IndiaCPIssueApi.class);
             }
         });
         rc.register(MultiPartFeature.class);
@@ -57,7 +55,20 @@ public class Main {
      * @throws IOException
      */
   public static void main(String[] args) throws IOException {
-        final HttpServer server = startServer();
+      String scheme = "http";
+      String host = System.getProperty("host");
+      String port = System.getProperty("port");
+      String path = System.getProperty("path");
+      if (host == null || port == null || path == null) {
+          System.out.println("FAILURE: Cannot Start HTTP Server. Host and Port are not configured correctly.");
+          System.out.println("Use the following command replacing the host and port to match the system requirements you are running on:\n" +
+          "mvn exec:exec -Dexec.executable=\"java\" -Dexec.args=\"-classpath %classpath -Dhost=localhost -Dport=5555 -Dpath=indiacp com.barclays.indiacp.Main\"");
+          System.out.println("OR\nUse the following command to start in the Debug Mode:\n" +
+                  "mvn exec:exec -Dexec.executable=\"java\" -Dexec.args=\"-classpath %classpath -Dhost=localhost -Dport=5555 -Dpath=indiacp -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=1044 com.barclays.indiacp.Main\"");
+          System.exit(0);
+      }
+      BASE_URI = scheme + "://" + host + ":" + port + "/" + path + "/";
+      final HttpServer server = startServer();
         System.out.println(String.format("Jersey app started with WADL available at "
                 + "%sapplication.wadl\nHit enter to stop it...", BASE_URI));
         System.in.read();

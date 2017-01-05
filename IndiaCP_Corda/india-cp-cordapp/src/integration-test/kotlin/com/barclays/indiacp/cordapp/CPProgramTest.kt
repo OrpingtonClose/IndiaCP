@@ -97,6 +97,7 @@ class CPProgramTest : IntegrationTestCategory
 
             runAddAllotmentLetterDoc(issuer.config.getHostAndPort("webAddress"))
 
+
             runIssueCPWithinCPProgram(issuer.config.getHostAndPort("webAddress"))
 
             System.out.println("-----------------------------------------ALL TEST RUN COMPLETE-------------------------------------------------" )

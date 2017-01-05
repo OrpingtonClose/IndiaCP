@@ -4,16 +4,17 @@ module app.dashboard {
     interface IDashboardScope {
         fetchAllCPPrograms(): void;
         generateISINDocs(): void;
-        createCPISsue():void;
-        createCPProgram():void;
-        showCPIssueDetails():void;
-        showCPProgramDetails():void;
+        createCPISsue(): void;
+        createCPProgram(): void;
+        showCPIssueDetails(): void;
+        showCPProgramDetails(cpProgramId:string): void;
     }
 
     class DashboardController implements IDashboardScope {
         loggedinUser: app.users.IUser;
+        cpPrograms: app.models.IndiaCPProgram[];
 
-        static $inject = ["$http", "$scope", "$uibModal","app.services.IssuerService"];
+        static $inject = ["$http", "$scope", "$uibModal", "app.services.IssuerService"];
         constructor(protected $http: ng.IHttpService,
             protected $scope: ng.IScope,
             protected $uibModal: ng.ui.bootstrap.IModalService,
@@ -21,9 +22,10 @@ module app.dashboard {
             this.fetchAllCPPrograms();
         }
         public fetchAllCPPrograms(): void {
-            // this.issuerService.fetchAllCPProgram("groggy").then(function (response) {
-            //     this.$scope.cpprograms = response;
-            // });
+            var vm = this;
+            this.issuerService.fetchAllCPProgram().then(function (response) {
+                vm.cpPrograms = response.data;
+            });
         }
         public generateISINDocs(): void {
             this.$uibModal.open({
@@ -52,7 +54,7 @@ module app.dashboard {
         }
 
         public createCPProgram(): void {
-            this.$uibModal.open({
+            var modalInstance: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open({
                 animation: true,
                 ariaLabelledBy: "modal-title",
                 ariaDescribedBy: "modal-body",
@@ -62,7 +64,11 @@ module app.dashboard {
                 backdrop: "static",
                 templateUrl: "app/dashboard/cpprogramcreate/cpprogramcreate.html"
             });
+            modalInstance.closed.then((): void => {
+                this.fetchAllCPPrograms();
+            });
         }
+
         public showCPIssueDetails(): void {
             this.$uibModal.open({
                 animation: true,
@@ -75,7 +81,7 @@ module app.dashboard {
                 templateUrl: "app/dashboard/cpissuedetails/cpissuedetails.html"
             });
         }
-        public showCPProgramDetails(): void {
+        public showCPProgramDetails(cpProgramId: string): void {
             this.$uibModal.open({
                 animation: true,
                 ariaLabelledBy: "modal-title",
@@ -84,7 +90,12 @@ module app.dashboard {
                 controllerAs: "vm",
                 size: "lg",
                 backdrop: "static",
-                templateUrl: "app/dashboard/cpprogramdetails/cpprogramdetails.html"
+                templateUrl: "app/dashboard/cpprogramdetails/cpprogramdetails.html",
+                resolve: {
+                    programId: ():string => {
+                        return cpProgramId;
+                    }
+                }
             });
         }
     }

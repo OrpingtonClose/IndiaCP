@@ -49,16 +49,16 @@ var app;
              * @param entity issuer or investor id that uniquely maps to the DL node
              */
             InvestorService.prototype.fetchAllCP = function (entity, extraHttpRequestParams) {
-                var localVarPath = this.basePath + "/cpissues/open/{entity}"
-                    .replace("{" + "entity" + "}", String(entity));
+                var localVarPath = this.basePath + '/cpissues/open/{entity}'
+                    .replace('{' + 'entity' + '}', String(entity));
                 var queryParameters = {};
                 var headerParams = this.extendObj({}, this.defaultHeaders);
-                // verify required parameter "entity" is not null or undefined
+                // verify required parameter 'entity' is not null or undefined
                 if (entity === null || entity === undefined) {
-                    throw new Error("Required parameter entity was null or undefined when calling fetchAllCP.");
+                    throw new Error('Required parameter entity was null or undefined when calling fetchAllCP.');
                 }
                 var httpRequestParams = {
-                    method: "GET",
+                    method: 'GET',
                     url: localVarPath,
                     json: true,
                     params: queryParameters,
@@ -76,21 +76,21 @@ var app;
              * @param cpIssueId Unique identifier of the CP Issue to be fetched
              */
             InvestorService.prototype.fetchCP = function (entity, cpIssueId, extraHttpRequestParams) {
-                var localVarPath = this.basePath + "/cpissue/{entity}/{cpIssueId}"
-                    .replace("{" + "entity" + "}", String(entity))
-                    .replace("{" + "cpIssueId" + "}", String(cpIssueId));
+                var localVarPath = this.basePath + '/cpissue/{entity}/{cpIssueId}'
+                    .replace('{' + 'entity' + '}', String(entity))
+                    .replace('{' + 'cpIssueId' + '}', String(cpIssueId));
                 var queryParameters = {};
                 var headerParams = this.extendObj({}, this.defaultHeaders);
-                // verify required parameter "entity" is not null or undefined
+                // verify required parameter 'entity' is not null or undefined
                 if (entity === null || entity === undefined) {
-                    throw new Error("Required parameter entity was null or undefined when calling fetchCP.");
+                    throw new Error('Required parameter entity was null or undefined when calling fetchCP.');
                 }
-                // verify required parameter "cpIssueId" is not null or undefined
+                // verify required parameter 'cpIssueId' is not null or undefined
                 if (cpIssueId === null || cpIssueId === undefined) {
-                    throw new Error("Required parameter cpIssueId was null or undefined when calling fetchCP.");
+                    throw new Error('Required parameter cpIssueId was null or undefined when calling fetchCP.');
                 }
                 var httpRequestParams = {
-                    method: "GET",
+                    method: 'GET',
                     url: localVarPath,
                     json: true,
                     params: queryParameters,

@@ -1,5 +1,7 @@
 package com.barclays.indiacp.cordapp.contract
 
+import com.barclays.indiacp.cordapp.schemas.*
+import com.barclays.indiacp.cordapp.schemas.PersistentDepositoryAccountSchemaState
 import net.corda.contracts.ICommercialPaperState
 import net.corda.contracts.asset.sumCashBy
 import net.corda.contracts.clause.AbstractIssue
@@ -15,8 +17,6 @@ import net.corda.core.schemas.PersistentState
 import net.corda.core.schemas.QueryableState
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.Emoji
-import com.barclays.indiacp.cordapp.schemas.IndiaCommercialPaperSchemaV1
-import com.barclays.indiacp.cordapp.schemas.SettlementSchemaV1
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import net.corda.core.crypto.*
 import java.security.PublicKey
@@ -70,11 +70,13 @@ class IndiaCommercialPaper : Contract {
             val tradeDate: Date,
             val valueDate: Date,
             val faceValue: Amount<Issued<Currency>>,
-            val maturityDate: Date,
+            val maturityDate: Instant,
             var isin: String,
             var version: Integer = Integer(1),
             var hashDealConfirmationDoc: String? = null,
-            var settlementDetails: SettlementDetails? = null
+            var issuerSettlementDetails: SettlementDetails? = null,
+            var investorSettlementDetails: SettlementDetails? = null,
+            var ipaSettlementDetails: SettlementDetails? = null
     ) : DealState, QueryableState {
         override val contract = com.barclays.indiacp.cordapp.contract.INDIA_CP_ID
 
@@ -99,17 +101,19 @@ class IndiaCommercialPaper : Contract {
         }
 
         val token: Issued<IndiaCommercialPaper.Terms>
-            get() = Issued(issuer.ref(CPUtils.getReference(ref)), IndiaCommercialPaper.Terms(faceValue.token, maturityDate.toInstant()))
+            get() = Issued(issuer.ref(CPUtils.getReference(ref)), IndiaCommercialPaper.Terms(faceValue.token, maturityDate))
 
         override fun toString() = "${Emoji.newspaper}CommercialPaper($cpProgramID:$cpTradeID of $faceValue redeemable on $maturityDate by '$issuer', owned by ${beneficiary.owningKey.toString()})"
 
         /** Object Relational Mapping support. */
-        override fun supportedSchemas(): Iterable<MappedSchema> = listOf(IndiaCommercialPaperSchemaV1, SettlementSchemaV1)
+        override fun supportedSchemas(): Iterable<MappedSchema> = listOf(IndiaCommercialPaperSchemaV1)
 
         /** Object Relational Mapping support. */
         override fun generateMappedObject(schema: MappedSchema): PersistentState {
             return when (schema) {
-                is IndiaCommercialPaperSchemaV1 -> IndiaCommercialPaperSchemaV1.PersistentIndiaCommericalPaperState(
+                is IndiaCommercialPaperSchemaV1 ->
+                {
+                    val cpPersistedObject = IndiaCommercialPaperSchemaV1.PersistentIndiaCommericalPaperState(
                         issuanceParty = this.issuer.owningKey.toBase58String(),
                         beneficiaryParty = this.beneficiary.owningKey.toBase58String(),
                         ipaParty = this.ipa.owningKey.toBase58String(),
@@ -123,43 +127,89 @@ class IndiaCommercialPaper : Contract {
                         currency = this.faceValue.token.product.currencyCode,
                         isin = this.isin,
                         version = this.version,
-                        hashDealConfirmationDoc = this.hashDealConfirmationDoc
-                )
-                is SettlementSchemaV1 -> SettlementSchemaV1.PersistentSettlementSchemaState(
-                        settlement_key = this.issuer.owningKey.toBase58String(),
-                        party_type = this.settlementDetails?.partyType?:"",
-                        cpTradeID = this.cpTradeID,
-                        cpProgramID = this.cpProgramID,
-                        creditorName = this.settlementDetails?.paymentAccountDetails?.creditorName?:"",
-                        bankAccountDetails = this.settlementDetails?.paymentAccountDetails?.bankAccountDetails?:"",
-                        bankName = this.settlementDetails?.paymentAccountDetails?.bankName?:"",
-                        rtgsCode = this.settlementDetails?.paymentAccountDetails?.rtgsCode?:"",
-                        dpName = this.settlementDetails?.depositoryAccountDetails?.dpName?:"",
-                        clientId = this.settlementDetails?.depositoryAccountDetails?.clientId?:"",
-                        dpID = this.settlementDetails?.depositoryAccountDetails?.dpID?:""
-                )
+                        hashDealConfirmationDoc = this.hashDealConfirmationDoc,
+                        settlementDetails = getSettlementPersistedStates(this.issuerSettlementDetails, this.investorSettlementDetails, this.ipaSettlementDetails))
+
+                    cpPersistedObject.settlementDetails = cpPersistedObject.settlementDetails?.map {setCPDetails(it, cpPersistedObject)}
+
+                    return cpPersistedObject
+
+                }
                 else -> throw IllegalArgumentException("Unrecognised schema $schema")
             }
         }
+
+        private fun  setCPDetails(it: PersistentSettlementSchemaState, cpPersistedObject: IndiaCommercialPaperSchemaV1.PersistentIndiaCommericalPaperState): PersistentSettlementSchemaState {
+            it.cpDetails = cpPersistedObject
+            return it
+        }
+
+        private fun  getSettlementPersistedStates(issuerSettlementDetails: IndiaCommercialPaper.SettlementDetails?, investorSettlementDetails: IndiaCommercialPaper.SettlementDetails?, ipaSettlementDetails: IndiaCommercialPaper.SettlementDetails?): List<PersistentSettlementSchemaState>? {
+            val persistedSettlementStates = ArrayList<PersistentSettlementSchemaState>()
+            var sd = getSettlementPersistedState(issuerSettlementDetails)
+            if (sd != null) persistedSettlementStates.add(sd)
+            sd = getSettlementPersistedState(investorSettlementDetails)
+            if (sd != null) persistedSettlementStates.add(sd)
+            sd = getSettlementPersistedState(ipaSettlementDetails)
+            if (sd != null) persistedSettlementStates.add(sd)
+
+            return persistedSettlementStates!!
+        }
+
+        private fun  getSettlementPersistedState(settlementDetails: IndiaCommercialPaper.SettlementDetails?): PersistentSettlementSchemaState? {
+            if (settlementDetails == null) {
+                return null
+            }
+            val persistentSD =  PersistentSettlementSchemaState (
+                    party_type = settlementDetails.partyType,
+                    creditorName = settlementDetails.paymentAccountDetails?.creditorName,
+                    bankAccountDetails = settlementDetails.paymentAccountDetails?.bankAccountDetails,
+                    bankName = settlementDetails.paymentAccountDetails?.bankName,
+                    rtgsCode = settlementDetails.paymentAccountDetails?.rtgsCode,
+                    depositoryAccounts = settlementDetails.depositoryAccountDetails?.map { getDepositoryAccountPersistedState(it) }
+            )
+            persistentSD.depositoryAccounts = persistentSD.depositoryAccounts?.map {setSettlementDetails(it, persistentSD)}
+
+            return persistentSD
+        }
+
+        private fun  setSettlementDetails(it: PersistentDepositoryAccountSchemaState, persistentSD: PersistentSettlementSchemaState): PersistentDepositoryAccountSchemaState {
+            it.settlementDetails = persistentSD
+            return it
+        }
+
+        private fun  getDepositoryAccountPersistedState(depositoryAccountDetails: DepositoryAccountDetails): PersistentDepositoryAccountSchemaState {
+            return PersistentDepositoryAccountSchemaState (
+                    dpID = depositoryAccountDetails.dpID,
+                    dpName = depositoryAccountDetails.dpName,
+                    dpType = depositoryAccountDetails.dpType,
+                    clientId = depositoryAccountDetails.clientId
+            )
+        }
     }
+
+//    private fun  getSettlementPersistedStates(issuerSettlementDetails: IndiaCommercialPaper.SettlementDetails?, investorSettlementDetails: IndiaCommercialPaper.SettlementDetails?, ipaSettlementDetails: IndiaCommercialPaper.SettlementDetails?): List<PersistentSettlementSchemaState>? {
+//        return ArrayList<PersistentSettlementSchemaState>()
+//    }
 
     data class SettlementDetails (
         val partyType : String,
-        val paymentAccountDetails: PaymentAccountDetails,
-        val depositoryAccountDetails: DepositoryAccountDetails
+        val paymentAccountDetails: PaymentAccountDetails?,
+        val depositoryAccountDetails: List<DepositoryAccountDetails>?
     )
 
     data class PaymentAccountDetails (
-        val creditorName: String,
-        val bankAccountDetails: String,
-        val bankName: String,
-        val rtgsCode: String
+        val creditorName: String?,
+        val bankAccountDetails: String?,
+        val bankName: String?,
+        val rtgsCode: String?
     )
 
     data class DepositoryAccountDetails (
-        val dpName: String,
-        val clientId: String,
-        val dpID: String
+        val dpName: String?,
+        val dpType: String?,
+        val clientId: String?,
+        val dpID: String?
     )
 
     interface Clauses {
@@ -189,7 +239,7 @@ class IndiaCommercialPaper : Contract {
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
-                require(outputs.all { time < it.maturityDate.toInstant() }) { "maturity date is not in the past" }
+                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
 
                 return consumedCommands
             }
@@ -232,7 +282,7 @@ class IndiaCommercialPaper : Contract {
                 val received = tx.outputs.sumCashBy(input.beneficiary.owningKey)
                 val time = timestamp?.after ?: throw IllegalArgumentException("Redemptions must be timestamped")
                 requireThat {
-                    "the paper must have matured" by (time >= input.maturityDate.toInstant())
+                    "the paper must have matured" by (time >= input.maturityDate)
                     "the received amount equals the face value" by (received == input.faceValue)
                     "the paper must be destroyed" by outputs.isEmpty()
                     "the transaction is signed by the beneficiary of the CP" by (input.beneficiary.owningKey in command.signers)
@@ -279,7 +329,7 @@ class IndiaCommercialPaper : Contract {
      */
     fun generateIssue(issuer: Party, beneficiary: Party, ipa: Party, depository: Party, notary: Party,
                       cpProgramID: String, cpTradeID: String, tradeDate: Date, valueDate: Date,
-                      faceValue: Amount<Issued<Currency>>, maturityDate: Date,
+                      faceValue: Amount<Issued<Currency>>, maturityDate: Instant,
                       isin: String): TransactionBuilder {
 
         val state = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
@@ -296,7 +346,7 @@ class IndiaCommercialPaper : Contract {
      */
     fun generateAgreement(issuer: Party, beneficiary: Party, ipa: Party, depository: Party,
                       cpProgramID: String, cpTradeID: String, tradeDate: Date, valueDate: Date,
-                      faceValue: Amount<Issued<Currency>>, maturityDate: Date,
+                      faceValue: Amount<Issued<Currency>>, maturityDate: Instant,
                       isin: String, notary: Party): TransactionBuilder {
 
         val state = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
@@ -307,12 +357,14 @@ class IndiaCommercialPaper : Contract {
     }
 
     fun addSettlementDetails(tx: TransactionBuilder, cp: StateAndRef<State>, settlementDetails: SettlementDetails): TransactionBuilder {
+        //todo - need to fix the settlement details
+        /*
         tx.addInputState(cp)
         val newVersion = Integer(cp.state.data.version.toInt() + 1)
         tx.addOutputState(
                 cp.state.data.copy(settlementDetails = settlementDetails, version = newVersion),
                 cp.state.notary
-        )
+        )*/
         tx.addCommand(Commands.AddSettlementDetails(settlementDetails), listOf(cp.state.data.issuer.owningKey))
         return tx;
     }

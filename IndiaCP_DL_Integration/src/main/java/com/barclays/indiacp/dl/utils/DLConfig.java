@@ -55,6 +55,10 @@ public class DLConfig extends Properties {
         return getDLProperty("uploadAttachmentPath");
     }
 
+    public String getDLDownloadAttachmentPath() {
+        return getDLProperty("downloadAttachmentPath");
+    }
+
     public String getDLProperty(String property) {
 
         if (DL == null) {

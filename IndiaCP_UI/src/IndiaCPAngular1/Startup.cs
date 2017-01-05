@@ -6,6 +6,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
+using IdentityServer4;
+
+
+using IdentityServer4;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
 
 namespace IndiaCPAngular1
 {
@@ -35,12 +46,11 @@ namespace IndiaCPAngular1
                 options.ViewLocationFormats.Add("~/wwwroot/app/{0}.html");
             });
 
-            services.AddIdentityServer()
-                    .AddInMemoryClients(new List<Client>())
-                    .AddInMemoryIdentityResources(new List<IdentityResource>())
-                    .AddInMemoryApiResources(new List<ApiResource>())
-                    //.AddInMemoryUsers(new List<InMemoryUser>())
-                    .AddTemporarySigningCredential();
+            //services.AddIdentityServer()
+            //    .AddTemporarySigningCredential()
+            //    .AddInMemoryApiResources(Config.GetApiResources())
+            //    .AddInMemoryClients(Config.GetClients());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,9 +69,9 @@ namespace IndiaCPAngular1
                     await next();
                 }
             });
+            
             app.UseStaticFiles();
             app.UseMvcWithDefaultRoute();
-            app.UseIdentityServer();
-        }
+          }
     }
 }

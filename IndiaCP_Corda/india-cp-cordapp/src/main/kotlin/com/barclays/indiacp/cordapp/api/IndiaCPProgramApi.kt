@@ -1,11 +1,14 @@
 package com.barclays.indiacp.cordapp.api
 
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
+import com.barclays.indiacp.cordapp.protocol.issuer.AddIsinToCPProgramFlow
+//import com.barclays.indiacp.cordapp.dto.IndiaCPProgramJSON
 import com.barclays.indiacp.cordapp.protocol.issuer.CPProgramFlows
+import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramWithInOrgLimitFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPWithinCPProgramFlow
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
-import com.barclays.indiacp.model.CPIssue
-import com.barclays.indiacp.model.CPProgram
+import com.barclays.indiacp.model.IndiaCPDocumentDetails
+import com.barclays.indiacp.model.IndiaCPIssue
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.utilities.Emoji
@@ -13,6 +16,8 @@ import net.corda.core.utilities.loggerFor
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
+import com.barclays.indiacp.model.IndiaCPProgram
+import java.util.*
 
 
 /*
@@ -30,37 +35,38 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @POST
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
-    fun issueCPProgram(indiaCPProgramJSON: CPProgram): Response {
-        try {
-            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM).resultFuture.get()
-            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
+    @Produces(MediaType.APPLICATION_JSON)
+    fun issueCPProgram(indiaCPProgramJSON: IndiaCPProgram): Response {
+        try
+        {
+            val stx = services.invokeFlowAsync(IssueCPProgramWithInOrgLimitFlow::class.java, indiaCPProgramJSON).resultFuture.get()
+            logger.info("CP Program Issued within ORG \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+            return Response.status(Response.Status.OK).entity(getCPProgram(indiaCPProgramJSON.programId)).build()
         } catch (ex: Throwable) {
-            logger.info("Exception when creating CP Program deal: ${ex.toString()}")
+            logger.info("Exception when creating Org Borrowing Program deal: ${ex.toString()}")
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
         }
     }
 
-    @POST
-    @Path("addISINGenerationDocs/{cpProgramId}/{docHashId}/{docStatus}")
-    fun addISINGenerationDocs(@PathParam("cpProgramId") cpProgramId: String,
-                             @PathParam("docHashId") docHashId: String,
-                             @PathParam("docStatus") docStatus: String): Response {
-        try {
-            val indiaCPProgramJSON:CPProgram = CPProgram()
-            indiaCPProgramJSON.programId = cpProgramId
-            indiaCPProgramJSON.isinGenerationRequestDocId = docHashId
-//            indiaCPProgramJSON.status = docStatus
-            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC.endStatus
-
-            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC).resultFuture.get()
-            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
-        } catch (ex: Throwable) {
-            logger.info("Exception when creating deal: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
-        }
-    }
+//    @POST
+//    @Path("addISINGenerationDocs/{cpProgramId}/{docHashId}/{docStatus}")
+//    fun addISINGenerationDocs(@PathParam("cpProgramId") cpProgramId: String,
+//                             @PathParam("docHashId") docHashId: String,
+//                             @PathParam("docStatus") docStatus: String): Response {
+//        try {
+//            val indiaCPProgramJSON:IndiaCPProgram = IndiaCPProgram()
+//
+//            indiaCPProgramJSON.programId = cpProgramId
+//            indiaCPProgramJSON.isin_generation_request_doc_id = docHashId , isin_generation_request_doc_status = docStatus, status = CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC.endStatus)
+//
+//            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC).resultFuture.get()
+//            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+//            return Response.status(Response.Status.OK).build()
+//        } catch (ex: Throwable) {
+//            logger.info("Exception when creating deal: ${ex.toString()}")
+//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+//        }
+//    }
 
 
     /*
@@ -69,137 +75,98 @@ class IndiaCPProgramApi(val services: ServiceHub) {
 
      */
     @POST
-    @Path("addISIN/{cpProgramId}/{isin}/{docHashId}/{docStatus}")
+    @Path("addISIN/{cpProgramId}/{isin}")
+    @Produces(MediaType.APPLICATION_JSON)
     fun addISIN(@PathParam("cpProgramId") cpProgramId: String,
-                @PathParam("isin") isin: String,
-                @PathParam("docHashId") docHashId: String,
-                @PathParam("docStatus") docStatus: String
+                @PathParam("isin") isin: String
     ): Response
     {
         try
         {
-            val indiaCPProgramJSON:CPProgram = CPProgram()
-            indiaCPProgramJSON.programId = cpProgramId
-            indiaCPProgramJSON.isin = isin
-            indiaCPProgramJSON.isinGenerationRequestDocId = docHashId
-            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADDISIN.endStatus
-
-
-
-            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADDISIN).resultFuture.get()
+            val stx = services.invokeFlowAsync(AddIsinToCPProgramFlow::class.java, cpProgramId, isin).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
+            return Response.status(Response.Status.OK).entity(getCPProgram(cpProgramId)).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
         }
     }
 
-    @POST
-    @Path("issueCPWithinCPProgram/{cpProgramId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    fun issueCPWintinCPProgram(@PathParam("cpProgramId") cpProgramId: String,
-                               newCP: CPIssue
-                               ): Response {
-        try {
-
-            val stx = services.invokeFlowAsync(IssueCPWithinCPProgramFlow::class.java, newCP).resultFuture.get()
-            logger.info("Issue CP Within a CP Program\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-
-            return Response.status(Response.Status.OK).build()
-        } catch (ex: Throwable) {
-            logger.info("Exception when creating deal: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
-        }
-    }
-
-    @POST
-    @Path("addIPAVerificationDocs/{cpProgramId}/{docHashId}/{docStatus}")
-    fun addIPAVerificationDocs(@PathParam("cpProgramId") cpProgramId: String,
-                             @PathParam("docHashId") docHashId: String,
-                             @PathParam("docStatus") docStatus: String): Response {
-        try {
-            val indiaCPProgramJSON:CPProgram = CPProgram()
-            indiaCPProgramJSON.programId = cpProgramId
-            indiaCPProgramJSON.ipaVerificationRequestDocId = docHashId
-            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.endStatus
-
-
-
-            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC).resultFuture.get()
-            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
-        } catch (ex: Throwable) {
-            logger.info("Exception when creating deal: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
-        }
-    }
-
-    @POST
-    @Path("addIPACertifcateDoc/{cpProgramId}/{docHashId}/{docStatus}")
-    fun addIPACertifcateDoc(@PathParam("cpProgramId") cpProgramId: String,
-                               @PathParam("docHashId") docHashId: String,
-                               @PathParam("docStatus") docStatus: String): Response {
-        try {
-            val indiaCPProgramJSON:CPProgram = CPProgram()
-            indiaCPProgramJSON.programId = cpProgramId
-            indiaCPProgramJSON.ipaCertificateDocId = docHashId
-            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC.endStatus
-
-
-
-            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC).resultFuture.get()
-            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
-        } catch (ex: Throwable) {
-            logger.info("Exception when creating deal: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
-        }
-    }
-
-    @POST
-    @Path("addCorpActionFormDoc/{cpProgramId}/{docHashId}/{docStatus}")
-    fun addCorpActionFormDoc(@PathParam("cpProgramId") cpProgramId: String,
-                            @PathParam("docHashId") docHashId: String,
-                            @PathParam("docStatus") docStatus: String): Response {
-        try {
-            val indiaCPProgramJSON:CPProgram = CPProgram()
-            indiaCPProgramJSON.programId = cpProgramId
-            indiaCPProgramJSON.corporateActionFormDocId = docHashId
-            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC.endStatus
-
-
-
-            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC).resultFuture.get()
-            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
-        } catch (ex: Throwable) {
-            logger.info("Exception when creating deal: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
-        }
-    }
-
-    @POST
-    @Path("addAllotmentLetterDoc/{cpProgramId}/{docHashId}/{docStatus}")
-    fun addAllotmentLetterDoc(@PathParam("cpProgramId") cpProgramId: String,
-                             @PathParam("docHashId") docHashId: String,
-                             @PathParam("docStatus") docStatus: String): Response {
-        try {
-            val indiaCPProgramJSON:CPProgram = CPProgram()
-            indiaCPProgramJSON.programId = cpProgramId
-            indiaCPProgramJSON.allotmentLetterDocId = docHashId
-            indiaCPProgramJSON.status = CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC.endStatus
-
-
-
-            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC).resultFuture.get()
-            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
-        } catch (ex: Throwable) {
-            logger.info("Exception when creating deal: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
-        }
-    }
+//    @POST
+//    @Path("addIPAVerificationDocs/{cpProgramId}/{docHashId}/{docStatus}")
+//    fun addIPAVerificationDocs(@PathParam("cpProgramId") cpProgramId: String,
+//                             @PathParam("docHashId") docHashId: String,
+//                             @PathParam("docStatus") docStatus: String): Response {
+//        try {
+//            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, ipa_verification_request_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC.endStatus)
+//
+//
+//
+//            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC).resultFuture.get()
+//            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+//            return Response.status(Response.Status.OK).build()
+//        } catch (ex: Throwable) {
+//            logger.info("Exception when creating deal: ${ex.toString()}")
+//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+//        }
+//    }
+//
+//    @POST
+//    @Path("addIPACertifcateDoc/{cpProgramId}/{docHashId}/{docStatus}")
+//    fun addIPACertifcateDoc(@PathParam("cpProgramId") cpProgramId: String,
+//                               @PathParam("docHashId") docHashId: String,
+//                               @PathParam("docStatus") docStatus: String): Response {
+//        try {
+//            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, ipa_certificate_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC.endStatus)
+//
+//
+//
+//            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC).resultFuture.get()
+//            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+//            return Response.status(Response.Status.OK).build()
+//        } catch (ex: Throwable) {
+//            logger.info("Exception when creating deal: ${ex.toString()}")
+//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+//        }
+//    }
+//
+//    @POST
+//    @Path("addCorpActionFormDoc/{cpProgramId}/{docHashId}/{docStatus}")
+//    fun addCorpActionFormDoc(@PathParam("cpProgramId") cpProgramId: String,
+//                            @PathParam("docHashId") docHashId: String,
+//                            @PathParam("docStatus") docStatus: String): Response {
+//        try {
+//            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, corporate_action_form_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC.endStatus)
+//
+//
+//
+//            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC).resultFuture.get()
+//            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+//            return Response.status(Response.Status.OK).build()
+//        } catch (ex: Throwable) {
+//            logger.info("Exception when creating deal: ${ex.toString()}")
+//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+//        }
+//    }
+//
+//    @POST
+//    @Path("addAllotmentLetterDoc/{cpProgramId}/{docHashId}/{docStatus}")
+//    fun addAllotmentLetterDoc(@PathParam("cpProgramId") cpProgramId: String,
+//                             @PathParam("docHashId") docHashId: String,
+//                             @PathParam("docStatus") docStatus: String): Response {
+//        try {
+//            val indiaCPProgramJSON:IndiaCPProgramJSON = IndiaCPProgramJSON(program_id = cpProgramId, allotment_letter_doc_id = docHashId, status = CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC.endStatus)
+//
+//
+//
+//            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, indiaCPProgramJSON, CP_PROGRAM_FLOW_STAGES.ADD_ALLOT_LETTER_DOC).resultFuture.get()
+//            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+//            return Response.status(Response.Status.OK).build()
+//        } catch (ex: Throwable) {
+//            logger.info("Exception when creating deal: ${ex.toString()}")
+//            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+//        }
+//    }
 
     @POST
     @Path("closeCPProgram/{cpProgramId}")
@@ -242,12 +209,13 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @GET
     @Path("fetchAllCPProgram")
     @Produces(MediaType.APPLICATION_JSON)
-    fun fetchAllCPProgram(): Array<IndiaCommercialPaperProgram.State>?  {
+    fun fetchAllCPProgram(): Response  {
         try {
-            return getAllCPProgram()
+            val cpProgramArray = getAllCPProgram()
+            return Response.status(Response.Status.OK).entity(cpProgramArray).build()
         } catch (ex: Throwable) {
             logger.info("Exception when fetching ecp: ${ex.toString()}")
-            return null
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
         }
     }
 
@@ -258,10 +226,16 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     }
 
     @GET
-    @Path("fetchCPProgram/{ref}")
+    @Path("fetchCPProgram/{cpProgramId}")
     @Produces(MediaType.APPLICATION_JSON)
-    fun fetchCPProgramWithRef(@PathParam("ref") ref: String): IndiaCommercialPaperProgram.State? {
-        return getCPProgram(ref)
+    fun fetchCPProgram(@PathParam("cpProgramId") cpProgramId: String): Response {
+        try {
+            val cpProgram = getCPProgram(cpProgramId)
+            return Response.status(Response.Status.OK).entity(cpProgram).build()
+        } catch (ex: Throwable) {
+            logger.info("Exception when fetching ecp: ${ex.toString()}")
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+        }
     }
 
     private fun getCPProgram(ref: String): IndiaCommercialPaperProgram.State? {
@@ -271,5 +245,54 @@ class IndiaCPProgramApi(val services: ServiceHub) {
             return if (deals.isEmpty()) null else deals[0]
         }
     }
+
+    /*
+     *  This method will upload a given set of documents into the CP Program.
+     *  We can get more than one document within a given zip file.
+     *
+     */
+    @POST
+    @Path("addDocs/{cpProgramId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    fun addDocs(@PathParam("cpProgramId") cpProgramId: String,
+                docDetails:ArrayList<IndiaCPDocumentDetails>): Response {
+        try
+        {
+            //Lets find the trigger type so that we rea able to
+            //Trigger the correct flow.
+            var trigStage : CP_PROGRAM_FLOW_STAGES = CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC;
+
+            val docType:IndiaCPDocumentDetails.DocTypeEnum = docDetails[0].docType;
+
+            if(docType == IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS)
+            {
+                trigStage = CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC;
+            }
+
+            if(docType == IndiaCPDocumentDetails.DocTypeEnum.IPA_CERTIFICATE_DOC)
+            {
+                trigStage = CP_PROGRAM_FLOW_STAGES.ADD_IPA_CERT_DOC;
+            }
+
+            if(docType == IndiaCPDocumentDetails.DocTypeEnum.IPA_DOCS)
+            {
+                trigStage = CP_PROGRAM_FLOW_STAGES.ADD_IPA_VERI_DOC;
+            }
+
+            if(docType == IndiaCPDocumentDetails.DocTypeEnum.CORPORATE_ACTION_FORM)
+            {
+                trigStage = CP_PROGRAM_FLOW_STAGES.ADD_CORP_ACT_FORM_DOC;
+            }
+
+
+            val stx = services.invokeFlowAsync(CPProgramFlows::class.java, cpProgramId, docDetails, trigStage).resultFuture.get()
+            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+            return Response.status(Response.Status.OK).build()
+        } catch (ex: Throwable) {
+            logger.info("Exception when creating deal: ${ex.toString()}")
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+        }
+    }
+
 
 }

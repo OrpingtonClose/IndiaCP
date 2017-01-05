@@ -22,12 +22,12 @@
     "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0",
     "Angular-UI-Router": "0.2.8",
     "AspNetCore.Identity.MongoDB": "1.0.0-rc2-2",
-    "IdentityServer4.AspNetIdentity": "1.0.0"
+    "IdentityServer4.AspNetIdentity": "1.0.0",
+    "IdentityServer4.AccessTokenValidation": "1.0.1",
+    "IdentityServer4": "1.0.0"
   },
-
   "tools": {
   },
-
   "frameworks": {
     "netcoreapp1.0": {
       "imports": [
@@ -36,18 +36,15 @@
       ]
     }
   },
-
   "buildOptions": {
     "emitEntryPoint": true,
     "preserveCompilationContext": true
   },
-
   "runtimeOptions": {
     "configProperties": {
       "System.GC.Server": true
     }
   },
-
   "publishOptions": {
     "include": [
       "wwwroot",
@@ -56,7 +53,10 @@
       "web.config"
     ]
   },
-
   "scripts": {
-    "postpublish": [ "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" ]  }
+    "postpublish": [ "dotnet publish-iis --publish-folder %publish:OutputPath% --framework %publish:FullTargetFramework%" ]
+  },
+  "configurations": {
+    "Angular1_Build": {}
+  }
 }

@@ -8,7 +8,8 @@
         "ui.bootstrap",
         "ngSanitize",
         "ngCookies",
-        "ngStorage"
+        "ngStorage",
+        "uuid4"
     ]);
 })();
 //# sourceMappingURL=app.core.module.js.map

@@ -4,7 +4,7 @@ import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.api.IndiaCPApi
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.utilities.CPUtils
-import com.barclays.indiacp.model.CPIssue
+import com.barclays.indiacp.model.IndiaCPIssue
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.contracts.DOLLARS
 import net.corda.core.contracts.`issued by`
@@ -26,7 +26,7 @@ import java.time.Instant
  * In the "real world", we'd probably have the offers sitting in the platform prior to the agreement step
  * or the protocol would have to reach out to external systems (or users) to verify the deals.
  */
-class IssueCPFlow(val newCP: CPIssue) : FlowLogic<SignedTransaction>() {
+class IssueCPFlow(val newCP: IndiaCPIssue) : FlowLogic<SignedTransaction>() {
 
     companion object {
         val PROSPECTUS_HASH = SecureHash.parse("decd098666b9657314870e192ced0c3519c2c9d395507a238338f8d003929de9")
@@ -51,9 +51,10 @@ class IssueCPFlow(val newCP: CPIssue) : FlowLogic<SignedTransaction>() {
 
         val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
         val issuer = getPartyByName(newCP.issuerId)
-        val beneficiary = getPartyByName(newCP.investorId)
+        val beneficiary = getPartyByName(newCP.beneficiaryId)
         val ipa = getPartyByName(newCP.ipaId)
         val depository = getPartyByName(newCP.depositoryId)
+        val faceValue = newCP.facevaluePerUnit * newCP.noOfUnits
 
         val tx = IndiaCommercialPaper().generateIssue(
                 issuer = issuer,
@@ -62,11 +63,11 @@ class IssueCPFlow(val newCP: CPIssue) : FlowLogic<SignedTransaction>() {
                 depository = depository,
                 notary = notary.notaryIdentity,
                 cpProgramID = newCP.cpProgramId,
-                cpTradeID = newCP.traderId,
+                cpTradeID = newCP.cpTradeId,
                 tradeDate = newCP.tradeDate,
                 valueDate = newCP.valueDate,
-                faceValue = (newCP.notionalAmount*1.0).DOLLARS `issued by` DUMMY_CASH_ISSUER,
-                maturityDate = newCP.maturityDate,
+                faceValue = faceValue.DOLLARS `issued by` DUMMY_CASH_ISSUER,
+                maturityDate = Instant.now() +  newCP.maturityDays.days,
                 isin = newCP.isin)
 
         // Attach the prospectus.

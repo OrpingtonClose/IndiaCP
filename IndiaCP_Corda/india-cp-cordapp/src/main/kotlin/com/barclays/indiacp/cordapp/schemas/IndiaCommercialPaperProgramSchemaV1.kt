@@ -3,7 +3,6 @@ package com.barclays.indiacp.cordapp.schemas
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.schemas.PersistentState
 import java.time.Instant
-import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -63,7 +62,7 @@ object IndiaCommercialPaperProgramSchemaV1 : MappedSchema(schemaFamily = IndiaCo
             var program_currency: String,
 
     @Column(name = "maturity_days")
-            var maturity_days: Date,
+            var maturity_days: Instant,
 
     @Column(name = "ipa_id")
             var ipa_id: String,
@@ -78,25 +77,31 @@ object IndiaCommercialPaperProgramSchemaV1 : MappedSchema(schemaFamily = IndiaCo
             var depository_name: String,
 
      @Column(name = "isin")
-     var isin: String,
+     var isin: String?,
 
     @Column(name = "isin_generation_request_doc_id")
-            var isin_generation_request_doc_id: String,
+            var isin_generation_request_doc_id: String?,
 
     @Column(name = "ipa_verification_request_doc_id")
-            var ipa_verification_request_doc_id: String,
+            var ipa_verification_request_doc_id: String?,
 
     @Column(name = "ipa_certificate_doc_id")
-            var ipa_certificate_doc_id: String,
+            var ipa_certificate_doc_id: String?,
 
     @Column(name = "corporate_action_form_doc_id")
-            var corporate_action_form_doc_id: String,
+            var corporate_action_form_doc_id: String?,
 
     @Column(name = "allotment_letter_doc_id")
-            var allotment_letter_doc_id: String,
+            var allotment_letter_doc_id: String?,
 
-     @Column(name = "last_modified")
+    @Column(name = "modified_by")
+            var modified_by: String,
+
+    @Column(name = "last_modified")
             var last_modified: Instant,
+
+     @Column(name = "status")
+            var status: String,
 
     @Column(name = "version", nullable=true)
     var version: Integer
