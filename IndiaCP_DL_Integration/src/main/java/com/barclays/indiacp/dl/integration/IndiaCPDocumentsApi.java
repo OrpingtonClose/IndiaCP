@@ -1,6 +1,8 @@
 package com.barclays.indiacp.dl.integration;
 
+import com.barclays.indiacp.dl.utils.DLAttachmentUtils;
 import com.barclays.indiacp.dl.utils.DLConfig;
+import com.barclays.indiacp.model.IndiaCPDocumentDetails;
 import com.barclays.indiacp.model.IndiaCPProgram;
 import jdk.nashorn.internal.parser.JSONParser;
 
@@ -242,24 +244,32 @@ public class IndiaCPDocumentsApi {
         return Response.status(Response.Status.OK).build();
     }
 
-    @POST
+    @GET
     @Path("getDocs/{docHash}")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response getDocs(@PathParam("docHash") String docHash) {
-
-        //TODO - return entire zip
-        return Response.status(Response.Status.OK).build();
+    public Response getDocs(@PathParam("docHash") String docHash)
+    {
+        return DLAttachmentUtils.getInstance().downloadAttachment(docHash);
     }
 
-    @POST
-    @Path("getDoc/{docHash}/{docSubType}")
-    @Produces(MediaType.TEXT_PLAIN)
+    @GET
+    @Path("getDoc/{docHash}/{docSubType}/{docExtension}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getDoc(@PathParam("docHash") String docHash,
-                                 @PathParam("docSubType") String docSubType) {
-        //TODO - return individual sub document from the zip based on the docSubType which should be the same as the file name inside the zip
-        return Response.status(Response.Status.OK).build();
+                           @PathParam("docSubType") String docSubType,
+                           @PathParam("docExtension") String docExtension)
+    {
+        return DLAttachmentUtils.getInstance().downloadAttachment(docHash + "/" + docSubType + "." + docExtension);
     }
 
+    @GET
+    @Path("getDoc")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response getDoc(IndiaCPDocumentDetails documentDetails)
+    {
+        return DLAttachmentUtils.getInstance().downloadAttachment(documentDetails.getDocHash() + "/" + documentDetails.getDocSubType() + "." + documentDetails.getDocExtension());
+    }
 
 
     public static String encodeFileToBase64Binary(String fileName) throws IOException {
