@@ -3,7 +3,6 @@ module app.dashboard.cpprogramcreate {
 
     interface ICPProgramCreateScope {
         createCPProgram(): void;
-        updateProgramId(): void;
     }
 
     class CPProgramCreateController implements ICPProgramCreateScope {

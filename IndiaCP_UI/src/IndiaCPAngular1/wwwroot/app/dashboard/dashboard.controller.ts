@@ -4,7 +4,7 @@ module app.dashboard {
     interface IDashboardScope {
         fetchAllCPPrograms(): void;
         generateISINDocs(): void;
-        createCPISsue(): void;
+        createCPISsue(selectedCPProgram:app.models.IndiaCPProgram): void;
         createCPProgram(): void;
         showCPIssueDetails(): void;
         showCPProgramDetails(cpProgramId:string): void;
@@ -40,7 +40,7 @@ module app.dashboard {
             });
         }
 
-        public createCPISsue(): void {
+        public createCPISsue(selectedCPProgram: app.models.IndiaCPProgram): void {
             this.$uibModal.open({
                 animation: true,
                 ariaLabelledBy: "modal-title",
@@ -49,7 +49,12 @@ module app.dashboard {
                 controllerAs: "vm",
                 size: "lg",
                 backdrop: "static",
-                templateUrl: "app/dashboard/cpissue/cpissue.html"
+                templateUrl: "app/dashboard/cpissue/cpissue.html",
+                resolve: {
+                    cpProgram: ():app.models.IndiaCPProgram => {
+                        return selectedCPProgram;
+                    }
+                }
             });
         }
 

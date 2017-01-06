@@ -13,14 +13,19 @@ module app.models {
         "cpIssueId"?: string;
 
         /**
-         * Type of Document. Possible Values are ISIN_DOC, IPA_DOC, DEAL_CONFIRMATION_DOC, ALLOTMENT_LETTER, CORPORATE_ACTION_FORM
+         * Type of Legal Documents exchanged and signed/countersigned by participants in the CPProgram
          */
-        "docType"?: string;
+        "docType"?: app.models.DocTypeEnum;
 
         /**
-         * Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA
+         * Sub-Type of the Document. May or may not be applicable. For e.g. for IPA_DOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.
          */
         "docSubType"?: string;
+
+        /**
+         * File extension of the document. E.g. PDF. The doc_sub_type.doc_extension would be the full file name in the zipped file uploaded to the DL.
+         */
+        "docExtension"?: string;
 
         /**
          * SHA256 Hash of the Content of the Document. This hash uniquely identifies the document.
@@ -41,6 +46,15 @@ module app.models {
          * Last Modified Date for this CPIssue. This is required for Audit History
          */
         "lastModified"?: Date;
-
     }
+
+    export enum DocTypeEnum {
+            CREDITRATINGDOC = <any> 'CREDIT_RATING_DOC',
+            BOARDRESOLUTIONBORROWINGLIMITDOC = <any> 'BOARD_RESOLUTION_BORROWING_LIMIT_DOC',
+            DEPOSITORYDOCS = <any> 'DEPOSITORY_DOCS',
+            IPADOCS = <any> 'IPA_DOCS',
+            IPACERTIFICATEDOC = <any> 'IPA_CERTIFICATE_DOC',
+            CORPORATEACTIONFORM = <any> 'CORPORATE_ACTION_FORM',
+            DEALCONFIRMATIONDOC = <any> 'DEAL_CONFIRMATION_DOC'
+        }
 }

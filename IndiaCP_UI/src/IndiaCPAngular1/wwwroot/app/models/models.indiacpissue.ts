@@ -2,15 +2,10 @@ module app.models {
     "use strict";
 
     export class IndiaCPIssue {
-        /**
+ /**
          * Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program
          */
         "cpProgramId"?: string;
-
-        /**
-         * User identifier
-         */
-        "userId"?: string;
 
         /**
          * Unique identifier representing a specific CP Issue under the umbrella CP Program
@@ -107,9 +102,11 @@ module app.models {
          */
         "rate"?: number;
 
-        "issuerSettlementDetails"?: app.models.SettlementDetails;
+        "issuerSettlementDetails"?: SettlementDetails;
 
-        "investorSettlementDetails"?: app.models.SettlementDetails;
+        "investorSettlementDetails"?: SettlementDetails;
+
+        "ipaSettlementDetails"?: SettlementDetails;
 
         /**
          * Unique identifier of the deal confirmation document signed by both the Issuer and the Investor

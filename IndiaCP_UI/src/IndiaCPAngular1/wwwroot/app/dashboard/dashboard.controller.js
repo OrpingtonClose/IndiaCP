@@ -29,7 +29,7 @@ var app;
                     templateUrl: "app/dashboard/isingeneration/isingeneration.html"
                 });
             };
-            DashboardController.prototype.createCPISsue = function () {
+            DashboardController.prototype.createCPISsue = function (selectedCPProgram) {
                 this.$uibModal.open({
                     animation: true,
                     ariaLabelledBy: "modal-title",
@@ -38,7 +38,12 @@ var app;
                     controllerAs: "vm",
                     size: "lg",
                     backdrop: "static",
-                    templateUrl: "app/dashboard/cpissue/cpissue.html"
+                    templateUrl: "app/dashboard/cpissue/cpissue.html",
+                    resolve: {
+                        cpProgram: function () {
+                            return selectedCPProgram;
+                        }
+                    }
                 });
             };
             DashboardController.prototype.createCPProgram = function () {
