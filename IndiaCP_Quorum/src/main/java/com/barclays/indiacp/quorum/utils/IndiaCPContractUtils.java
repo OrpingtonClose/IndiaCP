@@ -71,12 +71,17 @@ public class IndiaCPContractUtils {
         return getterMethodName;
     }
 
-    private static Class<?> getJavaType(SolidityType solType) {
+    private static Class<?> getJavaType(String methodName, SolidityType solType) {
         switch (solType.getName()) {
             case "string":
                 return String.class;
             case "uint256":
-                return Integer.class;
+                if(methodName.endsWith("Date")){
+                    return Date.class;
+                }else{
+                    return Integer.class;
+                }
+
             default: return Object.class;
         }
     }
@@ -93,20 +98,10 @@ public class IndiaCPContractUtils {
                 String argName = param.getName();
                 String setterMethodName = getSetterMethodName(argName);
 
-                Method method;
-
-                if(argName.endsWith("Date")){
-                    method = contractModel.getMethod(setterMethodName, Date.class);
-                    method.invoke(contractModelInstance, new Date(((Integer) dataAsList.get(i++)).longValue()));
-
-
-                }
-                else{
-                    SolidityType argType = param.getType();
-                    method = contractModel.getMethod(setterMethodName, getJavaType(argType));
-                    method.invoke(contractModelInstance, dataAsList.get(i++));
-                }
-
+                SolidityType argType = param.getType();
+                Class<?> argClass = getJavaType(argName, argType);
+                Method method = contractModel.getMethod(setterMethodName, argClass);
+                method.invoke(contractModelInstance, castArgument(argClass, dataAsList.get(i++)));
 
             }
             return contractModelInstance;
@@ -114,6 +109,15 @@ public class IndiaCPContractUtils {
             throw new RuntimeException(e);
         }
     }
+
+    private static Object castArgument(Class<?> argClass, Object arg) {
+        if(Date.class.getName().equals(argClass.getName())){
+            return new Date(((Integer)arg).longValue()*1000);
+        } else{
+         return argClass.cast(arg);
+        }
+    }
+
 
     private static <T> T instantiateObjectOfType(Class<T> contractModel) {
         try {

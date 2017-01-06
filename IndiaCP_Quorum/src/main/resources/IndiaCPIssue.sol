@@ -7,7 +7,7 @@ string public traderId;
 string public valueDate;
 string public maturityDate;
 uint public notionalAmount;
-uint public rate;
+uint public rateFloat;
 
 //populated later
 string public isin;
@@ -26,7 +26,7 @@ address public depositoryAddress;
 //assigned values
 string public status;
 uint public version;
-uint public lastModified;
+uint public lastModifiedDate;
 
 function IndiaCPIssue(string _cpProgramId, string _cpTradeId, string _bookId, string _traderId, string _valueDate, string _maturityDate, uint _notionalAmount) {
     cpProgramId = _cpProgramId;
