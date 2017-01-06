@@ -10,11 +10,12 @@ module app.dashboard.cpissue {
         cpissue: app.models.IndiaCPIssue;
         maturityValue: number;
         issueValue: number;
-        static $inject = ["$uibModalInstance","app.services.IssuerService", "uuid4", "cpProgram"]
+        static $inject = ["$uibModalInstance","app.services.IssuerService", "uuid4", "cpProgram","growl"]
         constructor(protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
                     protected issuerService: app.services.IIssuerService,
                     protected uuid4: any,
-                    protected cpProgram: app.models.IndiaCPProgram) {
+                    protected cpProgram: app.models.IndiaCPProgram,
+                    protected growl: ng.growl.IGrowlService) {
         this.cpissue = new app.models.IndiaCPIssue();
         this.cpissue.cpProgramId = this.cpProgram.programId;
         this.cpissue.bookId = "book1";
@@ -40,10 +41,12 @@ module app.dashboard.cpissue {
         this.cpissue.rate = 7;
      }
         public issueCP(): void {
-           this.issuerService.issueCP(this.cpissue).then(():void => { 
+           this.issuerService.issueCP(this.cpissue).then(():void => {
                console.log("CP Issue created");
+               this.growl.success(`CP Issue created for ${this.cpProgram.name}.`, { title: "Success!" });
            },(error:any):void => {
                console.log("CP Issue not created" +  error);
+               this.growl.error("CP Issue not created",{title: "Error"});
            });
         }
          public cancel():void{

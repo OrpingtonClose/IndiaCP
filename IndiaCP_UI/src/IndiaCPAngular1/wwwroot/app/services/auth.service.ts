@@ -2,7 +2,7 @@ module app.services {
     "use strict";
 
     export interface IAuthenticationService {
-        login(user:ICurrentUser):ng.IHttpPromise<any>;
+        login(user:app.models.CurrentUser):ng.IHttpPromise<any>;
         authenticate():void;
         clear():void;
         isAuthenticated():boolean;
@@ -17,7 +17,7 @@ module app.services {
         constructor(protected $http: ng.IHttpService, protected $q:ng.IQService, protected $sessionStorage?: (d: any) => any) {
         }
 
-        public login(userInfo:ICurrentUser):ng.IHttpPromise<any> {
+        public login(userInfo:app.models.CurrentUser):ng.IHttpPromise<any> {
             var deferred:ng.IDeferred<any> = this.$q.defer();
             this.$http.post("/account/login", JSON.stringify(userInfo))
                 .success(function (response:any):void {

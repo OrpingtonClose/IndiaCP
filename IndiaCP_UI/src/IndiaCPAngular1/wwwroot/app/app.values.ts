@@ -1,13 +1,8 @@
 ﻿
-interface ICurrentUser {
-    userId: string;
-    password: string;
-}
-
 ((): void => {
     "use strict";
-    var currentUser: ICurrentUser = {
-        userId: "",
+    var currentUser: app.models.CurrentUser = {
+        username: "",
         password: ""
 
     };

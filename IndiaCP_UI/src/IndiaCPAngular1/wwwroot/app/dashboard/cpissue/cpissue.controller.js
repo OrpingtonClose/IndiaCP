@@ -6,11 +6,12 @@ var app;
         (function (cpissue) {
             "use strict";
             var CPIssueController = (function () {
-                function CPIssueController($uibModalInstance, issuerService, uuid4, cpProgram) {
+                function CPIssueController($uibModalInstance, issuerService, uuid4, cpProgram, growl) {
                     this.$uibModalInstance = $uibModalInstance;
                     this.issuerService = issuerService;
                     this.uuid4 = uuid4;
                     this.cpProgram = cpProgram;
+                    this.growl = growl;
                     this.cpissue = new app.models.IndiaCPIssue();
                     this.cpissue.cpProgramId = this.cpProgram.programId;
                     this.cpissue.bookId = "book1";
@@ -36,10 +37,13 @@ var app;
                     this.cpissue.rate = 7;
                 }
                 CPIssueController.prototype.issueCP = function () {
+                    var _this = this;
                     this.issuerService.issueCP(this.cpissue).then(function () {
                         console.log("CP Issue created");
+                        _this.growl.success("CP Issue created for " + _this.cpProgram.name + ".", { title: "Success!" });
                     }, function (error) {
                         console.log("CP Issue not created" + error);
+                        _this.growl.error("CP Issue not created", { title: "Error" });
                     });
                 };
                 CPIssueController.prototype.cancel = function () {
@@ -57,7 +61,7 @@ var app;
                 };
                 return CPIssueController;
             }());
-            CPIssueController.$inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4", "cpProgram"];
+            CPIssueController.$inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4", "cpProgram", "growl"];
             angular
                 .module("app.dashboard.cpissue")
                 .controller("app.dashboard.cpissue.CPIssueController", CPIssueController);

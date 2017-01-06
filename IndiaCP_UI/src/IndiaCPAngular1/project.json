@@ -24,7 +24,8 @@
     "AspNetCore.Identity.MongoDB": "1.0.0-rc2-2",
     "IdentityServer4.AspNetIdentity": "1.0.0",
     "IdentityServer4.AccessTokenValidation": "1.0.1",
-    "IdentityServer4": "1.0.0"
+    "IdentityServer4": "1.0.0",
+    "IdentityModel": "2.1.1"
   },
   "tools": {
   },
