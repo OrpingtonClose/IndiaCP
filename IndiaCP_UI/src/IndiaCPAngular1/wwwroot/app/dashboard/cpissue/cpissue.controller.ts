@@ -10,7 +10,7 @@ module app.dashboard.cpissue {
         cpissue: app.models.IndiaCPIssue;
         maturityValue: number;
         issueValue: number;
-        static $inject = ["$uibModalInstance","app.services.IssuerService", "uuid4", "cpProgram","growl"]
+        static $inject = ["$uibModalInstance","app.services.IssuerService", "uuid4", "cpProgram","growl"];
         constructor(protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
                     protected issuerService: app.services.IIssuerService,
                     protected uuid4: any,

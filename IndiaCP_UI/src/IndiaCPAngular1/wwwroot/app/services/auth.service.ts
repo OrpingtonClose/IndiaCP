@@ -9,7 +9,7 @@ module app.services {
     }
 
     class AuthenticationService implements IAuthenticationService {
-        protected basePath = "http://localhost:35222/api";
+        protected basePath = "/api";
         public defaultHeaders : any = {};
 
         static $inject: string[] = ["$http", "$q", "$sessionStorage"];
@@ -19,7 +19,7 @@ module app.services {
 
         public login(userInfo:app.models.CurrentUser):ng.IHttpPromise<any> {
             var deferred:ng.IDeferred<any> = this.$q.defer();
-            this.$http.post("/account/login", JSON.stringify(userInfo))
+            this.$http.post(this.basePath + "/authentication", JSON.stringify(userInfo))
                 .success(function (response:any):void {
                     deferred.resolve(response);
                 })

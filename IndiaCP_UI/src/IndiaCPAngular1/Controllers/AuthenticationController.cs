@@ -27,7 +27,7 @@ namespace IndiaCPAngular1.Controllers
         [HttpPost(Name ="Post")]
         public void Post([FromBody] UserCredentials credentials)
         {
-            var disco = DiscoveryClient.GetAsync("http://localhost:30114").GetAwaiter().GetResult();
+            var disco = DiscoveryClient.GetAsync("http://indiacpidentityserver.azurewebsites.net").GetAwaiter().GetResult();
             var tokenClient = new TokenClient(disco.TokenEndpoint, "ro.client", "secret");
             var tokenResponse = tokenClient.RequestResourceOwnerPasswordAsync("issuer1", "password", "api1").GetAwaiter().GetResult();
 

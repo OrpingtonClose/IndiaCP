@@ -63,6 +63,7 @@
   },
   "userSecretsId": "aspnet-FinWizUI-20161218120857",
   "configurations": {
-    "Angular1_Build": {}
+    "Angular1_Build": {},
+    "IdentityServer_Build": {}
   }
 }
