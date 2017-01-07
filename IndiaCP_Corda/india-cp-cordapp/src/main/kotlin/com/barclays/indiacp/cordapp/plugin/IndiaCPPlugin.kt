@@ -48,6 +48,9 @@ class IndiaCPPlugin : CordaPluginRegistry() {
 
     )
 
+    override val servicePlugins: List<Class<*>>
+        get() = super.servicePlugins
+
     override fun registerRPCKryoTypes(kryo: Kryo): Boolean {
         kryo.apply {
             register(IndiaCPIssue::class.java)

@@ -36,7 +36,7 @@ import java.util.Date;
 /**
  * IndiaCPDocumentDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-05T14:40:19.760Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-06T23:16:51.945Z")
 public class IndiaCPDocumentDetails   {
   @JsonProperty("cpProgramId")
   private String cpProgramId = null;
@@ -88,23 +88,54 @@ public class IndiaCPDocumentDetails   {
   @JsonProperty("docType")
   private DocTypeEnum docType = null;
 
-  @JsonProperty("docSubType")
-  private String docSubType = null;
-
-  @JsonProperty("docExtension")
-  private String docExtension = null;
-
   @JsonProperty("docHash")
   private String docHash = null;
 
+  /**
+   * The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL
+   */
+  public enum DocStatusEnum {
+    UNSIGNED("UNSIGNED"),
+    
+    SIGNED_BY_ISSUER("SIGNED_BY_ISSUER"),
+    
+    SIGNED_BY_INVESTOR("SIGNED_BY_INVESTOR"),
+    
+    SIGNED_BY_IPA("SIGNED_BY_IPA"),
+    
+    SIGNED_BY_NSDL("SIGNED_BY_NSDL");
+
+    private String value;
+
+    DocStatusEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static DocStatusEnum fromValue(String text) {
+      for (DocStatusEnum b : DocStatusEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
   @JsonProperty("docStatus")
-  private String docStatus = null;
+  private DocStatusEnum docStatus = null;
 
   @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
-  @JsonProperty("lastModified")
-  private Date lastModified = null;
+  @JsonProperty("lastModifiedDate")
+  private Date lastModifiedDate = null;
 
   public IndiaCPDocumentDetails cpProgramId(String cpProgramId) {
     this.cpProgramId = cpProgramId;
@@ -160,42 +191,6 @@ public class IndiaCPDocumentDetails   {
     this.docType = docType;
   }
 
-  public IndiaCPDocumentDetails docSubType(String docSubType) {
-    this.docSubType = docSubType;
-    return this;
-  }
-
-   /**
-   * Sub-Type of the Document. May or may not be applicable. For e.g. for IPADOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.
-   * @return docSubType
-  **/
-  @ApiModelProperty(value = "Sub-Type of the Document. May or may not be applicable. For e.g. for IPADOC is a collection of documents that need to be sent to the IPA - like FIMMDA.pdf and others.")
-  public String getDocSubType() {
-    return docSubType;
-  }
-
-  public void setDocSubType(String docSubType) {
-    this.docSubType = docSubType;
-  }
-
-  public IndiaCPDocumentDetails docExtension(String docExtension) {
-    this.docExtension = docExtension;
-    return this;
-  }
-
-   /**
-   * File extension of the document. E.g. PDF. The docSubType.docExtension would be the full file name in the zipped file uploaded to the DL.
-   * @return docExtension
-  **/
-  @ApiModelProperty(value = "File extension of the document. E.g. PDF. The docSubType.docExtension would be the full file name in the zipped file uploaded to the DL.")
-  public String getDocExtension() {
-    return docExtension;
-  }
-
-  public void setDocExtension(String docExtension) {
-    this.docExtension = docExtension;
-  }
-
   public IndiaCPDocumentDetails docHash(String docHash) {
     this.docHash = docHash;
     return this;
@@ -214,21 +209,21 @@ public class IndiaCPDocumentDetails   {
     this.docHash = docHash;
   }
 
-  public IndiaCPDocumentDetails docStatus(String docStatus) {
+  public IndiaCPDocumentDetails docStatus(DocStatusEnum docStatus) {
     this.docStatus = docStatus;
     return this;
   }
 
    /**
-   * The current status of the document. Possible values are UNSIGNED, SIGNEDBYISSUER, SIGNEDBYINVESTOR, SIGNEDBYIPA, SIGNEDBYNSDL
+   * The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL
    * @return docStatus
   **/
-  @ApiModelProperty(value = "The current status of the document. Possible values are UNSIGNED, SIGNEDBYISSUER, SIGNEDBYINVESTOR, SIGNEDBYIPA, SIGNEDBYNSDL")
-  public String getDocStatus() {
+  @ApiModelProperty(value = "The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL")
+  public DocStatusEnum getDocStatus() {
     return docStatus;
   }
 
-  public void setDocStatus(String docStatus) {
+  public void setDocStatus(DocStatusEnum docStatus) {
     this.docStatus = docStatus;
   }
 
@@ -250,22 +245,22 @@ public class IndiaCPDocumentDetails   {
     this.modifiedBy = modifiedBy;
   }
 
-  public IndiaCPDocumentDetails lastModified(Date lastModified) {
-    this.lastModified = lastModified;
+  public IndiaCPDocumentDetails lastModifiedDate(Date lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
     return this;
   }
 
    /**
    * Last Modified Date for this CPIssue. This is required for Audit History
-   * @return lastModified
+   * @return lastModifiedDate
   **/
   @ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
-  public Date getLastModified() {
-    return lastModified;
+  public Date getLastModifiedDate() {
+    return lastModifiedDate;
   }
 
-  public void setLastModified(Date lastModified) {
-    this.lastModified = lastModified;
+  public void setLastModifiedDate(Date lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
   }
 
 
@@ -281,17 +276,15 @@ public class IndiaCPDocumentDetails   {
     return Objects.equals(this.cpProgramId, indiaCPDocumentDetails.cpProgramId) &&
         Objects.equals(this.cpIssueId, indiaCPDocumentDetails.cpIssueId) &&
         Objects.equals(this.docType, indiaCPDocumentDetails.docType) &&
-        Objects.equals(this.docSubType, indiaCPDocumentDetails.docSubType) &&
-        Objects.equals(this.docExtension, indiaCPDocumentDetails.docExtension) &&
         Objects.equals(this.docHash, indiaCPDocumentDetails.docHash) &&
         Objects.equals(this.docStatus, indiaCPDocumentDetails.docStatus) &&
         Objects.equals(this.modifiedBy, indiaCPDocumentDetails.modifiedBy) &&
-        Objects.equals(this.lastModified, indiaCPDocumentDetails.lastModified);
+        Objects.equals(this.lastModifiedDate, indiaCPDocumentDetails.lastModifiedDate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cpProgramId, cpIssueId, docType, docSubType, docExtension, docHash, docStatus, modifiedBy, lastModified);
+    return Objects.hash(cpProgramId, cpIssueId, docType, docHash, docStatus, modifiedBy, lastModifiedDate);
   }
 
 
@@ -303,12 +296,10 @@ public class IndiaCPDocumentDetails   {
     sb.append("    cpProgramId: ").append(toIndentedString(cpProgramId)).append("\n");
     sb.append("    cpIssueId: ").append(toIndentedString(cpIssueId)).append("\n");
     sb.append("    docType: ").append(toIndentedString(docType)).append("\n");
-    sb.append("    docSubType: ").append(toIndentedString(docSubType)).append("\n");
-    sb.append("    docExtension: ").append(toIndentedString(docExtension)).append("\n");
     sb.append("    docHash: ").append(toIndentedString(docHash)).append("\n");
     sb.append("    docStatus: ").append(toIndentedString(docStatus)).append("\n");
     sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");
-    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
+    sb.append("    lastModifiedDate: ").append(toIndentedString(lastModifiedDate)).append("\n");
     sb.append("}");
     return sb.toString();
   }

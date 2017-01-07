@@ -4,6 +4,7 @@ import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.contract.OrgLevelBorrowProgram
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
+import com.barclays.indiacp.model.IndiaCPException
 import com.barclays.indiacp.model.IndiaCPProgram
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.contracts.*
@@ -12,6 +13,7 @@ import net.corda.core.crypto.SecureHash
 import net.corda.core.days
 import net.corda.core.node.NodeInfo
 import net.corda.core.flows.FlowLogic
+import net.corda.core.node.services.ServiceType
 import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.seconds
 import net.corda.core.transactions.SignedTransaction
@@ -120,11 +122,20 @@ class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: IndiaCPProgram) : FlowL
         serviceHub.recordTransactions(listOf(stx))
         progressTracker.currentStep = TRANSACTION_RECORDED
 
+
+        // Send the fully signed transaction to the IPA and Depository parties
+        send(ipa, stx)
+        send(depository, stx)
+
         return stx
     }
 
     private fun getPartyByName(partyName: String) : Party {
         return serviceHub.networkMapCache.getNodeByLegalName(partyName)!!.legalIdentity
+    }
+
+    private fun getNodeByName(party: Party) : NodeInfo? {
+        return serviceHub.networkMapCache.getNodeByLegalName(party.name)
     }
 
     private fun getOrgProgramStateandRef(ref: String): StateAndRef<OrgLevelBorrowProgram.OrgState>

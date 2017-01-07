@@ -59,7 +59,7 @@ public interface IndiaCPIssueApi {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDocs(@PathParam("cpIssueId") String cpIssueId,
-                            @FormDataParam("documentDetails") ArrayList<IndiaCPDocumentDetails> docDetails,
+                            @FormDataParam("documentDetails") IndiaCPDocumentDetails docDetails,
                             @FormDataParam("file") InputStream uploadedInputStream);
 
     @Context
