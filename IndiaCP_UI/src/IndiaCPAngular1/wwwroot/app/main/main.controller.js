@@ -4,10 +4,17 @@ var app;
     (function (main) {
         "use strict";
         var MainController = (function () {
-            function MainController() {
+            function MainController($state, authService) {
+                this.$state = $state;
+                this.authService = authService;
             }
+            MainController.prototype.logout = function () {
+                this.authService.logout();
+                this.$state.go("login");
+            };
             return MainController;
         }());
+        MainController.$inject = ["$state", "app.services.AuthenticationService", "uuid4",];
         angular
             .module("app.main")
             .controller("app.main.MainController", MainController);

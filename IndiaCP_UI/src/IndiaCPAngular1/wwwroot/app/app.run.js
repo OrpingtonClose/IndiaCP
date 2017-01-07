@@ -14,7 +14,7 @@
     function run($state, $rootScope, $cookies, $timeout, $location, authService) {
         $rootScope.$on("$routeChangeError", function () { });
         $rootScope.$on("$stateChangeStart", function (event, toState) {
-            if (!authService.isAuthenticated() && toState.name !== "login") {
+            if (!authService.isAuthenticated && toState.name !== "login") {
                 console.log("DENY : Redirecting to Login");
                 event.preventDefault();
                 $timeout(function () {
