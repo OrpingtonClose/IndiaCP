@@ -24,19 +24,11 @@ module app.services {
             var deferred: ng.IDeferred<any> = this.$q.defer();
             this.$http.post(this.basePath + "/authentication", JSON.stringify(userInfo))
                 .then((response: any): void => {
-                    if (response.data.isSuccessStatusCode == false) {
-                        this.growl.error("Incorrect credentials. Try again.", { title: 'Error!' });
-                        console.log("Incorrect credentials. Try again.");
-                        this.isAuthenticated = false;
-                        deferred.reject({
-                            data: response.data
-                        });
-                    }
-                    else {
-                        this.isAuthenticated = true;
-                        deferred.resolve(response);
-                    }
+                    this.isAuthenticated = true;
+                    deferred.resolve(response);
                 }, (error: any): void => {
+                    this.growl.error("Incorrect credentials. Try again.", { title: "Error!" });
+                    console.log("Incorrect credentials. Try again.");
                     this.isAuthenticated = false;
                     deferred.reject({
                         data: error

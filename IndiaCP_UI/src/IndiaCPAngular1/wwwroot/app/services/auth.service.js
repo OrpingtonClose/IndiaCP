@@ -18,19 +18,11 @@ var app;
                 var deferred = this.$q.defer();
                 this.$http.post(this.basePath + "/authentication", JSON.stringify(userInfo))
                     .then(function (response) {
-                    if (response.data.isSuccessStatusCode == false) {
-                        _this.growl.error("Incorrect credentials. Try again.", { title: 'Error!' });
-                        console.log("Incorrect credentials. Try again.");
-                        _this.isAuthenticated = false;
-                        deferred.reject({
-                            data: response.data
-                        });
-                    }
-                    else {
-                        _this.isAuthenticated = true;
-                        deferred.resolve(response);
-                    }
+                    _this.isAuthenticated = true;
+                    deferred.resolve(response);
                 }, function (error) {
+                    _this.growl.error("Incorrect credentials. Try again.", { title: "Error!" });
+                    console.log("Incorrect credentials. Try again.");
                     _this.isAuthenticated = false;
                     deferred.reject({
                         data: error

@@ -1,11 +1,9 @@
 ﻿using IdentityModel.Client;
+using IndiaCPAngular1.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace IndiaCPAngular1.Controllers
 {
@@ -26,7 +24,7 @@ namespace IndiaCPAngular1.Controllers
         }
 
         [HttpPost(Name ="Post")]
-        public HttpResponseMessage Post([FromBody] UserCredentials credentials)
+        public ActionResult Post([FromBody] UserCredentials credentials)
         {
             var disco = DiscoveryClient.GetAsync("http://indiacpidentityserver.azurewebsites.net").GetAwaiter().GetResult();
             var tokenClient = new TokenClient(disco.TokenEndpoint, "ro.client", "secret");
@@ -37,21 +35,17 @@ namespace IndiaCPAngular1.Controllers
                 var resp = new HttpResponseMessage();
                 resp.StatusCode = System.Net.HttpStatusCode.Unauthorized;
                 _logger.LogError(tokenResponse.Error + " " + tokenResponse.ErrorDescription);
-                return resp;
+                return new UnauthorizedResult();
             }
             else
             {
-                var resp = new HttpResponseMessage();
-                resp.StatusCode = System.Net.HttpStatusCode.OK;
+                NodeInfo nodeInfo = new NodeInfo();
+                nodeInfo.NodeType = Environment.GetEnvironmentVariable("NODETYPE");
+                nodeInfo.Host = Environment.GetEnvironmentVariable("HOST");
+                nodeInfo.Port = Int32.Parse(Environment.GetEnvironmentVariable("PORT"));
                 _logger.LogInformation(tokenResponse.Json.ToString());
-                return resp;
+                return new OkObjectResult(nodeInfo);
             }
         }
-    }
-
-    public class UserCredentials
-    {
-        public String Username { get; set; }
-        public String Password { get; set; }
     }
 }
