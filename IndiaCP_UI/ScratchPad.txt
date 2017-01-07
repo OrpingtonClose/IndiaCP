@@ -2,6 +2,7 @@ http://www.hanselman.com/blog/ControlHowYourBowerPackagesAreInstalledWithAGulpfi
 
 install definitelytype dependencies
 npm install --save @types/lodash
+npm install --save @types/angular-growl-v2
 
 Angular2
 http://blog.stevensanderson.com/2016/10/04/angular2-template-for-visual-studio/
@@ -43,3 +44,12 @@ https://github.com/aspnet/Home/issues/1842
 OpenID connect flows and understanding
 https://leastprivilege.com/2016/01/17/which-openid-connectoauth-2-o-flow-is-the-right-one/
 http://connect2id.com/learn/openid-connect
+
+
+Notifications
+http://bootstrap-notify.remabledesigns.com/
+https://github.com/alexcrack/angular-ui-notification\
+http://cgross.github.io/angular-notify/demo/
+http://jvandemo.github.io/angular-growl-notifications/examples/fading-animation
+http://tamerayd.in/ngToast/#
+https://code.ciphertrick.com/2015/04/05/easy-notifications-in-angularjs-applications/

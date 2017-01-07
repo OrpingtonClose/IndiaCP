@@ -9,14 +9,14 @@ module app.dashboard.cpissuedetails {
     class CPIssueDetailsController implements ICPIssueDetailsScope {
         isinDocPDF: string;
         issueCP: app.models.IndiaCPIssue;
-        static $inject = ["$uibModalInstance", "app.services.IssuerService", "cpProgram"]
+        static $inject = ["$uibModalInstance", "app.services.IssuerService", "cpProgram"];
         constructor(
             protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
             protected issuerService: app.services.IIssuerService,
             protected cpProgram: any) {
         }
         public issueCPForProgram(): void {
-            
+
         }
 
         public cancel(): void {

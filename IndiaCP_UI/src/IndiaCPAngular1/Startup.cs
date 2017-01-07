@@ -57,7 +57,7 @@ namespace IndiaCPAngular1
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            loggerFactory.AddConsole().AddDebug();
             app.Use(async (context, next) =>
             {
                 await next();
