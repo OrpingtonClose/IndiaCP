@@ -28,39 +28,100 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Error
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-05T14:40:19.760Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-06T23:16:51.945Z")
 public class Error   {
   @JsonProperty("code")
-  private Integer code = null;
+  private String code = null;
+
+  /**
+   * Source of the error identifying the layer where the error originated. For e.g. DL Integration Layer, DL (Corda/Ethereum), Reference Data Service
+   */
+  public enum SourceEnum {
+    DL_INTEGRATION_LAYER("DL_INTEGRATION_LAYER"),
+    
+    DL_R3CORDA("DL_R3CORDA"),
+    
+    DL_ETHEREUM_QUORUM_CAKESHOP("DL_ETHEREUM_QUORUM_CAKESHOP"),
+    
+    DL_ETHEREUM_QUORUM("DL_ETHEREUM_QUORUM"),
+    
+    REFERENCE_DATA_SERVICE("REFERENCE_DATA_SERVICE"),
+    
+    UNKNOWN_SOURCE("UNKNOWN_SOURCE");
+
+    private String value;
+
+    SourceEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static SourceEnum fromValue(String text) {
+      for (SourceEnum b : SourceEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
+  @JsonProperty("source")
+  private SourceEnum source = null;
 
   @JsonProperty("message")
   private String message = null;
 
-  @JsonProperty("fields")
-  private String fields = null;
+  @JsonProperty("details")
+  private String details = null;
 
-  public Error code(Integer code) {
+  public Error code(String code) {
     this.code = code;
     return this;
   }
 
    /**
-   * Get code
+   * Unique Id to identify the type of error. For e.g. CP Program Creation, ISIN Generation, etc.
    * @return code
   **/
-  @ApiModelProperty(value = "")
-  public Integer getCode() {
+  @ApiModelProperty(value = "Unique Id to identify the type of error. For e.g. CP Program Creation, ISIN Generation, etc.")
+  public String getCode() {
     return code;
   }
 
-  public void setCode(Integer code) {
+  public void setCode(String code) {
     this.code = code;
+  }
+
+  public Error source(SourceEnum source) {
+    this.source = source;
+    return this;
+  }
+
+   /**
+   * Source of the error identifying the layer where the error originated. For e.g. DL Integration Layer, DL (Corda/Ethereum), Reference Data Service
+   * @return source
+  **/
+  @ApiModelProperty(value = "Source of the error identifying the layer where the error originated. For e.g. DL Integration Layer, DL (Corda/Ethereum), Reference Data Service")
+  public SourceEnum getSource() {
+    return source;
+  }
+
+  public void setSource(SourceEnum source) {
+    this.source = source;
   }
 
   public Error message(String message) {
@@ -69,10 +130,10 @@ public class Error   {
   }
 
    /**
-   * Get message
+   * Short message describing the error
    * @return message
   **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "Short message describing the error")
   public String getMessage() {
     return message;
   }
@@ -81,22 +142,22 @@ public class Error   {
     this.message = message;
   }
 
-  public Error fields(String fields) {
-    this.fields = fields;
+  public Error details(String details) {
+    this.details = details;
     return this;
   }
 
    /**
-   * Get fields
-   * @return fields
+   * Details of the error. This could also be the complete stack trace. It would be useful for debugging
+   * @return details
   **/
-  @ApiModelProperty(value = "")
-  public String getFields() {
-    return fields;
+  @ApiModelProperty(value = "Details of the error. This could also be the complete stack trace. It would be useful for debugging")
+  public String getDetails() {
+    return details;
   }
 
-  public void setFields(String fields) {
-    this.fields = fields;
+  public void setDetails(String details) {
+    this.details = details;
   }
 
 
@@ -110,13 +171,14 @@ public class Error   {
     }
     Error error = (Error) o;
     return Objects.equals(this.code, error.code) &&
+        Objects.equals(this.source, error.source) &&
         Objects.equals(this.message, error.message) &&
-        Objects.equals(this.fields, error.fields);
+        Objects.equals(this.details, error.details);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(code, message, fields);
+    return Objects.hash(code, source, message, details);
   }
 
 
@@ -126,8 +188,9 @@ public class Error   {
     sb.append("class Error {\n");
     
     sb.append("    code: ").append(toIndentedString(code)).append("\n");
+    sb.append("    source: ").append(toIndentedString(source)).append("\n");
     sb.append("    message: ").append(toIndentedString(message)).append("\n");
-    sb.append("    fields: ").append(toIndentedString(fields)).append("\n");
+    sb.append("    details: ").append(toIndentedString(details)).append("\n");
     sb.append("}");
     return sb.toString();
   }

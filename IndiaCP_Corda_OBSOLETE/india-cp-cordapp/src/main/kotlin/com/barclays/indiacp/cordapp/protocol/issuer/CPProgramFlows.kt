@@ -30,8 +30,8 @@ import java.util.*
  * or the protocol would have to reach out to external systems (or users) to verify the deals.
  */
 class CPProgramFlows( val cpProgramId: String,
-        val docDetails:ArrayList<IndiaCPDocumentDetails>,
-                     val trig_stage : CP_PROGRAM_FLOW_STAGES
+                      val docDetails:IndiaCPDocumentDetails,
+                      val trig_stage : CP_PROGRAM_FLOW_STAGES
                         ) : FlowLogic<SignedTransaction>() {
 
     companion object {
@@ -231,7 +231,7 @@ class CPProgramFlows( val cpProgramId: String,
     /*
 Method for adding ISIN & supporting document into CP Program.
  */
-    private fun addIsinGenDocToCPProgram(cpProgramId:String, docDetails:ArrayList<IndiaCPDocumentDetails>, notary: NodeInfo, status :String) : TransactionBuilder
+    private fun addIsinGenDocToCPProgram(cpProgramId:String, docDetails:IndiaCPDocumentDetails, notary: NodeInfo, status :String) : TransactionBuilder
     {
         val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
 
@@ -243,7 +243,7 @@ Method for adding ISIN & supporting document into CP Program.
      /*
             Method for uploading IPA Verification document hash a CP Program.
      */
-    private fun addIPAVerificationDocToCPProgram(cpProgramId:String, docDetails:ArrayList<IndiaCPDocumentDetails>, notary: NodeInfo, status :String) : TransactionBuilder
+    private fun addIPAVerificationDocToCPProgram(cpProgramId:String, docDetails:IndiaCPDocumentDetails, notary: NodeInfo, status :String) : TransactionBuilder
     {
         val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
 
@@ -255,7 +255,7 @@ Method for adding ISIN & supporting document into CP Program.
     /*
        Method for uploading IPA Certificate document hash a CP Program.
 */
-    private fun addIPACertifcateDocToCPProgram(cpProgramId:String, docDetails:ArrayList<IndiaCPDocumentDetails>, notary: NodeInfo, status :String) : TransactionBuilder
+    private fun addIPACertifcateDocToCPProgram(cpProgramId:String, docDetails:IndiaCPDocumentDetails, notary: NodeInfo, status :String) : TransactionBuilder
     {
 
         val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
@@ -268,7 +268,7 @@ Method for adding ISIN & supporting document into CP Program.
     /*
        Method for uploading Corporate Action Verification document hash a CP Program.
 */
-    private fun addCorpActionFormDocToCPProgram(cpProgramId:String, docDetails:ArrayList<IndiaCPDocumentDetails>, notary: NodeInfo, status :String) : TransactionBuilder
+    private fun addCorpActionFormDocToCPProgram(cpProgramId:String, docDetails:IndiaCPDocumentDetails, notary: NodeInfo, status :String) : TransactionBuilder
     {
         val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
 
@@ -280,7 +280,7 @@ Method for adding ISIN & supporting document into CP Program.
     /*
        Method for uploading Corporate Action Verification document hash a CP Program.
 */
-    private fun addAllotmentLetterDocToCPProgram(cpProgramId:String, docDetails:ArrayList<IndiaCPDocumentDetails>, notary: NodeInfo, status :String) : TransactionBuilder
+    private fun addAllotmentLetterDocToCPProgram(cpProgramId:String, docDetails:IndiaCPDocumentDetails, notary: NodeInfo, status :String) : TransactionBuilder
     {
         val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(cpProgramId)
 

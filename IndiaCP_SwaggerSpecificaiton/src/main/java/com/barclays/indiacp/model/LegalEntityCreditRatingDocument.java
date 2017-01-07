@@ -35,7 +35,7 @@ import java.util.Date;
 /**
  * LegalEntityCreditRatingDocument
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-05T14:40:19.760Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-06T23:16:51.945Z")
 public class LegalEntityCreditRatingDocument   {
   @JsonProperty("legalEntityId")
   private String legalEntityId = null;
@@ -61,8 +61,8 @@ public class LegalEntityCreditRatingDocument   {
   @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
-  @JsonProperty("lastModified")
-  private Date lastModified = null;
+  @JsonProperty("lastModifiedDate")
+  private Date lastModifiedDate = null;
 
   public LegalEntityCreditRatingDocument legalEntityId(String legalEntityId) {
     this.legalEntityId = legalEntityId;
@@ -208,22 +208,22 @@ public class LegalEntityCreditRatingDocument   {
     this.modifiedBy = modifiedBy;
   }
 
-  public LegalEntityCreditRatingDocument lastModified(Date lastModified) {
-    this.lastModified = lastModified;
+  public LegalEntityCreditRatingDocument lastModifiedDate(Date lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
     return this;
   }
 
    /**
    * Last Modified Date for this CPIssue. This is required for Audit History
-   * @return lastModified
+   * @return lastModifiedDate
   **/
   @ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
-  public Date getLastModified() {
-    return lastModified;
+  public Date getLastModifiedDate() {
+    return lastModifiedDate;
   }
 
-  public void setLastModified(Date lastModified) {
-    this.lastModified = lastModified;
+  public void setLastModifiedDate(Date lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
   }
 
 
@@ -244,12 +244,12 @@ public class LegalEntityCreditRatingDocument   {
         Objects.equals(this.creditRatingEffectiveDate, legalEntityCreditRatingDocument.creditRatingEffectiveDate) &&
         Objects.equals(this.creditRatingExpiryDate, legalEntityCreditRatingDocument.creditRatingExpiryDate) &&
         Objects.equals(this.modifiedBy, legalEntityCreditRatingDocument.modifiedBy) &&
-        Objects.equals(this.lastModified, legalEntityCreditRatingDocument.lastModified);
+        Objects.equals(this.lastModifiedDate, legalEntityCreditRatingDocument.lastModifiedDate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(legalEntityId, creditRatingAgencyName, creditRatingAmount, creditRating, creditRatingIssuanceDate, creditRatingEffectiveDate, creditRatingExpiryDate, modifiedBy, lastModified);
+    return Objects.hash(legalEntityId, creditRatingAgencyName, creditRatingAmount, creditRating, creditRatingIssuanceDate, creditRatingEffectiveDate, creditRatingExpiryDate, modifiedBy, lastModifiedDate);
   }
 
 
@@ -266,7 +266,7 @@ public class LegalEntityCreditRatingDocument   {
     sb.append("    creditRatingEffectiveDate: ").append(toIndentedString(creditRatingEffectiveDate)).append("\n");
     sb.append("    creditRatingExpiryDate: ").append(toIndentedString(creditRatingExpiryDate)).append("\n");
     sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");
-    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
+    sb.append("    lastModifiedDate: ").append(toIndentedString(lastModifiedDate)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -98,8 +98,8 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['build']) {
         cordapps = []
     }
     node {
-        name "Issuer"
-        dirName "issuer"
+        name "Issuer1"
+        dirName "issuer1"
         nearestCity "Mumbai"
         advertisedServices = []
         artemisPort 10004
@@ -116,12 +116,21 @@ task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['build']) {
         cordapps = []
     }
     node {
-        name "Investor2"
-        dirName "investor2"
+        name "IPA1"
+        dirName "ipa1"
         nearestCity "Mumbai"
         advertisedServices = []
         artemisPort 10008
         webPort 10009
+        cordapps = []
+    }
+    node {
+        name "NSDL1"
+        dirName "nsdl1"
+        nearestCity "Mumbai"
+        advertisedServices = []
+        artemisPort 10010
+        webPort 10011
         cordapps = []
     }
 }

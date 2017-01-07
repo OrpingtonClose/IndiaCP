@@ -35,7 +35,7 @@ import java.util.Date;
 /**
  * IndiaCPIssue
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-05T14:40:19.760Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-06T23:16:51.945Z")
 public class IndiaCPIssue   {
   @JsonProperty("cpProgramId")
   private String cpProgramId = null;
@@ -118,8 +118,8 @@ public class IndiaCPIssue   {
   @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
-  @JsonProperty("lastModified")
-  private Date lastModified = null;
+  @JsonProperty("lastModifiedDate")
+  private Date lastModifiedDate = null;
 
   public IndiaCPIssue cpProgramId(String cpProgramId) {
     this.cpProgramId = cpProgramId;
@@ -607,22 +607,22 @@ public class IndiaCPIssue   {
     this.modifiedBy = modifiedBy;
   }
 
-  public IndiaCPIssue lastModified(Date lastModified) {
-    this.lastModified = lastModified;
+  public IndiaCPIssue lastModifiedDate(Date lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
     return this;
   }
 
    /**
    * Last Modified Date for this CPIssue. This is required for Audit History
-   * @return lastModified
+   * @return lastModifiedDate
   **/
   @ApiModelProperty(value = "Last Modified Date for this CPIssue. This is required for Audit History")
-  public Date getLastModified() {
-    return lastModified;
+  public Date getLastModifiedDate() {
+    return lastModifiedDate;
   }
 
-  public void setLastModified(Date lastModified) {
-    this.lastModified = lastModified;
+  public void setLastModifiedDate(Date lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
   }
 
 
@@ -662,12 +662,12 @@ public class IndiaCPIssue   {
         Objects.equals(this.status, indiaCPIssue.status) &&
         Objects.equals(this.version, indiaCPIssue.version) &&
         Objects.equals(this.modifiedBy, indiaCPIssue.modifiedBy) &&
-        Objects.equals(this.lastModified, indiaCPIssue.lastModified);
+        Objects.equals(this.lastModifiedDate, indiaCPIssue.lastModifiedDate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(cpProgramId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, beneficiaryId, beneficiaryName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDays, currency, facevaluePerUnit, noOfUnits, rate, issuerSettlementDetails, investorSettlementDetails, ipaSettlementDetails, dealConfirmationDocId, status, version, modifiedBy, lastModified);
+    return Objects.hash(cpProgramId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, beneficiaryId, beneficiaryName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDays, currency, facevaluePerUnit, noOfUnits, rate, issuerSettlementDetails, investorSettlementDetails, ipaSettlementDetails, dealConfirmationDocId, status, version, modifiedBy, lastModifiedDate);
   }
 
 
@@ -703,7 +703,7 @@ public class IndiaCPIssue   {
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    version: ").append(toIndentedString(version)).append("\n");
     sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");
-    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
+    sb.append("    lastModifiedDate: ").append(toIndentedString(lastModifiedDate)).append("\n");
     sb.append("}");
     return sb.toString();
   }

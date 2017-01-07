@@ -7,8 +7,7 @@ import com.barclays.indiacp.cordapp.protocol.issuer.CPProgramFlows
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramWithInOrgLimitFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPWithinCPProgramFlow
 import com.barclays.indiacp.cordapp.utilities.CP_PROGRAM_FLOW_STAGES
-import com.barclays.indiacp.model.IndiaCPDocumentDetails
-import com.barclays.indiacp.model.IndiaCPIssue
+import com.barclays.indiacp.model.*
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.utilities.Emoji
@@ -16,7 +15,12 @@ import net.corda.core.utilities.loggerFor
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
-import com.barclays.indiacp.model.IndiaCPProgram
+import net.corda.contracts.CommercialPaper
+import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.IndiaCPHistorySearch
+import net.corda.core.contracts.TransactionState
+import net.corda.core.transactions.SignedTransaction
+import net.corda.core.transactions.WireTransaction
 import java.util.*
 
 
@@ -182,10 +186,11 @@ class IndiaCPProgramApi(val services: ServiceHub) {
 
     @POST
     @Path("getTransactionHistory/{cpProgramId}")
+    @Produces(MediaType.APPLICATION_JSON)
     fun getTransactionHistory(@PathParam("cpProgramId") cpProgramId: String): Response {
         try {
-            //TODO: Add code here
-            return Response.status(Response.Status.OK).build()
+            val history = getHistory(cpProgramId)
+            return Response.status(Response.Status.OK).entity(history).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
@@ -225,6 +230,21 @@ class IndiaCPProgramApi(val services: ServiceHub) {
         return indiacpprogams
     }
 
+    private fun getHistory(ref: String): Array<ContractState> {
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>().filterValues { it.state.data.programId == ref }
+        if (states == null || states.values == null || states.values.isEmpty()) {
+            throw IndiaCPException(CPProgramError.DOES_NOT_EXIST_ERROR, Error.SourceEnum.DL_R3CORDA)
+        }
+        val stx = services.storageService.validatedTransactions.getTransaction(states.values.first()!!.ref.txhash)
+
+        val search = IndiaCPHistorySearch(services.storageService.validatedTransactions, listOf(stx!!.tx))
+        search.query = IndiaCPHistorySearch.QueryByInputStateType(followInputsOfType = IndiaCommercialPaperProgram.State::class.java)
+        val cpProgHistory : List<WireTransaction> = search.call()
+
+        return search.filterOutputStates(cpProgHistory)
+    }
+
+
     @GET
     @Path("fetchCPProgram/{cpProgramId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -255,14 +275,14 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @Path("addDocs/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
     fun addDocs(@PathParam("cpProgramId") cpProgramId: String,
-                docDetails:ArrayList<IndiaCPDocumentDetails>): Response {
+                docDetails:IndiaCPDocumentDetails): Response {
         try
         {
             //Lets find the trigger type so that we rea able to
             //Trigger the correct flow.
             var trigStage : CP_PROGRAM_FLOW_STAGES = CP_PROGRAM_FLOW_STAGES.ADD_ISIN_GEN_DOC;
 
-            val docType:IndiaCPDocumentDetails.DocTypeEnum = docDetails[0].docType;
+            val docType:IndiaCPDocumentDetails.DocTypeEnum = docDetails.docType;
 
             if(docType == IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS)
             {
