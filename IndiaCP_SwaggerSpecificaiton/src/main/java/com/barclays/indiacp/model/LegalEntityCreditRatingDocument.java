@@ -28,6 +28,7 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
@@ -35,7 +36,7 @@ import java.util.Date;
 /**
  * LegalEntityCreditRatingDocument
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-06T23:16:51.945Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-08T11:59:45.052Z")
 public class LegalEntityCreditRatingDocument   {
   @JsonProperty("legalEntityId")
   private String legalEntityId = null;
@@ -58,11 +59,51 @@ public class LegalEntityCreditRatingDocument   {
   @JsonProperty("creditRatingExpiryDate")
   private Date creditRatingExpiryDate = null;
 
+  @JsonProperty("docHash")
+  private String docHash = null;
+
+  @JsonProperty("version")
+  private Integer version = null;
+
   @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
   @JsonProperty("lastModifiedDate")
   private Date lastModifiedDate = null;
+
+  /**
+   * There can be only one active CR Document at any given time
+   */
+  public enum StatusEnum {
+    ACTIVE("ACTIVE"),
+    
+    OBSOLETE("OBSOLETE");
+
+    private String value;
+
+    StatusEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static StatusEnum fromValue(String text) {
+      for (StatusEnum b : StatusEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
+  @JsonProperty("status")
+  private StatusEnum status = null;
 
   public LegalEntityCreditRatingDocument legalEntityId(String legalEntityId) {
     this.legalEntityId = legalEntityId;
@@ -190,6 +231,42 @@ public class LegalEntityCreditRatingDocument   {
     this.creditRatingExpiryDate = creditRatingExpiryDate;
   }
 
+  public LegalEntityCreditRatingDocument docHash(String docHash) {
+    this.docHash = docHash;
+    return this;
+  }
+
+   /**
+   * SHA256 Hash of the Credit Rating Document
+   * @return docHash
+  **/
+  @ApiModelProperty(value = "SHA256 Hash of the Credit Rating Document")
+  public String getDocHash() {
+    return docHash;
+  }
+
+  public void setDocHash(String docHash) {
+    this.docHash = docHash;
+  }
+
+  public LegalEntityCreditRatingDocument version(Integer version) {
+    this.version = version;
+    return this;
+  }
+
+   /**
+   * Current version of the CR Document. This is auto incremented by the DL.
+   * @return version
+  **/
+  @ApiModelProperty(value = "Current version of the CR Document. This is auto incremented by the DL.")
+  public Integer getVersion() {
+    return version;
+  }
+
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
+
   public LegalEntityCreditRatingDocument modifiedBy(String modifiedBy) {
     this.modifiedBy = modifiedBy;
     return this;
@@ -226,6 +303,24 @@ public class LegalEntityCreditRatingDocument   {
     this.lastModifiedDate = lastModifiedDate;
   }
 
+  public LegalEntityCreditRatingDocument status(StatusEnum status) {
+    this.status = status;
+    return this;
+  }
+
+   /**
+   * There can be only one active CR Document at any given time
+   * @return status
+  **/
+  @ApiModelProperty(value = "There can be only one active CR Document at any given time")
+  public StatusEnum getStatus() {
+    return status;
+  }
+
+  public void setStatus(StatusEnum status) {
+    this.status = status;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -243,13 +338,16 @@ public class LegalEntityCreditRatingDocument   {
         Objects.equals(this.creditRatingIssuanceDate, legalEntityCreditRatingDocument.creditRatingIssuanceDate) &&
         Objects.equals(this.creditRatingEffectiveDate, legalEntityCreditRatingDocument.creditRatingEffectiveDate) &&
         Objects.equals(this.creditRatingExpiryDate, legalEntityCreditRatingDocument.creditRatingExpiryDate) &&
+        Objects.equals(this.docHash, legalEntityCreditRatingDocument.docHash) &&
+        Objects.equals(this.version, legalEntityCreditRatingDocument.version) &&
         Objects.equals(this.modifiedBy, legalEntityCreditRatingDocument.modifiedBy) &&
-        Objects.equals(this.lastModifiedDate, legalEntityCreditRatingDocument.lastModifiedDate);
+        Objects.equals(this.lastModifiedDate, legalEntityCreditRatingDocument.lastModifiedDate) &&
+        Objects.equals(this.status, legalEntityCreditRatingDocument.status);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(legalEntityId, creditRatingAgencyName, creditRatingAmount, creditRating, creditRatingIssuanceDate, creditRatingEffectiveDate, creditRatingExpiryDate, modifiedBy, lastModifiedDate);
+    return Objects.hash(legalEntityId, creditRatingAgencyName, creditRatingAmount, creditRating, creditRatingIssuanceDate, creditRatingEffectiveDate, creditRatingExpiryDate, docHash, version, modifiedBy, lastModifiedDate, status);
   }
 
 
@@ -265,8 +363,11 @@ public class LegalEntityCreditRatingDocument   {
     sb.append("    creditRatingIssuanceDate: ").append(toIndentedString(creditRatingIssuanceDate)).append("\n");
     sb.append("    creditRatingEffectiveDate: ").append(toIndentedString(creditRatingEffectiveDate)).append("\n");
     sb.append("    creditRatingExpiryDate: ").append(toIndentedString(creditRatingExpiryDate)).append("\n");
+    sb.append("    docHash: ").append(toIndentedString(docHash)).append("\n");
+    sb.append("    version: ").append(toIndentedString(version)).append("\n");
     sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");
     sb.append("    lastModifiedDate: ").append(toIndentedString(lastModifiedDate)).append("\n");
+    sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -58,6 +58,30 @@ public class IndiaCPException extends Exception {
         this(cpProgramError, sourceOfError, "");
     }
 
+    public IndiaCPException(CreditRatingError creditRatingError, Error.SourceEnum sourceOfError, String errorMessage, String errorDetails) {
+        this(creditRatingError.name(), sourceOfError, errorMessage, errorDetails);
+    }
+
+    public IndiaCPException(CreditRatingError creditRatingError, Error.SourceEnum sourceOfError, String errorMessage) {
+        this(creditRatingError, sourceOfError, errorMessage, "");
+    }
+
+    public IndiaCPException(CreditRatingError creditRatingError, Error.SourceEnum sourceOfError) {
+        this(creditRatingError, sourceOfError, "");
+    }
+
+    public IndiaCPException(BoardResolutionError boardResolutionError, Error.SourceEnum sourceOfError, String errorMessage, String errorDetails) {
+        this(boardResolutionError.name(), sourceOfError, errorMessage, errorDetails);
+    }
+
+    public IndiaCPException(BoardResolutionError boardResolutionError, Error.SourceEnum sourceOfError, String errorMessage) {
+        this(boardResolutionError, sourceOfError, errorMessage, "");
+    }
+
+    public IndiaCPException(BoardResolutionError boardResolutionError, Error.SourceEnum sourceOfError) {
+        this(boardResolutionError, sourceOfError, "");
+    }
+
     public Error getError() {
         return error;
     }

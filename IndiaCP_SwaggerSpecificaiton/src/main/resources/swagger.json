@@ -545,6 +545,81 @@
                     }
                 }
             }
+        },
+        "/creditrating/issueCreditRating": {
+            "post": {
+                "summary": "Uploads the Credit Rating Document and Creates a Smart Contract for the same on the DL to establish immutable golden copy",
+                "description": "Uploads the Credit Rating Document and Creates a Smart Contract for the same on the DL to establish immutable golden copy",
+                "operationId": "issueCreditRating",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "parameters": [
+                    {
+                        "name": "creditRatingDetails",
+                        "in": "formData",
+                        "description": "Credit Rating Details for creating the Smart Contract",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "description": "Document Attachment",
+                        "required": true,
+                        "type": "file"
+                    }
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the LegalEntityCreditRatingDocument details",
+                        "schema": {
+                            "$ref": "#/definitions/LegalEntityCreditRatingDocument"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/creditrating/fetchCreditRating": {
+            "get": {
+                "summary": "Get current active Credit Rating details",
+                "description": "This returns only the current active credit rating details",
+                "operationId": "fetchCreditRating",
+                "parameters": [
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get current Active Credit Rating Details",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/LegalEntityCreditRatingDocument"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -582,6 +657,14 @@
                     "format": "date",
                     "description": "Rating expiry date"
                 },
+                "docHash": {
+                    "type": "string",
+                    "description": "SHA256 Hash of the Credit Rating Document"
+                },
+                "version": {
+                    "type": "integer",
+                    "description": "Current version of the CR Document. This is auto incremented by the DL."
+                },
                 "modifiedBy": {
                     "type": "string",
                     "description": "Unique identifier of the Logged-in User that performed the action. This is required for Audit History"
@@ -590,6 +673,14 @@
                     "type": "string",
                     "format": "date",
                     "description": "Last Modified Date for this CPIssue. This is required for Audit History"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "ACTIVE",
+                        "OBSOLETE"
+                    ],
+                    "description": "There can be only one active CR Document at any given time"
                 }
             }
         },
@@ -614,6 +705,14 @@
                     "format": "date",
                     "description": "Date on which the BR will become obsolete"
                 },
+                "docHash": {
+                    "type": "string",
+                    "description": "SHA256 Hash of the Credit Rating Document"
+                },
+                "version": {
+                    "type": "integer",
+                    "description": "Current version of the CR Document. This is auto incremented by the DL."
+                },
                 "modifiedBy": {
                     "type": "string",
                     "description": "Unique identifier of the Logged-in User that performed the action. This is required for Audit History"
@@ -622,6 +721,14 @@
                     "type": "string",
                     "format": "date",
                     "description": "Last Modified Date for this BR upload. This is required for Audit History"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "ACTIVE",
+                        "OBSOLETE"
+                    ],
+                    "description": "There can be only one active CR Document at any given time"
                 }
             }
         },
@@ -1028,6 +1135,32 @@
                 "CP_DOC_UPLOAD_ERROR",
                 "CP_HISTORY_SEARCH_ERROR"
            ]
+        },
+        "CreditRatingError": {
+            "type": "string",
+            "enum": [
+                "CR_CREATION_ERROR",
+                "CR_FETCH_ERROR",
+                "CR_AMENDMENT_ERROR",
+                "CR_CANCELLATION_ERROR",
+                "CR_DOES_NOT_EXIST_ERROR",
+                "CR_DOC_GENERATION_ERROR",
+                "CR_DOC_UPLOAD_ERROR",
+                "CR_HISTORY_SEARCH_ERROR"
+            ]
+        },
+        "BoardResolutionError": {
+            "type": "string",
+            "enum": [
+                "BR_CREATION_ERROR",
+                "BR_FETCH_ERROR",
+                "BR_AMENDMENT_ERROR",
+                "BR_CANCELLATION_ERROR",
+                "BR_DOES_NOT_EXIST_ERROR",
+                "BR_DOC_GENERATION_ERROR",
+                "BR_DOC_UPLOAD_ERROR",
+                "BR_HISTORY_SEARCH_ERROR"
+            ]
         }
     }
 }

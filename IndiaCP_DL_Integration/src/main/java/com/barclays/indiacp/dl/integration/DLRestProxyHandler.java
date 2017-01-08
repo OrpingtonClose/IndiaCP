@@ -2,6 +2,7 @@ package com.barclays.indiacp.dl.integration;
 
 import com.barclays.indiacp.dl.utils.DLAttachmentUtils;
 import com.barclays.indiacp.dl.utils.DLConfig;
+import com.barclays.indiacp.dl.utils.DLUtils;
 import com.barclays.indiacp.model.IndiaCPDocumentDetails;
 import com.barclays.indiacp.model.IndiaCPProgram;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -41,11 +42,8 @@ public class DLRestProxyHandler implements InvocationHandler {
 
     public DLRestProxyHandler(String resourcePath) {
         this.resourcePath = resourcePath;
-        Logger logger = Logger.getLogger(IndiaCPProgramApi.class.getName());
-        Client jerseyClient = ClientBuilder.newBuilder()
-                .register(MultiPartFeature.class).build();
 
-        dlRestEndPoint = jerseyClient.target(DLConfig.DLConfigInstance().getDLRestEndpoint());
+        dlRestEndPoint = DLUtils.getDLRestEndPoint();
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -60,7 +58,7 @@ public class DLRestProxyHandler implements InvocationHandler {
         String docHash = null;
         if (requiresAttachmentUpload(method)) {
             //upload attachment to DL
-            docHash = DLAttachmentUtils.getInstance().uploadAttachment(method.getName(), args);
+            docHash = DLAttachmentUtils.getInstance().uploadAttachment((InputStream) args[args.length - 1]);
             //set docHash in the documentDetails metadata before posting it to the DL
             jsonString = setDocHash(args, docHash);
         }
@@ -98,12 +96,7 @@ public class DLRestProxyHandler implements InvocationHandler {
 
         docDetails.setDocHash(docHash);
 
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.writeValueAsString(docDetails);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Unable to serialize IndiaCPDocumentDetails Object to JSON");
-        }
+        return DLUtils.getJSONString(docDetails);
     }
 
     private boolean requiresAttachmentUpload(Method method) {

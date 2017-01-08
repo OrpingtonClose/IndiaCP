@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Random;
 import java.util.logging.Logger;
 
 /**
@@ -55,14 +56,12 @@ public class DLAttachmentUtils {
         return attachmentResponse;
     }
 
-    public String uploadAttachment(String docName, Object[] args) {
-        InputStream uploadedInputStream;
+    public String uploadAttachment(InputStream uploadedInputStream) {
         final File tempFile;
+        String tempFileName = "IndiaCPDocument_" + new Random().nextInt();
 
         try {
-            uploadedInputStream = (InputStream) args[args.length - 1];
-
-            tempFile = createTempFile(docName, ".zip", uploadedInputStream);
+            tempFile = createTempFile(tempFileName, ".zip", uploadedInputStream);
 
 
         } catch (Exception ex)
