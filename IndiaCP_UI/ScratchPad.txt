@@ -4,6 +4,7 @@ install definitelytype dependencies
 npm install --save @types/lodash
 npm install --save @types/angular-growl-v2
 npm install --save @types/angular-local-storage
+npm install --save @types/ng-file-upload
 
 Angular2
 http://blog.stevensanderson.com/2016/10/04/angular2-template-for-visual-studio/
@@ -69,3 +70,10 @@ PDF Signing
 http://www.rudeprogrammer.com/2016/01/overview-and-usage-of-azure-vault-key-with-itext/
 
 Read about sessionstorage and localstorage
+
+Angular File Upload
+https://github.com/nervgh/angular-file-upload
+https://github.com/danialfarid/ng-file-upload
+http://stackoverflow.com/questions/21628378/angularjs-display-blob-pdf-in-an-angular-app
+https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL
+http://stackoverflow.com/questions/33973097/displaying-a-selected-file-from-an-input-in-angularjs

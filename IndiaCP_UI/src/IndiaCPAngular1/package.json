@@ -14,6 +14,7 @@
     "@types/angular-growl-v2": "^0.7.0",
     "@types/angular-local-storage": "^0.1.33",
     "@types/angular-ui-bootstrap": "^0.13.37",
-    "@types/angular-ui-router": "^1.1.36"
+    "@types/angular-ui-router": "^1.1.36",
+    "@types/ng-file-upload": "^11.1.33"
   }
 }

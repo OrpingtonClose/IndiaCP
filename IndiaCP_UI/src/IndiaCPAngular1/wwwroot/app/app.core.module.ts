@@ -11,7 +11,8 @@
             "ngStorage",
             "angular-growl",
             "uuid4",
-            "LocalStorageModule"
+            "LocalStorageModule",
+            "ngFileUpload"
 
             /*
             *3rd party modules

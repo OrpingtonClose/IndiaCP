@@ -1,18 +1,22 @@
-(function (): void {
+module app.investments {
     "use strict";
+
+    interface IInvestmentsScope {
+        nodeType:string;
+    }
+
+    class InvestmentsController implements IInvestmentsScope {
+        static $inject = ["$state", "app.services.AuthenticationService", "localStorageService"];
+        nodeType:string;
+        constructor(protected $state: ng.ui.IStateService,
+            protected authService: app.services.IAuthenticationService,
+            protected localStorageService: ng.local.storage.ILocalStorageService, ) {
+                // this.nodeType = (this.localStorageService.get("nodeInfo") as app.models.NodeInfo).nodeType;
+        }
+    }
+
     angular
         .module("app.investments")
-        .config(config);
-
-    config.$inject = ["$stateProvider", "$urlRouterProvider"];
-    function config($stateProvider: ng.ui.IStateProvider, $urlRouterProvider: ng.ui.IUrlRouterProvider): void {
-        $stateProvider
-            .state("main.investments", {
-                cache: false,
-                url: "investments",
-                templateUrl: "app/investments/investments.html",
-                controller: "app.investments.InvestmentsController",
-                controllerAs: "vm"
-            });
-    }
-})();
+        .controller("app.investments.InvestmentsController",
+        InvestmentsController);
+} 

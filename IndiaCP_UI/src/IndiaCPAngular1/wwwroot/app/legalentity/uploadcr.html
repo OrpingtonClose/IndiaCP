@@ -1,0 +1,51 @@
+<div class="container">
+    <form>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div class="page-header">
+                        <h1>Credit Rating Data</h1></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating</label>
+                                <input class="form-control input-sm" type="text" ng-model="vm.crDetails.creditRating" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating Issued By</label>
+                                <input class="form-control input-sm" type="text" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating Issued Date</label>
+                                <input class="form-control input-sm" type="date" ng-model="vm.crDetails.creditRatingIssuanceDate" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating Effective Date</label>
+                                <input class="form-control" type="date" ng-model="vm.crDetails.creditRatingEffectiveDate" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating PDF Upload</label>
+                                <input type="file" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Credit Rating Doc Preview</h3></div>
+                                <div class="panel-body"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <button class="btn btn-default" ng-click="vm.uploadCR()" type="button">Sign and Save </button>
+                    <button class="btn btn-default" type="button">Cancel </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

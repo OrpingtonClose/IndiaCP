@@ -16,6 +16,10 @@
         "app.dashboard.cpissue",
         "app.dashboard.cpprogramcreate",
         "app.dashboard.cpprogramdetails",
+        "app.investments",
+        "app.legalentity",
+        "app.depository",
+        "app.ipa",
         "app.sitesettings",
         "app.usersettings",
         "app.users"

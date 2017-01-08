@@ -1,6 +1,4 @@
 <header role="banner" id="top" class="site-header">
-
-    <!-- Main navigation -->
     <nav class="navbar navbar-fixed-top navbar-primary">
         <div class="container">
 
@@ -23,14 +21,14 @@
             <div class="collapse navbar-collapse" id="mainMenu">
 
                 <ul class="nav navbar-nav">
-                    <li class="active">
-                        <a href="/orders/new">
+                    <li ng-class="vm.nodeType == 'ISSUER' ? 'active' : ''">
+                        <a ui-sref="main.dashboard">
                             <span class="glyphicon glyphicon-inbox offset-right" aria-hidden="true"></span>
                             <span class="hidden-sm">CP Programs</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="/pages">
+                    <li ng-class="vm.nodeType == 'INVESTOR' ? 'active' : ''">
+                        <a ui-sref="main.investments">
                             <span class="glyphicon glyphicon-align-left offset-right" aria-hidden="true"></span>
                             <span class="hidden-sm">Investments</span>
                         </a>
@@ -44,11 +42,11 @@
                             <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Upload CR</a></li>
-                            <li><a href="#">Upload BR</a></li>
+                            <li><a ui-sref="main.legalentity.uploadcr">Upload CR</a></li>
+                            <li><a ui-sref="main.legalentity.uploadbr">Upload BR</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#">Entity Details</a></li>
-                            <li><a href="#">Settlement Details</a></li>
+                            <li><a ui-sref="main.legalentity.setup">Entity Details</a></li>
+                            <li><a ui-sref="main.legalentity.setup">Settlement Details</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="#">Contact Details</a></li>
                         </ul>
@@ -59,6 +57,7 @@
                             <span class="visible-xs">Home</span>
                         </a>
                     </li>
+
                     <li class="navbar-icon">
                         <a href="#" title="Settings">
                             <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
@@ -72,6 +71,34 @@
                         </a>
                     </li>
                     <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i data-count="2" class="glyphicon glyphicon-bell notification-icon"></i>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="notification">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <span class="glyphicon glyphicon-upload fa-3x"></span>
+                                    </div>
+                                    <div class="media-body">
+                                       <a ui-sref="main.legalentity.uploadbr">You need to Upload BR documents.</a>
+                                    </div>
+                                </div>
+                            </li>
+                              <li class="notification">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <span class="glyphicon glyphicon-upload fa-3x"></span>
+                                    </div>
+                                    <div class="media-body">
+                                       <a ui-sref="main.legalentity.uploadcr">You need to Upload CR documents.</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><a ui-sref="main.legalentity.uploadbr"></a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="My account">
                             <span class="glyphicon glyphicon-user offset-right" aria-hidden="true"></span>
                             <span class="visible-xs">My account</span>
@@ -82,7 +109,8 @@
                             <li class="divider"></li>
                             <li>
                                 <a href="" ng-click="vm.logout()">
-                                    <span class="glyphicon glyphicon-off offset-right icon-shift-down" aria-hidden="true"></span>Sign out
+                                    <span class="glyphicon glyphicon-off offset-right icon-shift-down" aria-hidden="true"></span>Sign
+                                    out
                                 </a>
                             </li>
                         </ul>
@@ -97,7 +125,6 @@
         </div>
         <!-- .container -->
     </nav>
-
 </header>
 <ui-view></ui-view>
 <footer role="contentinfo" class="footer site-footer">

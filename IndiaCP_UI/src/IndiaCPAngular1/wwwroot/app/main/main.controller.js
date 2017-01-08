@@ -4,9 +4,11 @@ var app;
     (function (main) {
         "use strict";
         var MainController = (function () {
-            function MainController($state, authService) {
+            function MainController($state, authService, localStorageService) {
                 this.$state = $state;
                 this.authService = authService;
+                this.localStorageService = localStorageService;
+                this.nodeType = this.localStorageService.get("nodeInfo").nodeType;
             }
             MainController.prototype.logout = function () {
                 this.authService.logout();
@@ -14,7 +16,7 @@ var app;
             };
             return MainController;
         }());
-        MainController.$inject = ["$state", "app.services.AuthenticationService", "uuid4",];
+        MainController.$inject = ["$state", "app.services.AuthenticationService", "localStorageService"];
         angular
             .module("app.main")
             .controller("app.main.MainController", MainController);
