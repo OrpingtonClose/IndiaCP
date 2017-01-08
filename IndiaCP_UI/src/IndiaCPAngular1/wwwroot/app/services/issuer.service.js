@@ -29,11 +29,15 @@ var app;
     (function (services) {
         "use strict";
         var IssuerService = (function () {
-            function IssuerService($http, $httpParamSerializer) {
+            function IssuerService($http, localStorageService, $httpParamSerializer) {
                 this.$http = $http;
+                this.localStorageService = localStorageService;
                 this.$httpParamSerializer = $httpParamSerializer;
-                this.basePath = "http://52.172.46.253:8182/indiacp";
                 this.defaultHeaders = {};
+                var nodeInfo = this.localStorageService.get("nodeInfo");
+                var host = nodeInfo.host;
+                var port = nodeInfo.port;
+                this.basePath = "http://" + host + ":" + port + "/indiacp";
             }
             IssuerService.prototype.extendObj = function (objA, objB) {
                 for (var key in objB) {
@@ -282,7 +286,7 @@ var app;
             };
             return IssuerService;
         }());
-        IssuerService.$inject = ["$http", "$httpParamSerializer"];
+        IssuerService.$inject = ["$http", "localStorageService", "$httpParamSerializer"];
         angular
             .module("app.services")
             .service("app.services.IssuerService", IssuerService);

@@ -4,8 +4,7 @@
     var currentUser: app.models.CurrentUser = {
         username: "",
         password: ""
-
-    };
+   };
 
     angular
         .module("app")

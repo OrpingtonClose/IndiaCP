@@ -13,11 +13,13 @@ module app.services {
         protected basePath = "/api";
         public defaultHeaders: any = {};
         isAuthenticated: boolean;
+        accessToken: string = "";
+   
+        static $inject: string[] = ["$http", "$q", "growl",  "localStorageService", "$sessionStorage"];
 
-        static $inject: string[] = ["$http", "$q", "growl", "$sessionStorage"];
-
-        constructor(protected $http: ng.IHttpService, protected $q: ng.IQService, protected growl, protected $sessionStorage?: (d: any) => any) {
+        constructor(protected $http: ng.IHttpService, protected $q: ng.IQService, protected growl, protected localStorageService:ng.local.storage.ILocalStorageService, protected $sessionStorage?: (d: any) => any) {
             this.isAuthenticated = false;
+            this.localStorageService.set("accessToken","");
         }
 
         public login(userInfo: app.models.CurrentUser): ng.IHttpPromise<any> {
@@ -25,11 +27,14 @@ module app.services {
             this.$http.post(this.basePath + "/authentication", JSON.stringify(userInfo))
                 .then((response: any): void => {
                     this.isAuthenticated = true;
+                    this.localStorageService.set("accessToken",response.data.accessToken);
+                    this.localStorageService.set("nodeInfo",response.data.nodeInfo);
                     deferred.resolve(response);
                 }, (error: any): void => {
                     this.growl.error("Incorrect credentials. Try again.", { title: "Error!" });
                     console.log("Incorrect credentials. Try again.");
                     this.isAuthenticated = false;
+                    this.localStorageService.set("accessToken","");
                     deferred.reject({
                         data: error
                     });

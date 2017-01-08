@@ -42,13 +42,17 @@ module app.services {
      }
 
      class IssuerService implements IIssuerService {
-        protected basePath = "http://52.172.46.253:8182/indiacp";
+        protected basePath:string;
         public defaultHeaders : any = {};
 
-        static $inject: string[] = ["$http", "$httpParamSerializer"];
+        static $inject: string[] = ["$http", "localStorageService", "$httpParamSerializer"];
 
-        constructor(protected $http: ng.IHttpService, protected $httpParamSerializer?: (d: any) => any) {
-        }
+        constructor(protected $http: ng.IHttpService, protected localStorageService:ng.local.storage.ILocalStorageService, protected $httpParamSerializer?: (d: any) => any) {
+            var nodeInfo:app.models.NodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
+            var host:string = nodeInfo.host;
+            var port:number = nodeInfo.port;
+            this.basePath = `http://${host}:${port}/indiacp`;
+    }
 
         private extendObj<T1,T2>(objA: T1, objB: T2) {
             for(let key in objB){

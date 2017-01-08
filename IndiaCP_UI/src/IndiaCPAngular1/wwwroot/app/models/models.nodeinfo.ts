@@ -2,8 +2,8 @@
     "use strict";
 
     export class NodeInfo {
-        public NodeType: string;
-        public Host: string;
-        public Port: number;
+        public nodeType: string;
+        public host: string;
+        public port: number;
     }
 }

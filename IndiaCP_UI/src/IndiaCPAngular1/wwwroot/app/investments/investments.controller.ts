@@ -13,6 +13,6 @@
                 templateUrl: "app/investments/investments.html",
                 controller: "app.investments.InvestmentsController",
                 controllerAs: "vm"
-            })
+            });
     }
 })();

@@ -10,7 +10,8 @@
         "ngCookies",
         "ngStorage",
         "angular-growl",
-        "uuid4"
+        "uuid4",
+        "LocalStorageModule"
     ]);
 })();
 //# sourceMappingURL=app.core.module.js.map

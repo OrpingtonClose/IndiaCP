@@ -3,6 +3,7 @@ using IndiaCPAngular1.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 
 namespace IndiaCPAngular1.Controllers
@@ -43,8 +44,12 @@ namespace IndiaCPAngular1.Controllers
                 nodeInfo.NodeType = Environment.GetEnvironmentVariable("NODETYPE");
                 nodeInfo.Host = Environment.GetEnvironmentVariable("HOST");
                 nodeInfo.Port = Int32.Parse(Environment.GetEnvironmentVariable("PORT"));
+                Dictionary<string, object> info = new Dictionary<string, object>();
+                info["nodeInfo"] = nodeInfo;
+                info["accessToken"] = tokenResponse.AccessToken;
                 _logger.LogInformation(tokenResponse.Json.ToString());
-                return new OkObjectResult(nodeInfo);
+
+                return new OkObjectResult(info);
             }
         }
     }

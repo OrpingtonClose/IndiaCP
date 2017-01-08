@@ -3,6 +3,7 @@ http://www.hanselman.com/blog/ControlHowYourBowerPackagesAreInstalledWithAGulpfi
 install definitelytype dependencies
 npm install --save @types/lodash
 npm install --save @types/angular-growl-v2
+npm install --save @types/angular-local-storage
 
 Angular2
 http://blog.stevensanderson.com/2016/10/04/angular2-template-for-visual-studio/
@@ -66,3 +67,5 @@ http://bridge.net/
 
 PDF Signing
 http://www.rudeprogrammer.com/2016/01/overview-and-usage-of-azure-vault-key-with-itext/
+
+Read about sessionstorage and localstorage
