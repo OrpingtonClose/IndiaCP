@@ -10,10 +10,11 @@ var app;
                 this.authService = authService;
             }
             LoginController.prototype.login = function () {
+                var ctrl = this;
                 this.authService.login(this.userCredentials).then(function (result) {
-                    this.$state.go("app.dashboard");
+                    ctrl.$state.go("main.dashboard");
                 }, function (error) {
-                    this.$state.go("login");
+                    ctrl.$state.go("login");
                 });
             };
             return LoginController;

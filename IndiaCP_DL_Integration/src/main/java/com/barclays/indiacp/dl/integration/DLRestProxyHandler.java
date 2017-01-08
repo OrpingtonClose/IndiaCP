@@ -86,21 +86,17 @@ public class DLRestProxyHandler implements InvocationHandler {
     }
 
     private String setDocHash(Object[] args, String docHash) {
-        List<IndiaCPDocumentDetails> docDetails = null;
+        IndiaCPDocumentDetails docDetails = null;
         for (Object arg : args) {
-            if (arg instanceof List<?>
-                    && ((List) arg).size() >= 1
-                    && ((List) arg).get(0) instanceof IndiaCPDocumentDetails) {
-                docDetails = (List<IndiaCPDocumentDetails>) arg;
+            if (arg instanceof IndiaCPDocumentDetails) {
+                docDetails = (IndiaCPDocumentDetails) arg;
             }
         }
         if (docDetails == null) {
             throw new RuntimeException("Expected IndiaCPDocumentDetails to be posted along with the document to be uploaded. But none found! Check the post api call.");
         }
 
-        for (IndiaCPDocumentDetails docDetail: docDetails) {
-            docDetail.setDocHash(docHash);
-        }
+        docDetails.setDocHash(docHash);
 
         ObjectMapper mapper = new ObjectMapper();
         try {

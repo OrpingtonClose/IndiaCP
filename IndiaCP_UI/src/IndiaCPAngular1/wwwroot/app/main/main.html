@@ -26,18 +26,33 @@
                     <li class="active">
                         <a href="/orders/new">
                             <span class="glyphicon glyphicon-inbox offset-right" aria-hidden="true"></span>
-                            <span class="hidden-sm">Orders</span>
+                            <span class="hidden-sm">CP Programs</span>
                         </a>
                     </li>
                     <li>
                         <a href="/pages">
                             <span class="glyphicon glyphicon-align-left offset-right" aria-hidden="true"></span>
-                            <span class="hidden-sm">Pages</span>
+                            <span class="hidden-sm">Investments</span>
                         </a>
                     </li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="My account">
+                           Legal Entity Setup
+                            <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Upload CR</a></li>
+                            <li><a href="#">Upload BR</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">Entity Details</a></li>
+                            <li><a href="#">Settlement Details</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">Contact Details</a></li>
+                        </ul>
+                    </li>
                     <li class="navbar-icon">
                         <a href="#" target="_blank" title="Open in new tab">
                             <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
@@ -66,8 +81,8 @@
                             <li class="dropdown-header">James Brown</li>
                             <li class="divider"></li>
                             <li>
-                                <a href="/">
-                                    <span class="glyphicon glyphicon-off offset-right icon-shift-down" aria-hidden="true"></span>                                    Sign out
+                                <a href="" ng-click="vm.logout()">
+                                    <span class="glyphicon glyphicon-off offset-right icon-shift-down" aria-hidden="true"></span>Sign out
                                 </a>
                             </li>
                         </ul>

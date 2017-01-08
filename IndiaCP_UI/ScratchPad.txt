@@ -53,3 +53,16 @@ http://cgross.github.io/angular-notify/demo/
 http://jvandemo.github.io/angular-growl-notifications/examples/fading-animation
 http://tamerayd.in/ngToast/#
 https://code.ciphertrick.com/2015/04/05/easy-notifications-in-angularjs-applications/
+
+C# to TypeScript 
+https://frhagn.github.io/Typewriter/
+https://visualstudiomagazine.com/articles/2016/05/16/typescript-class-with-csharp.aspx
+http://type.litesolutions.net/Tutorials
+https://marketplace.visualstudio.com/items?itemName=NhaBuiDuc.TypescriptSyntaxPaste
+http://type.litesolutions.net/
+https://marketplace.visualstudio.com/items?itemName=frhagn.Typewriter
+http://bridge.net/
+
+
+PDF Signing
+http://www.rudeprogrammer.com/2016/01/overview-and-usage-of-azure-vault-key-with-itext/

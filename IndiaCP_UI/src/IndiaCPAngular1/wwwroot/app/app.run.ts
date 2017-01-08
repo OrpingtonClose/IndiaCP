@@ -28,7 +28,7 @@
         $rootScope.$on("$routeChangeError", (): void => { });
  
         $rootScope.$on("$stateChangeStart", function (event:ng.IAngularEvent, toState:any):void {
-           if (!authService.isAuthenticated() && toState.name !== "login") {
+           if (!authService.isAuthenticated && toState.name !== "login") {
                console.log("DENY : Redirecting to Login");
                event.preventDefault();
                $timeout(function () {
