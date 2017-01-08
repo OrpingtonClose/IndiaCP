@@ -35,12 +35,13 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @POST
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     fun issueCPProgram(indiaCPProgramJSON: IndiaCPProgram): Response {
         try
         {
             val stx = services.invokeFlowAsync(IssueCPProgramWithInOrgLimitFlow::class.java, indiaCPProgramJSON).resultFuture.get()
             logger.info("CP Program Issued within ORG \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
+            return Response.status(Response.Status.OK).entity(getCPProgram(indiaCPProgramJSON.programId)).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating Org Borrowing Program deal: ${ex.toString()}")
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
@@ -75,6 +76,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
      */
     @POST
     @Path("addISIN/{cpProgramId}/{isin}")
+    @Produces(MediaType.APPLICATION_JSON)
     fun addISIN(@PathParam("cpProgramId") cpProgramId: String,
                 @PathParam("isin") isin: String
     ): Response
@@ -83,25 +85,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
         {
             val stx = services.invokeFlowAsync(AddIsinToCPProgramFlow::class.java, cpProgramId, isin).resultFuture.get()
             logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).build()
-        } catch (ex: Throwable) {
-            logger.info("Exception when creating deal: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
-        }
-    }
-
-    @POST
-    @Path("issueCPWithinCPProgram/{cpProgramId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    fun issueCPWintinCPProgram(@PathParam("cpProgramId") cpProgramId: String,
-                               newCP: IndiaCPIssue
-                               ): Response {
-        try {
-
-            val stx = services.invokeFlowAsync(IssueCPWithinCPProgramFlow::class.java, newCP).resultFuture.get()
-            logger.info("Issue CP Within a CP Program\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-
-            return Response.status(Response.Status.OK).build()
+            return Response.status(Response.Status.OK).entity(getCPProgram(cpProgramId)).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
@@ -225,12 +209,13 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @GET
     @Path("fetchAllCPProgram")
     @Produces(MediaType.APPLICATION_JSON)
-    fun fetchAllCPProgram(): Array<IndiaCommercialPaperProgram.State>?  {
+    fun fetchAllCPProgram(): Response  {
         try {
-            return getAllCPProgram()
+            val cpProgramArray = getAllCPProgram()
+            return Response.status(Response.Status.OK).entity(cpProgramArray).build()
         } catch (ex: Throwable) {
             logger.info("Exception when fetching ecp: ${ex.toString()}")
-            return null
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
         }
     }
 
@@ -241,10 +226,16 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     }
 
     @GET
-    @Path("fetchCPProgram/{ref}")
+    @Path("fetchCPProgram/{cpProgramId}")
     @Produces(MediaType.APPLICATION_JSON)
-    fun fetchCPProgramWithRef(@PathParam("ref") ref: String): IndiaCommercialPaperProgram.State? {
-        return getCPProgram(ref)
+    fun fetchCPProgram(@PathParam("cpProgramId") cpProgramId: String): Response {
+        try {
+            val cpProgram = getCPProgram(cpProgramId)
+            return Response.status(Response.Status.OK).entity(cpProgram).build()
+        } catch (ex: Throwable) {
+            logger.info("Exception when fetching ecp: ${ex.toString()}")
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+        }
     }
 
     private fun getCPProgram(ref: String): IndiaCommercialPaperProgram.State? {
@@ -264,7 +255,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     @Path("addDocs/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
     fun addDocs(@PathParam("cpProgramId") cpProgramId: String,
-                              docDetails:ArrayList<IndiaCPDocumentDetails>): Response {
+                docDetails:ArrayList<IndiaCPDocumentDetails>): Response {
         try
         {
             //Lets find the trigger type so that we rea able to

@@ -1,7 +1,7 @@
 module app.models {
     "use strict";
 
-    export interface IndiaCPIssue {
+    export class IndiaCPIssue {
         /**
          * Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program
          */

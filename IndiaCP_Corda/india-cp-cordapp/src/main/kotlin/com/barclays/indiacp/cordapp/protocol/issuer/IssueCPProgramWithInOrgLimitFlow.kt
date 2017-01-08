@@ -83,15 +83,18 @@ class IssueCPProgramWithInOrgLimitFlow(val newCPProgram: IndiaCPProgram) : FlowL
                         newCPProgram.issuerId, newCPProgram.issuerName,
                         newCPProgram.issueCommencementDate.toInstant(),
                         newCPProgram.programSize.DOLLARS `issued by` DUMMY_CASH_ISSUER,
-                        newCPProgram.programAllocatedValue.DOLLARS `issued by` DUMMY_CASH_ISSUER,
+                        if(newCPProgram.programAllocatedValue != null) (newCPProgram.programAllocatedValue!!.DOLLARS `issued by` DUMMY_CASH_ISSUER) else (0.DOLLARS `issued by` DUMMY_CASH_ISSUER),
                         Currency.getInstance("INR"), //TODO fix the hardcoding to INR and DOLLAR
                         Instant.now() + newCPProgram.maturityDays.days, newCPProgram.ipaId, newCPProgram.ipaName,
                         newCPProgram.depositoryId, newCPProgram.depositoryName,
-                        newCPProgram.isin, newCPProgram.isinGenerationRequestDocId,
+                        newCPProgram.isin,
+                        newCPProgram.isinGenerationRequestDocId,
                         newCPProgram.ipaVerificationRequestDocId,
-                        newCPProgram.ipaCertificateDocId, newCPProgram.corporateActionFormDocId,
+                        newCPProgram.ipaCertificateDocId,
+                        newCPProgram.corporateActionFormDocId,
                         newCPProgram.allotmentLetterDocId,
                         CP_PROGRAM_FLOW_STAGES.ISSUE_CP_PROGRAM.endStatus, //TODO: Add Status Enum
+                        "", //TODO: ModifiedBy should be the logged in user
                         Instant.now(),
                         Integer(0)),
                 notary = notary.notaryIdentity)

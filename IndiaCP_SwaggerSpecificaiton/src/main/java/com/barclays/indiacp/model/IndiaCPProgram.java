@@ -35,9 +35,9 @@ import java.util.Date;
 /**
  * IndiaCPProgram
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-04T11:02:40.426Z")
 public class IndiaCPProgram   {
-  @JsonProperty("program_id")
+  @JsonProperty("programId")
   private String programId = null;
 
   @JsonProperty("name")
@@ -52,52 +52,52 @@ public class IndiaCPProgram   {
   @JsonProperty("isin")
   private String isin = null;
 
-  @JsonProperty("issuer_id")
+  @JsonProperty("issuerId")
   private String issuerId = null;
 
-  @JsonProperty("issuer_name")
+  @JsonProperty("issuerName")
   private String issuerName = null;
 
-  @JsonProperty("issue_commencement_date")
+  @JsonProperty("issueCommencementDate")
   private Date issueCommencementDate = null;
 
-  @JsonProperty("program_size")
+  @JsonProperty("programSize")
   private Integer programSize = null;
 
-  @JsonProperty("program_allocated_value")
+  @JsonProperty("programAllocatedValue")
   private Double programAllocatedValue = null;
 
-  @JsonProperty("program_currency")
+  @JsonProperty("programCurrency")
   private String programCurrency = null;
 
-  @JsonProperty("maturity_days")
+  @JsonProperty("maturityDays")
   private Integer maturityDays = null;
 
-  @JsonProperty("ipa_id")
+  @JsonProperty("ipaId")
   private String ipaId = null;
 
-  @JsonProperty("ipa_name")
+  @JsonProperty("ipaName")
   private String ipaName = null;
 
-  @JsonProperty("depository_id")
+  @JsonProperty("depositoryId")
   private String depositoryId = null;
 
-  @JsonProperty("depository_name")
+  @JsonProperty("depositoryName")
   private String depositoryName = null;
 
-  @JsonProperty("isin_generation_request_doc_id")
+  @JsonProperty("isinGenerationRequestDocId")
   private String isinGenerationRequestDocId = null;
 
-  @JsonProperty("ipa_verification_request_doc_id")
+  @JsonProperty("ipaVerificationRequestDocId")
   private String ipaVerificationRequestDocId = null;
 
-  @JsonProperty("ipa_certificate_doc_id")
+  @JsonProperty("ipaCertificateDocId")
   private String ipaCertificateDocId = null;
 
-  @JsonProperty("corporate_action_form_doc_id")
+  @JsonProperty("corporateActionFormDocId")
   private String corporateActionFormDocId = null;
 
-  @JsonProperty("allotment_letter_doc_id")
+  @JsonProperty("allotmentLetterDocId")
   private String allotmentLetterDocId = null;
 
   @JsonProperty("status")
@@ -106,10 +106,10 @@ public class IndiaCPProgram   {
   @JsonProperty("version")
   private Integer version = null;
 
-  @JsonProperty("modified_by")
+  @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
-  @JsonProperty("last_modified")
+  @JsonProperty("lastModified")
   private Date lastModified = null;
 
   public IndiaCPProgram programId(String programId) {

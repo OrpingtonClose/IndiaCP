@@ -35,78 +35,78 @@ import java.util.Date;
 /**
  * IndiaCPIssue
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-04T11:02:40.426Z")
 public class IndiaCPIssue   {
-  @JsonProperty("cp_program_id")
+  @JsonProperty("cpProgramId")
   private String cpProgramId = null;
 
-  @JsonProperty("cp_trade_id")
+  @JsonProperty("cpTradeId")
   private String cpTradeId = null;
 
-  @JsonProperty("book_id")
+  @JsonProperty("bookId")
   private String bookId = null;
 
   @JsonProperty("isin")
   private String isin = null;
 
-  @JsonProperty("trader_id")
+  @JsonProperty("traderId")
   private String traderId = null;
 
-  @JsonProperty("issuer_id")
+  @JsonProperty("issuerId")
   private String issuerId = null;
 
-  @JsonProperty("issuer_name")
+  @JsonProperty("issuerName")
   private String issuerName = null;
 
-  @JsonProperty("beneficiary_id")
+  @JsonProperty("beneficiaryId")
   private String beneficiaryId = null;
 
-  @JsonProperty("beneficiary_name")
+  @JsonProperty("beneficiaryName")
   private String beneficiaryName = null;
 
-  @JsonProperty("ipa_id")
+  @JsonProperty("ipaId")
   private String ipaId = null;
 
-  @JsonProperty("ipa_name")
+  @JsonProperty("ipaName")
   private String ipaName = null;
 
-  @JsonProperty("depository_id")
+  @JsonProperty("depositoryId")
   private String depositoryId = null;
 
-  @JsonProperty("depository_name")
+  @JsonProperty("depositoryName")
   private String depositoryName = null;
 
-  @JsonProperty("trade_date")
+  @JsonProperty("tradeDate")
   private Date tradeDate = null;
 
-  @JsonProperty("value_date")
+  @JsonProperty("valueDate")
   private Date valueDate = null;
 
-  @JsonProperty("maturity_days")
+  @JsonProperty("maturityDays")
   private Integer maturityDays = null;
 
   @JsonProperty("currency")
   private String currency = null;
 
-  @JsonProperty("facevalue_per_unit")
+  @JsonProperty("facevaluePerUnit")
   private Integer facevaluePerUnit = null;
 
-  @JsonProperty("no_of_units")
+  @JsonProperty("noOfUnits")
   private Integer noOfUnits = null;
 
   @JsonProperty("rate")
   private Float rate = null;
 
-  @JsonProperty("issuer_settlement_details")
+  @JsonProperty("issuerSettlementDetails")
   private SettlementDetails issuerSettlementDetails = null;
 
-  @JsonProperty("investor_settlement_details")
+  @JsonProperty("investorSettlementDetails")
   private SettlementDetails investorSettlementDetails = null;
 
-  @JsonProperty("ipa_settlement_details")
+  @JsonProperty("ipaSettlementDetails")
   private SettlementDetails ipaSettlementDetails = null;
 
-  @JsonProperty("deal_confirmation_doc_id")
+  @JsonProperty("dealConfirmationDocId")
   private String dealConfirmationDocId = null;
 
   @JsonProperty("status")
@@ -115,10 +115,10 @@ public class IndiaCPIssue   {
   @JsonProperty("version")
   private Integer version = null;
 
-  @JsonProperty("modified_by")
+  @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
-  @JsonProperty("last_modified")
+  @JsonProperty("lastModified")
   private Date lastModified = null;
 
   public IndiaCPIssue cpProgramId(String cpProgramId) {
@@ -433,10 +433,10 @@ public class IndiaCPIssue   {
   }
 
    /**
-   * Face Value per Unit * No_Of_Units is the amount that will be paid by the Issuer to the Investor on redemption
+   * Face Value per Unit * NoOfUnits is the amount that will be paid by the Issuer to the Investor on redemption
    * @return facevaluePerUnit
   **/
-  @ApiModelProperty(value = "Face Value per Unit * No_Of_Units is the amount that will be paid by the Issuer to the Investor on redemption")
+  @ApiModelProperty(value = "Face Value per Unit * NoOfUnits is the amount that will be paid by the Issuer to the Investor on redemption")
   public Integer getFacevaluePerUnit() {
     return facevaluePerUnit;
   }

@@ -55,27 +55,9 @@ class IssueCPWithinCPProgramFlow(val newCP: IndiaCPIssue) : FlowLogic<SignedTran
         val ipa = getPartyByName(newCP.ipaId)
         val depository = getPartyByName(newCP.depositoryId)
 
-
-
-
-        //For now, we are only testing so will not issue CP.
-//        val tx = IndiaCommercialPaper().generateIssue(
-//                issuer = issuer,
-//                beneficiary = beneficiary,
-//                ipa = ipa,
-//                depository = depository,
-//                notary = notary.notaryIdentity,
-//                cpProgramID = newCP.cpProgramID,
-//                cpTradeID = newCP.cpTradeID,
-//                tradeDate = newCP.tradeDate,
-//                valueDate = newCP.valueDate,
-//                faceValue = newCP.faceValue.DOLLARS `issued by` DUMMY_CASH_ISSUER,
-//                maturityDate = Instant.now() + newCP.maturityDays.days,
-//                isin = newCP.isin)
-
         val indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateandRef(newCP.cpProgramId)
 
-        val newProgAllowValue: Amount<Issued<Currency>> = indiaCPProgramSF.state.data.programAllocatedValue.plus((newCP.facevaluePerUnit * newCP.noOfUnits).DOLLARS `issued by` DUMMY_CASH_ISSUER);
+        val newProgAllowValue: Amount<Issued<Currency>> = indiaCPProgramSF.state.data.programAllocatedValue!!.plus((newCP.facevaluePerUnit * newCP.noOfUnits).DOLLARS `issued by` DUMMY_CASH_ISSUER);
 
         if(newProgAllowValue.quantity > indiaCPProgramSF.state.data.programSize.quantity)
         {
@@ -83,14 +65,10 @@ class IssueCPWithinCPProgramFlow(val newCP: IndiaCPIssue) : FlowLogic<SignedTran
             throw InsufficientBalanceException(newProgAllowValue.minus(indiaCPProgramSF.state.data.programSize))
         }
 
-
         println("GOT ref id for program : " + indiaCPProgramSF.state.data.programId + ", having allocated amt of " + indiaCPProgramSF.state.data.programAllocatedValue
         + " and new allocated value will be " + newProgAllowValue)
 
         val tx = IndiaCommercialPaperProgram().createCPIssueWithinCPProgram(indiaCPProgramSF, issuer, beneficiary, ipa, depository, notary.notaryIdentity,newProgAllowValue, newCP, CP_PROGRAM_FLOW_STAGES.ISSUE_CP.endStatus)
-
-
-
 
         // Requesting timestamping, all CP must be timestamped.
         tx.setTime(Instant.now(), 30.seconds)

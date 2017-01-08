@@ -2,12 +2,30 @@ module app.dashboard.cpprogramdetails {
     "use strict";
 
     interface ICPProgramDetailsScope {
-        issueCP(): void;
+        fetchCP(): void;
     }
 
     class CPProgramDetailsController implements ICPProgramDetailsScope {
         isinDocPDF: string;
-        public issueCP(): void {
+        cpprogram: any;
+        static $inject = ["$uibModalInstance", "app.services.IssuerService", "programId"];
+        constructor(
+            protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
+            protected issuerService: app.services.IIssuerService,
+            protected cpProgramId: any) {
+                this.fetchCP();
+             }
+        public fetchCP(): void {
+            this.issuerService.fetchCPProgram(this.cpProgramId).then((response): void => {
+                this.cpprogram = response.data;
+                this.cpprogram.maturityDate = new Date(this.cpprogram.maturityDate.epochSecond*1000);
+            }, (error: any): void => {
+                console.log("CPProgram could not be fetched.");
+            });
+        }
+
+        public cancel(): void {
+            this.$uibModalInstance.close();
         }
     }
 

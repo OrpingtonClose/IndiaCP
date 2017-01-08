@@ -1,7 +1,7 @@
 module app.models {
     "use strict";
 
-    export interface IndiaCPProgram {
+    export class IndiaCPProgram {
         /**
          * Unique identifier representing a specific CP Program raised by an Issuer
          */

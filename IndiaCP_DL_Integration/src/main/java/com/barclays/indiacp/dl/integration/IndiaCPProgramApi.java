@@ -33,7 +33,7 @@ public interface IndiaCPProgramApi {
     @GET
     @Path("fetchCPProgram/{cpProgramId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public IndiaCPProgram fetchCPProgram(@PathParam("cpProgramId") String cpProgramId);
+    public Response fetchCPProgram(@PathParam("cpProgramId") String cpProgramId);
 
     @POST
     @Path("addISIN/{cpProgramId}/{isin}")

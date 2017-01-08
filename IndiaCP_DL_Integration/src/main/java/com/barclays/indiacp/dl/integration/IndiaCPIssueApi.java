@@ -20,10 +20,10 @@ import java.util.ArrayList;
 public interface IndiaCPIssueApi {
 
     @POST
-    @Path("issueCP/{cpProgramId}")
+    @Path("issueCP")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response issueCP(@PathParam("cpProgramId") String cpProgramId, String jsonBody);
+    public Response issueCP(String jsonBody);
 
     @POST
     @Path("addSettlementDetails/{cpIssueId}")

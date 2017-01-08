@@ -34,21 +34,21 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * PaymentAccountDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-03T07:18:23.010Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-04T11:02:40.426Z")
 public class PaymentAccountDetails   {
-  @JsonProperty("creditor_name")
+  @JsonProperty("creditorName")
   private String creditorName = null;
 
-  @JsonProperty("bank_account_no")
+  @JsonProperty("bankAccountNo")
   private String bankAccountNo = null;
 
-  @JsonProperty("bank_account_type")
+  @JsonProperty("bankAccountType")
   private String bankAccountType = null;
 
-  @JsonProperty("bank_name")
+  @JsonProperty("bankName")
   private String bankName = null;
 
-  @JsonProperty("rtgs_ifsc_code")
+  @JsonProperty("rtgsIfscCode")
   private String rtgsIfscCode = null;
 
   public PaymentAccountDetails creditorName(String creditorName) {

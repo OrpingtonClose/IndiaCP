@@ -1,7 +1,7 @@
 module app.models {
     "use strict";
 
-     export interface IndiaCPDocumentDetails {
+     export class IndiaCPDocumentDetails {
         /**
          * Unique identifier of the CP Program that this document is associated with
          */
