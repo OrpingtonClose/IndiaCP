@@ -16,9 +16,10 @@ public class IndiaCPIssueController {
     @POST
     @Path("issueCPIssue")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response issueCPIssue(IndiaCPIssue indiaCPIssue) {
-        String contractAddress = CakeshopUtils.createContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), indiaCPIssue);
-        return Response.status(Response.Status.OK).build();
+    public String issueCPIssue(IndiaCPIssue cpIssue, String cpProgAddr) {
+        String addr = CakeshopUtils.createContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), cpIssue, cpProgAddr);
+        System.out.println("Newly created contract mined at: "+addr);
+        return addr;
     }
 
     @GET

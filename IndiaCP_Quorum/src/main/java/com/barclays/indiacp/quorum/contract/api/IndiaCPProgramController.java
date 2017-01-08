@@ -4,6 +4,7 @@ import com.barclays.indiacp.model.IndiaCPIssue;
 import com.barclays.indiacp.model.IndiaCPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 import com.jpmorgan.cakeshop.client.model.Contract;
+import com.jpmorgan.cakeshop.client.model.req.ContractMethodCallCommand;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -21,13 +22,15 @@ import java.util.List;
 public class IndiaCPProgramController {
 
     Request request;
-    String userId;
+    String userId; // is this the owner's address?
+
+    String [] METHODS = {"fetchCPProgramTradeDetails", "fetchCPProgramDocuments", "fetchCPProgramParties", "fetchCPProgramStatus", "issueCP"}; //temporarily hardcoded
 
     @POST
     @Path("issueCPProgram")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String issueCPProgram(CPProgram cpProgramArgs) {
-        String addr = CakeshopUtils.createContract(this.getClass().getSimpleName(), cpProgramArgs);
+    public String issueCPProgram(IndiaCPProgram indiaCPProgramArgs) {
+        String addr = CakeshopUtils.createContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), indiaCPProgramArgs, userId);
         System.out.println("Newly created contract mined at: "+addr);
         return addr;
     }
@@ -53,29 +56,24 @@ public class IndiaCPProgramController {
         });*/
 
         //Temporarily hardcoded all fetch methods
-        String[] readMethodNames = {"fetchCPProgramTradeDetails", "fetchCPProgramDocuments",
-                "fetchCPProgramParties", "fetchCPProgramStatus"};
+        String[] readMethodNames = METHODS;
 
         for(Contract contract: contractList){
             indiaCPProgramArrayList.add(CakeshopUtils.readContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), contract.getAddress(), IndiaCPProgram.class, readMethodNames));
         }
-
         return indiaCPProgramArrayList;
     }
 
     @GET
     @Path("fetchCPProgram/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response fetchCPProgram(@PathParam("cpProgramId") String cpProgramId) {
+    public IndiaCPProgram fetchCPProgram(@PathParam("cpProgramId") String cpProgramId) {
         //TODO Get contract address from mapping service
         String contractAddress = cpProgramId;
 
-        String[] readMethodNames = {"fetchCPProgramTradeDetails", "fetchCPProgramDocuments",
-                "fetchCPProgramParties", "fetchCPProgramStatus"};
+        String[] readMethodNames = METHODS;
 
-        IndiaCPProgram indiaCPProgram = CakeshopUtils.readContract(this.getClass().getSimpleName(), contractAddress, IndiaCPProgram.class, readMethodNames);
-        return Response.status(Response.Status.OK).build();
-
+        return CakeshopUtils.readContract(this.getClass().getSimpleName(), contractAddress, IndiaCPProgram.class, readMethodNames);
     }
 
 
@@ -89,14 +87,23 @@ public class IndiaCPProgramController {
     @POST
     @Path("issueCP/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response issueCP(@PathParam("cpProgramId") String cpProgramId, CPIssue cpIssue) {
-        //get cp program contract by program id
-        // read allocated value
-        // do checks:
-            // cpIssue.amount < cpProg.alloc_val
-        // issueCP()
-            // if committed: reduce alloc_val, append cpIssueId to cpProg
-            // else: throw exception, log error
+    public String issueCP(@PathParam("cpProgramId") String cpProgramId, IndiaCPIssue cpIssue) {
+        IndiaCPProgram cpProg = fetchCPProgram(cpProgramId);
+        String cpProgAddr = resolveAddrFromProgID(cpProgramId);
+        String issuedCpAddr="";
+
+        if (cpIssue.getRate() <= cpProg.getProgramAllocatedValue()) {
+            issuedCpAddr = new IndiaCPIssueController().issueCPIssue(cpIssue, cpProgAddr); //is this the correct way to call this?
+            if (null != issuedCpAddr && ""!=issuedCpAddr) {
+                Object[] args = {cpIssue.getRate(), issuedCpAddr};
+                CakeshopUtils.transactContract(cpProgAddr, "issueCP", args); //embed issueAddr in cpProg, reduce allocation value
+            }
+            else {
+                // else: throw exception, log error, whatever
+                issuedCpAddr = "ERROR";
+            }
+        }
+        return issuedCpAddr;
     }
 
     @POST
@@ -115,5 +122,7 @@ public class IndiaCPProgramController {
         this.request = request;
         this.userId = ""; //TODO: Parse the userId from the Request Header
     }
+
+    public String resolveAddrFromProgID(String progId) {return "TODO"; };
 
 }

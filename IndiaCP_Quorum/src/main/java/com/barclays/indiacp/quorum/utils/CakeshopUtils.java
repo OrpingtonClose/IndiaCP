@@ -2,8 +2,6 @@ package com.barclays.indiacp.quorum.utils;
 
 import com.barclays.indiacp.quorum.contract.code.SolidityContract;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCodeFactory;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.jpmorgan.cakeshop.client.ClientManager;
@@ -51,28 +49,19 @@ public class CakeshopUtils {
     }
 
     //returns address of newly mined contract
-    public static String createContract(String contractName, Object contractModel) {
-        APIResponse<APIData<TransactionResult>, TransactionResult> res = contractApi.create(getContractCreateCommand(contractName, contractModel));
-        String txnID = res.getData().getId();
-        //wait till commit happens - TODO: check if this commit is to contractregistry or actual chain.
-        final ListenableFuture<Transaction> txFuture = cakeshopManager.waitForTx(txnID);
-        txFuture.addListener(() -> {
-                try { System.out.println("Transaction committed:\n" + txFuture.get().toString()); } //use as logger
-                catch (InterruptedException|ExecutionException e) { e.printStackTrace(); }
-                },
-                MoreExecutors.directExecutor());
-
-        return getAddrFromTxId(txnID);
+    public static String createContract(String contractName, Object contractModel, String owner) {
+        APIResponse<APIData<TransactionResult>, TransactionResult> res = contractApi.create(getContractCreateCommand(contractName, contractModel, owner));
+        return runAsyncTransaction(res);
     }
 
     // creates argument object to create contract.
-    public static ContractCreateCommand getContractCreateCommand(String contractName, Object contractModel) {
+    public static ContractCreateCommand getContractCreateCommand(String contractName, Object contractModel, String owner) {
         SolidityContract contractCode = SolidityContractCodeFactory.getInstance(contractName);
         ContractCreateCommand contractCreateCommand = new ContractCreateCommand();
         contractCreateCommand.setCode(contractCode.getContractCode());
         contractCreateCommand.setBinary(contractCode.getContractBinary());
         contractCreateCommand.setCodeType(contractCode.getCodeType());
-        contractCreateCommand.setFrom("0x2e219248f44546d966808cdd20cb6c36df6efa82");
+        contractCreateCommand.setFrom(owner); //TODO
         contractCreateCommand.setArgs(contractModel == null? null: IndiaCPContractUtils.getConstructorArgs(contractCode, contractModel));
         return contractCreateCommand;
 
@@ -100,17 +89,38 @@ public class CakeshopUtils {
 
 
     public static <T>  T readContract(String contractName, String contractAddress, Class<T> contractModel, String... readMethodNames) {
-
         T contractModelObject = null;
         for(int i=0; i<readMethodNames.length; i++){
-        APIResponse<List<Object>, Object> apiResponse = contractApi.read(getContractMethodCallCommand(contractAddress, readMethodNames[i]));
+            APIResponse<List<Object>, Object> apiResponse = contractApi.read(getContractMethodCallCommand(contractAddress, readMethodNames[i]));
 
-        contractModelObject = IndiaCPContractUtils.populateContractModel(contractModelObject, SolidityContractCodeFactory.getInstance(contractName),
-                readMethodNames[i],
-                contractModel,
-                apiResponse.getApiData());
+            contractModelObject = IndiaCPContractUtils.populateContractModel(contractModelObject, SolidityContractCodeFactory.getInstance(contractName),
+                    readMethodNames[i],
+                    contractModel,
+                    apiResponse.getApiData());
         }
         return contractModelObject;
+    }
+
+
+    public static String transactContract(String contractAddress, String methodName, Object[] args) {
+        ContractMethodCallCommand call = getContractMethodCallCommand(contractAddress, methodName);
+        call.setArgs(args);
+        APIResponse<APIData<TransactionResult>, TransactionResult> apiResponse = contractApi.transact(call);
+        return runAsyncTransaction(apiResponse);
+    }
+
+
+    //returns txnID of mined async transaction
+    public static String runAsyncTransaction(APIResponse<APIData<TransactionResult>,TransactionResult> res) {
+        String txnID = res.getData().getId();
+        //wait till commit happens - TODO: check if this commit is to contractregistry or actual chain.
+        final ListenableFuture<Transaction> txFuture = cakeshopManager.waitForTx(txnID);
+        txFuture.addListener(() -> {
+                    try { System.out.println("Transaction committed:\n" + txFuture.get().toString()); } //use as logger
+                    catch (InterruptedException|ExecutionException e) { e.printStackTrace(); }
+                },
+                MoreExecutors.directExecutor());
+        return txnID;
     }
 
     public static ContractMethodCallCommand getContractMethodCallCommand(String contractAddress, String methodName) {
