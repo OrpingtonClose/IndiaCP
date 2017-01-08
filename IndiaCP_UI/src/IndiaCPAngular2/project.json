@@ -73,6 +73,7 @@
     "defaultNamespace": "IndiaCPAngular2"
   },
   "configurations": {
-    "Angular1_Build": {}
+    "Angular1_Build": {},
+    "IdentityServer_Build": {}
   }
 }

@@ -4,23 +4,28 @@ var app;
     (function (services) {
         "use strict";
         var AuthenticationService = (function () {
-            function AuthenticationService($http, $q, $sessionStorage) {
+            function AuthenticationService($http, $q, growl, $sessionStorage) {
                 this.$http = $http;
                 this.$q = $q;
+                this.growl = growl;
                 this.$sessionStorage = $sessionStorage;
-                this.basePath = "http://localhost:35222/api";
+                this.basePath = "/api";
                 this.defaultHeaders = {};
+                this.isAuthenticated = false;
             }
             AuthenticationService.prototype.login = function (userInfo) {
+                var _this = this;
                 var deferred = this.$q.defer();
-                this.$http.post("/account/login", JSON.stringify(userInfo))
-                    .success(function (response) {
+                this.$http.post(this.basePath + "/authentication", JSON.stringify(userInfo))
+                    .then(function (response) {
+                    _this.isAuthenticated = true;
                     deferred.resolve(response);
-                })
-                    .error(function (data, status) {
+                }, function (error) {
+                    _this.growl.error("Incorrect credentials. Try again.", { title: "Error!" });
+                    console.log("Incorrect credentials. Try again.");
+                    _this.isAuthenticated = false;
                     deferred.reject({
-                        data: data,
-                        status: status
+                        data: error
                     });
                 });
                 return deferred.promise;
@@ -31,16 +36,12 @@ var app;
             AuthenticationService.prototype.clear = function () {
                 //this.$sessionStorage.isAuthenticated = false;
             };
-            AuthenticationService.prototype.isAuthenticated = function () {
-                // if (this.$sessionStorage.isAuthenticated) {
-                //     return true;
-                // }
-                // return false;
-                return false;
+            AuthenticationService.prototype.logout = function () {
+                this.isAuthenticated = false;
             };
             return AuthenticationService;
         }());
-        AuthenticationService.$inject = ["$http", "$q", "$sessionStorage"];
+        AuthenticationService.$inject = ["$http", "$q", "growl", "$sessionStorage"];
         angular
             .module("app.services")
             .service("app.services.AuthenticationService", AuthenticationService);

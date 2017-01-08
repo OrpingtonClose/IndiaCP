@@ -2,7 +2,7 @@ module app.models {
     "use strict";
 
     export class IndiaCPProgram {
-        /**
+      /**
          * Unique identifier representing a specific CP Program raised by an Issuer
          */
         "programId"?: string;
@@ -11,11 +11,6 @@ module app.models {
          * Name of the CP Program
          */
         "name"?: string;
-
-        /**
-         * User identifier
-         */
-        "userId"?: string;
 
         /**
          * Type of the CP Program
@@ -113,11 +108,6 @@ module app.models {
         "allotmentLetterDocId"?: string;
 
         /**
-         * Top level organizational borrowing limit contract
-         */
-        "orgUnit"?: string;
-
-        /**
          * Current status of the CP Program
          */
         "status"?: string;
@@ -136,5 +126,5 @@ module app.models {
          * Last Modified Date for this CPIssue. This is required for Audit History
          */
         "lastModified"?: Date;
-
-}}
+    }
+}

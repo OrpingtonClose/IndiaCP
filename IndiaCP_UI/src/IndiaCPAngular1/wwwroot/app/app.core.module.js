@@ -9,6 +9,7 @@
         "ngSanitize",
         "ngCookies",
         "ngStorage",
+        "angular-growl",
         "uuid4"
     ]);
 })();

@@ -1,0 +1,98 @@
+{
+	 
+			"cp":     
+					{
+						"issuerName": "<<cp.issuerName>>",
+						"secondParty": "<<cp.secondParty>>",
+						"desc": "<<cp.desc>>",
+						"boardResolutionDate": "<<cp.boardResolutionDate>>",
+						"valueDate": "<<cp.valueDate>>",
+						"tradeDate": "<<cp.tradeDate>>",
+						"dateOfContract": "<<cp.dateOfContract>>",
+						"allotDate": "<<cp.allotDate>>",
+						"matDate": "<<cp.matDate>>",
+						"issueValue": "<<cp.issueValue>>",
+						"maturityValue": "<<cp.maturityValue>>",
+						"redemValue": "<<cp.redemValue>>",
+						"totalAmount": "<<cp.totalAmount>>",
+						"tax": "<<cp.tax>>",
+						"CIN": "<<cp.CIN>>",
+						"NSDLHistory": "<<cp.NSDLHistory>>",
+						"issuerAddress": "<<cp.issuerAddress>>",
+						"officialContactNum": "<<cp.officialContactNum>>",
+						"officialFaxNum": "<<cp.officialFaxNum>>",
+						"officialEmail": "<<cp.officialEmail>>",
+						"officialWebsite": "<<cp.officialWebsite>>",
+						"entityType": "<<cp.entityType>>",
+						"price": "<<cp.price>>",
+						"discRate": "<<cp.discRate>>",
+						"currency": "<<currency>>",
+						"issueRef": "<<cp.issueRef>>",
+						"isinCode": "<<cp.isinCode>>",
+						"creditRating": "<<cp.creditRating>>",
+						"ratingIssuedBy": "<<cp.ratingIssuedBy>>",
+						"dateOfRating": "<<cp.dateOfRating>>",
+						"ratingValidityDate": "<<cp.ratingValidityDate>>",
+						"effectiveDateOfRating": "<<cp.effectiveDateOfRating>>",
+						"issuerContactPerson": "<<cp.issuerContactPerson>>",
+						"complianceOfficer": "<<cp.complianceOfficer>>",
+						"complianceOfficerDept": "<<cp.complianceOfficerDept>>",
+						"complianceOfficerAddress": "<<cp.complianceOfficerAddress>>",
+						"complianceOfficerContactNo": "<<cp.complianceOfficerContactNo>>",
+						"complianceOfficerEmail": "<<cp.complianceOfficerEmail>>",
+						"investorRelationsOfficer": "<<cp.investorRelationsOfficer>>",
+						"investorRelationsOfficerDept": "<<cp.investorRelationsOfficerDept>>",
+						"investorRelationsOfficerAddress": "<<cp.investorRelationsOfficerAddress>>",
+						"investorRelationsOfficerContactNo": "<<cp.investorRelationsOfficerContactNo>>",
+						"investorRelationsOfficerEmail": "<<cp.investorRelationsOfficerEmail>>",
+						"operationsOfficer": "<<cp.operationsOfficer>>",
+						"operationsOfficerDept": "<<cp.operationsOfficerDept>>",
+						"operationsOfficerAddress": "<<cp.operationsOfficerAddress>>",
+						"operationsOfficerContactNo": "<<cp.operationsOfficerContactNo>>",
+						"operationsOfficerEmail": "<<cp.operationsOfficerEmail>>",
+						"conditions": "<<cp.conditions>>",
+						"creditSupport": "<<cp.creditSupport>>",
+						"creditInstructions": "<<cp.creditInstructions>>",
+						"marketConventions": "<<cp.marketConventions>>",
+						"businessActivity": "<<cp.businessActivity>>",
+						"stockExchange": "<<cp.stockExchange>>",
+						"netWorth": "<<cp.netWorth>>",
+						"workingCapitalLimit": "<<cp.workingCapitalLimit>>",
+						"outstandingBankBorrowing": "<<cp.outstandingBankBorrowing>>",
+						"faceValue": "<<cp.faceValue>>",
+						"amountOfCPOutstanding" : "<<cp.amountOfCPOutstanding>>"
+					},
+				
+			
+			"investor": 
+				
+					{
+						"investorName": "<<investor.investorName>>",
+						"dpName": "<<investor.dpName>>",
+						"clientId": "<<investor.clientId>>",
+						"dpId": "<<investor.dpId>",
+						"contactPerson": "<<investor.contactPerson>>"
+					},
+				
+			
+			"ipa": 
+				
+					{
+						"ipaName": "<<ipa.ipaName>>",
+						"ipaAddress": "<<ipa.ipaAddress>>",
+						"ipaDPName": "<<ipa.ipaDPName>>",
+						"ipaAllotmentDPID": "<<ipa.ipaAllotmentDPID>>",
+						"ipaAllotmentClientID": "<<ipa.ipaAllotmentClientID>>",
+						"ipaRedemptionDPID": "<<ipa.ipaRedemptionDPID>>",
+						"ipaRedemptionClientID": "<<ipa.ipaRedemptionClientID>>"
+					},
+		
+			"nsdl":
+			
+					{
+						"nsdlContactPerson": "<<nsdl.nsdlContactPerson>>",
+						"nsdlAddress": "<<nsdl.nsdlAddress>>"						
+					}
+			
+			
+}	

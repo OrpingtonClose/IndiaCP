@@ -13,18 +13,18 @@
     ];
     function run($state, $rootScope, $cookies, $timeout, $location, authService) {
         $rootScope.$on("$routeChangeError", function () { });
-        //$rootScope.$on("$stateChangeStart", function (event:ng.IAngularEvent, toState:any):void {
-        //    if (!authService.isAuthenticated() && toState.name !== "login") {
-        //        console.log("DENY : Redirecting to Login");
-        //        event.preventDefault();
-        //        $timeout(function () {
-        //            $state.transitionTo("login");
-        //        }, 1000);
-        //    }
-        //    else {
-        //        console.log("ALLOW");
-        //    }
-        //});
+        $rootScope.$on("$stateChangeStart", function (event, toState) {
+            if (!authService.isAuthenticated && toState.name !== "login") {
+                console.log("DENY : Redirecting to Login");
+                event.preventDefault();
+                $timeout(function () {
+                    $state.transitionTo("login");
+                }, 1000);
+            }
+            else {
+                console.log("ALLOW");
+            }
+        });
         $timeout(function () {
             $state.transitionTo("main.dashboard");
         }, 1000);

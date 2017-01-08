@@ -35,7 +35,7 @@ import java.util.Date;
 /**
  * BoardResolutionBorrowingLimitDocument
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-04T11:02:40.426Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-06T23:16:51.945Z")
 public class BoardResolutionBorrowingLimitDocument   {
   @JsonProperty("legalEntityId")
   private String legalEntityId = null;
@@ -52,8 +52,8 @@ public class BoardResolutionBorrowingLimitDocument   {
   @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
-  @JsonProperty("lastModified")
-  private Date lastModified = null;
+  @JsonProperty("lastModifiedDate")
+  private Date lastModifiedDate = null;
 
   public BoardResolutionBorrowingLimitDocument legalEntityId(String legalEntityId) {
     this.legalEntityId = legalEntityId;
@@ -145,22 +145,22 @@ public class BoardResolutionBorrowingLimitDocument   {
     this.modifiedBy = modifiedBy;
   }
 
-  public BoardResolutionBorrowingLimitDocument lastModified(Date lastModified) {
-    this.lastModified = lastModified;
+  public BoardResolutionBorrowingLimitDocument lastModifiedDate(Date lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
     return this;
   }
 
    /**
    * Last Modified Date for this BR upload. This is required for Audit History
-   * @return lastModified
+   * @return lastModifiedDate
   **/
   @ApiModelProperty(value = "Last Modified Date for this BR upload. This is required for Audit History")
-  public Date getLastModified() {
-    return lastModified;
+  public Date getLastModifiedDate() {
+    return lastModifiedDate;
   }
 
-  public void setLastModified(Date lastModified) {
-    this.lastModified = lastModified;
+  public void setLastModifiedDate(Date lastModifiedDate) {
+    this.lastModifiedDate = lastModifiedDate;
   }
 
 
@@ -178,12 +178,12 @@ public class BoardResolutionBorrowingLimitDocument   {
         Objects.equals(this.boardResolutionIssuanceDate, boardResolutionBorrowingLimitDocument.boardResolutionIssuanceDate) &&
         Objects.equals(this.boardResolutionExpiryDate, boardResolutionBorrowingLimitDocument.boardResolutionExpiryDate) &&
         Objects.equals(this.modifiedBy, boardResolutionBorrowingLimitDocument.modifiedBy) &&
-        Objects.equals(this.lastModified, boardResolutionBorrowingLimitDocument.lastModified);
+        Objects.equals(this.lastModifiedDate, boardResolutionBorrowingLimitDocument.lastModifiedDate);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(legalEntityId, boardResolutionBorrowingLimit, boardResolutionIssuanceDate, boardResolutionExpiryDate, modifiedBy, lastModified);
+    return Objects.hash(legalEntityId, boardResolutionBorrowingLimit, boardResolutionIssuanceDate, boardResolutionExpiryDate, modifiedBy, lastModifiedDate);
   }
 
 
@@ -197,7 +197,7 @@ public class BoardResolutionBorrowingLimitDocument   {
     sb.append("    boardResolutionIssuanceDate: ").append(toIndentedString(boardResolutionIssuanceDate)).append("\n");
     sb.append("    boardResolutionExpiryDate: ").append(toIndentedString(boardResolutionExpiryDate)).append("\n");
     sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");
-    sb.append("    lastModified: ").append(toIndentedString(lastModified)).append("\n");
+    sb.append("    lastModifiedDate: ").append(toIndentedString(lastModifiedDate)).append("\n");
     sb.append("}");
     return sb.toString();
   }

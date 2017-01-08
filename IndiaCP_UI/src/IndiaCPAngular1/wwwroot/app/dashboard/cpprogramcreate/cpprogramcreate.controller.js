@@ -6,10 +6,11 @@ var app;
         (function (cpprogramcreate) {
             "use strict";
             var CPProgramCreateController = (function () {
-                function CPProgramCreateController($uibModalInstance, issuerService, uuid4) {
+                function CPProgramCreateController($uibModalInstance, issuerService, uuid4, growl) {
                     this.$uibModalInstance = $uibModalInstance;
                     this.issuerService = issuerService;
                     this.uuid4 = uuid4;
+                    this.growl = growl;
                     this.cpprogram = new app.models.IndiaCPProgram();
                     this.cpprogram.issuerId = "Issuer";
                     this.cpprogram.programCurrency = "INR";
@@ -28,12 +29,15 @@ var app;
                     var _this = this;
                     this.issuerService.issueCPProgram(this.cpprogram).then(function () {
                         console.log("CPProgram created");
+                        _this.growl.success('CPProgram created suceesfully.', { title: 'Success!' });
                         _this.$uibModalInstance.close();
                     }, function (error) {
                         console.log("CPProgram not created.");
+                        _this.growl.error("CPProgram not created.", { title: 'Error!' });
                     });
                 };
                 CPProgramCreateController.prototype.cancel = function () {
+                    this.growl.success('This is success message.', { title: 'Success!' });
                     this.$uibModalInstance.close();
                 };
                 CPProgramCreateController.prototype.updateProgramId = function () {
@@ -41,7 +45,7 @@ var app;
                 };
                 return CPProgramCreateController;
             }());
-            CPProgramCreateController.$inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4"];
+            CPProgramCreateController.$inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4", "growl"];
             angular
                 .module("app.dashboard.cpprogramcreate")
                 .controller("app.dashboard.cpprogramcreate.CPProgramCreateController", CPProgramCreateController);

@@ -3,17 +3,17 @@ module app.dashboard.cpprogramcreate {
 
     interface ICPProgramCreateScope {
         createCPProgram(): void;
-        updateProgramId(): void;
     }
 
     class CPProgramCreateController implements ICPProgramCreateScope {
         isinDocPDF: string;
         cpprogram: app.models.IndiaCPProgram;
-        static $inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4"];
+        static $inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4", "growl"];
         constructor(
             protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
             protected issuerService: app.services.IIssuerService,
-            protected uuid4: any) {
+            protected uuid4: any,
+            protected growl: ng.growl.IGrowlService) {
             this.cpprogram = new app.models.IndiaCPProgram();
             this.cpprogram.issuerId = "Issuer";
             this.cpprogram.programCurrency = "INR";
@@ -31,12 +31,15 @@ module app.dashboard.cpprogramcreate {
         public createCPProgram(): void {
             this.issuerService.issueCPProgram(this.cpprogram).then((): void => {
                 console.log("CPProgram created");
-                 this.$uibModalInstance.close();
+                this.growl.success('CPProgram created suceesfully.', { title: 'Success!' });
+                this.$uibModalInstance.close();
             }, (error: any): void => {
                 console.log("CPProgram not created.");
+                this.growl.error("CPProgram not created.", { title: 'Error!' })
             });
         }
         public cancel(): void {
+            this.growl.success('This is success message.', { title: 'Success!' });
             this.$uibModalInstance.close();
         }
 

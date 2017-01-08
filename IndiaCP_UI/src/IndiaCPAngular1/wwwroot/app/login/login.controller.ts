@@ -6,7 +6,7 @@ module app.Login {
     }
 
     class LoginController implements ILoginScope {
-        userCredentials: ICurrentUser;
+        userCredentials: app.models.CurrentUser;
 
         static $inject = ["$scope", "$state", "app.services.AuthenticationService"];
         constructor(protected $scope: ng.IScope,
@@ -15,12 +15,13 @@ module app.Login {
         }
 
         public login(): void {
+            var ctrl = this;
             this.authService.login(this.userCredentials).then(
                 function (result: any): void {
-                    this.$state.go("app.dashboard");
+                    ctrl.$state.go("main.dashboard");
                 },
                 function (error: any): void {
-                    this.$state.go("login");
+                    ctrl.$state.go("login");
                 }
             );
         }
