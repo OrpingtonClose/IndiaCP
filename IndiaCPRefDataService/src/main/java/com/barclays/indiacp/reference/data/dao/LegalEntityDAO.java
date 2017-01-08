@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -52,6 +53,26 @@ public class LegalEntityDAO
         return le;
     }
 
+    public Integer getLegalEntityByName(String legalEntityName)
+    {
+        LegalEntity le = null;
+        Integer legalEntityId = 0;
+        Query query = em.createQuery("FROM LegalEntity l where l.legal_entity_name = :legalEntityName");
+        query.setParameter("legalEntityName", legalEntityName );
+        List<LegalEntity> list = query.getResultList();
+        //List<LegalEntity> list = em.createQuery("SELECT l FROM LegalEntity l where l.legal_entity_name =:" + legalEntityName).getResultList();
+
+        if(list!=null && list.size()>0)
+        {
+            le = list.get(0);
+            legalEntityId = le.getLegal_entity_id();
+
+        }
+
+
+        return legalEntityId;
+    }
+
 
     public List<LegalEntity> findAll()
     {
@@ -71,21 +92,22 @@ public class LegalEntityDAO
 //        List<LegalEntity> list = em.find(LegalEntity.class, )
     }
 
-
     public void persist(LegalEntity legalEntity) {
 
         try
         {
             em.persist(legalEntity);
-
+            Integer legalEntityId = getLegalEntityByName(legalEntity.getLegal_entity_name());
             if (legalEntity.getUserDetails() != null) {
                 for (UserDetails u : legalEntity.getUserDetails()) {
+                    u.setLegal_entity_id(legalEntityId);
                     userDetailsDAO.persist(u);
                 }
             }
 
             if (legalEntity.getSettlementDetails() != null) {
                 for (SettlementDetails s : legalEntity.getSettlementDetails()) {
+                    s.setLegal_entity_id(legalEntityId);
                     settlementDetailsDAO.persist(s);
                 }
             }

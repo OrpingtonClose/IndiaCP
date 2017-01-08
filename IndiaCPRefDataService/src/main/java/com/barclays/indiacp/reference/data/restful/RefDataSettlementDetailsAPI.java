@@ -6,6 +6,7 @@ import com.barclays.indiacp.reference.data.entities.UserDetails;
 import com.barclays.indiacp.reference.data.service.LegalEntityService;
 import com.barclays.indiacp.reference.data.service.SettlementDetailsService;
 import com.barclays.indiacp.reference.data.service.UserDetailsService;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,12 +63,21 @@ public class RefDataSettlementDetailsAPI
         return settlementDetailsService.getSettlementDetailsForEntity(legalEntityID);
     }
 
-
     @RequestMapping(value = "/addLegalEntityDetails", method = RequestMethod.POST)
     public void addLegalEntityDetails(@RequestBody LegalEntity legalEntityJSON) {
         legalEntityService.add(legalEntityJSON);
     }
 
+
+    @RequestMapping(value = "/addUserDetails", method = RequestMethod.POST)
+    public void addUserDetails(@RequestBody UserDetails userDetailsJSON) {
+        userDetailsService.add(userDetailsJSON);
+    }
+
+    @RequestMapping(value = "/addSettlementDetails", method = RequestMethod.POST)
+    public void addSettlementDetails(@RequestBody SettlementDetails settlementDetailsJSON) {
+        settlementDetailsService.add(settlementDetailsJSON);
+    }
 
 
 
