@@ -3,11 +3,13 @@ module app.investments {
 
     interface IInvestmentsScope {
         nodeType:string;
+         workflowStates: app.models.WorkflowStates;
     }
 
     class InvestmentsController implements IInvestmentsScope {
         static $inject = ["$state", "app.services.AuthenticationService", "localStorageService"];
         nodeType:string;
+         workflowStates: app.models.WorkflowStates;
         constructor(protected $state: ng.ui.IStateService,
             protected authService: app.services.IAuthenticationService,
             protected localStorageService: ng.local.storage.ILocalStorageService, ) {

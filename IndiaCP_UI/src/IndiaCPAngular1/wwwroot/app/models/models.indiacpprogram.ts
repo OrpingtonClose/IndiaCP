@@ -113,6 +113,11 @@ module app.models {
         "status"?: string;
 
         /**
+         * Current status of the CP Program
+         */
+        "nextAction"?: string;
+
+        /**
          * Current version of the CP Program
          */
         "version"?: number;

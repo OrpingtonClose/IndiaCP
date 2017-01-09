@@ -9553,7 +9553,7 @@ Styleguide 3.6
 }
 .navbar-primary {
   background-color: #2A91D6;
-  border-color: #2174ac;
+  /*border-color: #2174ac;*/
 }
 .navbar-primary .navbar-brand {
   color: #fff;

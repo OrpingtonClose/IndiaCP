@@ -1,5 +1,5 @@
 <header role="banner" id="top" class="site-header">
-    <nav class="navbar navbar-fixed-top navbar-primary">
+    <nav class="navbar navbar-fixed-top navbar-primary first-navbar">
         <div class="container">
 
             <!-- Brand and menu toggle -->
@@ -10,17 +10,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="/orders/new" class="navbar-brand offset-right-large">
-                    <!--<img src="../../images/logo-barclays.jpg" />-->
-                    <span class="visible-xs visible-md visible-lg">India Commercial Paper</span>
-                    <span class="visible-sm" aria-hidden="true">BUI</span>
-                </a>
+                 <div class="navbar-brand"><strong>Barclays Investments and Loans (India) Ltd</strong></div>
             </div>
 
             <!-- Collapsible menu -->
             <div class="collapse navbar-collapse" id="mainMenu">
 
-                <ul class="nav navbar-nav">
+                <!--<ul class="nav navbar-nav">
                     <li ng-class="vm.nodeType == 'ISSUER' ? 'active' : ''">
                         <a ui-sref="main.dashboard">
                             <span class="glyphicon glyphicon-inbox offset-right" aria-hidden="true"></span>
@@ -33,7 +29,7 @@
                             <span class="hidden-sm">Investments</span>
                         </a>
                     </li>
-                </ul>
+                </ul>-->
 
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
@@ -117,6 +113,36 @@
                     </li>
                     <!-- .dropdown -->
                 </ul>
+                <!-- .nav -->
+
+            </div>
+            <!-- .collapsible -->
+
+        </div>
+        <!-- .container -->
+    </nav>
+     <nav class="navbar navbar-primary second-navbar">
+        <div class="container">
+
+            
+            <!-- Collapsible menu -->
+            <div class="collapse navbar-collapse second-navbar" id="mainMenu">
+
+                <ul class="nav navbar-nav">
+                    <li ng-class="vm.nodeType == 'ISSUER' ? 'active' : ''">
+                        <a ui-sref="main.dashboard">
+                            <span class="glyphicon glyphicon-inbox offset-right" aria-hidden="true"></span>
+                            <span class="hidden-sm">CP Programs</span>
+                        </a>
+                    </li>
+                    <li ng-class="vm.nodeType == 'INVESTOR' ? 'active' : ''">
+                        <a ui-sref="main.investments">
+                            <span class="glyphicon glyphicon-align-left offset-right" aria-hidden="true"></span>
+                            <span class="hidden-sm">Investments</span>
+                        </a>
+                    </li>
+                </ul>
+
                 <!-- .nav -->
 
             </div>
