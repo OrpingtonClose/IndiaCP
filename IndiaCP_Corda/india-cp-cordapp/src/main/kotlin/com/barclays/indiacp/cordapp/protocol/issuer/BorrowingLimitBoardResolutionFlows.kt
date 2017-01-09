@@ -1,14 +1,12 @@
 package com.barclays.indiacp.cordapp.protocol.issuer
 
 import co.paralleluniverse.fibers.Suspendable
-import com.barclays.indiacp.cordapp.contract.CreditRating
+import com.barclays.indiacp.cordapp.contract.BorrowingLimitBoardResolution
 import com.barclays.indiacp.cordapp.contract.LegalEntityDocumentContract
-import com.barclays.indiacp.cordapp.contract.LegalEntityDocumentOwnableState
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
-import com.barclays.indiacp.model.CreditRatingError
+import com.barclays.indiacp.model.BoardResolutionError
 import com.barclays.indiacp.model.Error
 import com.barclays.indiacp.model.IndiaCPException
-import net.corda.core.contracts.OwnableState
 import net.corda.core.crypto.SecureHash
 import net.corda.core.flows.FlowLogic
 import net.corda.core.node.NodeInfo
@@ -25,7 +23,7 @@ import java.time.Instant
  *
  * Created by ritukedia on 07/01/17.
  */
-open class CreditRatingFlows(val contractState: CreditRating.State?, val command: String) : FlowLogic<SignedTransaction>() {
+open class BorrowingLimitBoardResolutionFlows(val contractState: BorrowingLimitBoardResolution.State?, val command: String) : FlowLogic<SignedTransaction>() {
 
     companion object {
         object PRE_CHECKS : ProgressTracker.Step("Checking Status before Issuing/Amending Document for this Legal Entity")
@@ -59,23 +57,23 @@ open class CreditRatingFlows(val contractState: CreditRating.State?, val command
         var tx: TransactionBuilder? = null
 
         //check that there is only one Active Credit Rating Document
-        val existingDocStates = serviceHub.vaultService.currentVault.statesOfType<CreditRating.State>()
+        val existingDocStates = serviceHub.vaultService.currentVault.statesOfType<BorrowingLimitBoardResolution.State>()
         val activeDocStates = existingDocStates?.filter { it.state.data.status.equals(ModelUtils.DocumentStatus.ACTIVE.name) }
         if ( activeDocStates != null &&  activeDocStates?.isNotEmpty())
         {
             when (command) {
-                LegalEntityDocumentContract.Commands.Issue::class.java.simpleName -> throw IndiaCPException(CreditRatingError.CREATION_ERROR, Error.SourceEnum.DL_R3CORDA, "An ACTIVE Credit Rating Document Issued for ${contractState!!.issuer} already exists. Only one Credit Rating document can be active at a given time. To amend the current active document please use the amendCreditRating REST endpoint")
+                LegalEntityDocumentContract.Commands.Issue::class.java.simpleName -> throw IndiaCPException(BoardResolutionError.CREATION_ERROR, Error.SourceEnum.DL_R3CORDA, "An ACTIVE Board Resolution Document Issued for ${contractState!!.issuer} already exists. Only one Board Resolution document can be active at a given time. To amend the current active document please use the amendBoardResolution REST endpoint")
 
                 LegalEntityDocumentContract.Commands.Amend::class.java.simpleName -> {
                     //Amendment
                     progressTracker.currentStep = BEGINNING_AMEND
-                    tx = CreditRating().generateAmend( activeDocStates!!.last(), contractState!!, notary.notaryIdentity)
+                    tx = BorrowingLimitBoardResolution().generateAmend( activeDocStates!!.last(), contractState!!, notary.notaryIdentity)
                 }
 
                 LegalEntityDocumentContract.Commands.Cancel::class.java.simpleName -> {
                     //Cancelling
                     progressTracker.currentStep = CANCELLING
-                    tx = CreditRating().generateCancel( activeDocStates!!.last(), notary.notaryIdentity)
+                    tx = BorrowingLimitBoardResolution().generateCancel( activeDocStates!!.last(), notary.notaryIdentity)
                 }
             }
 
@@ -83,11 +81,11 @@ open class CreditRatingFlows(val contractState: CreditRating.State?, val command
 
             //First Time Issue
             progressTracker.currentStep = SELF_ISSUING
-            tx = CreditRating().generateIssue(contractState!!, notary.notaryIdentity)
+            tx = BorrowingLimitBoardResolution().generateIssue(contractState!!, notary.notaryIdentity)
 
         } else if (command.equals(LegalEntityDocumentContract.Commands.Cancel::class.java.simpleName) || command.equals(LegalEntityDocumentContract.Commands.Amend::class.java.simpleName)) {
 
-            throw IndiaCPException(CreditRatingError.CANCELLATION_ERROR, Error.SourceEnum.DL_R3CORDA, "$command Action cannot be performed. No Active Document/Smart Contract Found For this Legal Entity.")
+            throw IndiaCPException(BoardResolutionError.CREATION_ERROR, Error.SourceEnum.DL_R3CORDA, "$command Action cannot be performed. No Active Document/Smart Contract Found For this Legal Entity.")
         }
 
         if (command.equals(LegalEntityDocumentContract.Commands.Issue::class.java.simpleName) || command.equals(LegalEntityDocumentContract.Commands.Amend::class.java.simpleName)) {

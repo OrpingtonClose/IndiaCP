@@ -1,6 +1,7 @@
 package com.barclays.indiacp.cordapp.api
 
 import com.barclays.indiacp.cordapp.contract.CreditRating
+import com.barclays.indiacp.cordapp.contract.LegalEntityDocumentOwnableState
 import com.barclays.indiacp.cordapp.protocol.issuer.CreditRatingFlows
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
@@ -33,7 +34,8 @@ class CreditRatingApi(val services: ServiceHub){
     fun issueCreditRating(creditRatingDocument: LegalEntityCreditRatingDocument): Response
     {
         try {
-            val stx = services.invokeFlowAsync(CreditRatingFlows::class.java, ModelUtils.creditRatingStateFromModel(creditRatingDocument, services), CreditRating.Commands.Issue::class.java.name).resultFuture.get()
+            val creditRatingDocumentDetails : LegalEntityDocumentOwnableState = ModelUtils.creditRatingStateFromModel(creditRatingDocument, services)
+            val stx = services.invokeFlowAsync(CreditRatingFlows::class.java, creditRatingDocumentDetails, CreditRating.Commands.Issue::class.java.simpleName).resultFuture.get()
             logger.info("Issued Credit Rating with CR Document\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
 
             return Response.status(Response.Status.OK).entity(getCreditRating()).build()
@@ -51,7 +53,8 @@ class CreditRatingApi(val services: ServiceHub){
     fun amendCreditRating(creditRatingDocument: LegalEntityCreditRatingDocument): Response
     {
         try {
-            val stx = services.invokeFlowAsync(CreditRatingFlows::class.java, ModelUtils.creditRatingStateFromModel(creditRatingDocument, services), CreditRating.Commands.Amend::class.java.name).resultFuture.get()
+            val creditRatingDocumentDetails : LegalEntityDocumentOwnableState = ModelUtils.creditRatingStateFromModel(creditRatingDocument, services)
+            val stx = services.invokeFlowAsync(CreditRatingFlows::class.java, creditRatingDocumentDetails, CreditRating.Commands.Amend::class.java.simpleName).resultFuture.get()
             logger.info("Amended Credit Rating with CR Document\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
 
             return Response.status(Response.Status.OK).entity(getCreditRating()).build()
@@ -69,7 +72,7 @@ class CreditRatingApi(val services: ServiceHub){
     fun cancelCreditRating(): Response
     {
         try {
-            val stx = services.invokeFlowAsync(CreditRatingFlows::class.java, null, CreditRating.Commands.Cancel::class.java.name).resultFuture.get()
+            val stx = services.invokeFlowAsync(CreditRatingFlows::class.java, null, CreditRating.Commands.Cancel::class.java.simpleName).resultFuture.get()
             logger.info("Cancelled Credit Rating with CR Document\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
 
             return Response.status(Response.Status.OK).entity("Credit Rating Document for this Legal Entity has been Cancelled").build()

@@ -19,7 +19,7 @@ import java.util.*
 
 val CREDIT_RATING_ID = CreditRating()
 
-class CreditRating : Contract {
+class CreditRating : Contract, LegalEntityDocumentContract {
     //override this with actual CR Document Hash at the time of Contract Issue
     //ICRA is the Credit Rating Agency for India Commercial Papers for Barclays
     override val legalContractReference: SecureHash = SecureHash.sha256("http://www.icra.in/Files/Articles/RM-CommPapers.pdf")
@@ -27,7 +27,7 @@ class CreditRating : Contract {
     override fun verify(tx: TransactionForContract) = verifyClause(tx, CreditRating.Clauses.Group(), tx.commands.select<CreditRating.Commands>())
 
     data class State(
-            val issuer: Party,
+            override val issuer: Party,
             override val owner: CompositeKey,
             val creditRatingAgencyName: String,
             val creditRatingAmount: Integer,
@@ -35,13 +35,13 @@ class CreditRating : Contract {
             val creditRatingIssuanceDate: Date,
             val creditRatingEffectiveDate: Date,
             val creditRatingExpiryDate: Date,
-            val creditRatingDocumentHash: String,
+            override val docHash: String,
             val modifiedBy: String,
             val lastModifiedDate: Date? = Date(),
             val version: Integer? = Integer(1),
             val status: String? = ModelUtils.DocumentStatus.ACTIVE.name
-    ) : OwnableState, QueryableState {
-        override val contract = CREDIT_RATING_ID
+    ) : LegalEntityDocumentOwnableState, OwnableState, QueryableState {
+        override val contract = BORROWING_LIMIT_BOARD_RESOLUTION_ID
         override val participants: List<CompositeKey>
             get() = listOf(owner)
 
@@ -174,24 +174,30 @@ class CreditRating : Contract {
     /**
      * Returns a transaction that issues credit rating, owned by the issuing parties key.
      */
-    fun generateIssue(contractState: CreditRating.State, notary: Party): TransactionBuilder {
-        val state = TransactionState(contractState, notary)
-        return TransactionType.General.Builder(notary = notary).withItems(state, Command(CreditRating.Commands.Issue(), contractState.owner))
+    fun generateIssue(contractState: LegalEntityDocumentOwnableState, notary: Party): TransactionBuilder {
+        val tx = TransactionType.General.Builder(notary = notary)
+        if (contractState is CreditRating.State) {
+            val state = TransactionState(contractState, notary)
+            tx.withItems(state, Command(CreditRating.Commands.Issue(), contractState.owner))
+        }
+        return tx
     }
 
     /**
      * Returns a transaction that amends an existing credit rating, owned by the issuing parties key.
      */
-    fun generateAmend(currentCRRef: StateAndRef<State>, amendedCRState: CreditRating.State, notary: Party): TransactionBuilder {
+    fun generateAmend(currentCRRef: StateAndRef<State>, amendedCRState: LegalEntityDocumentOwnableState, notary: Party): TransactionBuilder {
         val tx = TransactionType.General.Builder(notary = notary)
-        tx.addInputState(currentCRRef)
-        val newVersion = Integer(currentCRRef.state.data.version!!.toInt() + 1)
-        tx.addOutputState(
-                amendedCRState.copy(status = ModelUtils.DocumentStatus.ACTIVE.name, version = newVersion),
-                currentCRRef.state.notary
-        )
-        tx.addCommand(Commands.Amend(), listOf(amendedCRState.owner))
-        return tx;
+        if (amendedCRState is CreditRating.State) {
+            tx.addInputState(currentCRRef)
+            val newVersion = Integer(currentCRRef.state.data.version!!.toInt() + 1)
+            tx.addOutputState(
+                    amendedCRState.copy(status = ModelUtils.DocumentStatus.ACTIVE.name, version = newVersion),
+                    currentCRRef.state.notary
+            )
+            tx.addCommand(Commands.Amend(), listOf(amendedCRState.owner))
+        }
+        return tx
     }
 
     /**
