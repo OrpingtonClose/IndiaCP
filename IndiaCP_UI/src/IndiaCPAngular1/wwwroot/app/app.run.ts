@@ -26,22 +26,21 @@
         authService: app.services.IAuthenticationService): void {
 
         $rootScope.$on("$routeChangeError", (): void => { });
- 
-        // $rootScope.$on("$stateChangeStart", function (event:ng.IAngularEvent, toState:any):void {
-        //    if (!authService.isAuthenticated && toState.name !== "login") {
-        //        console.log("DENY : Redirecting to Login");
-        //        event.preventDefault();
-        //        $timeout(function () {
-        //            $state.transitionTo("login");
-        //        }, 1000);
-        //    }
-        //    else {
-        //        console.log("ALLOW");
-        //    }
-        // });
-        $timeout(function () {
-             $state.transitionTo("main.dashboard");
-                }, 1000);
 
+        $rootScope.$on("$stateChangeStart", function (event: ng.IAngularEvent, toState: any): void {
+            if (!authService.isAuthenticated && toState.name !== "login") {
+                console.log("DENY : Redirecting to Login");
+                event.preventDefault();
+                $timeout(function () {
+                    $state.transitionTo("login");
+                }, 1000);
+            }
+            else{
+                console.log("ALLOW");
+            }
+        });
+        $timeout(function () {
+            $state.transitionTo("main.dashboard");
+        }, 1000);
     }
 })();

@@ -77,3 +77,6 @@ https://github.com/danialfarid/ng-file-upload
 http://stackoverflow.com/questions/21628378/angularjs-display-blob-pdf-in-an-angular-app
 https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL
 http://stackoverflow.com/questions/33973097/displaying-a-selected-file-from-an-input-in-angularjs
+
+Other themes
+https://bootswatch.com/yeti/#navbar
