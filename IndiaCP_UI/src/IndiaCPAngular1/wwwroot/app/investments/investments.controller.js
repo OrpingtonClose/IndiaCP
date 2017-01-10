@@ -8,11 +8,13 @@ var app;
                 this.$state = $state;
                 this.authService = authService;
                 this.localStorageService = localStorageService;
-                // this.nodeType = (this.localStorageService.get("nodeInfo") as app.models.NodeInfo).nodeType;
+                this.nodeType = this.localStorageService.get("nodeInfo").nodeType;
             }
             return InvestmentsController;
         }());
-        InvestmentsController.$inject = ["$state", "app.services.AuthenticationService", "localStorageService"];
+        InvestmentsController.$inject = ["$state",
+            "app.services.AuthenticationService",
+            "localStorageService"];
         angular
             .module("app.investments")
             .controller("app.investments.InvestmentsController", InvestmentsController);

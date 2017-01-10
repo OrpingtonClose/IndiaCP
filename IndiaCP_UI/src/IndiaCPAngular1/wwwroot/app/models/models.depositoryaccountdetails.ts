@@ -13,9 +13,18 @@ module app.models {
         "dpName"?: string;
 
         /**
+         * Depository Account Type. For now only the IPA has two depository accounts one for Allotment and one for Redemption
+         */
+        "dpType"?: DpTypeEnum;
+
+        /**
          * Unique identifier of the Client at the Depository
          */
         "clientId"?: string;
+    }
 
-}
+    export enum DpTypeEnum {
+        ALLOTTMENT = <any>"ALLOTTMENT",
+        REDEMPTION = <any>"REDEMPTION"
+    }
 }

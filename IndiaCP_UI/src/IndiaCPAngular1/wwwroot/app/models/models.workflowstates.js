@@ -33,4 +33,4 @@ var app;
         models.WorkflowState = WorkflowState;
     })(models = app.models || (app.models = {}));
 })(app || (app = {}));
-//# sourceMappingURL=model.workflowstates.js.map
+//# sourceMappingURL=models.workflowstates.js.map

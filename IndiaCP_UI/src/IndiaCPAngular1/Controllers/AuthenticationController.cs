@@ -24,7 +24,7 @@ namespace IndiaCPAngular1.Controllers
             int i = 1;
         }
 
-        [HttpPost(Name ="Post")]
+        [HttpPost(Name = "Post")]
         public ActionResult Post([FromBody] UserCredentials credentials)
         {
             var disco = DiscoveryClient.GetAsync("http://indiacpidentityserver.azurewebsites.net").GetAwaiter().GetResult();
@@ -41,7 +41,19 @@ namespace IndiaCPAngular1.Controllers
             else
             {
                 NodeInfo nodeInfo = new NodeInfo();
+
+
+
+#if DEBUG
+                if (credentials.Username == "investor1")
+                {
+                    nodeInfo.NodeType = "INVESTOR";
+                }
+                else
+                    nodeInfo.NodeType = "ISSUER";
+#else
                 nodeInfo.NodeType = Environment.GetEnvironmentVariable("NODETYPE");
+#endif
                 nodeInfo.Host = Environment.GetEnvironmentVariable("HOST");
                 nodeInfo.Port = Int32.Parse(Environment.GetEnvironmentVariable("PORT"));
                 Dictionary<string, object> info = new Dictionary<string, object>();

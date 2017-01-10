@@ -2,19 +2,19 @@ module app.models {
     "use strict";
 
     export class SettlementDetails {
-        /**
-         * partyType
-         */
-        "partyType"?: app.models.PartyTypeEnum;
+        /*
+        * partyType
+        */
+        "partyType"?: PartyTypeEnum;
 
-        "paymentAccountDetails"?: app.models.PaymentAccountDetails;
+        "paymentAccountDetails"?: PaymentAccountDetails;
 
-        "depositoryAccountDetails"?: Array<app.models.DepositoryAccountDetails>;
+        "depositoryAccountDetails"?: Array<DepositoryAccountDetails>;
 
     }
     export enum PartyTypeEnum {
-        ISSUER = <any>'ISSUER',
-        INVESTOR = <any>'INVESTOR',
-        IPA = <any>'IPA'
+        ISSUER = <any>"ISSUER",
+        INVESTOR = <any>"INVESTOR",
+        IPA = <any>"IPA"
     }
 }

@@ -3,7 +3,7 @@ module app.models {
 
     
     export class PaymentAccountDetails {
-         /**
+        /**
          * Name in which the payment has to be made. For e.g. Barclays Investments & Loans (India) Ltd CP
          */
         "creditorName"?: string;

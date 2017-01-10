@@ -2,7 +2,7 @@ module app.models {
     "use strict";
 
     export class IndiaCPIssue {
- /**
+    /**
          * Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program
          */
         "cpProgramId"?: string;
@@ -88,7 +88,7 @@ module app.models {
         "currency"?: string;
 
         /**
-         * Face Value per Unit * No_Of_Units is the amount that will be paid by the Issuer to the Investor on redemption
+         * Face Value per Unit * NoOfUnits is the amount that will be paid by the Issuer to the Investor on redemption
          */
         "facevaluePerUnit"?: number;
 
@@ -131,7 +131,7 @@ module app.models {
         /**
          * Last Modified Date for this CPIssue. This is required for Audit History
          */
-        "lastModified"?: Date;
+        "lastModifiedDate"?: Date;
 
     }
 }

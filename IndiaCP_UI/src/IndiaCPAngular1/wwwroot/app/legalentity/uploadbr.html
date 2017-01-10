@@ -7,7 +7,7 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <h3>Legal Entity : <label> </label></h3>
+                <h3>Legal Entity : Barclays Investments and Loans (India) Ltd<label> </label></h3>
             </div>
         </div>
         <div class="form-group">
@@ -15,7 +15,11 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label class="control-label">Board Resolution Amount</label>
-                        <input class="form-control input-sm" type="text" ng-model="vm.brDetails.boardResolutionBorrowingLimit" />
+                        <div class="input-group">
+                            <span class="input-group-addon">₹</span>
+                            <input type="text" ng-model="vm.brDetails.boardResolutionBorrowingLimit" class="form-control" aria-label="Amount (to the nearest dollar)">
+                            <span class="input-group-addon">.00</span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label">Board Resolution Date</label>
@@ -33,7 +37,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <button class="btn btn-primary btn-raised" ng-click="vm.uploadBR()" type="button">Sign and Save</button>
+                                    <button class="btn btn-primary btn-raised" type="button">Sign</button>
+                                    <button class="btn btn-primary btn-raised" ng-click="vm.uploadBR()" type="button">Save</button>
                                     <button class="btn btn-primary btn-raised" type="button">Cancel </button>
                                 </div>
                             </div>

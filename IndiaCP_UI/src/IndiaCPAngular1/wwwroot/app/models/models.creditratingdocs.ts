@@ -1,7 +1,7 @@
 module app.models {
     "use strict";
 
-     export class LegalEntityCRDocs {
+    export class CreditRatingDocs {
         /**
          * Unique identifier of the Legal Entity that this document is Issued for
          */
@@ -45,7 +45,9 @@ module app.models {
         /**
          * Last Modified Date for this CPIssue. This is required for Audit History
          */
-        "lastModified"?: Date;
+        "lastModifiedDate"?: Date;
+
+        "docHash"?: string;
 
     }
 }

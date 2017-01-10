@@ -12,7 +12,8 @@
         "angular-growl",
         "uuid4",
         "LocalStorageModule",
-        "ngFileUpload"
+        "ngFileUpload",
+        "angular-loading-bar"
     ]);
 })();
 //# sourceMappingURL=app.core.module.js.map

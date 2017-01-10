@@ -4,16 +4,17 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <div class="page-header">
-                        <h1>Credit Rating Data</h1></div>
+                        <h1>Credit Rating Data : Barclays Investments and Loans (India) Ltd</h1>
+                    </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="control-label">Credit Rating</label>
-                                <input class="form-control input-sm" type="text" ng-model="vm.crDetails.creditRating" />
+                                <label class="control-label">Credit Rating Agency</label>
+                                <input class="form-control input-sm" type="text" ng-model="vm.crDetails.creditRatingAgencyName" />
                             </div>
                             <div class="form-group">
-                                <label class="control-label">Credit Rating Issued By</label>
-                                <input class="form-control input-sm" type="text" />
+                                <label class="control-label">Credit Rating</label>
+                                <input class="form-control input-sm" type="text" ng-model="vm.crDetails.creditRating" />
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Credit Rating Issued Date</label>
@@ -25,25 +26,33 @@
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Credit Rating PDF Upload</label>
-                                <input type="file" />
+                                <input type="file" class="btn btn-default" ngf-select="vm.displayCR($file)" accept="*" ngf-max-height="1000" ngf-max-size="1MB"
+                                />
+
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary btn-raised" type="button">Sign</button>
+                                            <button class="btn btn-primary btn-raised" ng-click="vm.uploadCR()" type="button">Save</button>
+                                            <button class="btn btn-primary btn-raised" type="button">Cancel </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h3 class="panel-title">Credit Rating Doc Preview</h3></div>
-                                <div class="panel-body"></div>
+                                    <h3 class="panel-title">Credit Rating Doc Preview</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <iframe id="dynamicIframe" ng-src={{vm.crFileUrl}} scrolling="auto" width="100%" height="500px" type="application/pdf"></iframe>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <button class="btn btn-default" ng-click="vm.uploadCR()" type="button">Sign and Save </button>
-                    <button class="btn btn-default" type="button">Cancel </button>
                 </div>
             </div>
         </div>
