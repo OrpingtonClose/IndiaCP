@@ -6,6 +6,7 @@ import com.jpmorgan.cakeshop.model.SolidityType;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,10 +14,6 @@ import java.util.List;
  */
 public class IndiaCPContractUtils {
 
-//    public static CPProgram getContractBy(String cpProgramAddress) {
-//
-//        return (CPProgram) CakeshopUtils.getContractState(cpProgramAddress);
-//    }
 
     public static Object[] getConstructorArgs(SolidityContract contract, Object contractModel) {
         try {
@@ -74,35 +71,53 @@ public class IndiaCPContractUtils {
         return getterMethodName;
     }
 
-    private static Class<?> getJavaType(SolidityType solType) {
+    private static Class<?> getJavaType(String methodName, SolidityType solType) {
         switch (solType.getName()) {
             case "string":
                 return String.class;
             case "uint256":
-                return Integer.class;
+                if(methodName.endsWith("Date")){
+                    return Date.class;
+                }else{
+                    return Integer.class;
+                }
+
             default: return Object.class;
         }
     }
 
-    public static <T> T populateContractModel(SolidityContract contract, String functionName, Class<T> contractModel, List<Object> dataAsList) {
+    public static <T> T populateContractModel(T contractModelInstance, SolidityContract contract, String functionName, Class<T> contractModel, List<Object> dataAsList) {
         try {
-            T contractModelInstance = instantiateObjectOfType(contractModel);
+            if(contractModelInstance==null){
+                contractModelInstance = instantiateObjectOfType(contractModel);
+            }
             ContractABI.Function function = contract.getContractABI().getFunction(functionName);
             List<ContractABI.Entry.Param> functionParams = function.outputs;
             int i = 0;
             for (ContractABI.Entry.Param param : functionParams) {
                 String argName = param.getName();
-                SolidityType argType = param.getType();
                 String setterMethodName = getSetterMethodName(argName);
 
-                Method method = contractModel.getMethod(setterMethodName, getJavaType(argType));
-                method.invoke(contractModelInstance, dataAsList.get(i++));
+                SolidityType argType = param.getType();
+                Class<?> argClass = getJavaType(argName, argType);
+                Method method = contractModel.getMethod(setterMethodName, argClass);
+                method.invoke(contractModelInstance, castArgument(argClass, dataAsList.get(i++)));
+
             }
             return contractModelInstance;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    private static Object castArgument(Class<?> argClass, Object arg) {
+        if(Date.class.getName().equals(argClass.getName())){
+            return new Date(((Integer)arg).longValue()*1000);
+        } else{
+         return argClass.cast(arg);
+        }
+    }
+
 
     private static <T> T instantiateObjectOfType(Class<T> contractModel) {
         try {

@@ -9,12 +9,14 @@
         "$cookies",
         "$timeout",
         "$location",
+        "localStorageService",
         "app.services.AuthenticationService"
     ];
-    function run($state, $rootScope, $cookies, $timeout, $location, authService) {
+    function run($state, $rootScope, $cookies, $timeout, $location, localStorageService, authService) {
         $rootScope.$on("$routeChangeError", function () { });
+        localStorageService.set("nodeInfo", new app.models.NodeInfo("ISSUER", "52.172.46.253", 8182));
         $rootScope.$on("$stateChangeStart", function (event, toState) {
-            if (!authService.isAuthenticated() && toState.name !== "login") {
+            if (!authService.isAuthenticated && toState.name !== "login") {
                 console.log("DENY : Redirecting to Login");
                 event.preventDefault();
                 $timeout(function () {

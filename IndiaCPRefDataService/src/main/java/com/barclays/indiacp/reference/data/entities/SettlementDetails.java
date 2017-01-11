@@ -26,8 +26,8 @@ public class SettlementDetails
     @Column(name = "bankName")
     String bankName;
 
-    @Column(name = "rtgsCode")
-    String rtgsCode;
+    @Column(name = "ifscCode")
+    String ifscCode;
 
     @Column(name = "dpName")
     String dpName;
@@ -50,13 +50,13 @@ public class SettlementDetails
     public SettlementDetails() {
     }
 
-    public SettlementDetails(Integer legal_entity_id, String creditorName, String bankAccountDetails, String bankName, String rtgsCode, String dpName, String allocationClientId, String allocationDpID, String redemptionClientId, String redemptionDpID)
+    public SettlementDetails(Integer legal_entity_id, String creditorName, String bankAccountDetails, String bankName, String ifscCode, String dpName, String allocationClientId, String allocationDpID, String redemptionClientId, String redemptionDpID)
     {
         this.legal_entity_id = legal_entity_id;
         this.creditorName = creditorName;
         this.bankAccountDetails = bankAccountDetails;
         this.bankName = bankName;
-        this.rtgsCode = rtgsCode;
+        this.ifscCode = ifscCode;
         this.dpName = dpName;
         this.allocationClientId = allocationClientId;
         this.allocationDpID = allocationDpID;
@@ -84,8 +84,8 @@ public class SettlementDetails
         return bankName;
     }
 
-    public String getRtgsCode() {
-        return rtgsCode;
+    public String getifscCode() {
+        return ifscCode;
     }
 
     public String getDpName() {
@@ -113,8 +113,8 @@ public class SettlementDetails
         this.bankName = bankName;
     }
 
-    public void setRtgsCode(String rtgsCode) {
-        this.rtgsCode = rtgsCode;
+    public void setifscCode(String ifscCode) {
+        this.ifscCode = ifscCode;
     }
 
     public void setDpName(String dpName) {
@@ -172,7 +172,7 @@ public class SettlementDetails
                 ", creditorName='" + creditorName + '\'' +
                 ", bankAccountDetails='" + bankAccountDetails + '\'' +
                 ", bankName='" + bankName + '\'' +
-                ", rtgsCode='" + rtgsCode + '\'' +
+                ", ifscCode='" + ifscCode + '\'' +
                 ", dpName='" + dpName + '\'' +
                 ", allocationClientId='" + allocationClientId + '\'' +
                 ", allocationDpID='" + allocationDpID + '\'' +

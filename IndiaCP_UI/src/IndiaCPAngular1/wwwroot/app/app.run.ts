@@ -15,6 +15,7 @@
         "$cookies",
         "$timeout",
         "$location",
+        "localStorageService",
         "app.services.AuthenticationService"
     ];
     function run(
@@ -23,25 +24,26 @@
         $cookies: IAppCookies,
         $timeout: ng.ITimeoutService,
         $location: ng.ILocationService,
+        localStorageService: ng.local.storage.ILocalStorageService,
         authService: app.services.IAuthenticationService): void {
 
         $rootScope.$on("$routeChangeError", (): void => { });
- 
-        $rootScope.$on("$stateChangeStart", function (event:ng.IAngularEvent, toState:any):void {
-           if (!authService.isAuthenticated() && toState.name !== "login") {
-               console.log("DENY : Redirecting to Login");
-               event.preventDefault();
-               $timeout(function () {
-                   $state.transitionTo("login");
-               }, 1000);
-           }
-           else {
-               console.log("ALLOW");
-           }
+        localStorageService.set("nodeInfo", new app.models.NodeInfo("ISSUER", "52.172.46.253", 8182));
+
+        $rootScope.$on("$stateChangeStart", function (event: ng.IAngularEvent, toState: any): void {
+            if (!authService.isAuthenticated && toState.name !== "login") {
+                console.log("DENY : Redirecting to Login");
+                event.preventDefault();
+                $timeout(function () {
+                    $state.transitionTo("login");
+                }, 1000);
+            }
+            else{
+                console.log("ALLOW");
+            }
         });
         $timeout(function () {
-             $state.transitionTo("main.dashboard");
-                }, 1000);
-
+            $state.transitionTo("main.dashboard");
+        }, 1000);
     }
 })();

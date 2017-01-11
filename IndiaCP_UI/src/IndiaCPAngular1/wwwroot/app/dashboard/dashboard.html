@@ -10,19 +10,19 @@
                     <li class="active">
                         <a href="/orders/new">
                             <span class="glyphicon glyphicon-star offset-right" aria-hidden="true"></span>
-                            <span class="hidden-xs">New</span>
+                            <span class="hidden-xs">Open</span>
                         </a>
                     </li>
                     <li>
                         <a href="/orders/delivered">
                             <span class="glyphicon glyphicon-ok-sign offset-right" aria-hidden="true"></span>
-                            <span class="hidden-xs">Delivered</span>
+                            <span class="hidden-xs">Filled</span>
                         </a>
                     </li>
                     <li>
                         <a href="/orders/canceled">
                             <span class="glyphicon glyphicon-remove-sign offset-right" aria-hidden="true"></span>
-                            <span class="hidden-xs">Canceled</span>
+                            <span class="hidden-xs">Closed</span>
                         </a>
                     </li>
                     <li>
@@ -72,7 +72,7 @@
                                 <span class="label label-default">{{cpprogram.status}}</span>
                             </td>
                             <td class="text-center">
-                                <button type="button" ng-click="vm.generateISINDocs()" class="btn btn-success btn-raised btn-xs">Generate ISIN Docs</button>
+                                <button type="button" ng-click="vm.generateISINDocs()"  class="btn btn-success btn-raised btn-xs">Generate ISIN Docs</button>
                             </td>
                             <td class="text-center">
                                 <button type="button" ng-click="vm.createCPISsue(cpprogram)" class="btn btn-success btn-raised btn-sm">Sell</button>

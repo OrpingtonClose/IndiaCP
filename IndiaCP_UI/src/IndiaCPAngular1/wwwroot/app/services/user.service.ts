@@ -34,15 +34,16 @@ module app.services {
     }
 
     class UserService implements IUserService {
-        protected basePath = "http://finwizui.azurewebsites.net/api";
+        protected basePath:string;
         public defaultHeaders : any = {};
 
-        static $inject: string[] = ["$http", "$httpParamSerializer", "basePath"];
+        static $inject: string[] = ["$http", "$httpParamSerializer","localStorageService"];
 
-        constructor(protected $http: ng.IHttpService, protected $httpParamSerializer?: (d: any) => any, basePath?: string) {
-            if (basePath !== undefined) {
-                this.basePath = basePath;
-            }
+        constructor(protected $http: ng.IHttpService, protected localStorageService:ng.local.storage.ILocalStorageService, protected $httpParamSerializer?: (d: any) => any) {
+            var nodeInfo:app.models.NodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
+            var host:string = nodeInfo.host;
+            var port:number = nodeInfo.port;
+            this.basePath = `http://${host}:${port}/indiacp`;
         }
 
         private extendObj<T1,T2>(objA: T1, objB: T2) {

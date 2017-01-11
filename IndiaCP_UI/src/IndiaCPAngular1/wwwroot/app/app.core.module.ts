@@ -10,7 +10,10 @@
             "ngCookies",
             "ngStorage",
             "angular-growl",
-            "uuid4"
+            "uuid4",
+            "LocalStorageModule",
+            "ngFileUpload",
+            "angular-loading-bar"
 
             /*
             *3rd party modules

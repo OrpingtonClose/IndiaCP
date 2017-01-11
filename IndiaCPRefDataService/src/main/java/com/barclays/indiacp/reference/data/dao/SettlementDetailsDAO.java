@@ -38,7 +38,7 @@ public class SettlementDetailsDAO
         return em.createQuery("SELECT s FROM SettlementDetails s").getResultList();
     }
 
-    public List<SettlementDetails> getUserDetailsForEntity(Integer legalEntityId)
+    public List<SettlementDetails> getSettlementDetailsForEntity(Integer legalEntityId)
     {
         return em.createQuery("SELECT s FROM SettlementDetails s where legal_entity_id =" + legalEntityId).getResultList();
     }

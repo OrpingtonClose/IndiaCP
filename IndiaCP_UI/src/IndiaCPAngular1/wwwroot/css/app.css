@@ -1,0 +1,15 @@
+.first-navbar{
+    border-bottom: none;
+    box-shadow: none;
+    border : 0px !important;
+}
+
+.second-navbar{
+    margin-bottom: 0px;
+    padding-left: 0px;
+}
+
+#loading-bar .bar {
+    background: #7f7777;
+    height: 4px;
+  }

@@ -9,13 +9,36 @@ var app;
                 this.$scope = $scope;
                 this.$uibModal = $uibModal;
                 this.issuerService = issuerService;
+                this.workflowStates = new app.models.WorkflowStates();
                 this.fetchAllCPPrograms();
             }
             DashboardController.prototype.fetchAllCPPrograms = function () {
                 var vm = this;
                 this.issuerService.fetchAllCPProgram().then(function (response) {
                     vm.cpPrograms = response.data;
+                    vm.cpPrograms.forEach(function (cpProgram) {
+                        vm.workflowStates.states.forEach(function (state) {
+                            if (state.status === cpProgram.status) {
+                                cpProgram.nextAction = state.nextAction;
+                            }
+                        });
+                    });
                 });
+            };
+            DashboardController.prototype.executeNextAction = function (nextAction, selectedCPProgram) {
+                switch (nextAction) {
+                    case "ADD_ISIN_GEN_DOC":
+                        this.generateISINDocs();
+                        break;
+                    case "ISSUECP":
+                        this.createCPISsue(selectedCPProgram);
+                        break;
+                    case "ADD_IPA_VERI_DOC":
+                        this.createCPISsue(selectedCPProgram);
+                        break;
+                    default:
+                        this.createCPISsue(selectedCPProgram);
+                }
             };
             DashboardController.prototype.generateISINDocs = function () {
                 this.$uibModal.open({

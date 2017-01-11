@@ -2,7 +2,7 @@ module app.models {
     "use strict";
 
     export class BoardResolutionDocs {
-        /**
+         /**
          * Unique identifier of the Legal Entity that this document is issued by
          */
         "legalEntityId"?: string;
@@ -30,6 +30,8 @@ module app.models {
         /**
          * Last Modified Date for this BR upload. This is required for Audit History
          */
-        "lastModified"?: Date;
+        "lastModifiedDate"?: Date;
+
+        "docHash"?: string;
     }
 }

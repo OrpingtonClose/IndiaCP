@@ -29,14 +29,15 @@ var app;
     (function (services) {
         "use strict";
         var UserService = (function () {
-            function UserService($http, $httpParamSerializer, basePath) {
+            function UserService($http, localStorageService, $httpParamSerializer) {
                 this.$http = $http;
+                this.localStorageService = localStorageService;
                 this.$httpParamSerializer = $httpParamSerializer;
-                this.basePath = "http://finwizui.azurewebsites.net/api";
                 this.defaultHeaders = {};
-                if (basePath !== undefined) {
-                    this.basePath = basePath;
-                }
+                var nodeInfo = this.localStorageService.get("nodeInfo");
+                var host = nodeInfo.host;
+                var port = nodeInfo.port;
+                this.basePath = "http://" + host + ":" + port + "/indiacp";
             }
             UserService.prototype.extendObj = function (objA, objB) {
                 for (var key in objB) {
@@ -80,7 +81,7 @@ var app;
             };
             return UserService;
         }());
-        UserService.$inject = ["$http", "$httpParamSerializer", "basePath"];
+        UserService.$inject = ["$http", "$httpParamSerializer", "localStorageService"];
         angular
             .module("app.services")
             .service("app.services.UserService", UserService);

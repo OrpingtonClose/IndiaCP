@@ -1,9 +1,10 @@
 package com.barclays.indiacp;
 
-import com.barclays.indiacp.dl.integration.IndiaCPIssueApi;
-import com.barclays.indiacp.dl.integration.IndiaCPIssueApiFactory;
-import com.barclays.indiacp.dl.integration.IndiaCPProgramApi;
-import com.barclays.indiacp.dl.integration.IndiaCPProgramApiFactory;
+import com.barclays.indiacp.dl.integration.*;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import org.apache.axis.encoding.Base64;
+import org.apache.commons.io.IOUtils;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -75,23 +76,5 @@ public class Main {
         server.stop();
     }
 
-
-    /*public static void main(String[] args) throws IOException {
-
-    try{
-        File initialFile = new File("E:\\SwitchBoard.zip");
-        InputStream targetStream = new FileInputStream(initialFile);
-        String theString = IOUtils.toString(targetStream, "UTF-8");
-        final File tempFile = File.createTempFile("temp", ".zip");
-        tempFile.deleteOnExit();
-        FileOutputStream out = new FileOutputStream(tempFile);
-        IOUtils.copy(targetStream, out);
-
-    } catch (Exception ex)
-        {
-            throw new RuntimeException("File could not be uploaded.");
-        }
-
-    }*/
 
 }

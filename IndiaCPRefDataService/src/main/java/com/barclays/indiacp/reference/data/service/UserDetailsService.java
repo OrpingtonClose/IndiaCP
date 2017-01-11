@@ -38,4 +38,12 @@ public class UserDetailsService {
 
     }
 
+
+    @Transactional(readOnly = true)
+    public List<UserDetails> getUserDetailsForEntity(String legalEntityID) {
+        return userDetailsDAO.getUserDetailsForEntity(Integer.parseInt(legalEntityID));
+
+    }
+
+
 }

@@ -56,7 +56,7 @@ public class IndiaCPRefDataAppMain
         //settlementDetailsService.add(new SettlementDetails("Issuer","","MM","","","","","", ""));
         //System.out.println(" " + settlementDetailsService.listAll());
 
-        LegalEntity le = new LegalEntity(1, "Mo Bank","12312312312312","Kuala Lumpur","0612-232223232","","Kuala,Lumpur@kl.com","kualalumpur.com","","Mr. KL");
+      /*  LegalEntity le = new LegalEntity(1, "Mo Bank","12312312312312","Kuala Lumpur","0612-232223232","","Kuala,Lumpur@kl.com","kualalumpur.com","","Mr. KL");
         LegalEntity le1 = new LegalEntity(2, "Bank of America","567567567","America","+1 99999999","","United States of America","unitedstates.com","","Mr. US");
 
 
@@ -73,15 +73,20 @@ public class IndiaCPRefDataAppMain
         le.setSettlementDetails(arrSettlement);
 
         legalEntityService.add(le);
-        legalEntityService.add(le1);
+        legalEntityService.add(le1);*/
 
 //       System.out.println(legalEntityService.listAll());
 
-        List<LegalEntity> leArr = legalEntityService.listAll();
+      /* List<LegalEntity> leArr = legalEntityService.listAll();
         for(LegalEntity l : leArr)
         {
             System.out.println(l);
-        }
+       }*/
+
+       /* LegalEntity oneLe = legalEntityService.getLegalEntityByID("1");
+        System.out.println(oneLe);*/
+
+
        System.out.println("This is IndiaCPRefDataAppMain test Run is now complete");
     }
 

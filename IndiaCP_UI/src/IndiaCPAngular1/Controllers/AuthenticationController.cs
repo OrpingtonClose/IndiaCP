@@ -1,10 +1,10 @@
 ﻿using IdentityModel.Client;
+using IndiaCPAngular1.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace IndiaCPAngular1.Controllers
 {
@@ -24,27 +24,45 @@ namespace IndiaCPAngular1.Controllers
             int i = 1;
         }
 
-        [HttpPost(Name ="Post")]
-        public void Post([FromBody] UserCredentials credentials)
+        [HttpPost(Name = "Post")]
+        public ActionResult Post([FromBody] UserCredentials credentials)
         {
             var disco = DiscoveryClient.GetAsync("http://indiacpidentityserver.azurewebsites.net").GetAwaiter().GetResult();
             var tokenClient = new TokenClient(disco.TokenEndpoint, "ro.client", "secret");
-            var tokenResponse = tokenClient.RequestResourceOwnerPasswordAsync("issuer1", "password", "api1").GetAwaiter().GetResult();
+            var tokenResponse = tokenClient.RequestResourceOwnerPasswordAsync(credentials.Username, credentials.Password, "api1").GetAwaiter().GetResult();
 
             if (tokenResponse.IsError)
             {
+                var resp = new HttpResponseMessage();
+                resp.StatusCode = System.Net.HttpStatusCode.Unauthorized;
                 _logger.LogError(tokenResponse.Error + " " + tokenResponse.ErrorDescription);
+                return new UnauthorizedResult();
             }
             else
             {
+                NodeInfo nodeInfo = new NodeInfo();
+
+
+
+#if DEBUG
+                if (credentials.Username == "investor1")
+                {
+                    nodeInfo.NodeType = "INVESTOR";
+                }
+                else
+                    nodeInfo.NodeType = "ISSUER";
+#else
+                nodeInfo.NodeType = Environment.GetEnvironmentVariable("NODETYPE");
+#endif
+                nodeInfo.Host = Environment.GetEnvironmentVariable("HOST");
+                nodeInfo.Port = Int32.Parse(Environment.GetEnvironmentVariable("PORT"));
+                Dictionary<string, object> info = new Dictionary<string, object>();
+                info["nodeInfo"] = nodeInfo;
+                info["accessToken"] = tokenResponse.AccessToken;
                 _logger.LogInformation(tokenResponse.Json.ToString());
+
+                return new OkObjectResult(info);
             }
         }
-    }
-
-    public class UserCredentials
-    {
-        public String Username { get; set; }
-        public String Password { get; set; }
     }
 }

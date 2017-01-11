@@ -44,4 +44,11 @@ public class SettlementDetailsService
 
     }
 
+    @Transactional(readOnly = true)
+    public List<SettlementDetails> getSettlementDetailsForEntity(String legalEntityID) {
+        return settlementDetailsDAO.getSettlementDetailsForEntity(Integer.parseInt(legalEntityID));
+
+    }
+
+
 }

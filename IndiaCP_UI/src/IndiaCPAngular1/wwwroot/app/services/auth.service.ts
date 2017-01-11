@@ -2,51 +2,64 @@ module app.services {
     "use strict";
 
     export interface IAuthenticationService {
-        login(user:app.models.CurrentUser):ng.IHttpPromise<any>;
-        authenticate():void;
-        clear():void;
-        isAuthenticated():boolean;
+        login(user: app.models.CurrentUser): ng.IHttpPromise<any>;
+        authenticate(): void;
+        clear(): void;
+        isAuthenticated: boolean;
+        logout(): void;
     }
 
     class AuthenticationService implements IAuthenticationService {
         protected basePath = "/api";
-        public defaultHeaders : any = {};
+        public defaultHeaders: any = {};
+        isAuthenticated: boolean;
+        accessToken: string = "";
+   
+        static $inject: string[] = ["$http", "$q", "growl",  "localStorageService", "$sessionStorage"];
 
-        static $inject: string[] = ["$http", "$q", "$sessionStorage"];
-
-        constructor(protected $http: ng.IHttpService, protected $q:ng.IQService, protected $sessionStorage?: (d: any) => any) {
+        constructor(protected $http: ng.IHttpService, protected $q: ng.IQService, protected growl, protected localStorageService:ng.local.storage.ILocalStorageService, protected $sessionStorage?: (d: any) => any) {
+            this.isAuthenticated = false;
+            this.localStorageService.set("accessToken","");
         }
 
-        public login(userInfo:app.models.CurrentUser):ng.IHttpPromise<any> {
-            var deferred:ng.IDeferred<any> = this.$q.defer();
+        public login(userInfo: app.models.CurrentUser): ng.IHttpPromise<any> {
+            var deferred: ng.IDeferred<any> = this.$q.defer();
             this.$http.post(this.basePath + "/authentication", JSON.stringify(userInfo))
-                .success(function (response:any):void {
+                .then((response: any): void => {
+                    this.isAuthenticated = true;
+                    this.localStorageService.set("accessToken",response.data.accessToken);
+                    this.localStorageService.set("nodeInfo",response.data.nodeInfo);
                     deferred.resolve(response);
-                })
-                .error(function(data:any, status:any):void{
+                }, (error: any): void => {
+                    this.growl.error("Incorrect credentials. Try again.", { title: "Error!" });
+                    console.log("Incorrect credentials. Try again.");
+                    this.isAuthenticated = false;
+                    this.localStorageService.set("accessToken","");
                     deferred.reject({
-                   data: data,
-                   status: status
-                 });
+                        data: error
+                    });
                 });
             return deferred.promise;
         }
 
-        public authenticate():void {
+        public authenticate(): void {
             //this.$sessionStorage.isAuthenticated = true;
         }
 
-        public clear():void {
+        public clear(): void {
             //this.$sessionStorage.isAuthenticated = false;
         }
 
-        public isAuthenticated():boolean {
-            // if (this.$sessionStorage.isAuthenticated) {
-            //     return true;
-            // }
-            // return false;
-            return false;
+        public logout(): void {
+            this.isAuthenticated = false;
         }
+        // public isAuthenticated():boolean {
+        //     // if (this.$sessionStorage.isAuthenticated) {
+        //     //     return true;
+        //     // }
+        //     // return false;
+        //     return false;
+        // }
     }
 
     angular

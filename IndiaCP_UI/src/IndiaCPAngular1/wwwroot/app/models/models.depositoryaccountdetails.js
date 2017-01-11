@@ -9,6 +9,11 @@ var app;
             return DepositoryAccountDetails;
         }());
         models.DepositoryAccountDetails = DepositoryAccountDetails;
+        var DpTypeEnum;
+        (function (DpTypeEnum) {
+            DpTypeEnum[DpTypeEnum["ALLOTTMENT"] = "ALLOTTMENT"] = "ALLOTTMENT";
+            DpTypeEnum[DpTypeEnum["REDEMPTION"] = "REDEMPTION"] = "REDEMPTION";
+        })(DpTypeEnum = models.DpTypeEnum || (models.DpTypeEnum = {}));
     })(models = app.models || (app.models = {}));
 })(app || (app = {}));
 //# sourceMappingURL=models.depositoryaccountdetails.js.map

@@ -1,11 +1,11 @@
-(function(): void {
+(function (): void {
     "use strict";
     angular
-    .module("app.dashboard")
-    .config(config);
+        .module("app.dashboard")
+        .config(config);
 
     config.$inject = ["$stateProvider", "$urlRouterProvider"];
-    function config($stateProvider: ng.ui.IStateProvider, $urlRouterProvider: ng.ui.IUrlRouterProvider): void { 
+    function config($stateProvider: ng.ui.IStateProvider, $urlRouterProvider: ng.ui.IUrlRouterProvider): void {
         $stateProvider
             .state("main.dashboard", {
                 cache: false,

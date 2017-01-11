@@ -1,0 +1,60 @@
+<div class="container">
+    <form>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div class="page-header">
+                        <h1>Credit Rating Data : Barclays Investments and Loans (India) Ltd</h1>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating Agency</label>
+                                <input class="form-control input-sm" type="text" ng-model="vm.crDetails.creditRatingAgencyName" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating</label>
+                                <input class="form-control input-sm" type="text" ng-model="vm.crDetails.creditRating" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating Issued Date</label>
+                                <input class="form-control input-sm" type="date" ng-model="vm.crDetails.creditRatingIssuanceDate" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating Effective Date</label>
+                                <input class="form-control" type="date" ng-model="vm.crDetails.creditRatingEffectiveDate" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating PDF Upload</label>
+                                <input type="file" class="btn btn-default" ngf-select="vm.displayCR($file)" accept="*" ngf-max-height="1000" ngf-max-size="1MB"
+                                />
+
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <button class="btn btn-primary btn-raised" type="button">Sign</button>
+                                            <button class="btn btn-primary btn-raised" ng-click="vm.uploadCR()" type="button">Save</button>
+                                            <button class="btn btn-primary btn-raised" type="button">Cancel </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Credit Rating Doc Preview</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <iframe id="dynamicIframe" ng-src={{vm.crFileUrl}} scrolling="auto" width="100%" height="500px" type="application/pdf"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

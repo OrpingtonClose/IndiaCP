@@ -11,9 +11,9 @@ var app;
         models.SettlementDetails = SettlementDetails;
         var PartyTypeEnum;
         (function (PartyTypeEnum) {
-            PartyTypeEnum[PartyTypeEnum["ISSUER"] = 'ISSUER'] = "ISSUER";
-            PartyTypeEnum[PartyTypeEnum["INVESTOR"] = 'INVESTOR'] = "INVESTOR";
-            PartyTypeEnum[PartyTypeEnum["IPA"] = 'IPA'] = "IPA";
+            PartyTypeEnum[PartyTypeEnum["ISSUER"] = "ISSUER"] = "ISSUER";
+            PartyTypeEnum[PartyTypeEnum["INVESTOR"] = "INVESTOR"] = "INVESTOR";
+            PartyTypeEnum[PartyTypeEnum["IPA"] = "IPA"] = "IPA";
         })(PartyTypeEnum = models.PartyTypeEnum || (models.PartyTypeEnum = {}));
     })(models = app.models || (app.models = {}));
 })(app || (app = {}));

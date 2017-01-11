@@ -28,6 +28,7 @@
     "IdentityModel": "2.1.1"
   },
   "tools": {
+    "Microsoft.AspNetCore.Server.IISIntegration.Tools": "1.1.0-preview4-final"
   },
   "frameworks": {
     "netcoreapp1.0": {
@@ -39,7 +40,8 @@
   },
   "buildOptions": {
     "emitEntryPoint": true,
-    "preserveCompilationContext": true
+    "preserveCompilationContext": true,
+    "define": [ "DEBUG", "TRACE" ]
   },
   "runtimeOptions": {
     "configProperties": {

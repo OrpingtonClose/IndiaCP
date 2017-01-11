@@ -44,6 +44,10 @@ public class LegalEntityService
 
     }
 
+    @Transactional(readOnly = true)
+    public Integer getLegalEntityByName(String legalEntityName) {
+        return legalEntityDAO.getLegalEntityByName(legalEntityName);
+    }
 
 
 

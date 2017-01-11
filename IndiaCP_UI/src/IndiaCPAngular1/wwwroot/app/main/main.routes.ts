@@ -10,7 +10,8 @@
             .state("main", {
                 url: "/",
                 templateUrl: "app/main/main.html",
-                controller: "app.main.MainController"
+                controller: "app.main.MainController",
+                controllerAs: "vm"
             });
     }
     // resolveCPPrograms.$inject = ["app.services.CPProgramService"];
