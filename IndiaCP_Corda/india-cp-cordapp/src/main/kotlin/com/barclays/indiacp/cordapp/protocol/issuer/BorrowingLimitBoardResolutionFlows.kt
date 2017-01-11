@@ -18,10 +18,10 @@ import net.corda.flows.NotaryFlow
 import java.time.Instant
 
 /*
- * Flows for Setting up DL Stamped Immutable Credit Rating and Board Resolution Documents on DL.
+ * Flows for Setting up DL Stamped Immutable Board Resolution Document on DL.
  * The hash of the Documents is stamped on the DL as part of the corresponding Smart Contract State
  *
- * Created by ritukedia on 07/01/17.
+ * Created by ritukedia
  */
 open class BorrowingLimitBoardResolutionFlows(val contractState: BorrowingLimitBoardResolution.State?, val command: String) : FlowLogic<SignedTransaction>() {
 

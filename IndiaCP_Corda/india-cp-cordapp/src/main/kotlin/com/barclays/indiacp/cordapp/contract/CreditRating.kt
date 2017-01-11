@@ -15,10 +15,17 @@ import net.corda.core.schemas.PersistentState
 import net.corda.core.schemas.QueryableState
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.Emoji
+import sun.misc.CEStreamExhausted
 import java.util.*
 
 val CREDIT_RATING_ID = CreditRating()
 
+/**
+ * This is the Smart Contract to manage the Credit Rating Document Issued by the Credit Rating Agency that provides
+ * the approved Credit Limits for Short Term Borrowing instruments like Commercial Paper
+ *
+ * Created by ritukedia
+ */
 class CreditRating : Contract, LegalEntityDocumentContract {
     //override this with actual CR Document Hash at the time of Contract Issue
     //ICRA is the Credit Rating Agency for India Commercial Papers for Barclays
@@ -30,7 +37,9 @@ class CreditRating : Contract, LegalEntityDocumentContract {
             override val issuer: Party,
             override val owner: CompositeKey,
             val creditRatingAgencyName: String,
-            val creditRatingAmount: Integer,
+            val creditRatingAmount: Amount<Currency>,
+            val currency: Currency,
+            val currentOutstandingCreditBorrowing: Amount<Currency>? = Amount(0, currency),
             val creditRating: String,
             val creditRatingIssuanceDate: Date,
             val creditRatingEffectiveDate: Date,
@@ -38,7 +47,7 @@ class CreditRating : Contract, LegalEntityDocumentContract {
             override val docHash: String,
             val modifiedBy: String,
             val lastModifiedDate: Date? = Date(),
-            val version: Integer? = Integer(1),
+            val version: Int? = 1,
             val status: String? = ModelUtils.DocumentStatus.ACTIVE.name
     ) : LegalEntityDocumentOwnableState, OwnableState, QueryableState {
         override val contract = BORROWING_LIMIT_BOARD_RESOLUTION_ID
@@ -61,7 +70,9 @@ class CreditRating : Contract, LegalEntityDocumentContract {
                         issuanceParty = this.issuer.name,
                         owner = this.owner.toBase58String(),
                         creditRatingAgencyName = this.creditRatingAgencyName,
-                        creditRatingAmount = this.creditRatingAmount,
+                        creditRatingAmount = this.creditRatingAmount.quantity,
+                        currency = this.creditRatingAmount.token.symbol,
+                        currentOutstandingCreditBorrowing = this.currentOutstandingCreditBorrowing!!.quantity,
                         creditRating = this.creditRating,
                         creditRatingIssuanceDate = this.creditRatingIssuanceDate,
                         creditRatingEffectiveDate = this.creditRatingEffectiveDate,
@@ -190,9 +201,12 @@ class CreditRating : Contract, LegalEntityDocumentContract {
         val tx = TransactionType.General.Builder(notary = notary)
         if (amendedCRState is CreditRating.State) {
             tx.addInputState(currentCRRef)
-            val newVersion = Integer(currentCRRef.state.data.version!!.toInt() + 1)
+            val newVersion = currentCRRef.state.data.version!! + 1
+            val currentOutstandingCreditBorrowing = currentCRRef.state.data.currentOutstandingCreditBorrowing
             tx.addOutputState(
-                    amendedCRState.copy(status = ModelUtils.DocumentStatus.ACTIVE.name, version = newVersion),
+                    amendedCRState.copy(status = ModelUtils.DocumentStatus.ACTIVE.name,
+                                        version = newVersion,
+                                        currentOutstandingCreditBorrowing = (currentOutstandingCreditBorrowing!! + amendedCRState.currentOutstandingCreditBorrowing!!)),
                     currentCRRef.state.notary
             )
             tx.addCommand(Commands.Amend(), listOf(amendedCRState.owner))

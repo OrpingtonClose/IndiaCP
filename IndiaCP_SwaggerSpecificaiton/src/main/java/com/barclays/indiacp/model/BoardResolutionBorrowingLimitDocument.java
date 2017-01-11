@@ -36,13 +36,19 @@ import java.util.Date;
 /**
  * BoardResolutionBorrowingLimitDocument
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-08T11:59:45.052Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-10T12:15:59.809Z")
 public class BoardResolutionBorrowingLimitDocument   {
   @JsonProperty("legalEntityId")
   private String legalEntityId = null;
 
   @JsonProperty("boardResolutionBorrowingLimit")
-  private Integer boardResolutionBorrowingLimit = null;
+  private Long boardResolutionBorrowingLimit = null;
+
+  @JsonProperty("currentOutstandingCreditBorrowing")
+  private Long currentOutstandingCreditBorrowing = null;
+
+  @JsonProperty("currency")
+  private String currency = null;
 
   @JsonProperty("boardResolutionIssuanceDate")
   private Date boardResolutionIssuanceDate = null;
@@ -114,7 +120,7 @@ public class BoardResolutionBorrowingLimitDocument   {
     this.legalEntityId = legalEntityId;
   }
 
-  public BoardResolutionBorrowingLimitDocument boardResolutionBorrowingLimit(Integer boardResolutionBorrowingLimit) {
+  public BoardResolutionBorrowingLimitDocument boardResolutionBorrowingLimit(Long boardResolutionBorrowingLimit) {
     this.boardResolutionBorrowingLimit = boardResolutionBorrowingLimit;
     return this;
   }
@@ -124,12 +130,48 @@ public class BoardResolutionBorrowingLimitDocument   {
    * @return boardResolutionBorrowingLimit
   **/
   @ApiModelProperty(value = "Borrowing Limit approved by board")
-  public Integer getBoardResolutionBorrowingLimit() {
+  public Long getBoardResolutionBorrowingLimit() {
     return boardResolutionBorrowingLimit;
   }
 
-  public void setBoardResolutionBorrowingLimit(Integer boardResolutionBorrowingLimit) {
+  public void setBoardResolutionBorrowingLimit(Long boardResolutionBorrowingLimit) {
     this.boardResolutionBorrowingLimit = boardResolutionBorrowingLimit;
+  }
+
+  public BoardResolutionBorrowingLimitDocument currentOutstandingCreditBorrowing(Long currentOutstandingCreditBorrowing) {
+    this.currentOutstandingCreditBorrowing = currentOutstandingCreditBorrowing;
+    return this;
+  }
+
+   /**
+   * Outstanding Credit Borrowing. This is an auto computed value. It is computed by the Smart Contract based on the outstanding open CP Program Sizes.
+   * @return currentOutstandingCreditBorrowing
+  **/
+  @ApiModelProperty(value = "Outstanding Credit Borrowing. This is an auto computed value. It is computed by the Smart Contract based on the outstanding open CP Program Sizes.")
+  public Long getCurrentOutstandingCreditBorrowing() {
+    return currentOutstandingCreditBorrowing;
+  }
+
+  public void setCurrentOutstandingCreditBorrowing(Long currentOutstandingCreditBorrowing) {
+    this.currentOutstandingCreditBorrowing = currentOutstandingCreditBorrowing;
+  }
+
+  public BoardResolutionBorrowingLimitDocument currency(String currency) {
+    this.currency = currency;
+    return this;
+  }
+
+   /**
+   * Currency. Defaulted to INR for India Commercial Paper
+   * @return currency
+  **/
+  @ApiModelProperty(value = "Currency. Defaulted to INR for India Commercial Paper")
+  public String getCurrency() {
+    return currency;
+  }
+
+  public void setCurrency(String currency) {
+    this.currency = currency;
   }
 
   public BoardResolutionBorrowingLimitDocument boardResolutionIssuanceDate(Date boardResolutionIssuanceDate) {
@@ -270,6 +312,8 @@ public class BoardResolutionBorrowingLimitDocument   {
     BoardResolutionBorrowingLimitDocument boardResolutionBorrowingLimitDocument = (BoardResolutionBorrowingLimitDocument) o;
     return Objects.equals(this.legalEntityId, boardResolutionBorrowingLimitDocument.legalEntityId) &&
         Objects.equals(this.boardResolutionBorrowingLimit, boardResolutionBorrowingLimitDocument.boardResolutionBorrowingLimit) &&
+        Objects.equals(this.currentOutstandingCreditBorrowing, boardResolutionBorrowingLimitDocument.currentOutstandingCreditBorrowing) &&
+        Objects.equals(this.currency, boardResolutionBorrowingLimitDocument.currency) &&
         Objects.equals(this.boardResolutionIssuanceDate, boardResolutionBorrowingLimitDocument.boardResolutionIssuanceDate) &&
         Objects.equals(this.boardResolutionExpiryDate, boardResolutionBorrowingLimitDocument.boardResolutionExpiryDate) &&
         Objects.equals(this.docHash, boardResolutionBorrowingLimitDocument.docHash) &&
@@ -281,7 +325,7 @@ public class BoardResolutionBorrowingLimitDocument   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(legalEntityId, boardResolutionBorrowingLimit, boardResolutionIssuanceDate, boardResolutionExpiryDate, docHash, version, modifiedBy, lastModifiedDate, status);
+    return Objects.hash(legalEntityId, boardResolutionBorrowingLimit, currentOutstandingCreditBorrowing, currency, boardResolutionIssuanceDate, boardResolutionExpiryDate, docHash, version, modifiedBy, lastModifiedDate, status);
   }
 
 
@@ -292,6 +336,8 @@ public class BoardResolutionBorrowingLimitDocument   {
     
     sb.append("    legalEntityId: ").append(toIndentedString(legalEntityId)).append("\n");
     sb.append("    boardResolutionBorrowingLimit: ").append(toIndentedString(boardResolutionBorrowingLimit)).append("\n");
+    sb.append("    currentOutstandingCreditBorrowing: ").append(toIndentedString(currentOutstandingCreditBorrowing)).append("\n");
+    sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
     sb.append("    boardResolutionIssuanceDate: ").append(toIndentedString(boardResolutionIssuanceDate)).append("\n");
     sb.append("    boardResolutionExpiryDate: ").append(toIndentedString(boardResolutionExpiryDate)).append("\n");
     sb.append("    docHash: ").append(toIndentedString(docHash)).append("\n");

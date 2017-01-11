@@ -1,6 +1,5 @@
 package com.barclays.indiacp.cordapp.contract
 
-import com.barclays.indiacp.cordapp.schemas.BorrowingLimitBoardResolutionSchema
 import com.barclays.indiacp.cordapp.schemas.BorrowingLimitBoardResolutionSchemaV1
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
 import net.corda.core.contracts.*
@@ -20,6 +19,12 @@ import java.util.*
 
 val BORROWING_LIMIT_BOARD_RESOLUTION_ID = BorrowingLimitBoardResolution()
 
+/**
+ * This is the Smart Contract to manage the Borrowing Limit Board Resolution issued by the Board of the Legal Entity.
+ * This document contains the approved Limits for Short Term Borrowing through instruments like Commercial Paper
+ *
+ * Created by ritukedia
+ */
 class BorrowingLimitBoardResolution : Contract, LegalEntityDocumentContract {
     //override this with actual BR Document Hash at the time of Contract Issue
     override val legalContractReference: SecureHash = SecureHash.sha256("http://www.icra.in/Files/Articles/RM-CommPapers.pdf")
@@ -29,13 +34,15 @@ class BorrowingLimitBoardResolution : Contract, LegalEntityDocumentContract {
     data class State(
             override val issuer: Party,
             override val owner: CompositeKey,
-            val boardResolutionBorrowingLimit: Integer,
+            val currency: Currency,
+            val boardResolutionBorrowingLimit: Amount<Currency>,
+            val currentOutstandingCreditBorrowing: Amount<Currency>? = Amount(0, currency),
             val boardResolutionIssuanceDate: Date,
             val boardResolutionExpiryDate: Date,
             override val docHash: String,
             val modifiedBy: String,
             val lastModifiedDate: Date? = Date(),
-            val version: Integer? = Integer(1),
+            val version: Int? = ModelUtils.STARTING_VERSION,
             val status: String? = ModelUtils.DocumentStatus.ACTIVE.name
     ) : LegalEntityDocumentOwnableState, OwnableState, QueryableState {
         override val contract = BORROWING_LIMIT_BOARD_RESOLUTION_ID
@@ -57,7 +64,8 @@ class BorrowingLimitBoardResolution : Contract, LegalEntityDocumentContract {
                 is BorrowingLimitBoardResolutionSchemaV1 -> BorrowingLimitBoardResolutionSchemaV1.PersistentBorrowingLimitBRState(
                         issuanceParty = this.issuer.name,
                         owner = this.owner.toBase58String(),
-                        boardResolutionBorrowingLimit = this.boardResolutionBorrowingLimit,
+                        boardResolutionBorrowingLimit = this.boardResolutionBorrowingLimit.quantity,
+                        currentOutstandingCreditBorrowing = this.currentOutstandingCreditBorrowing!!.quantity,
                         boardResolutionIssuanceDate = this.boardResolutionIssuanceDate,
                         boardResolutionExpiryDate = this.boardResolutionExpiryDate,
                         modifiedBy = this.modifiedBy,
@@ -184,9 +192,12 @@ class BorrowingLimitBoardResolution : Contract, LegalEntityDocumentContract {
         val tx = TransactionType.General.Builder(notary = notary)
         if (amendedBRState is BorrowingLimitBoardResolution.State) {
             tx.addInputState(currentBRRef)
-            val newVersion = Integer(currentBRRef.state.data.version!!.toInt() + 1)
+            val currentOutstandingCreditBorrowing = currentBRRef.state.data.currentOutstandingCreditBorrowing
+            val newVersion = currentBRRef.state.data.version!!.toInt() + 1
             tx.addOutputState(
-                    amendedBRState.copy(status = ModelUtils.DocumentStatus.ACTIVE.name, version = newVersion),
+                    amendedBRState.copy(status = ModelUtils.DocumentStatus.ACTIVE.name,
+                                        version = newVersion,
+                                        currentOutstandingCreditBorrowing = (currentOutstandingCreditBorrowing!! + amendedBRState.currentOutstandingCreditBorrowing!!)),
                     currentBRRef.state.notary
             )
             tx.addCommand(Commands.Amend(), listOf(amendedBRState.owner))

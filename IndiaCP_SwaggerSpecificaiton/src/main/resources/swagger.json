@@ -592,6 +592,52 @@
                 }
             }
         },
+        "/creditrating/amendCreditRating": {
+            "post": {
+                "summary": "Uploads the Credit Rating Document and amends the Smart Contract for the same on the DL to establish immutable golden copy",
+                "description": "Uploads the Credit Rating Document and amends the Smart Contract for the same on the DL to establish immutable golden copy",
+                "operationId": "amendCreditRating",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "parameters": [
+                    {
+                        "name": "creditRatingDetails",
+                        "in": "formData",
+                        "description": "Credit Rating Details for creating the Smart Contract",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "description": "Document Attachment",
+                        "required": true,
+                        "type": "file"
+                    }
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the LegalEntityCreditRatingDocument details",
+                        "schema": {
+                            "$ref": "#/definitions/LegalEntityCreditRatingDocument"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
         "/creditrating/fetchCreditRating": {
             "get": {
                 "summary": "Get current active Credit Rating details",
@@ -620,7 +666,31 @@
                     }
                 }
             }
+        },
+        "/creditrating/cancelCreditRating": {
+            "get": {
+                "summary": "Cancel current active Credit Rating details",
+                "description": "Cancel current active Credit Rating details",
+                "operationId": "cancelCreditRating",
+                "parameters": [
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cancel current Active Credit Rating Details"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
         }
+
     },
     "definitions": {
         "LegalEntityCreditRatingDocument": {
@@ -632,11 +702,21 @@
                 },
                 "creditRatingAgencyName": {
                     "type": "string",
-                    "description": "Unique identifier for the Credit Rating Agency"
+                    "description": "The Credit Rating Agency"
                 },
                 "creditRatingAmount": {
                     "type": "integer",
-                    "description": "Unique identifier of the CP Program that this document is associated with"
+                    "format": "int64",
+                    "description": "Total Approved Borrowing Credit Limit"
+                },
+                "currentOutstandingCreditBorrowing": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Outstanding Credit Borrowing. This is an auto computed value. It is computed by the Smart Contract based on the outstanding open CP Program Sizes."
+                },
+                "currency": {
+                    "type": "string",
+                    "description": "Currency. Defaulted to INR for India Commercial Paper"
                 },
                 "creditRating": {
                     "type": "string",
@@ -693,7 +773,17 @@
                 },
                 "boardResolutionBorrowingLimit": {
                     "type": "integer",
+                    "format": "int64",
                     "description": "Borrowing Limit approved by board"
+                },
+                "currentOutstandingCreditBorrowing": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "Outstanding Credit Borrowing. This is an auto computed value. It is computed by the Smart Contract based on the outstanding open CP Program Sizes."
+                },
+                "currency": {
+                    "type": "string",
+                    "description": "Currency. Defaulted to INR for India Commercial Paper"
                 },
                 "boardResolutionIssuanceDate": {
                     "type": "string",
@@ -770,10 +860,12 @@
                 },
                 "programSize": {
                     "type": "integer",
+                    "format": "int64",
                     "description": "Total borrowing amount under this CP Program"
                 },
                 "programAllocatedValue": {
                     "type": "integer",
+                    "format": "int64",
                     "description": "Amount already allocated to the CP program"
                 },
                 "programCurrency": {
@@ -1114,6 +1206,9 @@
             "type": "string",
             "enum": [
                 "CP_PROGRAM_CREATION_ERROR",
+                "CP_PROGRAM_CREDIT_LIMIT_EXCEEDED_ERROR",
+                "CP_PROGRAM_BORROWING_LIMIT_EXCEEDED_ERROR",
+                "CP_PROGRAM_CREDIT_RATING_VALIDITY_EXPIRED_ERROR",
                 "CP_PROGRAM_CANCELLATION_ERROR",
                 "CP_PROGRAM_FETCH_ERROR",
                 "CP_PROGRAM_DOES_NOT_EXIST_ERROR",

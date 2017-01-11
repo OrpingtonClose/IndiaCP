@@ -32,7 +32,10 @@ object BorrowingLimitBoardResolutionSchemaV1 : MappedSchema(schemaFamily = Borro
             var owner: String,
 
             @Column(name = "board_resolution_borrowing_limit")
-            var boardResolutionBorrowingLimit: Integer,
+            var boardResolutionBorrowingLimit: Long,
+
+            @Column(name = "current_outstanding_credit_borrowing")
+            var currentOutstandingCreditBorrowing: Long,
 
             @Column(name = "board_resolution_issuance_date")
             var boardResolutionIssuanceDate: Date,
@@ -47,7 +50,7 @@ object BorrowingLimitBoardResolutionSchemaV1 : MappedSchema(schemaFamily = Borro
             var lastModifiedDate: Date,
 
             @Column(name = "version")
-            var version: Integer,
+            var version: Int,
 
             @Column(name = "status")
             var status: String

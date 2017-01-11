@@ -1,12 +1,17 @@
 package com.barclays.indiacp.cordapp.utilities
 
+import com.barclays.indiacp.cordapp.contract.CreditRating
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
+import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.model.Error
 import com.barclays.indiacp.model.IndiaCPException
+import net.corda.contracts.asset.DUMMY_CASH_ISSUER_KEY
+import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.OwnableState
 import net.corda.core.contracts.PartyAndReference
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.crypto.Party
+import net.corda.core.crypto.composite
 import net.corda.core.node.NodeInfo
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.dealsWith
@@ -14,6 +19,7 @@ import net.corda.core.serialization.OpaqueBytes
 import java.io.PrintWriter
 import java.io.StringWriter
 import javax.ws.rs.core.Response
+import kotlin.reflect.KClass
 
 enum class Role {
     BUYER,
@@ -24,7 +30,12 @@ val DEFAULT_BASE_DIRECTORY = "./build/indiacpdemo"
 
 object CPUtils {
 
-    fun getReferencedCommercialPaper(serviceHub: ServiceHub, cpRefId: String) : StateAndRef<OwnableState> {
+    inline fun <reified T : ContractState> getContractStateAndRef(serviceHub: ServiceHub) : StateAndRef<T>? {
+        val states = serviceHub.vaultService.currentVault.statesOfType<T>()
+        return if (states.isEmpty()) null else states[0]
+    }
+
+    fun getContractState(serviceHub: ServiceHub, cpRefId: String) : StateAndRef<OwnableState> {
         val states = serviceHub.vaultService.currentVault.statesOfType<IndiaCommercialPaper.State>()
         for (stateAndRef: StateAndRef<IndiaCommercialPaper.State> in states) {
             val ref = getReference(cpRefId)
@@ -35,46 +46,6 @@ object CPUtils {
         }
         throw Exception("ECPTradeAndSettlementProtocol: Commercial Paper referenced by $cpRefId not found")
     }
-
-    fun errorHttpResponse(ex: Throwable, errorCode: Any = "Unknown", errorMessage: String? = null, errorDetails: String? = null): Response {
-        if (ex is IndiaCPException)
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getError()).build()
-        else {
-            val error = Error()
-            error.source(Error.SourceEnum.DL_R3CORDA)
-            error.code(errorCode.toString())
-            error.message(errorMessage ?: ex.message)
-            error.details(errorDetails ?: getCustomStackTrace(ex))
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(error).build()
-        }
-    }
-
-    fun getStackTrace(aThrowable: Throwable): String {
-        val result = StringWriter()
-        val printWriter = PrintWriter(result)
-        aThrowable.printStackTrace(printWriter)
-        return result.toString()
-    }
-
-    /**
-     * Defines a custom format for the stack trace as String.
-     */
-    fun getCustomStackTrace(aThrowable: Throwable): String {
-        //add the class name and any message passed to constructor
-        val result = StringBuilder("BOO-BOO: ")
-        result.append(aThrowable.toString())
-        val NEW_LINE = System.getProperty("line.separator")
-        result.append(NEW_LINE)
-
-        //add each element of the stack trace
-        val element: StackTraceElement? = null
-        for(element in aThrowable.stackTrace) {
-            result.append(element)
-            result.append(NEW_LINE)
-        }
-        return result.toString()
-    }
-
 
     fun getPartyAndRef(party: Party, reference: OpaqueBytes) : PartyAndReference {
         return PartyAndReference(party, reference)
@@ -88,4 +59,13 @@ object CPUtils {
         return OpaqueBytes.of(*cpRefId.toByteArray())
     }
 
+    val DUMMY_CASH_ISSUER by lazy { Party("Snake Oil Issuer", DUMMY_CASH_ISSUER_KEY.public.composite).ref(1) }
+
+    fun getCashIssuerForThisNode(serviceHub: ServiceHub) : PartyAndReference {
+        return serviceHub.myInfo.legalIdentity.ref(1)
+    }
+
+    fun getCashIssuerForThisNode(party: Party) : PartyAndReference {
+        return party.ref(1)
+    }
 }

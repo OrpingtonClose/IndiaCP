@@ -3,7 +3,7 @@ package com.barclays.indiacp.cordapp.api
 import com.barclays.indiacp.cordapp.contract.BorrowingLimitBoardResolution
 import com.barclays.indiacp.cordapp.contract.LegalEntityDocumentOwnableState
 import com.barclays.indiacp.cordapp.protocol.issuer.BorrowingLimitBoardResolutionFlows
-import com.barclays.indiacp.cordapp.utilities.CPUtils
+import com.barclays.indiacp.cordapp.utilities.ErrorUtils
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
 import com.barclays.indiacp.model.*
 import net.corda.core.node.ServiceHub
@@ -14,11 +14,10 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 /**
- * Created by ritukedia on 07/01/17.
- */
-/*
- * This is the REST Client API for India CP Trade Operations
- * Created by ritukedia on 07/01/17.
+ * This is the REST Client API for Managing the Borrowing Limit Board Resolution. This is part of the reference data but
+ * is required in the Commercial Paper process and is legally certified by the IPA.
+ *
+ * Created by ritukedia
  */
 @Path("boardresolution")
 class BorrowingLimitBoardResolutionApi(val services: ServiceHub){
@@ -38,11 +37,11 @@ class BorrowingLimitBoardResolutionApi(val services: ServiceHub){
             val stx = services.invokeFlowAsync(BorrowingLimitBoardResolutionFlows::class.java, boardResolutionContractState, BorrowingLimitBoardResolution.Commands.Issue::class.java.simpleName).resultFuture.get()
             logger.info("Issued Credit Rating with CR Document\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
 
-            return Response.status(Response.Status.OK).entity(getBoardResolution()).build()
+            return Response.status(Response.Status.OK).entity(getBoardResolutionContractState()).build()
 
         } catch (ex: Throwable) {
             logger.info("Exception when creating credit rating: ${ex.toString()}")
-            return CPUtils.errorHttpResponse(ex, errorCode = CreditRatingError.CREATION_ERROR)
+            return ErrorUtils.errorHttpResponse(ex, errorCode = CreditRatingError.CREATION_ERROR)
         }
     }
 
@@ -57,11 +56,11 @@ class BorrowingLimitBoardResolutionApi(val services: ServiceHub){
             val stx = services.invokeFlowAsync(BorrowingLimitBoardResolutionFlows::class.java, boardResolutionContractState, BorrowingLimitBoardResolution.Commands.Amend::class.java.simpleName).resultFuture.get()
             logger.info("Amended Credit Rating with CR Document\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
 
-            return Response.status(Response.Status.OK).entity(getBoardResolution()).build()
+            return Response.status(Response.Status.OK).entity(getBoardResolutionContractState()).build()
 
         } catch (ex: Throwable) {
             logger.info("Exception when creating credit rating: ${ex.toString()}")
-            return CPUtils.errorHttpResponse(ex, errorCode = CreditRatingError.AMENDMENT_ERROR)
+            return ErrorUtils.errorHttpResponse(ex, errorCode = CreditRatingError.AMENDMENT_ERROR)
         }
 
     }
@@ -79,7 +78,7 @@ class BorrowingLimitBoardResolutionApi(val services: ServiceHub){
 
         } catch (ex: Throwable) {
             logger.info("Exception when creating credit rating: ${ex.toString()}")
-            return CPUtils.errorHttpResponse(ex, errorCode = CreditRatingError.CANCELLATION_ERROR)
+            return ErrorUtils.errorHttpResponse(ex, errorCode = CreditRatingError.CANCELLATION_ERROR)
         }
     }
 
@@ -89,18 +88,26 @@ class BorrowingLimitBoardResolutionApi(val services: ServiceHub){
     fun fetchBoardResolution(): Response
     {
         try {
-            return Response.status(Response.Status.OK).entity(getBoardResolution() ?: "No Board Resolution Documents Uploaded").build()
+            return Response.status(Response.Status.OK).entity(getBoardResolutionContractState() ?: "No Board Resolution Documents Uploaded").build()
         } catch (ex: Throwable) {
             logger.info("Exception when fetching board resolution: ${ex.toString()}")
-            return CPUtils.errorHttpResponse(ex, errorCode = CreditRatingError.FETCH_ERROR)
+            return ErrorUtils.errorHttpResponse(ex, errorCode = CreditRatingError.FETCH_ERROR)
         }
     }
 
-    private fun getBoardResolution(): BoardResolutionBorrowingLimitDocument? {
+    fun getBoardResolutionModel(): BoardResolutionBorrowingLimitDocument? {
+        val boardResolutionContractState = getBoardResolutionContractState()
+        if (boardResolutionContractState != null)
+            return ModelUtils.boardResolutionModelFromState(boardResolutionContractState)
+        else
+            return null
+    }
+
+    fun getBoardResolutionContractState(): BorrowingLimitBoardResolution.State? {
         val states = services.vaultService.currentVault.statesOfType<BorrowingLimitBoardResolution.State>()
         return if (states.isEmpty()) null else {
             val datas = states.map { it.state.data }
-            return if (datas.isEmpty()) null else ModelUtils.boardResolutionModelFromState(datas[0])
+            return if (datas.isEmpty()) null else datas[0]
         }
     }
 

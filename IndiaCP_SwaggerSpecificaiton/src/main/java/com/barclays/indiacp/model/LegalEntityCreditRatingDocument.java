@@ -36,7 +36,7 @@ import java.util.Date;
 /**
  * LegalEntityCreditRatingDocument
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-08T11:59:45.052Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-10T12:15:59.809Z")
 public class LegalEntityCreditRatingDocument   {
   @JsonProperty("legalEntityId")
   private String legalEntityId = null;
@@ -45,7 +45,13 @@ public class LegalEntityCreditRatingDocument   {
   private String creditRatingAgencyName = null;
 
   @JsonProperty("creditRatingAmount")
-  private Integer creditRatingAmount = null;
+  private Long creditRatingAmount = null;
+
+  @JsonProperty("currentOutstandingCreditBorrowing")
+  private Long currentOutstandingCreditBorrowing = null;
+
+  @JsonProperty("currency")
+  private String currency = null;
 
   @JsonProperty("creditRating")
   private String creditRating = null;
@@ -129,10 +135,10 @@ public class LegalEntityCreditRatingDocument   {
   }
 
    /**
-   * Unique identifier for the Credit Rating Agency
+   * The Credit Rating Agency
    * @return creditRatingAgencyName
   **/
-  @ApiModelProperty(value = "Unique identifier for the Credit Rating Agency")
+  @ApiModelProperty(value = "The Credit Rating Agency")
   public String getCreditRatingAgencyName() {
     return creditRatingAgencyName;
   }
@@ -141,22 +147,58 @@ public class LegalEntityCreditRatingDocument   {
     this.creditRatingAgencyName = creditRatingAgencyName;
   }
 
-  public LegalEntityCreditRatingDocument creditRatingAmount(Integer creditRatingAmount) {
+  public LegalEntityCreditRatingDocument creditRatingAmount(Long creditRatingAmount) {
     this.creditRatingAmount = creditRatingAmount;
     return this;
   }
 
    /**
-   * Unique identifier of the CP Program that this document is associated with
+   * Total Approved Borrowing Credit Limit
    * @return creditRatingAmount
   **/
-  @ApiModelProperty(value = "Unique identifier of the CP Program that this document is associated with")
-  public Integer getCreditRatingAmount() {
+  @ApiModelProperty(value = "Total Approved Borrowing Credit Limit")
+  public Long getCreditRatingAmount() {
     return creditRatingAmount;
   }
 
-  public void setCreditRatingAmount(Integer creditRatingAmount) {
+  public void setCreditRatingAmount(Long creditRatingAmount) {
     this.creditRatingAmount = creditRatingAmount;
+  }
+
+  public LegalEntityCreditRatingDocument currentOutstandingCreditBorrowing(Long currentOutstandingCreditBorrowing) {
+    this.currentOutstandingCreditBorrowing = currentOutstandingCreditBorrowing;
+    return this;
+  }
+
+   /**
+   * Outstanding Credit Borrowing. This is an auto computed value. It is computed by the Smart Contract based on the outstanding open CP Program Sizes.
+   * @return currentOutstandingCreditBorrowing
+  **/
+  @ApiModelProperty(value = "Outstanding Credit Borrowing. This is an auto computed value. It is computed by the Smart Contract based on the outstanding open CP Program Sizes.")
+  public Long getCurrentOutstandingCreditBorrowing() {
+    return currentOutstandingCreditBorrowing;
+  }
+
+  public void setCurrentOutstandingCreditBorrowing(Long currentOutstandingCreditBorrowing) {
+    this.currentOutstandingCreditBorrowing = currentOutstandingCreditBorrowing;
+  }
+
+  public LegalEntityCreditRatingDocument currency(String currency) {
+    this.currency = currency;
+    return this;
+  }
+
+   /**
+   * Currency. Defaulted to INR for India Commercial Paper
+   * @return currency
+  **/
+  @ApiModelProperty(value = "Currency. Defaulted to INR for India Commercial Paper")
+  public String getCurrency() {
+    return currency;
+  }
+
+  public void setCurrency(String currency) {
+    this.currency = currency;
   }
 
   public LegalEntityCreditRatingDocument creditRating(String creditRating) {
@@ -334,6 +376,8 @@ public class LegalEntityCreditRatingDocument   {
     return Objects.equals(this.legalEntityId, legalEntityCreditRatingDocument.legalEntityId) &&
         Objects.equals(this.creditRatingAgencyName, legalEntityCreditRatingDocument.creditRatingAgencyName) &&
         Objects.equals(this.creditRatingAmount, legalEntityCreditRatingDocument.creditRatingAmount) &&
+        Objects.equals(this.currentOutstandingCreditBorrowing, legalEntityCreditRatingDocument.currentOutstandingCreditBorrowing) &&
+        Objects.equals(this.currency, legalEntityCreditRatingDocument.currency) &&
         Objects.equals(this.creditRating, legalEntityCreditRatingDocument.creditRating) &&
         Objects.equals(this.creditRatingIssuanceDate, legalEntityCreditRatingDocument.creditRatingIssuanceDate) &&
         Objects.equals(this.creditRatingEffectiveDate, legalEntityCreditRatingDocument.creditRatingEffectiveDate) &&
@@ -347,7 +391,7 @@ public class LegalEntityCreditRatingDocument   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(legalEntityId, creditRatingAgencyName, creditRatingAmount, creditRating, creditRatingIssuanceDate, creditRatingEffectiveDate, creditRatingExpiryDate, docHash, version, modifiedBy, lastModifiedDate, status);
+    return Objects.hash(legalEntityId, creditRatingAgencyName, creditRatingAmount, currentOutstandingCreditBorrowing, currency, creditRating, creditRatingIssuanceDate, creditRatingEffectiveDate, creditRatingExpiryDate, docHash, version, modifiedBy, lastModifiedDate, status);
   }
 
 
@@ -359,6 +403,8 @@ public class LegalEntityCreditRatingDocument   {
     sb.append("    legalEntityId: ").append(toIndentedString(legalEntityId)).append("\n");
     sb.append("    creditRatingAgencyName: ").append(toIndentedString(creditRatingAgencyName)).append("\n");
     sb.append("    creditRatingAmount: ").append(toIndentedString(creditRatingAmount)).append("\n");
+    sb.append("    currentOutstandingCreditBorrowing: ").append(toIndentedString(currentOutstandingCreditBorrowing)).append("\n");
+    sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
     sb.append("    creditRating: ").append(toIndentedString(creditRating)).append("\n");
     sb.append("    creditRatingIssuanceDate: ").append(toIndentedString(creditRatingIssuanceDate)).append("\n");
     sb.append("    creditRatingEffectiveDate: ").append(toIndentedString(creditRatingEffectiveDate)).append("\n");

@@ -44,7 +44,13 @@ object CreditRatingSchemaV1 : MappedSchema(schemaFamily = CreditRatingSchema.jav
             var creditRatingExpiryDate: Date,
 
             @Column(name = "credit_rating_amount")
-            var creditRatingAmount: Integer,
+            var creditRatingAmount: Long,
+
+            @Column(name = "currency")
+            var currency: String,
+
+            @Column(name = "current_outstanding_credit_borrowing")
+            var currentOutstandingCreditBorrowing: Long,
 
             @Column(name = "credit_rating")
             var creditRating: String,
@@ -56,7 +62,7 @@ object CreditRatingSchemaV1 : MappedSchema(schemaFamily = CreditRatingSchema.jav
             var lastModifiedDate: Date,
 
             @Column(name = "version")
-            var version: Integer,
+            var version: Int,
 
             @Column(name = "status")
             var status: String
