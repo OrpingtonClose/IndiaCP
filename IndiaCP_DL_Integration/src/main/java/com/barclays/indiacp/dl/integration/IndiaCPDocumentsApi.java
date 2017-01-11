@@ -768,16 +768,6 @@ public class IndiaCPDocumentsApi {
         return DLAttachmentUtils.getInstance().downloadAttachment(docHash + "/" + docSubType + "." + docExtension);
     }
 
-    @GET
-    @Path("getDoc")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getDoc(IndiaCPDocumentDetails documentDetails)
-    {
-        return DLAttachmentUtils.getInstance().downloadAttachment(documentDetails.getDocHash() + "/" + documentDetails.getDocSubType() + "." + documentDetails.getDocExtension());
-    }
-
-
     public static String encodeFileToBase64Binary(String fileName) throws IOException {
         File file = new File(fileName);
         byte[] encoded = Base64.encodeBase64(FileUtils.readFileToByteArray(file));
@@ -785,7 +775,7 @@ public class IndiaCPDocumentsApi {
     }
 
     @POST
-    @Path("signDoc")
+    @Path("signDoc/{docName}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_PLAIN)
     public Response signDoc(@FormDataParam("file") InputStream uploadedInputStream)
@@ -794,7 +784,6 @@ public class IndiaCPDocumentsApi {
          String outputB64Str = sign.inputStreamSign(uploadedInputStream, "ISIN");
         return Response.ok(outputB64Str, MediaType.TEXT_PLAIN)
                 .build();
-
 
     }
 

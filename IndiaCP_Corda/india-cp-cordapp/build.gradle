@@ -1,0 +1,162 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "net.corda.plugins:publish-utils:$gradle_plugins_version"
+        classpath "net.corda.plugins:quasar-utils:$gradle_plugins_version"
+        classpath "net.corda.plugins:cordformation:$gradle_plugins_version"
+        classpath "com.barclays.indiacp:indiacp_swagger_specification:1.0-SNAPSHOT"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: 'idea'
+apply plugin: 'net.corda.plugins.quasar-utils'
+apply plugin: 'net.corda.plugins.publish-utils'
+apply plugin: 'net.corda.plugins.cordformation'
+apply plugin: 'maven-publish'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven {
+        url 'https://dl.bintray.com/kotlin/exposed'
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir "config/dev"
+        }
+    }
+    test {
+        resources {
+            srcDir "config/test"
+        }
+    }
+    integrationTest {
+        kotlin {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration-test/kotlin')
+        }
+    }
+}
+
+configurations {
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+    // Corda integration dependencies
+    compile "net.corda:client:$corda_version"
+    compile "net.corda:core:$corda_version"
+    compile "net.corda:finance:$corda_version"
+    compile "net.corda:node:$corda_version"
+    compile "net.corda:corda:$corda_version"
+    compile "net.corda:test-utils:$corda_version"
+
+    // Javax is required for webapis
+    compile "org.glassfish.jersey.core:jersey-server:${jersey_version}"
+
+    compile "com.barclays.indiacp:indiacp_swagger_specification:1.0-SNAPSHOT"
+
+    // GraphStream: For visualisation (required by ExampleClientRPC app)
+    compile "org.graphstream:gs-core:1.3"
+    compile("org.graphstream:gs-ui:1.3") {
+        exclude group: "bouncycastle"
+    }
+
+//    compile "com.barclays.indiacp:indiacp_dl_integration:1.0-SNAPSHOT"
+
+    // Cordapp dependencies
+    // Specify your cordapp's dependencies below, including dependent cordapps
+}
+
+task deployNodes(type: net.corda.plugins.Cordform, dependsOn: ['build']) {
+    directory "./../build/indiacpdemo"
+    networkMap "Controller"
+    node {
+        name "Controller"
+        dirName "controller"
+        nearestCity "Pune"
+        advertisedServices = ["corda.notary.validating"]
+        artemisPort 10002
+        webPort 10003
+        cordapps = []
+    }
+    node {
+        name "Issuer1"
+        dirName "issuer1"
+        nearestCity "Mumbai"
+        advertisedServices = []
+        artemisPort 10004
+        webPort 10005
+        cordapps = []
+    }
+    node {
+        name "Investor1"
+        dirName "investor1"
+        nearestCity "Mumbai"
+        advertisedServices = []
+        artemisPort 10006
+        webPort 10007
+        cordapps = []
+    }
+    node {
+        name "IPA1"
+        dirName "ipa1"
+        nearestCity "Mumbai"
+        advertisedServices = []
+        artemisPort 10008
+        webPort 10009
+        cordapps = []
+    }
+    node {
+        name "NSDL1"
+        dirName "nsdl1"
+        nearestCity "Mumbai"
+        advertisedServices = []
+        artemisPort 10010
+        webPort 10011
+        cordapps = []
+    }
+}
+
+task integrationTest(type: Test, dependsOn: []) {
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+idea {
+    module {
+        downloadJavadoc = true // defaults to false
+        downloadSources = true
+    }
+}
+
+//quasarScan.dependsOn('classes')
+
+publishing {
+    publications {
+        jarAndSources(MavenPublication) {
+            from components.java
+            artifactId 'india-cp-cordapp'
+
+            artifact sourceJar
+            artifact javadocJar
+        }
+    }
+}

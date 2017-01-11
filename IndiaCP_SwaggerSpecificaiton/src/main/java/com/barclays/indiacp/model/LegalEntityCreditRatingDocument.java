@@ -28,6 +28,7 @@ package com.barclays.indiacp.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
@@ -35,7 +36,7 @@ import java.util.Date;
 /**
  * LegalEntityCreditRatingDocument
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-06T23:16:51.945Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-10T12:15:59.809Z")
 public class LegalEntityCreditRatingDocument   {
   @JsonProperty("legalEntityId")
   private String legalEntityId = null;
@@ -44,7 +45,13 @@ public class LegalEntityCreditRatingDocument   {
   private String creditRatingAgencyName = null;
 
   @JsonProperty("creditRatingAmount")
-  private Integer creditRatingAmount = null;
+  private Long creditRatingAmount = null;
+
+  @JsonProperty("currentOutstandingCreditBorrowing")
+  private Long currentOutstandingCreditBorrowing = null;
+
+  @JsonProperty("currency")
+  private String currency = null;
 
   @JsonProperty("creditRating")
   private String creditRating = null;
@@ -58,11 +65,51 @@ public class LegalEntityCreditRatingDocument   {
   @JsonProperty("creditRatingExpiryDate")
   private Date creditRatingExpiryDate = null;
 
+  @JsonProperty("docHash")
+  private String docHash = null;
+
+  @JsonProperty("version")
+  private Integer version = null;
+
   @JsonProperty("modifiedBy")
   private String modifiedBy = null;
 
   @JsonProperty("lastModifiedDate")
   private Date lastModifiedDate = null;
+
+  /**
+   * There can be only one active CR Document at any given time
+   */
+  public enum StatusEnum {
+    ACTIVE("ACTIVE"),
+    
+    OBSOLETE("OBSOLETE");
+
+    private String value;
+
+    StatusEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static StatusEnum fromValue(String text) {
+      for (StatusEnum b : StatusEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+
+  @JsonProperty("status")
+  private StatusEnum status = null;
 
   public LegalEntityCreditRatingDocument legalEntityId(String legalEntityId) {
     this.legalEntityId = legalEntityId;
@@ -88,10 +135,10 @@ public class LegalEntityCreditRatingDocument   {
   }
 
    /**
-   * Unique identifier for the Credit Rating Agency
+   * The Credit Rating Agency
    * @return creditRatingAgencyName
   **/
-  @ApiModelProperty(value = "Unique identifier for the Credit Rating Agency")
+  @ApiModelProperty(value = "The Credit Rating Agency")
   public String getCreditRatingAgencyName() {
     return creditRatingAgencyName;
   }
@@ -100,22 +147,58 @@ public class LegalEntityCreditRatingDocument   {
     this.creditRatingAgencyName = creditRatingAgencyName;
   }
 
-  public LegalEntityCreditRatingDocument creditRatingAmount(Integer creditRatingAmount) {
+  public LegalEntityCreditRatingDocument creditRatingAmount(Long creditRatingAmount) {
     this.creditRatingAmount = creditRatingAmount;
     return this;
   }
 
    /**
-   * Unique identifier of the CP Program that this document is associated with
+   * Total Approved Borrowing Credit Limit
    * @return creditRatingAmount
   **/
-  @ApiModelProperty(value = "Unique identifier of the CP Program that this document is associated with")
-  public Integer getCreditRatingAmount() {
+  @ApiModelProperty(value = "Total Approved Borrowing Credit Limit")
+  public Long getCreditRatingAmount() {
     return creditRatingAmount;
   }
 
-  public void setCreditRatingAmount(Integer creditRatingAmount) {
+  public void setCreditRatingAmount(Long creditRatingAmount) {
     this.creditRatingAmount = creditRatingAmount;
+  }
+
+  public LegalEntityCreditRatingDocument currentOutstandingCreditBorrowing(Long currentOutstandingCreditBorrowing) {
+    this.currentOutstandingCreditBorrowing = currentOutstandingCreditBorrowing;
+    return this;
+  }
+
+   /**
+   * Outstanding Credit Borrowing. This is an auto computed value. It is computed by the Smart Contract based on the outstanding open CP Program Sizes.
+   * @return currentOutstandingCreditBorrowing
+  **/
+  @ApiModelProperty(value = "Outstanding Credit Borrowing. This is an auto computed value. It is computed by the Smart Contract based on the outstanding open CP Program Sizes.")
+  public Long getCurrentOutstandingCreditBorrowing() {
+    return currentOutstandingCreditBorrowing;
+  }
+
+  public void setCurrentOutstandingCreditBorrowing(Long currentOutstandingCreditBorrowing) {
+    this.currentOutstandingCreditBorrowing = currentOutstandingCreditBorrowing;
+  }
+
+  public LegalEntityCreditRatingDocument currency(String currency) {
+    this.currency = currency;
+    return this;
+  }
+
+   /**
+   * Currency. Defaulted to INR for India Commercial Paper
+   * @return currency
+  **/
+  @ApiModelProperty(value = "Currency. Defaulted to INR for India Commercial Paper")
+  public String getCurrency() {
+    return currency;
+  }
+
+  public void setCurrency(String currency) {
+    this.currency = currency;
   }
 
   public LegalEntityCreditRatingDocument creditRating(String creditRating) {
@@ -190,6 +273,42 @@ public class LegalEntityCreditRatingDocument   {
     this.creditRatingExpiryDate = creditRatingExpiryDate;
   }
 
+  public LegalEntityCreditRatingDocument docHash(String docHash) {
+    this.docHash = docHash;
+    return this;
+  }
+
+   /**
+   * SHA256 Hash of the Credit Rating Document
+   * @return docHash
+  **/
+  @ApiModelProperty(value = "SHA256 Hash of the Credit Rating Document")
+  public String getDocHash() {
+    return docHash;
+  }
+
+  public void setDocHash(String docHash) {
+    this.docHash = docHash;
+  }
+
+  public LegalEntityCreditRatingDocument version(Integer version) {
+    this.version = version;
+    return this;
+  }
+
+   /**
+   * Current version of the CR Document. This is auto incremented by the DL.
+   * @return version
+  **/
+  @ApiModelProperty(value = "Current version of the CR Document. This is auto incremented by the DL.")
+  public Integer getVersion() {
+    return version;
+  }
+
+  public void setVersion(Integer version) {
+    this.version = version;
+  }
+
   public LegalEntityCreditRatingDocument modifiedBy(String modifiedBy) {
     this.modifiedBy = modifiedBy;
     return this;
@@ -226,6 +345,24 @@ public class LegalEntityCreditRatingDocument   {
     this.lastModifiedDate = lastModifiedDate;
   }
 
+  public LegalEntityCreditRatingDocument status(StatusEnum status) {
+    this.status = status;
+    return this;
+  }
+
+   /**
+   * There can be only one active CR Document at any given time
+   * @return status
+  **/
+  @ApiModelProperty(value = "There can be only one active CR Document at any given time")
+  public StatusEnum getStatus() {
+    return status;
+  }
+
+  public void setStatus(StatusEnum status) {
+    this.status = status;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -239,17 +376,22 @@ public class LegalEntityCreditRatingDocument   {
     return Objects.equals(this.legalEntityId, legalEntityCreditRatingDocument.legalEntityId) &&
         Objects.equals(this.creditRatingAgencyName, legalEntityCreditRatingDocument.creditRatingAgencyName) &&
         Objects.equals(this.creditRatingAmount, legalEntityCreditRatingDocument.creditRatingAmount) &&
+        Objects.equals(this.currentOutstandingCreditBorrowing, legalEntityCreditRatingDocument.currentOutstandingCreditBorrowing) &&
+        Objects.equals(this.currency, legalEntityCreditRatingDocument.currency) &&
         Objects.equals(this.creditRating, legalEntityCreditRatingDocument.creditRating) &&
         Objects.equals(this.creditRatingIssuanceDate, legalEntityCreditRatingDocument.creditRatingIssuanceDate) &&
         Objects.equals(this.creditRatingEffectiveDate, legalEntityCreditRatingDocument.creditRatingEffectiveDate) &&
         Objects.equals(this.creditRatingExpiryDate, legalEntityCreditRatingDocument.creditRatingExpiryDate) &&
+        Objects.equals(this.docHash, legalEntityCreditRatingDocument.docHash) &&
+        Objects.equals(this.version, legalEntityCreditRatingDocument.version) &&
         Objects.equals(this.modifiedBy, legalEntityCreditRatingDocument.modifiedBy) &&
-        Objects.equals(this.lastModifiedDate, legalEntityCreditRatingDocument.lastModifiedDate);
+        Objects.equals(this.lastModifiedDate, legalEntityCreditRatingDocument.lastModifiedDate) &&
+        Objects.equals(this.status, legalEntityCreditRatingDocument.status);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(legalEntityId, creditRatingAgencyName, creditRatingAmount, creditRating, creditRatingIssuanceDate, creditRatingEffectiveDate, creditRatingExpiryDate, modifiedBy, lastModifiedDate);
+    return Objects.hash(legalEntityId, creditRatingAgencyName, creditRatingAmount, currentOutstandingCreditBorrowing, currency, creditRating, creditRatingIssuanceDate, creditRatingEffectiveDate, creditRatingExpiryDate, docHash, version, modifiedBy, lastModifiedDate, status);
   }
 
 
@@ -261,12 +403,17 @@ public class LegalEntityCreditRatingDocument   {
     sb.append("    legalEntityId: ").append(toIndentedString(legalEntityId)).append("\n");
     sb.append("    creditRatingAgencyName: ").append(toIndentedString(creditRatingAgencyName)).append("\n");
     sb.append("    creditRatingAmount: ").append(toIndentedString(creditRatingAmount)).append("\n");
+    sb.append("    currentOutstandingCreditBorrowing: ").append(toIndentedString(currentOutstandingCreditBorrowing)).append("\n");
+    sb.append("    currency: ").append(toIndentedString(currency)).append("\n");
     sb.append("    creditRating: ").append(toIndentedString(creditRating)).append("\n");
     sb.append("    creditRatingIssuanceDate: ").append(toIndentedString(creditRatingIssuanceDate)).append("\n");
     sb.append("    creditRatingEffectiveDate: ").append(toIndentedString(creditRatingEffectiveDate)).append("\n");
     sb.append("    creditRatingExpiryDate: ").append(toIndentedString(creditRatingExpiryDate)).append("\n");
+    sb.append("    docHash: ").append(toIndentedString(docHash)).append("\n");
+    sb.append("    version: ").append(toIndentedString(version)).append("\n");
     sb.append("    modifiedBy: ").append(toIndentedString(modifiedBy)).append("\n");
     sb.append("    lastModifiedDate: ").append(toIndentedString(lastModifiedDate)).append("\n");
+    sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -35,7 +35,7 @@ import java.util.Date;
 /**
  * IndiaCPProgram
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-06T23:16:51.945Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-10T12:15:59.809Z")
 public class IndiaCPProgram   {
   @JsonProperty("programId")
   private String programId = null;
@@ -62,10 +62,10 @@ public class IndiaCPProgram   {
   private Date issueCommencementDate = null;
 
   @JsonProperty("programSize")
-  private Integer programSize = null;
+  private Long programSize = null;
 
   @JsonProperty("programAllocatedValue")
-  private Integer programAllocatedValue = null;
+  private Long programAllocatedValue = null;
 
   @JsonProperty("programCurrency")
   private String programCurrency = null;
@@ -256,7 +256,7 @@ public class IndiaCPProgram   {
     this.issueCommencementDate = issueCommencementDate;
   }
 
-  public IndiaCPProgram programSize(Integer programSize) {
+  public IndiaCPProgram programSize(Long programSize) {
     this.programSize = programSize;
     return this;
   }
@@ -266,15 +266,15 @@ public class IndiaCPProgram   {
    * @return programSize
   **/
   @ApiModelProperty(value = "Total borrowing amount under this CP Program")
-  public Integer getProgramSize() {
+  public Long getProgramSize() {
     return programSize;
   }
 
-  public void setProgramSize(Integer programSize) {
+  public void setProgramSize(Long programSize) {
     this.programSize = programSize;
   }
 
-  public IndiaCPProgram programAllocatedValue(Integer programAllocatedValue) {
+  public IndiaCPProgram programAllocatedValue(Long programAllocatedValue) {
     this.programAllocatedValue = programAllocatedValue;
     return this;
   }
@@ -284,11 +284,11 @@ public class IndiaCPProgram   {
    * @return programAllocatedValue
   **/
   @ApiModelProperty(value = "Amount already allocated to the CP program")
-  public Integer getProgramAllocatedValue() {
+  public Long getProgramAllocatedValue() {
     return programAllocatedValue;
   }
 
-  public void setProgramAllocatedValue(Integer programAllocatedValue) {
+  public void setProgramAllocatedValue(Long programAllocatedValue) {
     this.programAllocatedValue = programAllocatedValue;
   }
 

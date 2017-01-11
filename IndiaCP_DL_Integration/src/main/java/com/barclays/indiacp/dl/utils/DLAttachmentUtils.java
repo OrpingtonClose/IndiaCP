@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Random;
 import java.util.logging.Logger;
 
 /**
@@ -56,19 +57,15 @@ public class DLAttachmentUtils {
         return attachmentResponse;
     }
 
-    public String uploadAttachment(String docName, Object[] args) {
-        InputStream uploadedInputStream;
+    public String uploadAttachment(InputStream uploadedInputStream) {
         final File tempFile;
+        String tempFileName = "IndiaCPDocument_" + new Random().nextInt();
+
         String signedFilePath = "";
-        Signature sign = new Signature();
-
-
         try {
-            uploadedInputStream = (InputStream) args[args.length - 1];
-            tempFile = createTempFile(docName, ".zip", uploadedInputStream);
-            signedFilePath = sign.signZipFolder(tempFile.getAbsolutePath(), "ABC");
-
-
+//            Signature sign = new Signature();
+            tempFile = createTempFile(tempFileName, ".zip", uploadedInputStream);
+//            signedFilePath = sign.signZipFolder(tempFile.getAbsolutePath(), "ABC");
         } catch (Exception ex)
         {
             throw new RuntimeException("File could not be uploaded.");
@@ -78,7 +75,7 @@ public class DLAttachmentUtils {
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
 
         FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file",
-                new File(signedFilePath),
+                tempFile,
                 MediaType.APPLICATION_OCTET_STREAM_TYPE);
         multiPart.bodyPart(fileDataBodyPart);
 

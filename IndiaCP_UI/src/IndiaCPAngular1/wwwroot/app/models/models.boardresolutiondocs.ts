@@ -32,6 +32,8 @@ module app.models {
          */
         "lastModifiedDate"?: Date;
 
+        "currency"?: string;
+
         "docHash"?: string;
     }
 }

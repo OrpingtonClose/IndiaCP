@@ -35,7 +35,7 @@ import java.util.Date;
 /**
  * IndiaCPIssue
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-06T23:16:51.945Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-10T12:15:59.809Z")
 public class IndiaCPIssue   {
   @JsonProperty("cpProgramId")
   private String cpProgramId = null;

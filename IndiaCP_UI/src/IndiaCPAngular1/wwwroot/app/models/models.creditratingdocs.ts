@@ -49,5 +49,7 @@ module app.models {
 
         "docHash"?: string;
 
+        "currency"?: string;
+
     }
 }
