@@ -1,5 +1,6 @@
 package com.barclays.indiacp.dl.utils;
 
+import com.barclays.indiacp.dl.integration.Signature;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -58,11 +59,14 @@ public class DLAttachmentUtils {
     public String uploadAttachment(String docName, Object[] args) {
         InputStream uploadedInputStream;
         final File tempFile;
+        String signedFilePath = "";
+        Signature sign = new Signature();
+
 
         try {
             uploadedInputStream = (InputStream) args[args.length - 1];
-
             tempFile = createTempFile(docName, ".zip", uploadedInputStream);
+            signedFilePath = sign.signZipFolder(tempFile.getAbsolutePath(), "ABC");
 
 
         } catch (Exception ex)
@@ -74,7 +78,7 @@ public class DLAttachmentUtils {
         multiPart.setMediaType(MediaType.MULTIPART_FORM_DATA_TYPE);
 
         FileDataBodyPart fileDataBodyPart = new FileDataBodyPart("file",
-                tempFile,
+                new File(signedFilePath),
                 MediaType.APPLICATION_OCTET_STREAM_TYPE);
         multiPart.bodyPart(fileDataBodyPart);
 

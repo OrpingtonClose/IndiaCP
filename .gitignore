@@ -1,2 +1,4 @@
 .idea/*
-/IndiaCP_DL_Integration/.idea/*
+*.class binary
+.idea/workspace.xml
+IndiaCP_DL_Integration/.idea/workspace.xml
