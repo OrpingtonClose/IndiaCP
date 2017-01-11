@@ -15,6 +15,7 @@ import com.jpmorgan.cakeshop.client.model.req.ContractCreateCommand;
 import com.jpmorgan.cakeshop.client.model.req.ContractMethodCallCommand;
 import com.jpmorgan.cakeshop.client.model.res.APIData;
 import com.jpmorgan.cakeshop.client.model.res.APIResponse;
+import feign.FeignException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class CakeshopUtils {
 
     static {
         // setup cakeshop manager
-        cakeshopManager = ClientManager.create("http://52.172.42.128:8080/cakeshop");
+        cakeshopManager = ClientManager.create("http://52.172.46.253:8081/cakeshop");
         contractApi = cakeshopManager.getClient(ContractApi.class);
         transactionApi = cakeshopManager.getClient(TransactionApi.class);
     }
@@ -79,24 +80,20 @@ public class CakeshopUtils {
         return filteredContracts;
     }
 
-    public static Object getContractState(String contractAddress) {
-
-        APIResponse<APIData<Contract>, Contract> a = contractApi.get(contractAddress);
-
-        //TODO find state using read calls
-        return new Object();
-    }
-
-
     public static <T>  T readContract(String contractName, String contractAddress, Class<T> contractModel, String... readMethodNames) {
         T contractModelObject = null;
         for(int i=0; i<readMethodNames.length; i++){
-            APIResponse<List<Object>, Object> apiResponse = contractApi.read(getContractMethodCallCommand(contractAddress, readMethodNames[i]));
+            try {
+                APIResponse<List<Object>, Object> apiResponse = contractApi.read(getContractMethodCallCommand(contractAddress, readMethodNames[i]));
 
             contractModelObject = IndiaCPContractUtils.populateContractModel(contractModelObject, SolidityContractCodeFactory.getInstance(contractName),
                     readMethodNames[i],
                     contractModel,
                     apiResponse.getApiData());
+            }catch(FeignException e){
+                System.out.println("Could not read method " + readMethodNames[i]+ "for contract " + contractName + " at " + contractAddress);
+                //e.printStackTrace();
+            }
         }
         return contractModelObject;
     }
