@@ -21,6 +21,7 @@ var app;
                 this.brDetails.boardResolutionIssuanceDate = new Date(); // Todays date
                 this.brDetails.boardResolutionExpiryDate = new Date(2022, 12, 08); //5 years from now
                 this.brDetails.modifiedBy = "Ritu";
+                this.brDetails.currency = "INR";
                 this.brDetails.docHash = "XXXXXXXXXXX";
                 //cr detsils setup
                 this.crDetails = new app.models.CreditRatingDocs();
@@ -32,6 +33,7 @@ var app;
                 this.crDetails.creditRatingEffectiveDate = new Date();
                 this.crDetails.creditRatingExpiryDate = new Date(2022, 12, 08); //5 years from now
                 this.crDetails.modifiedBy = "Ritu";
+                this.crDetails.currency = "INR";
                 this.crDetails.docHash = "XXXXXXXXXXX";
                 //legal entity setup
             }
@@ -69,6 +71,42 @@ var app;
                     console.log(errorMssg.source + "-" + errorMssg.message);
                     _this.growl.error(errorMssg.message, { title: "Upload Failed - " + errorMssg.source });
                 });
+            };
+            LegalEntityController.prototype.signCR = function () {
+                var _this = this;
+                var httpUploadRequestParams = {
+                    url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/CreditRating",
+                    data: { file: this.signedCRFile },
+                    method: "POST"
+                };
+                this.Upload.upload(httpUploadRequestParams).
+                    then(function (response) {
+                    _this.growl.success("Credit Details document signed succesfully", { title: "CR Signed" });
+                    var streamData = response.data;
+                    var url = "data:application/pdf;base64," + streamData;
+                    // this.crFileUrl = this.$sce.trustAsResourceUrl(url);
+                }, function (error) {
+                    _this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
+                });
+            };
+            LegalEntityController.prototype.signBR = function () {
+                var _this = this;
+                var httpUploadRequestParams = {
+                    url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/CreditRating",
+                    data: { file: this.signedCRFile },
+                    method: "POST"
+                };
+                this.Upload.upload(httpUploadRequestParams).
+                    then(function (response) {
+                    _this.growl.success("Credit Details document signed succesfully", { title: "CR Signed" });
+                    var streamData = response.data;
+                    var url = "data:application/pdf;base64," + streamData;
+                    _this.crFileUrl = _this.$sce.trustAsResourceUrl(url);
+                }, function (error) {
+                    _this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
+                });
+            };
+            LegalEntityController.prototype.close = function () {
             };
             return LegalEntityController;
         }());

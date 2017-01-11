@@ -5,6 +5,8 @@ module app.legalentity {
         nodeType: string;
         brDetails: app.models.BoardResolutionDocs;
         crDetails: app.models.CreditRatingDocs;
+        signCR(): void;
+        signBR(): void;
         uploadBR(): void;
         uploadCR(): void;
     }
@@ -42,6 +44,7 @@ module app.legalentity {
             this.brDetails.boardResolutionIssuanceDate = new Date(); // Todays date
             this.brDetails.boardResolutionExpiryDate = new Date(2022, 12, 08); //5 years from now
             this.brDetails.modifiedBy = "Ritu";
+            this.brDetails.currency = "INR";
             this.brDetails.docHash = "XXXXXXXXXXX";
 
             //cr detsils setup
@@ -54,7 +57,8 @@ module app.legalentity {
             this.crDetails.creditRatingEffectiveDate = new Date();
             this.crDetails.creditRatingExpiryDate = new Date(2022, 12, 08); //5 years from now
             this.crDetails.modifiedBy = "Ritu";
-            this.crDetails.docHash = "XXXXXXXXXXX"
+            this.crDetails.currency = "INR";
+            this.crDetails.docHash = "XXXXXXXXXXX";
 
             //legal entity setup
 
@@ -92,13 +96,52 @@ module app.legalentity {
             this.issuerService.issueCreditRating(this.crDetails, this.signedCRFile).
                 then((response: any): void => {
                     console.log(response);
-                    this.growl.success("Credit Details document uploaded succesfully", { title: "CR Uploaded"});
+                    this.growl.success("Credit Details document uploaded succesfully", { title: "CR Uploaded" });
                 },
                 (error: any) => {
-                    let errorMssg : app.models.Error = error.data;
+                    let errorMssg: app.models.Error = error.data;
                     console.log(`${errorMssg.source}-${errorMssg.message}`);
-                    this.growl.error(errorMssg.message, { title: `Upload Failed - ${errorMssg.source}`});
+                    this.growl.error(errorMssg.message, { title: `Upload Failed - ${errorMssg.source}` });
                 });
+        }
+
+        public signCR(): void {
+            let httpUploadRequestParams: any = {
+                url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/CreditRating",
+                data: { file: this.signedCRFile },
+                method: "POST"
+            }
+            this.Upload.upload(httpUploadRequestParams).
+                then((response:any) => {
+                    this.growl.success("Credit Details document signed succesfully", { title: "CR Signed" });
+                    let streamData = response.data;
+                    var url:string = "data:application/pdf;base64," + streamData;
+                    // this.crFileUrl = this.$sce.trustAsResourceUrl(url);
+
+                }, (error: any) => {
+                    this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
+                });
+        }
+        public signBR(): void {
+            let httpUploadRequestParams: any = {
+                url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/CreditRating",
+                data: { file: this.signedCRFile },
+                method: "POST"
+            }
+            this.Upload.upload(httpUploadRequestParams).
+                then((response:any) => {
+                    this.growl.success("Credit Details document signed succesfully", { title: "CR Signed" });
+                    let streamData = response.data;
+                    var url:string = "data:application/pdf;base64," + streamData;
+                    this.crFileUrl = this.$sce.trustAsResourceUrl(url);
+
+                }, (error: any) => {
+                    this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
+                });
+        }
+
+        public close(){
+           
         }
 
     }
