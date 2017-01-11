@@ -689,8 +689,151 @@
                     }
                 }
             }
+        },
+        "/boardresolution/issueBoardResolution": {
+            "post": {
+                "summary": "Uploads the Board Resolution Document and Creates a Smart Contract for the same on the DL to establish immutable golden copy",
+                "description": "Uploads the Board Resolution Document and Creates a Smart Contract for the same on the DL to establish immutable golden copy",
+                "operationId": "issueBoardResolution",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "parameters": [
+                    {
+                        "name": "boardResolutionDetails",
+                        "in": "formData",
+                        "description": "Board Resolution Details for creating the Smart Contract",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "description": "Document Attachment",
+                        "required": true,
+                        "type": "file"
+                    }
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the BoardResolutionBorrowingLimitDocument details",
+                        "schema": {
+                            "$ref": "#/definitions/BoardResolutionBorrowingLimitDocument"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/boardresolution/amendBoardResolution": {
+            "post": {
+                "summary": "Uploads the Board Resolution Document and Amends a Smart Contract for the same on the DL to establish immutable golden copy",
+                "description": "Uploads the Board Resolution Document and Amends a Smart Contract for the same on the DL to establish immutable golden copy",
+                "operationId": "amendBoardResolution",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "parameters": [
+                    {
+                        "name": "amendBoardResolution",
+                        "in": "formData",
+                        "description": "Board Resolution Details for creating the Smart Contract",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "file",
+                        "in": "formData",
+                        "description": "Document Attachment",
+                        "required": true,
+                        "type": "file"
+                    }
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the BoardResolutionBorrowingLimitDocument details",
+                        "schema": {
+                            "$ref": "#/definitions/BoardResolutionBorrowingLimitDocument"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/boardresolution/fetchBoardResolution": {
+            "get": {
+                "summary": "Get current active Board Resolution details",
+                "description": "This returns only the current active board resolution details",
+                "operationId": "fetchBoardResolution",
+                "parameters": [
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get current Active Board Resolution Details",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/BoardResolutionBorrowingLimitDocument"
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/boardresolution/cancelBoardResolution": {
+            "get": {
+                "summary": "Cancel current active Board Resolution details",
+                "description": "Cancel current active Board Resolution details",
+                "operationId": "cancelBoardResolution",
+                "parameters": [
+                ],
+                "tags": [
+                    "Issuer"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cancel current Active Board Resolution Details"
+                    },
+                    "default": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
         }
-
     },
     "definitions": {
         "LegalEntityCreditRatingDocument": {
