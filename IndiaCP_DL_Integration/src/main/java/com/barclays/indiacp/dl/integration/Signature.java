@@ -8,17 +8,70 @@ import net.lingala.zip4j.util.Zip4jConstants;
 import org.apache.axis.encoding.Base64;
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import static java.io.File.createTempFile;
 
 
 /**
  * Created by Electrania.com on 1/8/2017.
  */
 public class Signature {
+
+    public InputStream inputStreamSign(InputStream uploadedInputStream, String docType)
+    {
+        String signedDocFolder = "";
+        InputStream isSigned = null;
+        try {
+
+            signedDocFolder = createTempDir(docType).getAbsolutePath();
+
+            final File tempFile = createTempFile(docType, ".pdf", uploadedInputStream);
+            File signedPDF = new File(Base64Decode(signPDF(Base64Encode(tempFile.getAbsolutePath())), docType, signedDocFolder));
+
+            isSigned = new FileInputStream(signedPDF);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return isSigned;
+    }
+
+    public String signZipFolder(String ZipFilePath, String docType) {
+        String finalPath = "";
+        final File tempFile;
+        String signedDocFolder = "";
+
+
+        try {
+            String upzippedFolderPath = unzipFile(ZipFilePath, docType);
+            //tempFile = createTempFile(docType, ".zip");
+            //ZipFile zipFile = new ZipFile(tempFile.getAbsoluteFile());
+            //finalPath = tempFile.getAbsolutePath();
+            signedDocFolder = createTempDir(docType).getAbsolutePath();
+            File dir = new File(upzippedFolderPath);
+            File[] directoryListing = dir.listFiles();
+            ArrayList<String> filesPath = new ArrayList<String>();
+
+            if (directoryListing != null) {
+                for (File child : directoryListing) {
+                    filesPath.add(Base64Decode(signPDF(Base64Encode(child.getPath())), docType, signedDocFolder).toString());
+
+                }
+            }
+
+            finalPath = zipFile(signedDocFolder,docType);
+
+            // return Base64Encode(zipFile(destination,docType));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return finalPath;
+
+    }
 
     public String signPDF(String b64EncodedString)
     {
@@ -37,59 +90,52 @@ public class Signature {
             return signed;
     }
 
-    public String signFolder(String folderPath, String docType) {
 
-        String destination = System.getProperty("java.io.tmpdir") + "\\" + docType + "\\";
-        File dir = new File(folderPath);
-        File[] directoryListing = dir.listFiles();
-        ArrayList<String> filesPath = null;
-        if (directoryListing != null) {
-            for (File child : directoryListing) {
-                filesPath.add(Base64Decode(signPDF(Base64Encode(child.getPath())), docType));
-            }
-        }
 
-        return Base64Encode(zipFile(destination,docType));
-
-    }
-
-    public String unzipFile(String b64EncodedString, String docType)
+    public String unzipFile(String zipFilePath, String docType)
     {
-        String destination = System.getProperty("java.io.tmpdir") + "\\" + docType + "\\";
+        String destination = "";
 
-      try {
-          byte[] decoded = Base64.decode(b64EncodedString);
+        try{
+
+            destination = createTempDir(docType).getAbsolutePath();
+         /* byte[] decoded = Base64.decode(b64EncodedString);
           final File tempFile = File.createTempFile("temp", ".zip");
-          tempFile.deleteOnExit();
-          FileOutputStream output = new FileOutputStream(tempFile);
-          output.write(decoded);
-          output.close();
+
+         tempFile.deleteOnExit();
+         FileOutputStream output = new FileOutputStream(tempFile);
+         output.write(decoded);
+         output.close();
 
           String source = tempFile.getAbsolutePath();
-
-              ZipFile zipFile = new ZipFile(source);
+*/
+              ZipFile zipFile = new ZipFile(zipFilePath);
               //if (zipFile.isEncrypted()) {
               //   zipFile.setPassword(password);
               //}
               zipFile.extractAll(destination);
 
-
-
       } catch (ZipException e) {
           e.printStackTrace();
-      }
-      catch (IOException e)
-      {
+      } catch (Exception e) {
           e.printStackTrace();
-      }
+        }
+
         return destination;
     }
+
     public String zipFile(String fileFolderPath, String docType)
     {
-        String destination =  System.getProperty("java.io.tmpdir") + "\\" + docType + ".zip";
-       try{
 
 
+
+           Calendar calendar = Calendar.getInstance();
+           Date time = calendar.getTime();
+           long milliseconds = time.getTime();
+           String path = System.getProperty("java.io.tmpdir");
+           ZipFile zipFile;
+           try{
+            zipFile = new ZipFile(path + docType + "_" + milliseconds + ".zip");
 
            ZipParameters parameters = new ZipParameters();
            parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
@@ -104,7 +150,7 @@ public class Signature {
                parameters.setPassword(password);
            }*/
 
-           ZipFile zipFile = new ZipFile(destination);
+
            //String folderToAdd = "E:\\Temp";
            //zipFile.addFolder(folderToAdd, parameters);
 
@@ -121,8 +167,8 @@ public class Signature {
        } catch (ZipException e) {
            e.printStackTrace();
        }
+        return (path + docType + "_" + milliseconds + ".zip");
 
-        return destination;
     }
 
     public String Base64Encode(String filePath)
@@ -141,13 +187,14 @@ public class Signature {
 
     }
 
-    public String Base64Decode(String base64String, String docType)
+    public String Base64Decode(String base64String, String docType, String filePath)
     {
 
+        File dir = new File(filePath);
         String path = "";
         try {
             byte[] decoded = Base64.decode(base64String);
-            File tempFile = File.createTempFile(docType, ".pdf");
+            File tempFile = File.createTempFile(docType, ".pdf", dir);
             path = tempFile.getAbsolutePath();
             FileOutputStream output = new FileOutputStream(tempFile);
             output.write(decoded);
@@ -160,6 +207,60 @@ public class Signature {
         return path;
     }
 
+    public static File createTempDir(String prefix)
+            throws IOException
+    {
+        String tmpDirStr = System.getProperty("java.io.tmpdir");
+        if (tmpDirStr == null) {
+            throw new IOException(
+                    "System property 'java.io.tmpdir' does not specify a tmp dir");
+        }
+
+        File tmpDir = new File(tmpDirStr);
+        if (!tmpDir.exists()) {
+            boolean created = tmpDir.mkdirs();
+            if (!created) {
+                throw new IOException("Unable to create tmp dir " + tmpDir);
+            }
+        }
+
+        File resultDir = null;
+        int suffix = (int)System.currentTimeMillis();
+        int failureCount = 0;
+        do {
+            resultDir = new File(tmpDir, prefix + suffix % 10000);
+            suffix++;
+            failureCount++;
+        }
+        while (resultDir.exists() && failureCount < 50);
+
+        if (resultDir.exists()) {
+            throw new IOException(failureCount +
+                    " attempts to generate a non-existent directory name failed, giving up");
+        }
+        boolean created = resultDir.mkdir();
+        if (!created) {
+            throw new IOException("Failed to create tmp directory");
+        }
+
+        return resultDir;
+    }
+
+
+
+
+    private File createTempFile(String fileName, String extension, InputStream uploadedInputStream) {
+        try {
+            final File tempFile = File.createTempFile(fileName, extension);
+            tempFile.deleteOnExit();
+            FileOutputStream out = new FileOutputStream(tempFile);
+            IOUtils.copy(uploadedInputStream, out);
+            return tempFile;
+        } catch (Exception ex)
+        {
+            throw new RuntimeException("File could not be uploaded.");
+        }
+    }
 
 
 

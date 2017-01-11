@@ -25,6 +25,7 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.simple.JSONObject;
 //import org.json.simple.parser.JSONParser;
 import com.google.gson.Gson;
@@ -767,20 +768,24 @@ public class IndiaCPDocumentsApi {
         return DLAttachmentUtils.getInstance().downloadAttachment(docHash + "/" + docSubType + "." + docExtension);
     }
 
-    @GET
-    @Path("getDoc")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getDoc(IndiaCPDocumentDetails documentDetails)
-    {
-        return DLAttachmentUtils.getInstance().downloadAttachment(documentDetails.getDocHash() + "/" + documentDetails.getDocSubType() + "." + documentDetails.getDocExtension());
-    }
-
-
     public static String encodeFileToBase64Binary(String fileName) throws IOException {
         File file = new File(fileName);
         byte[] encoded = Base64.encodeBase64(FileUtils.readFileToByteArray(file));
         return new String(encoded, StandardCharsets.US_ASCII);
+    }
+
+    @POST
+    @Path("signDoc/{docName}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.MULTIPART_FORM_DATA)
+    public Response signDoc(@PathParam("docName") String docName,
+            @FormDataParam("file") InputStream uploadedInputStream)
+    {
+        Signature sign = new Signature();
+         InputStream output = sign.inputStreamSign(uploadedInputStream, docName);
+        return Response.ok(output, MediaType.MULTIPART_FORM_DATA).build();
+
+
     }
 
 //    @POST

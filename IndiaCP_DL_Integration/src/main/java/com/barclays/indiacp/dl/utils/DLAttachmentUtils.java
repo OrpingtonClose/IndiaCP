@@ -1,5 +1,6 @@
 package com.barclays.indiacp.dl.utils;
 
+import com.barclays.indiacp.dl.integration.Signature;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.Random;
 import java.util.logging.Logger;
 
 /**
@@ -55,16 +57,15 @@ public class DLAttachmentUtils {
         return attachmentResponse;
     }
 
-    public String uploadAttachment(String docName, Object[] args) {
-        InputStream uploadedInputStream;
+    public String uploadAttachment(InputStream uploadedInputStream) {
         final File tempFile;
+        String tempFileName = "IndiaCPDocument_" + new Random().nextInt();
 
+        String signedFilePath = "";
         try {
-            uploadedInputStream = (InputStream) args[args.length - 1];
-
-            tempFile = createTempFile(docName, ".zip", uploadedInputStream);
-
-
+//            Signature sign = new Signature();
+            tempFile = createTempFile(tempFileName, ".zip", uploadedInputStream);
+//            signedFilePath = sign.signZipFolder(tempFile.getAbsolutePath(), "ABC");
         } catch (Exception ex)
         {
             throw new RuntimeException("File could not be uploaded.");
