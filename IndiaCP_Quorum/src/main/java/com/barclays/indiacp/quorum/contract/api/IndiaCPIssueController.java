@@ -14,9 +14,9 @@ import javax.ws.rs.core.Response;
 public class IndiaCPIssueController {
 
     @POST
-    @Path("issueCPIssue")
+    @Path("issueCPIssue/{cpProgAddr}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String issueCPIssue(IndiaCPIssue cpIssue, String cpProgAddr) {
+    public String issueCPIssue(IndiaCPIssue cpIssue, @PathParam("cpProgAddr") String cpProgAddr) {
         String addr = CakeshopUtils.createContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), cpIssue, cpProgAddr);
         System.out.println("Newly created contract mined at: "+addr);
         return addr;

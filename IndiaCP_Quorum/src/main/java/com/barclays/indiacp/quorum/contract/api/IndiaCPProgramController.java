@@ -4,7 +4,6 @@ import com.barclays.indiacp.model.IndiaCPIssue;
 import com.barclays.indiacp.model.IndiaCPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 import com.jpmorgan.cakeshop.client.model.Contract;
-import com.jpmorgan.cakeshop.client.model.req.ContractMethodCallCommand;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -46,20 +45,24 @@ public class IndiaCPProgramController {
         ArrayList<IndiaCPProgram> indiaCPProgramArrayList = new ArrayList<>();
 
         //TODO find all method names which are required to fetch all the contents of CPPrograms
-        //Need to check if the code works
-        /*SolidityContract contract = null;
-        contract.getContractABI().findFunction(new org.apache.commons.collections4.Predicate<ContractABI.Function>() {
+        //Partially working
+        /*SolidityContractCode contract1 = SolidityContractCode.getSingleInstance(this.getClass().getSimpleName().replaceFirst("Controller", ""));
+        ContractABI.Function b = contract1.getContractABI().findFunction(new Predicate<ContractABI.Function>() {
             @Override
             public boolean evaluate(ContractABI.Function f) {
                 return f.name.startsWith("fetchCPProgram");
             }
-        });*/
-
+        });
+        */
         //Temporarily hardcoded all fetch methods
         String[] readMethodNames = METHODS;
 
         for(Contract contract: contractList){
-            indiaCPProgramArrayList.add(CakeshopUtils.readContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), contract.getAddress(), IndiaCPProgram.class, readMethodNames));
+            //indiaCPProgramArrayList.add(Optional.ofNullable(CakeshopUtils.readContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), contract.getAddress(), IndiaCPProgram.class, readMethodNames)).orElse(null));
+            IndiaCPProgram temp = CakeshopUtils.readContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), contract.getAddress(), IndiaCPProgram.class, readMethodNames);
+            if(temp!=null){
+                indiaCPProgramArrayList.add(temp);
+            }
         }
         return indiaCPProgramArrayList;
     }
