@@ -8,7 +8,12 @@ import javax.ws.rs.core.Response
 
 object ErrorUtils {
 
-    fun errorHttpResponse(ex: Throwable, errorCode: Any = "Unknown", errorMessage: String? = null, errorDetails: String? = null): Response {
+    fun errorHttpResponse(errorCode: Any? = "Unknown", errorMessage: String? = null, errorDetails: String? = null): Response {
+        val ex = IndiaCPException("Internal Corda Server Error", Error.SourceEnum.DL_R3CORDA)
+        return errorHttpResponse(ex = ex, errorCode = errorCode, errorMessage = errorMessage, errorDetails = errorDetails)
+    }
+
+    fun errorHttpResponse(ex: Throwable, errorCode: Any? = "Unknown", errorMessage: String? = null, errorDetails: String? = null): Response {
         if (ex is IndiaCPException)
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.getError()).build()
         else {

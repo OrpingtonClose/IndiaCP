@@ -7,6 +7,8 @@ import com.barclays.indiacp.cordapp.contract.BorrowingLimitBoardResolution
 import com.barclays.indiacp.cordapp.contract.CreditRating
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
+import com.barclays.indiacp.cordapp.protocol.AddISINDocFlow
+import com.barclays.indiacp.cordapp.protocol.ISINRequestAcceptor
 import com.barclays.indiacp.cordapp.protocol.issuer.BorrowingLimitBoardResolutionFlows
 import com.barclays.indiacp.cordapp.protocol.issuer.CreditRatingFlows
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
@@ -14,6 +16,7 @@ import com.barclays.indiacp.model.IndiaCPProgram
 import com.barclays.indiacp.model.IndiaCPProgramStatusEnum
 import com.barclays.indiacp.model.LegalEntityCreditRatingDocument
 import com.esotericsoftware.kryo.Kryo
+import net.corda.core.contracts.StateAndRef
 import net.corda.core.node.CordaPluginRegistry
 import net.corda.node.services.vault.CashBalanceAsMetricsObserver
 import java.util.*
@@ -30,14 +33,17 @@ class IndiaCPPlugin : CordaPluginRegistry() {
     override val requiredFlows: Map<String, Set<String>> = mapOf(
             CreditRatingFlows::class.java.name to setOf(CreditRating.State::class.java.name, String::class.java.name),
             BorrowingLimitBoardResolutionFlows::class.java.name to setOf(BorrowingLimitBoardResolution.State::class.java.name, String::class.java.name),
-            IssueCPProgramFlow::class.java.name to setOf(IndiaCommercialPaperProgram.State::class.java.name)
+            IssueCPProgramFlow::class.java.name to setOf(IndiaCommercialPaperProgram.State::class.java.name),
+            AddISINDocFlow::class.java.name to setOf(StateAndRef::class.java.name)
 
             //DealEntryFlow::class.java.name to setOf(String::class.java.name, Party::class.java.name),
             //IssueCPFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
             //ISINGenerationFlow::class.java.name to setOf(String::class.java.name, String::class.java.name)
     )
 
-    //override val servicePlugins = listOf(Function(BuyerFlow::Service))
+    override val servicePlugins = listOf(
+            AddISINDocFlow.ISINDocService::class.java
+    )
 
     override fun registerRPCKryoTypes(kryo: Kryo): Boolean {
         kryo.apply {
