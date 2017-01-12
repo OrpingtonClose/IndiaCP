@@ -777,14 +777,13 @@ public class IndiaCPDocumentsApi {
     @POST
     @Path("signDoc/{docName}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.MULTIPART_FORM_DATA)
-    public Response signDoc(@PathParam("docName") String docName,
-            @FormDataParam("file") InputStream uploadedInputStream)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response signDoc(@FormDataParam("file") InputStream uploadedInputStream)
     {
         Signature sign = new Signature();
-         InputStream output = sign.inputStreamSign(uploadedInputStream, docName);
-        return Response.ok(output, MediaType.MULTIPART_FORM_DATA).build();
-
+         String outputB64Str = sign.inputStreamSign(uploadedInputStream, "ISIN");
+        return Response.ok(outputB64Str, MediaType.TEXT_PLAIN)
+                .build();
 
     }
 

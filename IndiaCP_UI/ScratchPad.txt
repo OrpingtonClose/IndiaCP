@@ -80,3 +80,6 @@ http://stackoverflow.com/questions/33973097/displaying-a-selected-file-from-an-i
 
 Other themes
 https://bootswatch.com/yeti/#navbar
+
+Angular Loading Bar
+https://github.com/chieffancypants/angular-loading-bar

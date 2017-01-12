@@ -21,23 +21,24 @@ import static java.io.File.createTempFile;
  */
 public class Signature {
 
-    public InputStream inputStreamSign(InputStream uploadedInputStream, String docType)
+    public String inputStreamSign(InputStream uploadedInputStream, String docType)
     {
         String signedDocFolder = "";
         InputStream isSigned = null;
+        String returnStr = "";
         try {
 
             signedDocFolder = createTempDir(docType).getAbsolutePath();
 
             final File tempFile = createTempFile(docType, ".pdf", uploadedInputStream);
-            File signedPDF = new File(Base64Decode(signPDF(Base64Encode(tempFile.getAbsolutePath())), docType, signedDocFolder));
+            returnStr = signPDF(Base64Encode(tempFile.getAbsolutePath()));
 
-            isSigned = new FileInputStream(signedPDF);
+
         } catch (IOException e)
         {
             e.printStackTrace();
         }
-        return isSigned;
+        return returnStr;
     }
 
     public String signZipFolder(String ZipFilePath, String docType) {
