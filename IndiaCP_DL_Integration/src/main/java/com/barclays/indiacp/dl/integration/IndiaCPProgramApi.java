@@ -48,6 +48,11 @@ public interface IndiaCPProgramApi {
                             @FormDataParam("documentDetails") IndiaCPDocumentDetails docDetails,
                             @FormDataParam("file") InputStream uploadedInputStream);
 
+    @GET
+    @Path("getTransactionHistory/{cpProgramId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTransactionHistory(@PathParam("cpProgramId") String cpProgramId);
+
     @Context
     public void setRequest(Request request);
 }
