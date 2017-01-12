@@ -342,47 +342,50 @@ class IndiaCommercialPaperProgram : Contract {
      * at the moment: this restriction is not fundamental and may be lifted later.
      */
     fun generateIssue(cpProgramContractState: IndiaCommercialPaperProgram.State,
-                      //creditRatingStateRef: StateAndRef<CreditRating.State>,
-                      //boardResolutionStateRef: StateAndRef<BorrowingLimitBoardResolution.State>,
+                      creditRatingStateRef: StateAndRef<CreditRating.State>,
+                      boardResolutionStateRef: StateAndRef<BorrowingLimitBoardResolution.State>,
                       notary: Party): TransactionBuilder {
 
         //Adding Credit Rating and Board Resolution to output states
         val tx = TransactionType.General.Builder(notary)
 
         //Adding Inputs
-//        tx.addInputState(creditRatingStateRef)
-//        tx.addInputState(boardResolutionStateRef)
+        tx.addInputState(creditRatingStateRef)
+        tx.addInputState(boardResolutionStateRef)
 
         //Adding Outputs
-//        val creditRatingInputState = creditRatingStateRef.state.data
-//        val boardResolutionInputState = boardResolutionStateRef.state.data
-        val cpProgOutState = TransactionState(cpProgramContractState, notary)
-        tx.withItems(cpProgOutState, Command(CreditRating.Commands.Issue(), cpProgramContractState.issuer.owningKey))
+        val creditRatingInputState = creditRatingStateRef.state.data
+        val boardResolutionInputState = boardResolutionStateRef.state.data
 
-//        tx.addOutputState(cpProgOutState)
-//        tx.addOutputState(
-//                creditRatingInputState.copy(
-//                        version = creditRatingInputState.version!! + 1,
-//                        currentOutstandingCreditBorrowing = creditRatingInputState.currentOutstandingCreditBorrowing!!.copy (
-//                                quantity = cpProgramContractState.programSize.quantity + creditRatingInputState.currentOutstandingCreditBorrowing!!.quantity
-//                        )
-//                ),
-//                creditRatingStateRef.state.notary
-//        )
-//        tx.addOutputState(
-//                boardResolutionInputState.copy(
-//                        version = boardResolutionInputState.version!! + 1,
-//                        currentOutstandingCreditBorrowing = boardResolutionInputState.currentOutstandingCreditBorrowing!!.copy (
-//                                quantity = cpProgramContractState.programSize.quantity + boardResolutionInputState.currentOutstandingCreditBorrowing!!.quantity
-//                        )
-//                ),
-//                boardResolutionStateRef.state.notary
-//        )
+        tx.addOutputState(
+                cpProgramContractState.copy(
+                        status = IndiaCPProgramStatusEnum.CP_PROGRAM_CREATED.name
+                ),
+                notary
+        )
+        tx.addOutputState(
+                creditRatingInputState.copy(
+                        version = creditRatingInputState.version!! + 1,
+                        currentOutstandingCreditBorrowing = creditRatingInputState.currentOutstandingCreditBorrowing!!.copy (
+                                quantity = cpProgramContractState.programSize.quantity + creditRatingInputState.currentOutstandingCreditBorrowing!!.quantity
+                        )
+                ),
+                creditRatingStateRef.state.notary
+        )
+        tx.addOutputState(
+                boardResolutionInputState.copy(
+                        version = boardResolutionInputState.version!! + 1,
+                        currentOutstandingCreditBorrowing = boardResolutionInputState.currentOutstandingCreditBorrowing!!.copy (
+                                quantity = cpProgramContractState.programSize.quantity + boardResolutionInputState.currentOutstandingCreditBorrowing!!.quantity
+                        )
+                ),
+                boardResolutionStateRef.state.notary
+        )
 
         //Adding Required Commands
-//        tx.addCommand(IndiaCommercialPaperProgram.Commands.Issue(), listOf(cpProgramContractState.issuer.owningKey))
-        //TODO: We may have to add the commands for the inputs and outputs of the CreditRating and BorrowingLimitBoardResolution Smart Contracts.
-        //For now the verification will be done by the Issue Command of the IndiaCommercialPaperProgram Contract
+        tx.addCommand(IndiaCommercialPaperProgram.Commands.Issue(), listOf(cpProgramContractState.issuer.owningKey))
+        tx.addCommand(CreditRating.Commands.Amend(), listOf(cpProgramContractState.issuer.owningKey))
+        tx.addCommand(BorrowingLimitBoardResolution.Commands.Amend(), listOf(cpProgramContractState.issuer.owningKey))
 
         return tx
     }

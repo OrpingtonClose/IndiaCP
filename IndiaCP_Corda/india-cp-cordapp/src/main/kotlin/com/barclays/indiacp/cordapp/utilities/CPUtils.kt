@@ -3,19 +3,20 @@ package com.barclays.indiacp.cordapp.utilities
 import com.barclays.indiacp.cordapp.contract.CreditRating
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
+import com.barclays.indiacp.cordapp.search.IndiaCPHistorySearch
+import com.barclays.indiacp.model.CPProgramError
 import com.barclays.indiacp.model.Error
 import com.barclays.indiacp.model.IndiaCPException
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER_KEY
-import net.corda.core.contracts.ContractState
-import net.corda.core.contracts.OwnableState
-import net.corda.core.contracts.PartyAndReference
-import net.corda.core.contracts.StateAndRef
+import net.corda.core.contracts.*
 import net.corda.core.crypto.Party
 import net.corda.core.crypto.composite
 import net.corda.core.node.NodeInfo
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.dealsWith
+import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.serialization.OpaqueBytes
+import net.corda.core.transactions.WireTransaction
 import java.io.PrintWriter
 import java.io.StringWriter
 import javax.ws.rs.core.Response
@@ -33,6 +34,21 @@ object CPUtils {
     inline fun <reified T : ContractState> getContractStateAndRef(serviceHub: ServiceHub) : StateAndRef<T>? {
         val states = serviceHub.vaultService.currentVault.statesOfType<T>()
         return if (states.isEmpty()) null else states[0]
+    }
+
+    inline fun<reified T: LinearState> getTransactionHistory(services: ServiceHub, referenceSelector: T.() -> Boolean ): List<T> {
+        val states = services.vaultService.linearHeadsOfType<T>().filterValues{ referenceSelector(it.state.data)}
+        if (states == null || states.values == null || states.values.isEmpty()) {
+            throw IndiaCPException("History Fetch Error")
+        }
+        val stx = services.storageService.validatedTransactions.getTransaction(states.values.first()!!.ref.txhash)
+
+        val search = IndiaCPHistorySearch(services.storageService.validatedTransactions, listOf(stx!!.tx))
+        search.query = IndiaCPHistorySearch.QueryByInputStateType(followInputsOfType = T::class.java)
+        val txHistory : List<WireTransaction> = search.call()
+
+        return search.filterLinearStatesOfType(txHistory)
+
     }
 
     fun getContractState(serviceHub: ServiceHub, cpRefId: String) : StateAndRef<OwnableState> {

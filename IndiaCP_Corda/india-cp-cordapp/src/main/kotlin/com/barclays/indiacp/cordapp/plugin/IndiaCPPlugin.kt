@@ -15,6 +15,7 @@ import com.barclays.indiacp.model.IndiaCPProgramStatusEnum
 import com.barclays.indiacp.model.LegalEntityCreditRatingDocument
 import com.esotericsoftware.kryo.Kryo
 import net.corda.core.node.CordaPluginRegistry
+import net.corda.node.services.vault.CashBalanceAsMetricsObserver
 import java.util.*
 
 class IndiaCPPlugin : CordaPluginRegistry() {
@@ -61,6 +62,7 @@ class IndiaCPPlugin : CordaPluginRegistry() {
             register(IndiaCPProgramStatusEnum.UNKNOWN::class.java)
 
             register(net.corda.node.services.api.MonitoringService::class.java)
+            register(CashBalanceAsMetricsObserver::class.java)
 
             //registering Model
             register(LegalEntityCreditRatingDocument::class.java)

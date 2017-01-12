@@ -4,6 +4,7 @@ package com.barclays.indiacp.cordapp.api
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
 import com.barclays.indiacp.cordapp.search.IndiaCPHistorySearch
+import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ErrorUtils
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
 import com.barclays.indiacp.model.*
@@ -180,13 +181,13 @@ class IndiaCPProgramApi(val services: ServiceHub) {
         }
     }
 
-    @POST
+    @GET
     @Path("getTransactionHistory/{cpProgramId}")
     @Produces(MediaType.APPLICATION_JSON)
     fun getTransactionHistory(@PathParam("cpProgramId") cpProgramId: String): Response {
         try {
-            val history = getHistory(cpProgramId)
-            return Response.status(Response.Status.OK).entity(history).build()
+            val history = CPUtils.getTransactionHistory<IndiaCommercialPaperProgram.State>(services, { programId == cpProgramId })
+            return Response.status(Response.Status.OK).entity(history.map { ModelUtils.indiaCPProgramModelFromState(it) }).build()
         } catch (ex: Throwable) {
             logger.info("Exception when creating deal: ${ex.toString()}")
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
@@ -220,25 +221,25 @@ class IndiaCPProgramApi(val services: ServiceHub) {
         }
     }
 
-    private fun getAllCPProgram(): Array<IndiaCommercialPaperProgram.State>?  {
+    fun getAllCPProgram(): Array<IndiaCommercialPaperProgram.State>?  {
         val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>()
         val indiacpprogams = states.values.map { it.state.data }.toTypedArray()
         return indiacpprogams
     }
 
-    private fun getHistory(ref: String): Array<ContractState> {
-        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>().filterValues { it.state.data.programId == ref }
-        if (states == null || states.values == null || states.values.isEmpty()) {
-            throw IndiaCPException(CPProgramError.DOES_NOT_EXIST_ERROR, Error.SourceEnum.DL_R3CORDA)
-        }
-        val stx = services.storageService.validatedTransactions.getTransaction(states.values.first()!!.ref.txhash)
-
-        val search = IndiaCPHistorySearch(services.storageService.validatedTransactions, listOf(stx!!.tx))
-        search.query = IndiaCPHistorySearch.QueryByInputStateType(followInputsOfType = IndiaCommercialPaperProgram.State::class.java)
-        val cpProgHistory : List<WireTransaction> = search.call()
-
-        return search.filterOutputStates(cpProgHistory)
-    }
+//    private fun getHistory(ref: String): Array<ContractState> {
+//        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>().filterValues { it.state.data.programId == ref }
+//        if (states == null || states.values == null || states.values.isEmpty()) {
+//            throw IndiaCPException(CPProgramError.DOES_NOT_EXIST_ERROR, Error.SourceEnum.DL_R3CORDA)
+//        }
+//        val stx = services.storageService.validatedTransactions.getTransaction(states.values.first()!!.ref.txhash)
+//
+//        val search = IndiaCPHistorySearch(services.storageService.validatedTransactions, listOf(stx!!.tx))
+//        search.query = IndiaCPHistorySearch.QueryByInputStateType(followInputsOfType = IndiaCommercialPaperProgram.State::class.java)
+//        val cpProgHistory : List<WireTransaction> = search.call()
+//
+//        return search.filterOutputStates(cpProgHistory)
+//    }
 
 
     @GET

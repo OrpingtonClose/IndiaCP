@@ -2,6 +2,7 @@ package com.barclays.indiacp.cordapp.search
 
 import net.corda.core.contracts.CommandData
 import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.LinearState
 import net.corda.core.contracts.StateRef
 import net.corda.core.crypto.SecureHash
 import net.corda.core.node.services.ReadOnlyTransactionStorage
@@ -74,9 +75,13 @@ class IndiaCPHistorySearch(val transactions: ReadOnlyTransactionStorage,
         return results
     }
 
-    fun filterOutputStates(searchOutput: List<WireTransaction>): Array<ContractState> {
+    fun filterContractStates(searchOutput: List<WireTransaction>): ArrayList<ContractState> {
         val filteredOutputStates : ArrayList<ContractState> = ArrayList<ContractState>()
         val filteredOutputStatesList = searchOutput.map { it.outputs}.forEach { it.filter {it.data.javaClass == query.followInputsOfType}.forEach { filteredOutputStates.add(it.data) } }
-        return filteredOutputStates.toTypedArray()
+        return filteredOutputStates
+    }
+
+    inline fun<reified T: LinearState> filterLinearStatesOfType(searchOutput: List<WireTransaction>): List<T> {
+        return filterContractStates(searchOutput).filterIsInstance<T>()
     }
 }

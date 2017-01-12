@@ -16,6 +16,7 @@ import net.corda.core.schemas.QueryableState
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.Emoji
 import sun.misc.CEStreamExhausted
+import java.security.PublicKey
 import java.util.*
 
 val CREDIT_RATING_ID = CreditRating()
@@ -35,7 +36,7 @@ class CreditRating : Contract, LegalEntityDocumentContract {
 
     data class State(
             override val issuer: Party,
-            override val owner: CompositeKey,
+            val owner: CompositeKey = issuer.owningKey,
             val creditRatingAgencyName: String,
             val creditRatingAmount: Amount<Currency>,
             val currency: Currency,
@@ -49,12 +50,20 @@ class CreditRating : Contract, LegalEntityDocumentContract {
             val lastModifiedDate: Date? = Date(),
             val version: Int? = 1,
             val status: String? = ModelUtils.DocumentStatus.ACTIVE.name
-    ) : LegalEntityDocumentOwnableState, OwnableState, QueryableState {
+    ) : LegalEntityDocumentOwnableState, LinearState, QueryableState {
+
+        override fun isRelevant(ourKeys: Set<PublicKey>): Boolean {
+            return participants.any { ck -> ck.containsAny(ourKeys) }
+        }
+
+        override val linearId: UniqueIdentifier
+            get() = UniqueIdentifier(issuer.name)
+
         override val contract = BORROWING_LIMIT_BOARD_RESOLUTION_ID
         override val participants: List<CompositeKey>
             get() = listOf(owner)
 
-        override fun withNewOwner(newOwner: CompositeKey): Pair<CommandData, OwnableState> = throw IllegalStateException()
+        //override fun withNewOwner(newOwner: CompositeKey): Pair<CommandData, OwnableState> = throw IllegalStateException()
         override fun toString() = "${Emoji.newspaper}Credit Rating Document (issued by $creditRatingAgencyName, applicable from $creditRatingEffectiveDate, expiring on $creditRatingExpiryDate for '$issuer', owned by ${owner.toString()})"
 
         /** Object Relational Mapping support. */
