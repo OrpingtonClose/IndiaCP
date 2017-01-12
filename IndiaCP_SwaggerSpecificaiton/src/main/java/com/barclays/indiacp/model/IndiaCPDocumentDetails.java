@@ -36,7 +36,7 @@ import java.util.Date;
 /**
  * IndiaCPDocumentDetails
  */
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-10T12:15:59.809Z")
+@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-12T22:50:03.458Z")
 public class IndiaCPDocumentDetails   {
   @JsonProperty("cpProgramId")
   private String cpProgramId = null;
@@ -95,6 +95,8 @@ public class IndiaCPDocumentDetails   {
    * The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL
    */
   public enum DocStatusEnum {
+    UNKNOWN("UNKNOWN"),
+    
     UNSIGNED("UNSIGNED"),
     
     SIGNED_BY_ISSUER("SIGNED_BY_ISSUER"),

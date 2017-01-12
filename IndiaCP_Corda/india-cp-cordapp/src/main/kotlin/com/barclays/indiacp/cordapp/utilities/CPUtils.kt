@@ -6,6 +6,7 @@ import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.search.IndiaCPHistorySearch
 import com.barclays.indiacp.model.CPProgramError
 import com.barclays.indiacp.model.Error
+import com.barclays.indiacp.model.IndiaCPDocumentDetails
 import com.barclays.indiacp.model.IndiaCPException
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER_KEY
 import net.corda.core.contracts.*
@@ -39,7 +40,7 @@ object CPUtils {
     inline fun<reified T: LinearState> getTransactionHistory(services: ServiceHub, referenceSelector: T.() -> Boolean ): List<T> {
         val states = services.vaultService.linearHeadsOfType<T>().filterValues{ referenceSelector(it.state.data)}
         if (states == null || states.values == null || states.values.isEmpty()) {
-            throw IndiaCPException("History Fetch Error")
+            throw IndiaCPException("History Fetch Error", Error.SourceEnum.DL_R3CORDA)
         }
         val stx = services.storageService.validatedTransactions.getTransaction(states.values.first()!!.ref.txhash)
 
@@ -47,7 +48,21 @@ object CPUtils {
         search.query = IndiaCPHistorySearch.QueryByInputStateType(followInputsOfType = T::class.java)
         val txHistory : List<WireTransaction> = search.call()
 
-        return search.filterLinearStatesOfType(txHistory)
+        return search.filterLinearStatesOfType<T>(txHistory)
+
+    }
+
+    inline fun<reified T: LinearState, reified C: CommandData> getDocumentTransactionHistory(services: ServiceHub, referenceSelector: T.() -> Boolean ): List<T> {
+        val states = services.vaultService.linearHeadsOfType<T>().filterValues{ referenceSelector(it.state.data)}
+        if (states == null || states.values == null || states.values.isEmpty()) {
+            throw IndiaCPException("History Fetch Error", Error.SourceEnum.DL_R3CORDA)
+        }
+        val stx = services.storageService.validatedTransactions.getTransaction(states.values.first()!!.ref.txhash)
+        val search = IndiaCPHistorySearch(services.storageService.validatedTransactions, listOf(stx!!.tx))
+        search.query = IndiaCPHistorySearch.QueryByCommand(withCommandOfType = C::class.java, followInputsOfType = T::class.java)
+        val txHistory : List<WireTransaction> = search.call()
+
+        return search.filterLinearStatesOfType<T>(txHistory)
 
     }
 

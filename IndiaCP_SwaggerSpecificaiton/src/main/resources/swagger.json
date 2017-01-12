@@ -1224,6 +1224,7 @@
                     "type": "string",
                     "description": "The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL",
                     "enum": [
+                        "UNKNOWN",
                         "UNSIGNED",
                         "SIGNED_BY_ISSUER",
                         "SIGNED_BY_INVESTOR",

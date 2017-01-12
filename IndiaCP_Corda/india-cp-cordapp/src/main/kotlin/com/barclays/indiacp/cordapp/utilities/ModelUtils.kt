@@ -189,4 +189,34 @@ object ModelUtils {
         return model
     }
 
+    fun  getDocumentDetails(cpProgId: String, cpProgStatesForDocTypeHistory: List<IndiaCommercialPaperProgram.State>, docType: IndiaCPDocumentDetails.DocTypeEnum): List<IndiaCPDocumentDetails> {
+
+        val documentDetailsList = ArrayList<IndiaCPDocumentDetails>()
+        for (cpProgramState in cpProgStatesForDocTypeHistory) {
+            val documentDetails = IndiaCPDocumentDetails ()
+            documentDetails.docType(docType)
+            documentDetails.cpProgramId(cpProgId)
+            setDocHashAndStatus(documentDetails, cpProgramState, docType)
+            documentDetails.lastModifiedDate(Date(cpProgramState.lastModifiedDate!!.toEpochMilli()))
+            documentDetails.modifiedBy(cpProgramState.modifiedBy)
+            documentDetailsList.add(documentDetails)
+        }
+        return documentDetailsList
+    }
+
+    private fun  setDocHashAndStatus(documentDetails: IndiaCPDocumentDetails, cpProgramState: IndiaCommercialPaperProgram.State, docType: IndiaCPDocumentDetails.DocTypeEnum) {
+
+        val DOC_HASH_NOT_FOUND_ERROR_MESSAGE = "Document Hash Not Found in Smart Contract for Doc Type ${docType}, CPProgram Id ${cpProgramState.programId}"
+        when (docType) {
+            IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS -> {
+                val docHashAndStatus = cpProgramState.isinGenerationRequestDocId?.split(":") ?: throw IndiaCPException(DOC_HASH_NOT_FOUND_ERROR_MESSAGE, Error.SourceEnum.DL_R3CORDA)
+                val docHash = docHashAndStatus[0]
+                val docStatus = docHashAndStatus[1]
+                val docStatusEnum = IndiaCPDocumentDetails.DocStatusEnum.fromValue(docStatus) ?: IndiaCPDocumentDetails.DocStatusEnum.UNKNOWN
+                documentDetails.docHash(docHash)
+                documentDetails.docStatus(docStatusEnum)
+            }
+        }
+    }
+
 }

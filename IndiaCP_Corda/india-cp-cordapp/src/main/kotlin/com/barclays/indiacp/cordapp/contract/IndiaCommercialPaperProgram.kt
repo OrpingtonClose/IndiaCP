@@ -396,7 +396,8 @@ class IndiaCommercialPaperProgram : Contract {
         )
 
         //Adding Attachments
-        tx.addAttachment(SecureHash.parse(cpProgramContractStateAndRef.state.data.isinGenerationRequestDocId!!))
+        val docHash = cpProgramContractStateAndRef.state.data.isinGenerationRequestDocId!!.split(":").first()
+        tx.addAttachment(SecureHash.parse(docHash))
 
         //Adding Required Commands
         tx.addCommand(IndiaCommercialPaperProgram.Commands.AddIsinGenDoc(), listOf(cpProgramContractStateAndRef.state.data.issuer.owningKey,

@@ -9,6 +9,7 @@ import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ErrorUtils
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
 import com.barclays.indiacp.model.*
+import net.corda.core.contracts.Command
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.node.ServiceHub
@@ -16,6 +17,7 @@ import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.transactions.WireTransaction
 import net.corda.core.utilities.Emoji
 import net.corda.core.utilities.loggerFor
+import java.time.Instant
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -98,14 +100,37 @@ class IndiaCPProgramApi(val services: ServiceHub) {
         }
     }
 
-    @POST
+    @GET
     @Path("getDocumentHistory/{cpProgramId}/{docType}/{docSubType}")
+    @Produces(MediaType.APPLICATION_JSON)
     fun getDocumentHistory(@PathParam("cpProgramId") cpProgramId: String,
                            @PathParam("docType") docType: String,
                            @PathParam("docSubType") docSubType: String): Response {
+        var history: List<IndiaCPDocumentDetails> = emptyList()
         try {
-            //TODO: Add code here
-            return Response.status(Response.Status.OK).build()
+            when (docType) {
+                IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS.name -> {
+                    val cpProgStatesForDocTypeTransactions = CPUtils.getDocumentTransactionHistory<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands.AddIsinGenDoc>(services, { programId == cpProgramId })
+                    history = ModelUtils.getDocumentDetails(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS)
+                }
+                IndiaCPDocumentDetails.DocTypeEnum.IPA_DOCS.name -> {
+                    val cpProgStatesForDocTypeTransactions = CPUtils.getDocumentTransactionHistory<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands.AddIPAVerification>(services, { programId == cpProgramId })
+                    history = ModelUtils.getDocumentDetails(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.IPA_DOCS)
+                }
+                IndiaCPDocumentDetails.DocTypeEnum.IPA_CERTIFICATE_DOC.name -> {
+                    val cpProgStatesForDocTypeTransactions = CPUtils.getDocumentTransactionHistory<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands.AddIPACertifcateDoc>(services, { programId == cpProgramId })
+                    history = ModelUtils.getDocumentDetails(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.IPA_CERTIFICATE_DOC)
+                }
+                IndiaCPDocumentDetails.DocTypeEnum.CORPORATE_ACTION_FORM.name -> {
+                    val cpProgStatesForDocTypeTransactions = CPUtils.getDocumentTransactionHistory<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands.AddCorpActionFormDoc>(services, { programId == cpProgramId })
+                    history = ModelUtils.getDocumentDetails(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.CORPORATE_ACTION_FORM)
+                }
+                else -> {
+                    return ErrorUtils.errorHttpResponse(IndiaCPException("Unknown Document Type History Requested from India Commercial Paper Program Smart Contract", Error.SourceEnum.DL_R3CORDA),
+                            errorCode = CPProgramError.DOC_UPLOAD_ERROR)
+                }
+            }
+            return Response.status(Response.Status.OK).entity(history).build()
         } catch (ex: Throwable) {
             logger.info("${CPProgramError.HISTORY_SEARCH_ERROR}: ${ex.toString()}")
             return ErrorUtils.errorHttpResponse(ex, errorCode = CPProgramError.HISTORY_SEARCH_ERROR)
@@ -174,11 +199,23 @@ class IndiaCPProgramApi(val services: ServiceHub) {
             when (docDetails.docType) {
                 IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS -> {
                     val newStateRef = cpProgramStateAndRef.copy(state = cpProgramStateAndRef.state.copy(
-                                                                        data = cpProgramStateAndRef.state.data.copy(isinGenerationRequestDocId = docDetails.docHash)
+                            data = cpProgramStateAndRef.state.data.copy(isinGenerationRequestDocId = docDetails.docHash + ":" + docDetails.docStatus ?:  IndiaCPDocumentDetails.DocStatusEnum.UNKNOWN.name,
+                                                                        modifiedBy = docDetails.modifiedBy,
+                                                                        lastModifiedDate = docDetails.lastModifiedDate?.toInstant() ?: Instant.now()
                                                                         )
+                                                                    )
                                                                 )
                     val stx = services.invokeFlowAsync(AddISINDocFlow::class.java, newStateRef).resultFuture.get()
                     logger.info("ISIN Request Document Uploaded & Stamped on DL \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+                }
+                IndiaCPDocumentDetails.DocTypeEnum.IPA_DOCS -> {
+
+                }
+                IndiaCPDocumentDetails.DocTypeEnum.IPA_CERTIFICATE_DOC -> {
+
+                }
+                IndiaCPDocumentDetails.DocTypeEnum.CORPORATE_ACTION_FORM -> {
+
                 }
                 else -> {
                     return ErrorUtils.errorHttpResponse(IndiaCPException("Unknown Document Type Uploaded to India Commercial Paper Program Smart Contract", Error.SourceEnum.DL_R3CORDA),
