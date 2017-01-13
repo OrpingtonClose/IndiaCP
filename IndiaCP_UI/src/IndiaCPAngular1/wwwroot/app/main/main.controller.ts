@@ -23,8 +23,8 @@ module app.main {
             this.$state.go("login");
         }
 
-        public showBRDoc(): void {
-            this.$uibModal.open({
+        public uploadBRDoc(): void {
+            var uploadBRModal: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open({
                 animation: true,
                 ariaLabelledBy: "modal-title",
                 ariaDescribedBy: "modal-body",
@@ -34,9 +34,23 @@ module app.main {
                 backdrop: "static",
                 templateUrl: "app/legalentity/uploadbr.html"
             });
+
+            uploadBRModal.closed.then(() => {
+                this.$state.transitionTo("main.dashboard");
+            });
         }
-        public showCRDoc(): void {
-            this.$uibModal.open({
+        public uploadCRDoc(): void {
+            // this.$uibModal.open({
+            //     animation: true,
+            //     ariaLabelledBy: "modal-title",
+            //     ariaDescribedBy: "modal-body",
+            //     controller: "app.dashboard.isingeneration.ISINGenerationController",
+            //     controllerAs: "vm",
+            //     size: "lg",
+            //     backdrop: "static",
+            //     templateUrl: "app/dashboard/isingeneration/isingeneration.html"
+            // });
+            var uploadCRModal: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open({
                 animation: true,
                 ariaLabelledBy: "modal-title",
                 ariaDescribedBy: "modal-body",
@@ -44,7 +58,11 @@ module app.main {
                 controllerAs: "vm",
                 size: "lg",
                 backdrop: "static",
-                templateUrl: "app/legalentity/uploadcr.html"
+                templateUrl: "app/legalentity/uploadcr.html",
+            });
+
+            uploadCRModal.closed.then(() => {
+                this.$state.transitionTo("main.dashboard");
             });
         }
     }

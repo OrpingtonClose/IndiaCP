@@ -2,20 +2,30 @@ module app.models {
     "use strict";
 
     export class CreditRatingDocs {
-        /**
+         /**
          * Unique identifier of the Legal Entity that this document is Issued for
          */
         "legalEntityId"?: string;
 
         /**
-         * Unique identifier for the Credit Rating Agency
+         * The Credit Rating Agency
          */
         "creditRatingAgencyName"?: string;
 
         /**
-         * Unique identifier of the CP Program that this document is associated with
+         * Total Approved Borrowing Credit Limit
          */
         "creditRatingAmount"?: number;
+
+        /**
+         * Outstanding Credit Borrowing. This is an auto computed value. It is computed by the Smart Contract based on the outstanding open CP Program Sizes.
+         */
+        "currentOutstandingCreditBorrowing"?: number;
+
+        /**
+         * Currency. Defaulted to INR for India Commercial Paper
+         */
+        "currency"?: string;
 
         /**
          * Rating assigned by the CRA
@@ -38,6 +48,16 @@ module app.models {
         "creditRatingExpiryDate"?: Date;
 
         /**
+         * SHA256 Hash of the Credit Rating Document
+         */
+        "docHash"?: string;
+
+        /**
+         * Current version of the CR Document. This is auto incremented by the DL.
+         */
+        "version"?: number;
+
+        /**
          * Unique identifier of the Logged-in User that performed the action. This is required for Audit History
          */
         "modifiedBy"?: string;
@@ -47,9 +67,10 @@ module app.models {
          */
         "lastModifiedDate"?: Date;
 
-        "docHash"?: string;
-
-        "currency"?: string;
+        /**
+         * There can be only one active CR Document at any given time
+         */
+        "status"?: StatusEnum;
 
     }
 }

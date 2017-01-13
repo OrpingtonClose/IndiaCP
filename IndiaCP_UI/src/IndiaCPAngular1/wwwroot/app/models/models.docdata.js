@@ -9,6 +9,31 @@ var app;
             return DocData;
         }());
         models.DocData = DocData;
+        var DOCTYPE;
+        (function (DOCTYPE) {
+            DOCTYPE[DOCTYPE["DEPOSITORY_DOCS"] = "DEPOSITORY_DOCS"] = "DEPOSITORY_DOCS";
+        })(DOCTYPE = models.DOCTYPE || (models.DOCTYPE = {}));
+        var DOCSTATUS;
+        (function (DOCSTATUS) {
+            DOCSTATUS[DOCSTATUS["SIGNED_BY_ISSUER"] = "SIGNED_BY_ISSUER"] = "SIGNED_BY_ISSUER";
+        })(DOCSTATUS = models.DOCSTATUS || (models.DOCSTATUS = {}));
+        var DOCEXTENSION;
+        (function (DOCEXTENSION) {
+            DOCEXTENSION[DOCEXTENSION["PDF"] = "pdf"] = "PDF";
+            DOCEXTENSION[DOCEXTENSION["DOCX"] = "docx"] = "DOCX";
+            DOCEXTENSION[DOCEXTENSION["DOC"] = "doc"] = "DOC";
+            DOCEXTENSION[DOCEXTENSION["ZIP"] = "zip"] = "ZIP";
+        })(DOCEXTENSION = models.DOCEXTENSION || (models.DOCEXTENSION = {}));
+        var DocRefData = (function () {
+            function DocRefData() {
+                this.cp = new CPDocData();
+                this.investor = new InvestorDocData();
+                this.nsdl = new NSDLDOcData();
+                this.ipa = new IPADocData();
+            }
+            return DocRefData;
+        }());
+        models.DocRefData = DocRefData;
         var CPDocData = (function () {
             function CPDocData() {
             }

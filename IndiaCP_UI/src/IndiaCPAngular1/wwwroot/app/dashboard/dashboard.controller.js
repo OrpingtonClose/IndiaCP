@@ -4,31 +4,38 @@ var app;
     (function (dashboard) {
         "use strict";
         var DashboardController = (function () {
-            function DashboardController($http, $scope, $uibModal, issuerService) {
+            function DashboardController($http, $scope, $uibModal, $interval, issuerService) {
                 this.$http = $http;
                 this.$scope = $scope;
                 this.$uibModal = $uibModal;
+                this.$interval = $interval;
                 this.issuerService = issuerService;
                 this.workflowStates = new app.models.WorkflowStates();
                 this.fetchAllCPPrograms();
             }
+            DashboardController.prototype.$onDestroy = function () {
+                this.$interval.cancel(this.dataRefresher);
+            };
             DashboardController.prototype.fetchAllCPPrograms = function () {
-                var vm = this;
-                this.issuerService.fetchAllCPProgram().then(function (response) {
-                    vm.cpPrograms = response.data;
-                    vm.cpPrograms.forEach(function (cpProgram) {
-                        vm.workflowStates.states.forEach(function (state) {
-                            if (state.status === cpProgram.status) {
-                                cpProgram.nextAction = state.nextAction;
-                            }
+                var _this = this;
+                this.dataRefresher = this.$interval(function () {
+                    var vm = _this;
+                    _this.issuerService.fetchAllCPProgram().then(function (response) {
+                        vm.cpPrograms = response.data;
+                        vm.cpPrograms.forEach(function (cpProgram) {
+                            vm.workflowStates.states.forEach(function (state) {
+                                if (state.status === cpProgram.status) {
+                                    cpProgram.nextAction = state.nextAction;
+                                }
+                            });
                         });
                     });
-                });
+                }, 10000);
             };
             DashboardController.prototype.executeNextAction = function (nextAction, selectedCPProgram) {
                 switch (nextAction) {
                     case "ADD_ISIN_GEN_DOC":
-                        this.generateISINDocs();
+                        this.generateISINDocs(selectedCPProgram);
                         break;
                     case "ISSUECP":
                         this.createCPISsue(selectedCPProgram);
@@ -40,7 +47,7 @@ var app;
                         this.createCPISsue(selectedCPProgram);
                 }
             };
-            DashboardController.prototype.generateISINDocs = function () {
+            DashboardController.prototype.generateISINDocs = function (selectedCPProgram) {
                 this.$uibModal.open({
                     animation: true,
                     ariaLabelledBy: "modal-title",
@@ -49,7 +56,8 @@ var app;
                     controllerAs: "vm",
                     size: "lg",
                     backdrop: "static",
-                    templateUrl: "app/dashboard/isingeneration/isingeneration.html"
+                    templateUrl: "app/dashboard/isingeneration/isingeneration.html",
+                    resolve: { cpProgram: selectedCPProgram }
                 });
             };
             DashboardController.prototype.createCPISsue = function (selectedCPProgram) {
@@ -116,10 +124,19 @@ var app;
             };
             return DashboardController;
         }());
-        DashboardController.$inject = ["$http", "$scope", "$uibModal", "app.services.IssuerService"];
-        angular
-            .module("app.dashboard")
+        DashboardController.$inject = ["$http",
+            "$scope",
+            "$uibModal",
+            "$interval",
+            "app.services.IssuerService"];
+        angular.module("app.dashboard")
             .controller("app.dashboard.DashboardController", DashboardController);
+        angular.module("app.dashboard")
+            .component("app.dashboard.DashboardComponent", {
+            controller: "app.dashboard.DashboardController",
+            controllerAs: "vm",
+            templateUrl: "app/dashboard/dashboard.html",
+        });
     })(dashboard = app.dashboard || (app.dashboard = {}));
 })(app || (app = {}));
 //# sourceMappingURL=dashboard.controller.js.map

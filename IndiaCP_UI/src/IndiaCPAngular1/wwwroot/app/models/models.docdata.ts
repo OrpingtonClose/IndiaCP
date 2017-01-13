@@ -1,6 +1,40 @@
 module app.models {
     "use strict";
+
     export class DocData {
+        cpProgramId: string;
+        docType: DOCTYPE;
+        docSubType: DOCTYPE;
+        docExtension: DOCEXTENSION;
+        docStatus: DOCSTATUS;
+        modifiedBy: string;
+    }
+
+    export enum DOCTYPE {
+        DEPOSITORY_DOCS = <any>"DEPOSITORY_DOCS"
+    }
+
+    export enum DOCSTATUS {
+        SIGNED_BY_ISSUER = <any>"SIGNED_BY_ISSUER"
+    }
+
+    export enum DOCEXTENSION {
+        PDF = <any>"pdf",
+        DOCX = <any>"docx",
+        DOC = <any>"doc",
+        ZIP = <any>"zip"
+    }
+
+
+
+    export class DocRefData {
+
+        constructor() {
+            this.cp = new CPDocData();
+            this.investor = new InvestorDocData();
+            this.nsdl = new NSDLDOcData();
+            this.ipa = new IPADocData();
+        }
         /**
          * Unique Id to identify the type of error. For e.g. CP Program Creation, ISIN Generation, etc.
          */

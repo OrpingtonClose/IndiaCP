@@ -49,13 +49,13 @@ var app;
                 return objA;
             };
             /**
-                 * Uploads and attaches the provided document to the CPProgram on the DL
-                 * Uploads and attaches the provided document to the CPProgram on the DL
-                 * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
-                 * @param metadata Document Attachment Details
-                 * @param file Document Attachment
-                 */
-            IssuerService.prototype.addDoc = function (cpProgramId, metadata, file, extraHttpRequestParams) {
+             * Uploads and attaches the provided document to the CPProgram on the DL
+             * Uploads and attaches the provided document to the CPProgram on the DL
+             * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
+             * @param metadata Document Attachment Details
+             * @param file Document Attachment
+             */
+            IssuerService.prototype.addDoc = function (cpProgramId, docData, file, extraHttpRequestParams) {
                 var localVarPath = this.basePath + "/indiacpprogram/addDocs/{cpProgramId}"
                     .replace("{" + "cpProgramId" + "}", String(cpProgramId));
                 var queryParameters = {};
@@ -66,7 +66,7 @@ var app;
                     throw new Error("Required parameter cpProgramId was null or undefined when calling addDoc.");
                 }
                 // verify required parameter "metadata" is not null or undefined
-                if (metadata === null || metadata === undefined) {
+                if (docData === null || docData === undefined) {
                     throw new Error("Required parameter metadata was null or undefined when calling addDoc.");
                 }
                 // verify required parameter "file" is not null or undefined
@@ -74,7 +74,7 @@ var app;
                     throw new Error("Required parameter file was null or undefined when calling addDoc.");
                 }
                 headerParams["Content-Type"] = "application/x-www-form-urlencoded";
-                formParams["metadata"] = metadata;
+                formParams["documentDetails"] = docData;
                 formParams["file"] = file;
                 var httpRequestParams = {
                     method: "POST",
@@ -252,7 +252,10 @@ var app;
                     url: localVarPath,
                     json: true,
                     params: queryParameters,
-                    headers: headerParams
+                    headers: headerParams,
+                    transformResponse: [function (data) {
+                            return data;
+                        }]
                 };
                 if (extraHttpRequestParams) {
                     httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
@@ -351,6 +354,70 @@ var app;
                 };
                 return this.Upload.upload(httpUploadRequestParams);
                 //return this.$http(httpRequestParams);
+            };
+            /**
+             * Uploads the Board Resolution Document and Creates a Smart Contract for the same on the DL to establish immutable golden copy
+             * Uploads the Board Resolution Document and Creates a Smart Contract for the same on the DL to establish immutable golden copy
+             * @param boardResolutionDetails Board Resolution Details for creating the Smart Contract
+             * @param file Document Attachment
+             */
+            IssuerService.prototype.issueBoardResolution = function (boardResolutionDetails, file, extraHttpRequestParams) {
+                var localVarPath = this.basePath + "/boardresolution/issueBoardResolution";
+                var queryParameters = {};
+                var headerParams = this.extendObj({}, this.defaultHeaders);
+                var formParams = {};
+                // verify required parameter "boardResolutionDetails" is not null or undefined
+                if (boardResolutionDetails === null || boardResolutionDetails === undefined) {
+                    throw new Error("Required parameter boardResolutionDetails was null or undefined when calling issueBoardResolution.");
+                }
+                // verify required parameter "file" is not null or undefined
+                if (file === null || file === undefined) {
+                    throw new Error("Required parameter file was null or undefined when calling issueBoardResolution.");
+                }
+                headerParams["Content-Type"] = "application/x-www-form-urlencoded";
+                formParams["boardResolutionDetails"] = boardResolutionDetails;
+                formParams["file"] = file;
+                var httpRequestParams = {
+                    method: "POST",
+                    url: localVarPath,
+                    json: false,
+                    data: this.$httpParamSerializer(formParams),
+                    params: queryParameters,
+                    headers: headerParams
+                };
+                if (extraHttpRequestParams) {
+                    httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+                }
+                var httpUploadRequestParams = {
+                    url: localVarPath,
+                    data: { file: file, boardResolutionDetails: this.Upload.jsonBlob(boardResolutionDetails) },
+                    method: "POST"
+                };
+                return this.Upload.upload(httpUploadRequestParams);
+                //return this.$http(httpRequestParams);
+            };
+            /**
+             * Get current active Board Resolution details
+             * This returns only the current active board resolution details
+             */
+            IssuerService.prototype.fetchBoardResolution = function (extraHttpRequestParams) {
+                var localVarPath = this.basePath + "/boardresolution/fetchBoardResolution";
+                var queryParameters = {};
+                var headerParams = this.extendObj({}, this.defaultHeaders);
+                var httpRequestParams = {
+                    method: "GET",
+                    url: localVarPath,
+                    json: true,
+                    params: queryParameters,
+                    headers: headerParams,
+                    transformResponse: [function (data) {
+                            return data;
+                        }]
+                };
+                if (extraHttpRequestParams) {
+                    httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+                }
+                return this.$http(httpRequestParams);
             };
             return IssuerService;
         }());

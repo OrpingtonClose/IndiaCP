@@ -5,6 +5,7 @@
         * Angular modules
         */
         "ui.router",
+        "ui.router.state.events",
         "ui.bootstrap",
         "ngSanitize",
         "ngCookies",
