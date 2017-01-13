@@ -1359,7 +1359,7 @@
                 "CP_PROGRAM_DOC_GENERATION_ERROR",
                 "CP_PROGRAM_DOC_UPLOAD_ERROR",
                 "CP_PROGRAM_ISIN_CREATION_ERROR",
-                "CP_PROGRAM_HISTORY_SEARCH_ERROR"
+                "CP_PROGRAM_ISIN_ALREADY_EXISTS_ERROR"
             ]
         },
         "CPIssueError": {

@@ -24,23 +24,11 @@ import net.corda.flows.NotaryFlow
 import java.time.Instant
 import java.util.*
 
+/**
+ *
+ */
 class IssueCPProgramFlow(val contractState: IndiaCommercialPaperProgram.State) : FlowLogic<SignedTransaction>() {
 
-//    companion object {
-//        object CREDIT_VALIDITY_CHECK : ProgressTracker.Step("Checking that the CP Program maturity period is within the Credit Rating validity period")
-//        object CREDIT_LIMIT_CHECK : ProgressTracker.Step("Checking that the CP Program Ceiling is within the Approved Credit Limit")
-//        object BORROWING_LIMIT_CHECK : ProgressTracker.Step("Checking that the CP Program Ceiling is within the Approved Borrowing Limit as approved by the Board")
-//        object SELF_ISSUING : ProgressTracker.Step("Self Issuing CP Program")
-//        object OBTAINING_NOTARY_SIGNATURE : ProgressTracker.Step("Obtaining Notary Signature")
-//        object NOTARY_SIGNATURE_OBTAINED : ProgressTracker.Step("Notary Signature Obtained")
-//        object RECORDING_TRANSACTION : ProgressTracker.Step("Recording Transaction in Local Storage")
-//        object TRANSACTION_RECORDED : ProgressTracker.Step("Transaction Recorded in Local Storage")
-//
-//    }
-//
-//    override val progressTracker = getTracker()
-//
-//    fun getTracker() = ProgressTracker(CREDIT_VALIDITY_CHECK, CREDIT_LIMIT_CHECK, BORROWING_LIMIT_CHECK, SELF_ISSUING, OBTAINING_NOTARY_SIGNATURE, NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
     companion object {
         object CREDIT_LIMIT_CHECK : ProgressTracker.Step("Credit Limit Check")
         object CREDIT_VALIDITY_CHECK : ProgressTracker.Step("Credit Rating Validity Check")

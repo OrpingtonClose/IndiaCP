@@ -158,6 +158,54 @@ class IndiaCommercialPaperProgram : Contract {
 
         abstract class AbstractIndiaCPProgramClause : Clause<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, UniqueIdentifier>() {
 
+            fun  verifyDocAsPerStatus(doc: Attachment, docId: String): Boolean {
+                val docHashAndStatus = getDocHashAndStatus(docId)
+
+                return verifyDoc(doc, docHashAndStatus.first, docHashAndStatus.second)
+            }
+
+            fun  verifyDoc(doc: Attachment, docHash: SecureHash, docStatus: IndiaCPDocumentDetails.DocStatusEnum): Boolean {
+                when (docStatus) {
+                    IndiaCPDocumentDetails.DocStatusEnum.UNSIGNED -> {
+                        //Verify that the Attachment has been uploaded and is accessible
+                        return doc.open() != null
+                    }
+                    IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_ISSUER -> {
+                        //TODO: verifyDocSignature(doc.open())
+                        return true
+                    }
+                    IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_INVESTOR -> {
+                        //TODO: verifyDocSignature(doc.open())
+                        return true
+                    }
+                    IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_NSDL -> {
+                        //TODO: verifyDocSignature(doc.open())
+                        return true
+                    }
+                    IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_IPA -> {
+                        //TODO: verifyDocSignature(doc.open())
+                        return true
+                    }
+                    else -> return false
+                }
+            }
+
+            fun  verifyDocIsSignedByIssuer(doc: Attachment, docId: String?): Boolean {
+                val docHashAndStatus = getDocHashAndStatus(docId)
+
+                return verifyDoc(doc, docHashAndStatus.first, IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_ISSUER)
+            }
+
+            fun  getDocHashAndStatus(docId: String?): Pair<SecureHash, IndiaCPDocumentDetails.DocStatusEnum> {
+                if (docId == null || docId.isEmpty()) {
+                    throw IndiaCPException(CPProgramError.DOC_UPLOAD_ERROR, Error.SourceEnum.DL_R3CORDA)
+                }
+                val docHashAndStatus = docId?.split(":")
+                val docHash = SecureHash.parse(docHashAndStatus[0])
+                val docStatus = IndiaCPDocumentDetails.DocStatusEnum.fromValue(docHashAndStatus[1])
+                return Pair(docHash, docStatus)
+            }
+
         }
 
         class Issue : AbstractIndiaCPProgramClause() {
@@ -170,25 +218,6 @@ class IndiaCommercialPaperProgram : Contract {
                                 groupingKey: UniqueIdentifier?): Set<IndiaCommercialPaperProgram.Commands> {
 
                 val command = commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.Issue>()
-                val timestamp = tx.timestamp
-                val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
-
-                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
-
-                return setOf(command.value)
-            }
-        }
-
-        class AddIsin : AbstractIndiaCPProgramClause() {
-            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIsin::class.java)
-
-            override fun verify(tx: TransactionForContract,
-                                inputs: List<IndiaCommercialPaperProgram.State>,
-                                outputs: List<IndiaCommercialPaperProgram.State>,
-                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
-                                groupingKey: UniqueIdentifier?): Set<IndiaCommercialPaperProgram.Commands> {
-
-                val command = commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.AddIsin>()
                 val timestamp = tx.timestamp
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
@@ -211,18 +240,47 @@ class IndiaCommercialPaperProgram : Contract {
 
                 val output = tx.outputs.filterIsInstance<IndiaCommercialPaperProgram.State>().single()
 
+                val attachment = tx.attachments.single()
+
                 val timestamp = tx.timestamp
                 val time = timestamp?.after ?: throw IllegalArgumentException("ISIN Request must be timestamped")
-
-                //TODO: verify signature on the ISIN Request document
 
                 requireThat {
                     "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
                     "the transaction is signed by the Depository" by (output.depository.owningKey in command.signers)
+                    "the ISIN Request Document - Letter of Intent - has been attached" by (attachment.id.toString() == output.isinGenerationRequestDocId!!.split(":").first())
+                    "the ISIN Request Document - Letter of Intent - matches the status as uploaded" by verifyDocAsPerStatus(attachment, output.isinGenerationRequestDocId)
                 }
                 return setOf(command.value)
             }
         }
+
+        class AddIsin : AbstractIndiaCPProgramClause() {
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIsin::class.java)
+
+            override fun verify(tx: TransactionForContract,
+                                inputs: List<IndiaCommercialPaperProgram.State>,
+                                outputs: List<IndiaCommercialPaperProgram.State>,
+                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
+                                groupingKey: UniqueIdentifier?): Set<IndiaCommercialPaperProgram.Commands> {
+
+                val command = commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.AddIsin>()
+                val output = tx.outputs.filterIsInstance<IndiaCommercialPaperProgram.State>().single()
+                val attachment = tx.attachments.single()
+
+                val timestamp = tx.timestamp
+                val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
+
+                requireThat {
+                    "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
+                    "the transaction is signed by the Depository" by (output.depository.owningKey in command.signers)
+                    "the ISIN Request Document - Letter of Intent - has been signed & uploaded by the Issuer" by (verifyDocIsSignedByIssuer(attachment, output.isinGenerationRequestDocId))
+                }
+
+                return setOf(command.value)
+            }
+        }
+
 
 //        class AddIPAVerificationDoc : AbstractIssue<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, IndiaCommercialPaperProgram.Terms>(
 //                { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
@@ -317,7 +375,7 @@ class IndiaCommercialPaperProgram : Contract {
     interface Commands : CommandData {
         data class Issue(override val nonce: Long = random63BitValue()) : IssueCommand, IndiaCommercialPaperProgram.Commands
         class AddIsinGenDoc() : TypeOnlyCommandData(), IndiaCommercialPaperProgram.Commands
-        class AddIsin(isin:String, isinGenerationRequestDocId: String) : IndiaCommercialPaperProgram.Commands
+        class AddIsin() : IndiaCommercialPaperProgram.Commands
         class AddIPAVerification(ipaVerificationRequestDocId: String) : IndiaCommercialPaperProgram.Commands
         class AddIPACertifcateDoc(ipaCertificateDocId: String) : IndiaCommercialPaperProgram.Commands
         class AddCorpActionFormDoc(corporateActionFormDocId: String) : IndiaCommercialPaperProgram.Commands
@@ -405,6 +463,36 @@ class IndiaCommercialPaperProgram : Contract {
 
         return tx
     }
+
+    fun  generateTransactionWithISIN(cpProgramContractStateAndRef: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party): TransactionBuilder {
+
+        val tx = TransactionType.General.Builder(notary)
+
+        //Adding Inputs
+        tx.addInputState(cpProgramContractStateAndRef)
+
+        //Adding Outputs
+        tx.addOutputState(
+                cpProgramContractStateAndRef.state.data.copy(
+                        version = cpProgramContractStateAndRef.state.data.version!! + 1,
+                        lastModifiedDate = Instant.now(),
+                        status = IndiaCPProgramStatusEnum.ISIN_ADDED.name
+                ),
+                cpProgramContractStateAndRef.state.notary
+        )
+
+        //Adding Attachments
+        val docHash = cpProgramContractStateAndRef.state.data.isinGenerationRequestDocId!!.split(":").first()
+        tx.addAttachment(SecureHash.parse(docHash))
+
+        //Adding Required Commands
+        tx.addCommand(IndiaCommercialPaperProgram.Commands.AddIsin(), listOf(cpProgramContractStateAndRef.state.data.issuer.owningKey,
+                cpProgramContractStateAndRef.state.data.depository.owningKey))
+
+        return tx
+    }
+
+
 
     /**
      * Returns a transaction that that updates the ISIN on to the CP Program.
@@ -646,7 +734,6 @@ class IndiaCommercialPaperProgram : Contract {
                 rtgsCode = paymentAccountDetails?.rtgsIfscCode
         )
     }
-
 
 }
 

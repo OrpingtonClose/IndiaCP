@@ -5,10 +5,9 @@ import com.barclays.indiacp.cordapp.api.CreditRatingApi
 import com.barclays.indiacp.cordapp.api.IndiaCPProgramApi
 import com.barclays.indiacp.cordapp.contract.BorrowingLimitBoardResolution
 import com.barclays.indiacp.cordapp.contract.CreditRating
-import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
-import com.barclays.indiacp.cordapp.protocol.AddISINDocFlow
-import com.barclays.indiacp.cordapp.protocol.ISINRequestAcceptor
+import com.barclays.indiacp.cordapp.protocol.agreements.AddISINDocFlow
+import com.barclays.indiacp.cordapp.protocol.agreements.AddISINFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.BorrowingLimitBoardResolutionFlows
 import com.barclays.indiacp.cordapp.protocol.issuer.CreditRatingFlows
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
@@ -34,15 +33,16 @@ class IndiaCPPlugin : CordaPluginRegistry() {
             CreditRatingFlows::class.java.name to setOf(CreditRating.State::class.java.name, String::class.java.name),
             BorrowingLimitBoardResolutionFlows::class.java.name to setOf(BorrowingLimitBoardResolution.State::class.java.name, String::class.java.name),
             IssueCPProgramFlow::class.java.name to setOf(IndiaCommercialPaperProgram.State::class.java.name),
-            AddISINDocFlow::class.java.name to setOf(StateAndRef::class.java.name)
+            AddISINDocFlow::class.java.name to setOf(StateAndRef::class.java.name),
+            AddISINFlow::class.java.name to setOf(StateAndRef::class.java.name)
 
             //DealEntryFlow::class.java.name to setOf(String::class.java.name, Party::class.java.name),
             //IssueCPFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
-            //ISINGenerationFlow::class.java.name to setOf(String::class.java.name, String::class.java.name)
     )
 
     override val servicePlugins = listOf(
-            AddISINDocFlow.ISINDocService::class.java
+            AddISINDocFlow.Services::class.java,
+            AddISINFlow.Services::class.java
     )
 
     override fun registerRPCKryoTypes(kryo: Kryo): Boolean {

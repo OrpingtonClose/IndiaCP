@@ -2,7 +2,8 @@ package com.barclays.indiacp.cordapp.api
 
 //import net.corda.core.contracts.IndiaCPHistorySearch
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
-import com.barclays.indiacp.cordapp.protocol.AddISINDocFlow
+import com.barclays.indiacp.cordapp.protocol.agreements.AddISINDocFlow
+import com.barclays.indiacp.cordapp.protocol.agreements.AddISINFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
 import com.barclays.indiacp.cordapp.search.IndiaCPHistorySearch
 import com.barclays.indiacp.cordapp.utilities.CPUtils
@@ -66,9 +67,14 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     {
         try
         {
-//            val stx = services.invokeFlowAsync(AddISINDocFlow::class.java, cpProgramId, isin).resultFuture.get()
-//            logger.info("CP Program Issued\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-            return Response.status(Response.Status.OK).entity(getCPProgram(cpProgramId)).build()
+            val contractStateRef = getCPProgramStateRefNonNull(cpProgramId)
+            if (!contractStateRef.state.data.isin.isNullOrBlank()) {
+                throw IndiaCPException(CPProgramError.ISIN_ALREADY_EXISTS_ERROR, Error.SourceEnum.DL_R3CORDA)
+            }
+            val stx = services.invokeFlowAsync(AddISINFlow::class.java, contractStateRef).resultFuture.get()
+            logger.info("CP Program ${cpProgramId}: New ISIN ${isin} Added as Issued by the Depository\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+
+            return Response.status(Response.Status.OK).entity(ModelUtils.indiaCPProgramModelFromState(getCPProgram(cpProgramId)!!)).build()
         } catch (ex: Throwable) {
             logger.info("${CPProgramError.ISIN_CREATION_ERROR}: ${ex.toString()}")
             return ErrorUtils.errorHttpResponse(ex, errorCode = CPProgramError.ISIN_CREATION_ERROR)
@@ -177,6 +183,17 @@ class IndiaCPProgramApi(val services: ServiceHub) {
         }
     }
 
+    private fun getCPProgramStateRefNonNull(cpProgramId: String): StateAndRef<IndiaCommercialPaperProgram.State> {
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>().filterValues { it.state.data.programId == cpProgramId }
+        if (states == null || states.isEmpty()) {
+            throw IndiaCPException(CPProgramError.DOES_NOT_EXIST_ERROR, Error.SourceEnum.DL_R3CORDA)
+        }
+
+        val cpProgramStateAndRef : StateAndRef<IndiaCommercialPaperProgram.State> = states.values.first()
+
+        return cpProgramStateAndRef
+    }
+
     /*
      *  This method will upload a given set of documents into the CP Program.
      *  We can get more than one document within a given zip file.
@@ -189,12 +206,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                 docDetails:IndiaCPDocumentDetails): Response {
         try
         {
-            val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>().filterValues { it.state.data.programId == cpProgramId }
-            if (states == null || states.isEmpty()) {
-                return ErrorUtils.errorHttpResponse(errorCode = CPProgramError.DOES_NOT_EXIST_ERROR)
-            }
-
-            val cpProgramStateAndRef : StateAndRef<IndiaCommercialPaperProgram.State> = states.values.first()
+            val cpProgramStateAndRef : StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateRefNonNull(cpProgramId)
 
             when (docDetails.docType) {
                 IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS -> {
