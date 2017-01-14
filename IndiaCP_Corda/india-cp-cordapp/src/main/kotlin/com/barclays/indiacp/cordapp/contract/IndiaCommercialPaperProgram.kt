@@ -1,11 +1,8 @@
 package com.barclays.indiacp.cordapp.contract
 
 import com.barclays.indiacp.cordapp.schemas.IndiaCommercialPaperProgramSchemaV1
-import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
 import com.barclays.indiacp.model.*
-import net.corda.contracts.asset.DUMMY_CASH_ISSUER
-import net.corda.contracts.clause.AbstractIssue
 import net.corda.core.contracts.*
 import net.corda.core.contracts.clauses.AnyComposition
 import net.corda.core.contracts.clauses.Clause
@@ -14,7 +11,6 @@ import net.corda.core.contracts.clauses.verifyClause
 import net.corda.core.crypto.CompositeKey
 import net.corda.core.crypto.Party
 import net.corda.core.crypto.SecureHash
-import net.corda.core.days
 import net.corda.core.random63BitValue
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.schemas.PersistentState
@@ -144,6 +140,7 @@ class IndiaCommercialPaperProgram : Contract {
         class Group : GroupClauseVerifier<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, UniqueIdentifier>(
                 AnyComposition(
                         IndiaCommercialPaperProgram.Clauses.Issue(),
+                        IndiaCommercialPaperProgram.Clauses.Amend(),
                         IndiaCommercialPaperProgram.Clauses.AddIsinGenDoc(),
                         IndiaCommercialPaperProgram.Clauses.AddIsin()
 //                    IndiaCommercialPaperProgram.Clauses.AddIPAVerificationDoc(),
@@ -222,6 +219,30 @@ class IndiaCommercialPaperProgram : Contract {
                 val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
 
                 require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
+
+                return setOf(command.value)
+            }
+        }
+
+        class Amend : AbstractIndiaCPProgramClause() {
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.Amend::class.java)
+
+            override fun verify(tx: TransactionForContract,
+                                inputs: List<IndiaCommercialPaperProgram.State>,
+                                outputs: List<IndiaCommercialPaperProgram.State>,
+                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
+                                groupingKey: UniqueIdentifier?): Set<IndiaCommercialPaperProgram.Commands> {
+
+                val command = commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.Amend>()
+                val output = tx.outputs.filterIsInstance<IndiaCommercialPaperProgram.State>().single()
+
+                val timestamp = tx.timestamp
+                val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
+
+                requireThat {
+                    "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
+                    "the amendment is for changing programAllocatedValue as part of the new CP Issue" by (output.status.equals(IndiaCPProgramStatusEnum.CP_ISSUEED.name))
+                }
 
                 return setOf(command.value)
             }
@@ -374,6 +395,7 @@ class IndiaCommercialPaperProgram : Contract {
 
     interface Commands : CommandData {
         data class Issue(override val nonce: Long = random63BitValue()) : IssueCommand, IndiaCommercialPaperProgram.Commands
+        class Amend() : TypeOnlyCommandData(), IndiaCommercialPaperProgram.Commands
         class AddIsinGenDoc() : TypeOnlyCommandData(), IndiaCommercialPaperProgram.Commands
         class AddIsin() : IndiaCommercialPaperProgram.Commands
         class AddIPAVerification(ipaVerificationRequestDocId: String) : IndiaCommercialPaperProgram.Commands
@@ -382,11 +404,6 @@ class IndiaCommercialPaperProgram : Contract {
         class AddAllotmentLetterDoc(allotmentLetterDocId: String) : IndiaCommercialPaperProgram.Commands
     }
 
-    /**
-     * Returns a transaction that issues commercial paper, owned by the issuing parties key. Does not update
-     * an existing transaction because you aren't able to issue multiple pieces of CP in a single transaction
-     * at the moment: this restriction is not fundamental and may be lifted later.
-     */
     fun generateIssue(cpProgramContractState: IndiaCommercialPaperProgram.State,
                       creditRatingStateRef: StateAndRef<CreditRating.State>,
                       boardResolutionStateRef: StateAndRef<BorrowingLimitBoardResolution.State>,
@@ -404,7 +421,9 @@ class IndiaCommercialPaperProgram : Contract {
 
         tx.addOutputState(
                 cpProgramContractState.copy(
-                        status = IndiaCPProgramStatusEnum.CP_PROGRAM_CREATED.name
+                        status = IndiaCPProgramStatusEnum.CP_PROGRAM_CREATED.name,
+                        lastModifiedDate = Instant.now(),
+                        version = ModelUtils.STARTING_VERSION
                 ),
                 notary
         )
@@ -669,72 +688,6 @@ class IndiaCommercialPaperProgram : Contract {
 
         return ptx
     }
-
-    /**
-     * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
-     */
-    fun createCPIssueWithinCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, issuer: Party, beneficiary: Party, ipa: Party, depository: Party, notary: Party, programAllocatedValue : Amount<Currency>, newCP: IndiaCPIssue, status: String): TransactionBuilder {
-
-        val ptx = TransactionType.General.Builder(notary)
-        ptx.addInputState(indiaCPProgramSF)
-
-        val newVersion = indiaCPProgramSF.state.data.version!!+ 1
-
-        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-                programAllocatedValue = programAllocatedValue,
-                status = status,
-                version = newVersion
-        ))
-
-        val indiaCPState = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
-                newCP.cpProgramId, newCP.cpTradeId, newCP.tradeDate, newCP.valueDate,
-                (newCP.facevaluePerUnit * newCP.noOfUnits).DOLLARS `issued by` DUMMY_CASH_ISSUER, Instant.now() + newCP.maturityDays.days,
-                newCP.isin, (if(newCP.version != null) Integer(newCP.version) else Integer(1)), newCP.dealConfirmationDocId,
-                getSettlementDetails(newCP.issuerSettlementDetails), getSettlementDetails(newCP.investorSettlementDetails), getSettlementDetails(newCP.ipaSettlementDetails)
-                ),
-                notary)
-
-
-        ptx.addOutputState(indiaCPState)
-
-        return ptx
-    }
-
-    private fun  getSettlementDetails(settlementDetails: SettlementDetails?): IndiaCommercialPaper.SettlementDetails? {
-        return IndiaCommercialPaper.SettlementDetails (
-                partyType = settlementDetails?.partyType.toString(),
-                paymentAccountDetails = getPaymentAccountDetails(settlementDetails?.paymentAccountDetails),
-                depositoryAccountDetails = getDepositoryAccountDetails(settlementDetails?.depositoryAccountDetails)
-        )
-    }
-
-    private fun  getDepositoryAccountDetails(depositoryAccountDetails: List<DepositoryAccountDetails>?): List<IndiaCommercialPaper.DepositoryAccountDetails>? {
-        if (depositoryAccountDetails == null) {
-            return null
-        }
-        val dpDetails = ArrayList<IndiaCommercialPaper.DepositoryAccountDetails>()
-        for (dp in depositoryAccountDetails) {
-            dpDetails.add(
-                    IndiaCommercialPaper.DepositoryAccountDetails(
-                            dpID = dp.dpId,
-                            dpName = dp.dpName,
-                            dpType = dp.dpType.toString(),
-                            clientId = dp.clientId
-                    )
-            )
-        }
-        return dpDetails
-    }
-
-    private fun  getPaymentAccountDetails(paymentAccountDetails: PaymentAccountDetails?): IndiaCommercialPaper.PaymentAccountDetails {
-        return IndiaCommercialPaper.PaymentAccountDetails (
-                creditorName = paymentAccountDetails?.creditorName,
-                bankAccountDetails = paymentAccountDetails?.bankAccountNo,
-                bankName = paymentAccountDetails?.bankName,
-                rtgsCode = paymentAccountDetails?.rtgsIfscCode
-        )
-    }
-
 }
 
 

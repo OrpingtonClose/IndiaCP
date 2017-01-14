@@ -1359,13 +1359,15 @@
                 "CP_PROGRAM_DOC_GENERATION_ERROR",
                 "CP_PROGRAM_DOC_UPLOAD_ERROR",
                 "CP_PROGRAM_ISIN_CREATION_ERROR",
-                "CP_PROGRAM_ISIN_ALREADY_EXISTS_ERROR"
+                "CP_PROGRAM_ISIN_ALREADY_EXISTS_ERROR",
+                "CP_PROGRAM_HISTORY_SEARCH_ERROR"
             ]
         },
         "CPIssueError": {
             "type": "string",
             "enum": [
                 "CP_CREATION_ERROR",
+                "CP_PROGRAM_CEILING_EXCEEDED_ERROR",
                 "CP_FETCH_ERROR",
                 "CP_DOES_NOT_EXIST_ERROR",
                 "CP_AMENDMENT_ERROR",

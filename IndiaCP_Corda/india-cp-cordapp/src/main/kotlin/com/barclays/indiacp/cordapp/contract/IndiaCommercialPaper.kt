@@ -18,7 +18,11 @@ import net.corda.core.schemas.QueryableState
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.Emoji
 import com.barclays.indiacp.cordapp.utilities.CPUtils
+import com.barclays.indiacp.cordapp.utilities.ModelUtils
+import com.barclays.indiacp.model.*
+import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.crypto.*
+import net.corda.core.days
 import java.security.PublicKey
 import java.time.Instant
 import java.util.*
@@ -49,18 +53,27 @@ class IndiaCommercialPaper : Contract {
             val beneficiary: Party,
             val ipa: Party,
             val depository: Party,
+
             val cpProgramID: String,
             val cpTradeID: String,
-            val tradeDate: Date,
-            val valueDate: Date,
+            val tradeDate: Instant,
+            val valueDate: Instant,
             val faceValue: Amount<Issued<Currency>>,
+            val faceValuePerUnit: Amount<Currency>,
+            val noOfunits: Int,
+            val yieldOnMaturity: Float,
             val maturityDate: Instant,
             var isin: String,
-            var version: Integer = Integer(1),
             var hashDealConfirmationDoc: String? = null,
+
             var issuerSettlementDetails: SettlementDetails? = null,
             var investorSettlementDetails: SettlementDetails? = null,
-            var ipaSettlementDetails: SettlementDetails? = null
+            var ipaSettlementDetails: SettlementDetails? = null,
+
+            val status: String? = IndiaCPProgramStatusEnum.UNKNOWN.name,
+            val modifiedBy: String? = "",//todo default to logged in user
+            val lastModifiedDate: Instant? = Instant.now(),
+            val version: Int? = ModelUtils.STARTING_VERSION
     ) : DealState, QueryableState {
         override val contract = com.barclays.indiacp.cordapp.contract.INDIA_CP_ID
 
@@ -102,6 +115,7 @@ class IndiaCommercialPaper : Contract {
                         beneficiaryParty = this.beneficiary.owningKey.toBase58String(),
                         ipaParty = this.ipa.owningKey.toBase58String(),
                         depositoryParty = this.depository.owningKey.toBase58String(),
+
                         cpProgramID = this.cpProgramID,
                         cpTradeID = this.cpTradeID,
                         tradeDate = this.tradeDate,
@@ -109,10 +123,19 @@ class IndiaCommercialPaper : Contract {
                         maturity = this.maturityDate,
                         faceValue = this.faceValue.quantity,
                         currency = this.faceValue.token.product.currencyCode,
+                        faceValuePerUnit = this.faceValuePerUnit.quantity.toInt(),
+                        noOfunits = this.noOfunits,
+                        yieldOnMaturity = this.yieldOnMaturity,
                         isin = this.isin,
-                        version = this.version,
+
                         hashDealConfirmationDoc = this.hashDealConfirmationDoc,
-                        settlementDetails = getSettlementPersistedStates(this.issuerSettlementDetails, this.investorSettlementDetails, this.ipaSettlementDetails))
+                        settlementDetails = getSettlementPersistedStates(this.issuerSettlementDetails, this.investorSettlementDetails, this.ipaSettlementDetails),
+
+                        last_modified = this.lastModifiedDate!!,
+                        version = this.version!!,
+                        modified_by = this.modifiedBy!!,
+                        status = this.status!!
+                    )
 
                     cpPersistedObject.settlementDetails = cpPersistedObject.settlementDetails?.map {setCPDetails(it, cpPersistedObject)}
 
@@ -304,40 +327,46 @@ class IndiaCommercialPaper : Contract {
         class Redeem : TypeOnlyCommandData(), IndiaCommercialPaper.Commands
         class Agree : TypeOnlyCommandData(), Commands  // Both sides agree to trade
         class AddSettlementDetails(settlementDetails: SettlementDetails) : IndiaCommercialPaper.Commands
+        class AddDealConfirmationDoc : TypeOnlyCommandData(), IndiaCommercialPaper.Commands
     }
 
-    /**
-     * Returns a transaction that issues commercial paper, owned by the issuing parties key. Does not update
-     * an existing transaction because you aren't able to issue multiple pieces of CP in a single transaction
-     * at the moment: this restriction is not fundamental and may be lifted later.
-     */
-    fun generateIssue(issuer: Party, beneficiary: Party, ipa: Party, depository: Party, notary: Party,
-                      cpProgramID: String, cpTradeID: String, tradeDate: Date, valueDate: Date,
-                      faceValue: Amount<Issued<Currency>>, maturityDate: Instant,
-                      isin: String): TransactionBuilder {
+    fun generateIssue(cpContractState: IndiaCommercialPaper.State,
+                      cpProgramStateRef: StateAndRef<IndiaCommercialPaperProgram.State>,
+                      notary: Party): TransactionBuilder {
 
-        val state = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
-                                                                cpProgramID, cpTradeID, tradeDate, valueDate,
-                                                                faceValue, maturityDate,
-                                                                isin), notary)
-        return TransactionType.General.Builder(notary = notary).withItems(state, Command(IndiaCommercialPaper.Commands.Issue(), issuer.owningKey))
-    }
+        val tx = TransactionType.General.Builder(notary)
 
-    /**
-     * Returns a transaction that issues commercial paper, owned by the issuing parties key. Does not update
-     * an existing transaction because you aren't able to issue multiple pieces of CP in a single transaction
-     * at the moment: this restriction is not fundamental and may be lifted later.
-     */
-    fun generateAgreement(issuer: Party, beneficiary: Party, ipa: Party, depository: Party,
-                      cpProgramID: String, cpTradeID: String, tradeDate: Date, valueDate: Date,
-                      faceValue: Amount<Issued<Currency>>, maturityDate: Instant,
-                      isin: String, notary: Party): TransactionBuilder {
+        //Adding Inputs
+        tx.addInputState(cpProgramStateRef)
 
-        val state = TransactionState(IndiaCommercialPaper.State(issuer, beneficiary, ipa, depository,
-                cpProgramID, cpTradeID, tradeDate, valueDate,
-                faceValue, maturityDate,
-                isin), notary)
-        return TransactionType.General.Builder(notary = notary).withItems(state, Command(IndiaCommercialPaper.Commands.Agree(), listOf(issuer.owningKey, beneficiary.owningKey)))
+        //Adding Outputs
+        val cpProgramInputState = cpProgramStateRef.state.data
+
+        tx.addOutputState(
+                cpContractState.copy(
+                        status = IndiaCPIssueStatusEnum.CP_ISSUED.name,
+                        lastModifiedDate = Instant.now(),
+                        version = ModelUtils.STARTING_VERSION
+                ),
+                notary
+        )
+        tx.addOutputState(
+                cpProgramInputState.copy(
+                        status = IndiaCPProgramStatusEnum.CP_ISSUEED.name,
+                        lastModifiedDate = Instant.now(),
+                        version = cpProgramInputState.version!! + 1,
+                        programAllocatedValue = cpProgramInputState.programAllocatedValue!!.copy (
+                                quantity = cpContractState.faceValue.quantity + cpProgramInputState.programAllocatedValue!!.quantity
+                        )
+                ),
+                cpProgramStateRef.state.notary
+        )
+
+        //Adding Required Commands
+        tx.addCommand(IndiaCommercialPaper.Commands.Issue(), listOf(cpContractState.issuer.owningKey))
+        tx.addCommand(IndiaCommercialPaperProgram.Commands.Amend(), listOf(cpContractState.issuer.owningKey))
+
+        return tx
     }
 
     fun addSettlementDetails(tx: TransactionBuilder, cp: StateAndRef<State>, settlementDetails: SettlementDetails): TransactionBuilder {

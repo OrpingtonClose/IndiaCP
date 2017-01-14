@@ -55,16 +55,34 @@ object IndiaCommercialPaperSchemaV1 : MappedSchema(schemaFamily = IndiaCommercia
             var cpTradeID: String,
 
             @Column(name = "trade_date")
-            var tradeDate: Date,
+            var tradeDate: Instant,
 
             @Column(name = "value_date")
-            var valueDate: Date,
+            var valueDate: Instant,
+
+            @Column(name = "face_value_per_unit")
+            var faceValuePerUnit: Int,
+
+            @Column(name = "no_of_units")
+            var noOfunits: Int,
+
+            @Column(name = "yield")
+            var yieldOnMaturity: Float,
 
             @Column(name = "isin", nullable=true)
             var isin: String,
 
+            @Column(name = "modified_by")
+            var modified_by: String,
+
+            @Column(name = "last_modified")
+            var last_modified: Instant,
+
+            @Column(name = "status")
+            var status: String,
+
             @Column(name = "version", nullable=true)
-            var version: Integer,
+            var version: Int,
 
             @Column(name = "hash_deal_confirmation_doc", nullable=true)
             var hashDealConfirmationDoc: String?,

@@ -66,6 +66,18 @@ object CPUtils {
 
     }
 
+    fun getCPProgramStateRefNonNull(services: ServiceHub, cpProgramId: String): StateAndRef<IndiaCommercialPaperProgram.State> {
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>().filterValues { it.state.data.programId == cpProgramId }
+        if (states == null || states.isEmpty()) {
+            throw IndiaCPException(CPProgramError.DOES_NOT_EXIST_ERROR, Error.SourceEnum.DL_R3CORDA)
+        }
+
+        val cpProgramStateAndRef : StateAndRef<IndiaCommercialPaperProgram.State> = states.values.first()
+
+        return cpProgramStateAndRef
+    }
+
+
     fun getContractState(serviceHub: ServiceHub, cpRefId: String) : StateAndRef<OwnableState> {
         val states = serviceHub.vaultService.currentVault.statesOfType<IndiaCommercialPaper.State>()
         for (stateAndRef: StateAndRef<IndiaCommercialPaper.State> in states) {

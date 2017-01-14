@@ -25,7 +25,7 @@ import java.time.Instant
 import java.util.*
 
 /**
- *
+ * This is the Flow Logic for Issuing Commercial Paper Program.
  */
 class IssueCPProgramFlow(val contractState: IndiaCommercialPaperProgram.State) : FlowLogic<SignedTransaction>() {
 

@@ -2,7 +2,6 @@ package com.barclays.indiacp.cordapp.protocol.agreements
 
 import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
-import com.barclays.indiacp.model.CPProgramError
 import com.barclays.indiacp.model.Error
 import com.barclays.indiacp.model.IndiaCPException
 import net.corda.core.contracts.StateAndRef
@@ -16,14 +15,10 @@ import net.corda.core.seconds
 import net.corda.core.serialization.SingletonSerializeAsToken
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
-import net.corda.core.utilities.Emoji
 import net.corda.core.utilities.ProgressTracker
 import net.corda.flows.FetchAttachmentsFlow
 import net.corda.flows.TwoPartyDealFlow
 import java.security.KeyPair
-import java.util.*
-import javax.ws.rs.core.Response
-import kotlin.test.assertEquals
 
 /**
  * This is the Flow to manage the consensus between Issuer and Depository (NSDL) when requesting generation
@@ -116,20 +111,7 @@ open class ISINRequestAcceptor(override val otherParty: Party,
         // And add a request for timestamping
         tx.setTime(serviceHub.clock.instant(), 30.seconds)
 
-        //Register Subscriber for Resolving Attachment
-//        serviceHub.storageService.validatedTransactions.updates.subscribe { event ->
-//            // When the transaction is received, it's passed through [ResolveTransactionsFlow], which first fetches any
-//            // attachments for us, then verifies the transaction. As such, by the time it hits the validated transaction store,
-//            // we have a copy of the attachment.
-//            val tx = event.tx
-//            if (tx.attachments.isNotEmpty()) {
-//                val attachment = serviceHub.storageService.attachments.openAttachment(tx.attachments.first())
-//                assertEquals(SecureHash.parse(cpProgramStateAndRef.state.data.isinGenerationRequestDocId?.split(":")?.first()!!), attachment?.id)
-//                println("ISIN Request DOC received on NSDL Node!\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(event.tx)}")
-//            } else {
-//                throw IndiaCPException(CPProgramError.DOC_UPLOAD_ERROR, Error.SourceEnum.DL_R3CORDA)
-//            }
-//        }
+        //Resolve Attachment on the Depository Node
         subFlow(FetchAttachmentsFlow(setOf(isinDocHash), cpProgramStateAndRef.state.data.issuer))
 
         return Pair(tx, arrayListOf(cpProgramStateAndRef.state.data.depository.owningKey))

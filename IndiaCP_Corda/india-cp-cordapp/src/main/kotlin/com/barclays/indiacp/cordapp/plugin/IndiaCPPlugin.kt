@@ -2,14 +2,17 @@ package com.barclays.indiacp.cordapp.plugin
 
 import com.barclays.indiacp.cordapp.api.BorrowingLimitBoardResolutionApi
 import com.barclays.indiacp.cordapp.api.CreditRatingApi
+import com.barclays.indiacp.cordapp.api.IndiaCPApi
 import com.barclays.indiacp.cordapp.api.IndiaCPProgramApi
 import com.barclays.indiacp.cordapp.contract.BorrowingLimitBoardResolution
 import com.barclays.indiacp.cordapp.contract.CreditRating
+import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.protocol.agreements.AddISINDocFlow
 import com.barclays.indiacp.cordapp.protocol.agreements.AddISINFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.BorrowingLimitBoardResolutionFlows
 import com.barclays.indiacp.cordapp.protocol.issuer.CreditRatingFlows
+import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
 import com.barclays.indiacp.model.IndiaCPProgram
 import com.barclays.indiacp.model.IndiaCPProgramStatusEnum
@@ -25,7 +28,8 @@ class IndiaCPPlugin : CordaPluginRegistry() {
     override val webApis: List<Class<*>> = listOf(
             CreditRatingApi::class.java,
             BorrowingLimitBoardResolutionApi::class.java,
-            IndiaCPProgramApi::class.java
+            IndiaCPProgramApi::class.java,
+            IndiaCPApi::class.java
     )
 
     // A list of protocol that are required for this cordapp
@@ -34,7 +38,8 @@ class IndiaCPPlugin : CordaPluginRegistry() {
             BorrowingLimitBoardResolutionFlows::class.java.name to setOf(BorrowingLimitBoardResolution.State::class.java.name, String::class.java.name),
             IssueCPProgramFlow::class.java.name to setOf(IndiaCommercialPaperProgram.State::class.java.name),
             AddISINDocFlow::class.java.name to setOf(StateAndRef::class.java.name),
-            AddISINFlow::class.java.name to setOf(StateAndRef::class.java.name)
+            AddISINFlow::class.java.name to setOf(StateAndRef::class.java.name),
+            IssueCPFlow::class.java.name to setOf(IndiaCommercialPaper.State::class.java.name)
 
             //DealEntryFlow::class.java.name to setOf(String::class.java.name, Party::class.java.name),
             //IssueCPFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),

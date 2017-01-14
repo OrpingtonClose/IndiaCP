@@ -1,21 +1,16 @@
 package com.barclays.indiacp.cordapp.api
 
-//import net.corda.core.contracts.IndiaCPHistorySearch
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.protocol.agreements.AddISINDocFlow
 import com.barclays.indiacp.cordapp.protocol.agreements.AddISINFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
-import com.barclays.indiacp.cordapp.search.IndiaCPHistorySearch
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ErrorUtils
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
 import com.barclays.indiacp.model.*
-import net.corda.core.contracts.Command
-import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.linearHeadsOfType
-import net.corda.core.transactions.WireTransaction
 import net.corda.core.utilities.Emoji
 import net.corda.core.utilities.loggerFor
 import java.time.Instant
@@ -43,7 +38,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
         {
             val contractState = ModelUtils.indiaCPProgramStateFromModel(indiaCPProgramModel, services)
             val stx = services.invokeFlowAsync(IssueCPProgramFlow::class.java, contractState).resultFuture.get()
-            logger.info("CP Program Issued within ORG \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+            logger.info("CP Program Created ${indiaCPProgramModel.programId}:${indiaCPProgramModel.name} \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
 
             val createdContractState = getCPProgram(indiaCPProgramModel.programId) ?: throw IndiaCPException(CPProgramError.CREATION_ERROR, Error.SourceEnum.DL_R3CORDA, "Could not fetch the newly created CPProgram from the DL");
             return Response.status(Response.Status.OK).entity(ModelUtils.indiaCPProgramModelFromState(createdContractState!!)).build()
@@ -67,7 +62,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     {
         try
         {
-            val contractStateRef = getCPProgramStateRefNonNull(cpProgramId)
+            val contractStateRef = CPUtils.getCPProgramStateRefNonNull(services, cpProgramId)
             if (!contractStateRef.state.data.isin.isNullOrBlank()) {
                 throw IndiaCPException(CPProgramError.ISIN_ALREADY_EXISTS_ERROR, Error.SourceEnum.DL_R3CORDA)
             }
@@ -117,19 +112,19 @@ class IndiaCPProgramApi(val services: ServiceHub) {
             when (docType) {
                 IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS.name -> {
                     val cpProgStatesForDocTypeTransactions = CPUtils.getDocumentTransactionHistory<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands.AddIsinGenDoc>(services, { programId == cpProgramId })
-                    history = ModelUtils.getDocumentDetails(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS)
+                    history = ModelUtils.getDocumentDetailsForCPProgram(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS)
                 }
                 IndiaCPDocumentDetails.DocTypeEnum.IPA_DOCS.name -> {
                     val cpProgStatesForDocTypeTransactions = CPUtils.getDocumentTransactionHistory<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands.AddIPAVerification>(services, { programId == cpProgramId })
-                    history = ModelUtils.getDocumentDetails(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.IPA_DOCS)
+                    history = ModelUtils.getDocumentDetailsForCPProgram(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.IPA_DOCS)
                 }
                 IndiaCPDocumentDetails.DocTypeEnum.IPA_CERTIFICATE_DOC.name -> {
                     val cpProgStatesForDocTypeTransactions = CPUtils.getDocumentTransactionHistory<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands.AddIPACertifcateDoc>(services, { programId == cpProgramId })
-                    history = ModelUtils.getDocumentDetails(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.IPA_CERTIFICATE_DOC)
+                    history = ModelUtils.getDocumentDetailsForCPProgram(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.IPA_CERTIFICATE_DOC)
                 }
                 IndiaCPDocumentDetails.DocTypeEnum.CORPORATE_ACTION_FORM.name -> {
                     val cpProgStatesForDocTypeTransactions = CPUtils.getDocumentTransactionHistory<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands.AddCorpActionFormDoc>(services, { programId == cpProgramId })
-                    history = ModelUtils.getDocumentDetails(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.CORPORATE_ACTION_FORM)
+                    history = ModelUtils.getDocumentDetailsForCPProgram(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.CORPORATE_ACTION_FORM)
                 }
                 else -> {
                     return ErrorUtils.errorHttpResponse(IndiaCPException("Unknown Document Type History Requested from India Commercial Paper Program Smart Contract", Error.SourceEnum.DL_R3CORDA),
@@ -149,7 +144,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     fun fetchAllCPProgram(): Response  {
         try {
             val cpProgramArray = getAllCPProgram()
-            return Response.status(Response.Status.OK).entity(cpProgramArray).build()
+            return Response.status(Response.Status.OK).entity(cpProgramArray?.map { ModelUtils.indiaCPProgramModelFromState(it) }).build()
         } catch (ex: Throwable) {
             logger.info("${CPProgramError.FETCH_ERROR}: ${ex.toString()}")
             return ErrorUtils.errorHttpResponse(ex, errorCode = CPProgramError.FETCH_ERROR)
@@ -168,7 +163,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     fun fetchCPProgram(@PathParam("cpProgramId") cpProgramId: String): Response {
         try {
             val cpProgram = getCPProgram(cpProgramId)
-            return Response.status(Response.Status.OK).entity(cpProgram).build()
+            return Response.status(Response.Status.OK).entity(if(cpProgram == null) "" else ModelUtils.indiaCPProgramModelFromState(cpProgram)).build()
         } catch (ex: Throwable) {
             logger.info("${CPProgramError.FETCH_ERROR}: ${ex.toString()}")
             return ErrorUtils.errorHttpResponse(ex, errorCode = CPProgramError.FETCH_ERROR)
@@ -183,17 +178,6 @@ class IndiaCPProgramApi(val services: ServiceHub) {
         }
     }
 
-    private fun getCPProgramStateRefNonNull(cpProgramId: String): StateAndRef<IndiaCommercialPaperProgram.State> {
-        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>().filterValues { it.state.data.programId == cpProgramId }
-        if (states == null || states.isEmpty()) {
-            throw IndiaCPException(CPProgramError.DOES_NOT_EXIST_ERROR, Error.SourceEnum.DL_R3CORDA)
-        }
-
-        val cpProgramStateAndRef : StateAndRef<IndiaCommercialPaperProgram.State> = states.values.first()
-
-        return cpProgramStateAndRef
-    }
-
     /*
      *  This method will upload a given set of documents into the CP Program.
      *  We can get more than one document within a given zip file.
@@ -206,7 +190,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                 docDetails:IndiaCPDocumentDetails): Response {
         try
         {
-            val cpProgramStateAndRef : StateAndRef<IndiaCommercialPaperProgram.State> = getCPProgramStateRefNonNull(cpProgramId)
+            val cpProgramStateAndRef : StateAndRef<IndiaCommercialPaperProgram.State> = CPUtils.getCPProgramStateRefNonNull(services, cpProgramId)
 
             when (docDetails.docType) {
                 IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS -> {
