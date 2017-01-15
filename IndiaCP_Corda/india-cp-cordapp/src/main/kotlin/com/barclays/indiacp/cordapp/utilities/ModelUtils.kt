@@ -131,7 +131,7 @@ object ModelUtils {
                                         Amount(0, currency)
                                     },
             programCurrency = Currency.getInstance("INR"), //TODO fix the hardcoding to INR and DOLLAR
-            maturityDate =  Instant.now() + model.maturityDays.days,
+            maturityDate =  Instant.now() + model.maturityDays.days, //TODO fix this just maintain maturity days as maturity days in the Smart Contract
             issueCommencementDate = model.issueCommencementDate?.toInstant() ?: Date().toInstant(),
             isin = model.isin,
 
@@ -192,7 +192,7 @@ object ModelUtils {
             documentDetails.docType(docType)
             documentDetails.cpProgramId(cpState.cpProgramID)
             documentDetails.cpIssueId(cpState.cpTradeID)
-            val docHashAndStatus = getDocHashAndStatus(cpState.hashDealConfirmationDoc, IndiaCPDocumentDetails.DocTypeEnum.DEAL_CONFIRMATION_DOC, cpState.cpTradeID)
+            val docHashAndStatus = getDocHashAndStatus(cpState.dealConfirmationDocId, IndiaCPDocumentDetails.DocTypeEnum.DEAL_CONFIRMATION_DOC, cpState.cpTradeID)
             documentDetails.docHash(docHashAndStatus.first)
             documentDetails.docStatus(docHashAndStatus.second)
             documentDetails.lastModifiedDate(Date(cpState.lastModifiedDate!!.toEpochMilli()))
@@ -270,7 +270,7 @@ object ModelUtils {
                 investorSettlementDetails = settlementDetailsFromModel(model.investorSettlementDetails),
                 ipaSettlementDetails = settlementDetailsFromModel(model.ipaSettlementDetails),
 
-                hashDealConfirmationDoc = model.dealConfirmationDocId,
+                dealConfirmationDocId = model.dealConfirmationDocId,
 
                 modifiedBy = model.modifiedBy ?: DEFAULT_MODIFIED_BY,//todo default to logged in user
                 lastModifiedDate = model.lastModifiedDate?.toInstant() ?: Date().toInstant(),
@@ -329,7 +329,7 @@ object ModelUtils {
         model.investorSettlementDetails = if(contractState.investorSettlementDetails == null) null else settlementDetailsModelFromState(contractState.investorSettlementDetails!!)
         model.ipaSettlementDetails = if(contractState.ipaSettlementDetails == null) null else settlementDetailsModelFromState(contractState.ipaSettlementDetails!!)
 
-        model.dealConfirmationDocId = contractState.hashDealConfirmationDoc
+        model.dealConfirmationDocId = contractState.dealConfirmationDocId
 
         model.modifiedBy = contractState.modifiedBy
         model.lastModifiedDate = if (contractState.lastModifiedDate == null) null else Date(contractState.lastModifiedDate.toEpochMilli())

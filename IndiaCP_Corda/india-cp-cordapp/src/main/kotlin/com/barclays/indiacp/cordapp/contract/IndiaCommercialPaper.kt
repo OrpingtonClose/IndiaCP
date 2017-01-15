@@ -64,7 +64,7 @@ class IndiaCommercialPaper : Contract {
             val yieldOnMaturity: Float,
             val maturityDate: Instant,
             var isin: String,
-            var hashDealConfirmationDoc: String? = null,
+            var dealConfirmationDocId: String? = null,
 
             var issuerSettlementDetails: SettlementDetails? = null,
             var investorSettlementDetails: SettlementDetails? = null,
@@ -128,7 +128,7 @@ class IndiaCommercialPaper : Contract {
                         yieldOnMaturity = this.yieldOnMaturity,
                         isin = this.isin,
 
-                        hashDealConfirmationDoc = this.hashDealConfirmationDoc,
+                        hashDealConfirmationDoc = this.dealConfirmationDocId,
                         settlementDetails = getSettlementPersistedStates(this.issuerSettlementDetails, this.investorSettlementDetails, this.ipaSettlementDetails),
 
                         last_modified = this.lastModifiedDate!!,
@@ -221,14 +221,64 @@ class IndiaCommercialPaper : Contract {
 
     interface Clauses {
         class Group : GroupClauseVerifier<IndiaCommercialPaper.State, IndiaCommercialPaper.Commands, Issued<IndiaCommercialPaper.Terms>>(
-                AnyComposition(
+                clause = AnyComposition(
                         IndiaCommercialPaper.Clauses.Redeem(),
                         IndiaCommercialPaper.Clauses.Issue(),
                         IndiaCommercialPaper.Clauses.Agree(),
-                        IndiaCommercialPaper.Clauses.AddSettlementDetails()
+                        IndiaCommercialPaper.Clauses.AddSettlementDetails(),
+                        IndiaCommercialPaper.Clauses.AddDealConfirmationDoc()
                 )) {
             override fun groupStates(tx: TransactionForContract): List<TransactionForContract.InOutGroup<IndiaCommercialPaper.State, Issued<IndiaCommercialPaper.Terms>>>
                     = tx.groupStates<IndiaCommercialPaper.State, Issued<IndiaCommercialPaper.Terms>> { it.token }
+        }
+
+        abstract class AbstractIndiaCPClause : Clause<IndiaCommercialPaper.State, IndiaCommercialPaper.Commands, Issued<IndiaCommercialPaper.Terms>>() {
+
+            fun  verifyDocAsPerStatus(doc: Attachment, docId: String?): Boolean {
+                val docHashAndStatus = CPUtils.getDocHashAndStatus(docId)
+
+                return verifyDoc(doc, docHashAndStatus.first, docHashAndStatus.second)
+            }
+
+            fun  verifyDoc(doc: Attachment, docHash: SecureHash, docStatus: IndiaCPDocumentDetails.DocStatusEnum): Boolean {
+                when (docStatus) {
+                    IndiaCPDocumentDetails.DocStatusEnum.UNSIGNED -> {
+                        //Verify that the Attachment has been uploaded and is accessible
+                        return doc.open() != null
+                    }
+                    IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_ISSUER -> {
+                        //TODO: verifyDocSignature(doc.open())
+                        return true
+                    }
+                    IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_INVESTOR -> {
+                        //TODO: verifyDocSignature(doc.open())
+                        return true
+                    }
+                    IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_NSDL -> {
+                        //TODO: verifyDocSignature(doc.open())
+                        return true
+                    }
+                    IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_IPA -> {
+                        //TODO: verifyDocSignature(doc.open())
+                        return true
+                    }
+                    else -> return false
+                }
+            }
+
+            fun  verifyDocIsSignedByRole(doc: Attachment, docId: String?, signer: IndiaCPDocumentDetails.DocStatusEnum): Boolean {
+                val docHashAndStatus = CPUtils.getDocHashAndStatus(docId)
+
+                return verifyDoc(doc, docHashAndStatus.first, signer)
+            }
+
+            fun  verifyDocIsSignedByIssuer (doc: Attachment, docId: String?): Boolean = verifyDocIsSignedByRole(doc, docId, IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_ISSUER )
+
+            fun  verifyDocIsSignedByInvestor (doc: Attachment, docId: String?): Boolean = verifyDocIsSignedByRole(doc, docId, IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_INVESTOR )
+
+            fun  verifyDocIsSignedByIPA (doc: Attachment, docId: String?): Boolean = verifyDocIsSignedByRole(doc, docId, IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_IPA )
+
+            fun  verifyDocIsSignedByDepository (doc: Attachment, docId: String?): Boolean = verifyDocIsSignedByRole(doc, docId, IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_NSDL )
         }
 
         class Issue : AbstractIssue<IndiaCommercialPaper.State, IndiaCommercialPaper.Commands, IndiaCommercialPaper.Terms>(
@@ -249,6 +299,34 @@ class IndiaCommercialPaper : Contract {
                 require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
 
                 return consumedCommands
+            }
+        }
+
+        class AddDealConfirmationDoc: AbstractIndiaCPClause() {
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaper.Commands.AddDealConfirmationDoc::class.java)
+
+            override fun verify(tx: TransactionForContract,
+                                inputs: List<IndiaCommercialPaper.State>,
+                                outputs: List<IndiaCommercialPaper.State>,
+                                commands: List<AuthenticatedObject<IndiaCommercialPaper.Commands>>,
+                                groupingKey: Issued<IndiaCommercialPaper.Terms>?): Set<IndiaCommercialPaper.Commands> {
+
+                val command = commands.requireSingleCommand<IndiaCommercialPaper.Commands.AddDealConfirmationDoc>()
+
+                val output = tx.outputs.filterIsInstance<IndiaCommercialPaper.State>().single()
+
+                val attachment = tx.attachments.single()
+
+                val timestamp = tx.timestamp
+                val time = timestamp?.after ?: throw IllegalArgumentException("ISIN Request must be timestamped")
+
+                requireThat {
+                    "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
+                    "the transaction is signed by the Beneficiary" by (output.beneficiary.owningKey in command.signers)
+                    "the Deal Confirmation Document has been attached" by (attachment.id.toString() == output.dealConfirmationDocId!!.split(":").first())
+                    "the Deal Confirmation Document matches the status as uploaded" by verifyDocAsPerStatus(attachment, output.dealConfirmationDocId)
+                }
+                return setOf(command.value)
             }
         }
 
@@ -369,6 +447,33 @@ class IndiaCommercialPaper : Contract {
         return tx
     }
 
+    fun  generateDealConfirmation(cpStateAndRef: StateAndRef<IndiaCommercialPaper.State>, notary: Party): TransactionBuilder? {
+        val tx = TransactionType.General.Builder(notary)
+
+        //Adding Inputs
+        tx.addInputState(cpStateAndRef)
+
+        //Adding Outputs
+        tx.addOutputState(
+                cpStateAndRef.state.data.copy(
+                        version = cpStateAndRef.state.data.version!! + 1,
+                        lastModifiedDate = Instant.now(),
+                        status = IndiaCPIssueStatusEnum.CP_DEAL_CONFIRMATION_DOC_ADDED.name
+                ),
+                cpStateAndRef.state.notary
+        )
+
+        //Adding Attachments
+        val docHash = cpStateAndRef.state.data.dealConfirmationDocId!!.split(":").first()
+        tx.addAttachment(SecureHash.parse(docHash))
+
+        //Adding Required Commands
+        tx.addCommand(IndiaCommercialPaper.Commands.AddDealConfirmationDoc(), listOf(cpStateAndRef.state.data.issuer.owningKey,
+                cpStateAndRef.state.data.beneficiary.owningKey))
+
+        return tx
+    }
+
     fun addSettlementDetails(tx: TransactionBuilder, cp: StateAndRef<State>, settlementDetails: SettlementDetails): TransactionBuilder {
         //todo - need to fix the settlement details
         /*
@@ -382,14 +487,6 @@ class IndiaCommercialPaper : Contract {
         return tx;
     }
 
-
-    fun attachIssuerSignedDealConfirmation(tx: TransactionBuilder, cp: StateAndRef<State>, isin: String): TransactionBuilder {
-        return tx;
-    }
-
-    fun attachInvestorSignedDealConfirmation(tx: TransactionBuilder, cp: StateAndRef<State>, isin: String): TransactionBuilder {
-        return tx;
-    }
 }
 
 

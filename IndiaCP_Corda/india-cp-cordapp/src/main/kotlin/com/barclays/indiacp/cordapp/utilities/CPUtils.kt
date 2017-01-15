@@ -4,13 +4,11 @@ import com.barclays.indiacp.cordapp.contract.CreditRating
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.search.IndiaCPHistorySearch
-import com.barclays.indiacp.model.CPProgramError
-import com.barclays.indiacp.model.Error
-import com.barclays.indiacp.model.IndiaCPDocumentDetails
-import com.barclays.indiacp.model.IndiaCPException
+import com.barclays.indiacp.model.*
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER_KEY
 import net.corda.core.contracts.*
 import net.corda.core.crypto.Party
+import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.composite
 import net.corda.core.node.NodeInfo
 import net.corda.core.node.ServiceHub
@@ -77,6 +75,16 @@ object CPUtils {
         return cpProgramStateAndRef
     }
 
+    fun getCPStateRefNonNull(services: ServiceHub, cpTradeId: String): StateAndRef<IndiaCommercialPaper.State> {
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaper.State>().filterValues { it.state.data.cpTradeID == cpTradeId }
+        if (states == null || states.isEmpty()) {
+            throw IndiaCPException(CPIssueError.DOES_NOT_EXIST_ERROR, Error.SourceEnum.DL_R3CORDA)
+        }
+
+        val cpStateAndRef : StateAndRef<IndiaCommercialPaper.State> = states.values.first()
+
+        return cpStateAndRef
+    }
 
     fun getContractState(serviceHub: ServiceHub, cpRefId: String) : StateAndRef<OwnableState> {
         val states = serviceHub.vaultService.currentVault.statesOfType<IndiaCommercialPaper.State>()
@@ -110,5 +118,15 @@ object CPUtils {
 
     fun getCashIssuerForThisNode(party: Party) : PartyAndReference {
         return party.ref(1)
+    }
+
+    fun  getDocHashAndStatus(docId: String?): Pair<SecureHash, IndiaCPDocumentDetails.DocStatusEnum> {
+        if (docId == null || docId.isEmpty()) {
+            throw IndiaCPException(CPProgramError.DOC_UPLOAD_ERROR, Error.SourceEnum.DL_R3CORDA)
+        }
+        val docHashAndStatus = docId?.split(":")
+        val docHash = SecureHash.parse(docHashAndStatus[0])
+        val docStatus = IndiaCPDocumentDetails.DocStatusEnum.fromValue(docHashAndStatus[1])
+        return Pair(docHash, docStatus)
     }
 }

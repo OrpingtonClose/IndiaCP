@@ -1,19 +1,21 @@
 package com.barclays.indiacp.cordapp.api
 
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
-import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
+import com.barclays.indiacp.cordapp.protocol.agreements.AddCPDocFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ErrorUtils
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
 import com.barclays.indiacp.model.*
 import net.corda.contracts.testing.fillWithSomeTestCash
 import net.corda.core.contracts.DOLLARS
+import net.corda.core.contracts.StateAndRef
+import net.corda.core.crypto.Party
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.utilities.Emoji
 import net.corda.core.utilities.loggerFor
+import java.time.Instant
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -142,6 +144,50 @@ class IndiaCPApi(val services: ServiceHub){
             return if (deals.isEmpty()) null else deals[0]
         }
     }
+
+    @POST
+    @Path("addDocs/{cpIssueId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    fun addDocs(@PathParam("cpIssueId") cpIssueId: String,
+                docDetails:IndiaCPDocumentDetails): Response {
+        try
+        {
+            val cpStateAndRef : StateAndRef<IndiaCommercialPaper.State> = CPUtils.getCPStateRefNonNull(services, cpIssueId)
+
+            when (docDetails.docType) {
+                IndiaCPDocumentDetails.DocTypeEnum.DEAL_CONFIRMATION_DOC -> {
+                    val newStateRef = cpStateAndRef.copy(state = cpStateAndRef.state.copy(
+                            data = cpStateAndRef.state.data.copy(dealConfirmationDocId = docDetails.docHash + ":" + docDetails.docStatus ?:  IndiaCPDocumentDetails.DocStatusEnum.UNKNOWN.name,
+                                    modifiedBy = docDetails.modifiedBy,
+                                    lastModifiedDate = docDetails.lastModifiedDate?.toInstant() ?: Instant.now()
+                            )
+                    )
+                    )
+                    val stx = services.invokeFlowAsync(AddCPDocFlow::class.java, newStateRef, docDetails.docType, getOtherPartyForDealConfirmation(cpStateAndRef)).resultFuture.get()
+                    logger.info("ISIN Request Document Uploaded & Stamped on DL \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+                }
+                else -> {
+                    return ErrorUtils.errorHttpResponse(IndiaCPException("Unknown Document Type Uploaded to India Commercial Paper Smart Contract", Error.SourceEnum.DL_R3CORDA),
+                            errorCode = CPIssueError.DOC_UPLOAD_ERROR)
+                }
+            }
+
+            return Response.status(Response.Status.OK).entity(ModelUtils.indiaCPModelFromState(getCP(cpIssueId)!!)).build()
+        } catch (ex: Throwable) {
+            logger.info("${CPIssueError.DOC_UPLOAD_ERROR}: ${ex.toString()}")
+            return ErrorUtils.errorHttpResponse(ex, errorCode = CPIssueError.DOC_UPLOAD_ERROR)
+        }
+    }
+
+    private fun  getOtherPartyForDealConfirmation(cpStateAndRef: StateAndRef<IndiaCommercialPaper.State>): Party {
+        val thisNode = services.myInfo
+        if (thisNode.legalIdentity.name.equals(cpStateAndRef.state.data.issuer.name))
+            return cpStateAndRef.state.data.beneficiary
+        else
+            return cpStateAndRef.state.data.issuer
+    }
+
 
     @POST
     @Path("enterDeal/{investor}")

@@ -1,7 +1,9 @@
 package com.barclays.indiacp.cordapp.protocol.agreements
 
 import co.paralleluniverse.fibers.Suspendable
+import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
+import com.barclays.indiacp.model.IndiaCPDocumentDetails
 import net.corda.core.contracts.LinearState
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.TransactionState
@@ -18,11 +20,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.primaryConstructor
 
 /**
- * This is the Flow to manage the consensus between Issuer and Depository (NSDL) when requesting generation
- * of ISIN Identifier for the Commercial Paper Program. This is depicting the current paper flow, though digitized
- * and stamped on the blockchain.
- * The actual ISIN issuance is a separate flow. This flow is a pre-requisite to that.
- *
+ * NOT BEING USED
  * Created by ritukedia
  */
 abstract class IndiaCPTwoPartyAgreementFlow() : FlowLogic<SignedTransaction>() {
@@ -42,7 +40,7 @@ abstract class IndiaCPTwoPartyAgreementFlow() : FlowLogic<SignedTransaction>() {
     override val progressTracker = tracker
 }
 
-data class IndiaCPPayload(val contractStateAndRef: StateAndRef<LinearState>, val notary: Party) {
+data class IndiaCPPayload(val contractStateAndRef: StateAndRef<LinearState>, val docType: IndiaCPDocumentDetails.DocTypeEnum, val notary: Party) {
 
     fun  getCPProgramStateAndRef(): StateAndRef<IndiaCommercialPaperProgram.State> {
         val contractStateAndRef = contractStateAndRef
@@ -54,4 +52,12 @@ data class IndiaCPPayload(val contractStateAndRef: StateAndRef<LinearState>, val
         return cpProgramStateAndRef
     }
 
+    fun  getCPStateAndRef(): StateAndRef<IndiaCommercialPaper.State> {
+        val contractStateAndRef = contractStateAndRef
+        val cpContractState = contractStateAndRef.state.data as IndiaCommercialPaper.State
+        val cpTransactionState = TransactionState<IndiaCommercialPaper.State>(cpContractState, contractStateAndRef.state.notary)
+        val cpStateAndRef : StateAndRef<IndiaCommercialPaper.State> = StateAndRef(state = cpTransactionState, ref = contractStateAndRef.ref)
+
+        return cpStateAndRef
+    }
 }

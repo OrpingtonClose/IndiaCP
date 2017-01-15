@@ -3,6 +3,7 @@ package com.barclays.indiacp.cordapp.protocol.agreements
 import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.model.Error
+import com.barclays.indiacp.model.IndiaCPDocumentDetails
 import com.barclays.indiacp.model.IndiaCPException
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.crypto.CompositeKey
@@ -60,7 +61,7 @@ class AddISINDocFlow(val contractStateAndRef: StateAndRef<IndiaCommercialPaperPr
         progressTracker.currentStep = startingProgressStep
         val instigator = ISINRequestInitiator(
                 acceptorParty,
-                IndiaCPPayload(contractStateAndRef, notary),
+                IndiaCPPayload(contractStateAndRef, IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS, notary),
                 serviceHub.legalIdentityKey,
                 progressTracker.getChildProgressTracker(startingProgressStep)!!)
         val stx = subFlow(instigator)

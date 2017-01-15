@@ -1,6 +1,7 @@
 package com.barclays.indiacp.cordapp.contract
 
 import com.barclays.indiacp.cordapp.schemas.IndiaCommercialPaperProgramSchemaV1
+import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
 import com.barclays.indiacp.model.*
 import net.corda.core.contracts.*
@@ -156,7 +157,7 @@ class IndiaCommercialPaperProgram : Contract {
         abstract class AbstractIndiaCPProgramClause : Clause<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, UniqueIdentifier>() {
 
             fun  verifyDocAsPerStatus(doc: Attachment, docId: String): Boolean {
-                val docHashAndStatus = getDocHashAndStatus(docId)
+                val docHashAndStatus = CPUtils.getDocHashAndStatus(docId)
 
                 return verifyDoc(doc, docHashAndStatus.first, docHashAndStatus.second)
             }
@@ -188,19 +189,9 @@ class IndiaCommercialPaperProgram : Contract {
             }
 
             fun  verifyDocIsSignedByIssuer(doc: Attachment, docId: String?): Boolean {
-                val docHashAndStatus = getDocHashAndStatus(docId)
+                val docHashAndStatus = CPUtils.getDocHashAndStatus(docId)
 
                 return verifyDoc(doc, docHashAndStatus.first, IndiaCPDocumentDetails.DocStatusEnum.SIGNED_BY_ISSUER)
-            }
-
-            fun  getDocHashAndStatus(docId: String?): Pair<SecureHash, IndiaCPDocumentDetails.DocStatusEnum> {
-                if (docId == null || docId.isEmpty()) {
-                    throw IndiaCPException(CPProgramError.DOC_UPLOAD_ERROR, Error.SourceEnum.DL_R3CORDA)
-                }
-                val docHashAndStatus = docId?.split(":")
-                val docHash = SecureHash.parse(docHashAndStatus[0])
-                val docStatus = IndiaCPDocumentDetails.DocStatusEnum.fromValue(docHashAndStatus[1])
-                return Pair(docHash, docStatus)
             }
 
         }
