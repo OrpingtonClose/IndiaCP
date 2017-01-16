@@ -28,11 +28,13 @@ public class Signature {
         String returnStr = "";
         try {
 
-            signedDocFolder = createTempDir(docType).getAbsolutePath();
+           /* signedDocFolder = createTempDir(docType).getAbsolutePath();
 
             final File tempFile = createTempFile(docType, ".pdf", uploadedInputStream);
             returnStr = signPDF(Base64Encode(tempFile.getAbsolutePath()));
+*/
 
+            returnStr = signPDF(Base64.encode(IOUtils.toByteArray(uploadedInputStream)));
 
         } catch (IOException e)
         {
@@ -73,6 +75,8 @@ public class Signature {
         return finalPath;
 
     }
+
+
 
     public String signPDF(String b64EncodedString)
     {

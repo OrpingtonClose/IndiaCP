@@ -1,5 +1,7 @@
 package com.barclays.indiacp.dl.integration;
 
+import com.barclays.indiacp.dl.EMVerifyClient.DSVerifyWSImplServiceLocator;
+import com.barclays.indiacp.dl.EMVerifyClient.DSVerifyWSImplServiceSoapBindingStub;
 import com.barclays.indiacp.dl.utils.DLAttachmentUtils;
 import com.barclays.indiacp.dl.utils.DLConfig;
 import com.barclays.indiacp.model.IndiaCPDocumentDetails;
@@ -787,6 +789,52 @@ public class IndiaCPDocumentsApi {
 
     }
 
+
+    @POST
+    @Path("verifyDocSignature")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response verifyDocSignature(@FormDataParam("file") InputStream uploadedInputStream)
+    {
+        String output = "";
+        VerifySignature verify = new VerifySignature();
+        output = verify.verify(verify.convertIStoB64(uploadedInputStream));
+
+        return Response.ok(output, MediaType.TEXT_PLAIN)
+                .build();
+
+    }
+
+    @POST
+    @Path("verifyDocSignatureJSON")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response verifyDocTest(@FormDataParam("file") InputStream uploadedInputStream)
+    {
+        String output = "";
+        VerifySignature verify = new VerifySignature();
+        output = verify.verify(verify.convertIStoB64(uploadedInputStream));
+        VerificationResult vr = verify.readXML(output);
+
+        return Response.ok(vr, MediaType.APPLICATION_JSON)
+                .build();
+
+    }
+
+    @POST
+    @Path("verifyDocSignatureAndOrg/{docType}/{org}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response verifyDocSignAndOrg(@FormDataParam("file") InputStream uploadedInputStream,@PathParam("docType")String docType, @PathParam("org")String organization)
+    {
+        Boolean output;
+        VerifySignature verify = new VerifySignature();
+        output = verify.verifyWithOrg(uploadedInputStream,docType,organization);
+
+        return Response.ok(output, MediaType.TEXT_PLAIN)
+                .build();
+
+    }
 //    @POST
 //    @Path("uploadDoc")
 //    @Consumes(MediaType.MULTIPART_FORM_DATA)
