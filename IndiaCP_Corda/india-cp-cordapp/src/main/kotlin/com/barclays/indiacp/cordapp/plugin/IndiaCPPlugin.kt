@@ -11,10 +11,7 @@ import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.protocol.agreements.AddCPDocFlow
 import com.barclays.indiacp.cordapp.protocol.agreements.AddISINDocFlow
 import com.barclays.indiacp.cordapp.protocol.agreements.AddISINFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.BorrowingLimitBoardResolutionFlows
-import com.barclays.indiacp.cordapp.protocol.issuer.CreditRatingFlows
-import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
+import com.barclays.indiacp.cordapp.protocol.issuer.*
 import com.barclays.indiacp.model.IndiaCPDocumentDetails
 import com.barclays.indiacp.model.IndiaCPProgram
 import com.barclays.indiacp.model.IndiaCPProgramStatusEnum
@@ -52,7 +49,8 @@ class IndiaCPPlugin : CordaPluginRegistry() {
     override val servicePlugins = listOf(
             AddISINDocFlow.Services::class.java,
             AddISINFlow.Services::class.java,
-            AddCPDocFlow.Services::class.java
+            AddCPDocFlow.Services::class.java,
+            OtherParticipantsTransactionPropogationFlow.Services::class.java
     )
 
     override fun registerRPCKryoTypes(kryo: Kryo): Boolean {

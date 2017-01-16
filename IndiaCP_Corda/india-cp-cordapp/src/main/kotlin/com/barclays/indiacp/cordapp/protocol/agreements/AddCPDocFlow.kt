@@ -88,6 +88,7 @@ open class DocAttachmentUploadInitiator(override val otherParty: Party,
     serviceHub.networkMapCache.notaryNodes.filter { it.notaryIdentity == payload.notary }.single()
 
 }
+
 /**
  * Acceptor Side of the Flow for Receiving the CP Attachment. Currently only the Deal Confirmation Document flow
  * uses this

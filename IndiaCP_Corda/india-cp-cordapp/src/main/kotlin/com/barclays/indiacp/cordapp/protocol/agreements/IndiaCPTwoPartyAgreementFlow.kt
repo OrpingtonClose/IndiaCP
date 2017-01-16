@@ -61,3 +61,4 @@ data class IndiaCPPayload(val contractStateAndRef: StateAndRef<LinearState>, val
         return cpStateAndRef
     }
 }
+

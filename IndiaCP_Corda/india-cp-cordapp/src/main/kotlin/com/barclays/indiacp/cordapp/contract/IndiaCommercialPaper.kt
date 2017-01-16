@@ -84,7 +84,7 @@ class IndiaCommercialPaper : Contract {
 
         //Only the Issuer and Investor should be party to the full state of this transaction
         override val parties: List<Party>
-            get() = listOf(issuer, beneficiary)
+            get() = listOf(issuer, beneficiary, ipa, depository)
 
         override val participants: List<CompositeKey>
             get() = listOf(issuer, beneficiary, ipa, depository).map { it.owningKey }

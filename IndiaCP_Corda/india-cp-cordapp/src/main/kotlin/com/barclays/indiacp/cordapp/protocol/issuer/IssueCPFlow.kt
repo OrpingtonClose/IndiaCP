@@ -1,23 +1,13 @@
 package com.barclays.indiacp.cordapp.protocol.issuer
 
 import co.paralleluniverse.fibers.Suspendable
-import com.barclays.indiacp.cordapp.api.IndiaCPApi
-import com.barclays.indiacp.cordapp.api.IndiaCPProgramApi
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
-import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.model.CPIssueError
-import com.barclays.indiacp.model.CPProgramError
 import com.barclays.indiacp.model.Error
 import com.barclays.indiacp.model.IndiaCPException
-import net.corda.contracts.asset.DUMMY_CASH_ISSUER
-import net.corda.core.contracts.DOLLARS
-import net.corda.core.contracts.`issued by`
-import net.corda.core.crypto.Party
-import net.corda.core.crypto.SecureHash
-import net.corda.core.days
-import net.corda.core.node.NodeInfo
 import net.corda.core.flows.FlowLogic
+import net.corda.core.node.NodeInfo
 import net.corda.core.seconds
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.utilities.ProgressTracker
@@ -36,8 +26,9 @@ class IssueCPFlow(val contractState: IndiaCommercialPaper.State) : FlowLogic<Sig
         object NOTARY_SIGNATURE_OBTAINED : ProgressTracker.Step("Notary Signature Obtained")
         object RECORDING_TRANSACTION : ProgressTracker.Step("Recording Transaction in Local Storage")
         object TRANSACTION_RECORDED : ProgressTracker.Step("Transaction Recorded in Local Storage")
+        object COPYING_TO_PARTICIPANTS : ProgressTracker.Step("Propogating transaction to all participants")
 
-        fun tracker() = ProgressTracker(PROGRAM_CEILING_CHECK, SELF_ISSUING, OBTAINING_NOTARY_SIGNATURE, NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+        fun tracker() = ProgressTracker(PROGRAM_CEILING_CHECK, SELF_ISSUING, OBTAINING_NOTARY_SIGNATURE, NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED, COPYING_TO_PARTICIPANTS)
     }
 
     override val progressTracker = tracker()
@@ -61,6 +52,7 @@ class IssueCPFlow(val contractState: IndiaCommercialPaper.State) : FlowLogic<Sig
         tx.setTime(Instant.now(), 30.seconds)
 
         // Sign it as Issuer.
+        val issuerNode = serviceHub.myInfo
         tx.signWith(serviceHub.legalIdentityKey)
 
         // Get the notary to sign the timestamp
@@ -75,7 +67,13 @@ class IssueCPFlow(val contractState: IndiaCommercialPaper.State) : FlowLogic<Sig
         serviceHub.recordTransactions(listOf(stx))
         progressTracker.currentStep = TRANSACTION_RECORDED
 
+        progressTracker.currentStep = COPYING_TO_PARTICIPANTS
+        val parties = contractState.parties
+        if (parties.isNotEmpty()) {
+            // Copy the transaction to other participant nodes
+            parties.filter{!it.equals(issuerNode.legalIdentity)}.forEach { send(it, stx) }
+        }
+
         return stx
     }
 }
-
