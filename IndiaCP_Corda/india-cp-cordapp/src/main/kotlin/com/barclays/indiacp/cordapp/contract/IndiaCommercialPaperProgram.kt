@@ -475,12 +475,15 @@ class IndiaCommercialPaperProgram : Contract {
         return tx
     }
 
-    fun  generateTransactionWithISIN(cpProgramContractStateAndRef: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party): TransactionBuilder {
+    fun  generateTransactionWithISIN(cpProgramContractStateAndRef: StateAndRef<IndiaCommercialPaperProgram.State>, cpIssues: List<StateAndRef<IndiaCommercialPaper.State>>, notary: Party): TransactionBuilder {
 
         val tx = TransactionType.General.Builder(notary)
 
         //Adding Inputs
         tx.addInputState(cpProgramContractStateAndRef)
+        for(cpIssue in cpIssues) {
+            tx.addInputState(cpIssue)
+        }
 
         //Adding Outputs
         tx.addOutputState(
@@ -492,12 +495,27 @@ class IndiaCommercialPaperProgram : Contract {
                 cpProgramContractStateAndRef.state.notary
         )
 
+        //Propogate ISIN to ALL CP Issues under this CP Program umbrella
+        for(cpIssue in cpIssues) {
+            tx.addOutputState(
+                    cpIssue.state.data.copy(
+                            isin = cpProgramContractStateAndRef.state.data.isin!!,
+                            version = cpIssue.state.data.version!! + 1,
+                            lastModifiedDate = Instant.now(),
+                            status = IndiaCPIssueStatusEnum.CP_ISIN_ADDED.name
+                    ),
+                    cpProgramContractStateAndRef.state.notary
+            )
+        }
+
         //Adding Attachments
         val docHash = cpProgramContractStateAndRef.state.data.isinGenerationRequestDocId!!.split(":").first()
         tx.addAttachment(SecureHash.parse(docHash))
 
         //Adding Required Commands
         tx.addCommand(IndiaCommercialPaperProgram.Commands.AddIsin(), listOf(cpProgramContractStateAndRef.state.data.issuer.owningKey,
+                cpProgramContractStateAndRef.state.data.depository.owningKey))
+        tx.addCommand(IndiaCommercialPaper.Commands.AddISIN(), listOf(cpProgramContractStateAndRef.state.data.issuer.owningKey,
                 cpProgramContractStateAndRef.state.data.depository.owningKey))
 
         return tx

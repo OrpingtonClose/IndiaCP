@@ -8,6 +8,8 @@ public enum IndiaCPIssueStatusEnum {
         UNKNOWN,
         CP_ISSUED,
         CP_AMENDED,
+        CP_SETTLEMENT_DETAILS_AMENDED,
+        CP_ISIN_ADDED,
         CP_DEAL_CONFIRMATION_DOC_ADDED,
         CP_INVESTOR_PAYMENT_RECEIVED,
         CP_ISSUER_PAYMENT_RECEIVED,

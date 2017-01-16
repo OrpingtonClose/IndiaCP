@@ -124,6 +124,19 @@ class IndiaCPApi(val services: ServiceHub){
     }
 
     @GET
+    @Path("fetchAllCP/{cpProgramId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    fun fetchAllCP(@PathParam("cpProgramId") cpProgramId: String): Response {
+        try {
+            val cpList = CPUtils.getAllCP(services, cpProgramId)
+            return Response.status(Response.Status.OK).entity(cpList?.map { ModelUtils.indiaCPModelFromState(it.state.data) }).build()
+        } catch (ex: Throwable) {
+            logger.info("${CPIssueError.FETCH_ERROR}: ${ex.toString()}")
+            return ErrorUtils.errorHttpResponse(ex, errorCode = CPIssueError.FETCH_ERROR)
+        }
+    }
+
+    @GET
     @Path("fetchCP/{cpIssueId}")
     @Produces(MediaType.APPLICATION_JSON)
     fun fetchCP(@PathParam("cpIssueId") cpIssueId: String): Response {
@@ -138,7 +151,7 @@ class IndiaCPApi(val services: ServiceHub){
     }
 
     private fun getCP(ref: String): IndiaCommercialPaper.State? {
-        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaper.State>().filterValues { it.state.data.ref == ref }
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaper.State>().filterValues { it.state.data.cpTradeID == ref }
         return if (states.isEmpty()) null else {
             val deals = states.values.map { it.state.data }
             return if (deals.isEmpty()) null else deals[0]

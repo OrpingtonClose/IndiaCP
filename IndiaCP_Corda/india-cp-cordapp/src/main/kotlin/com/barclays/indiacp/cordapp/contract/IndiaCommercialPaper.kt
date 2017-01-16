@@ -74,16 +74,14 @@ class IndiaCommercialPaper : Contract {
             val modifiedBy: String? = "",//todo default to logged in user
             val lastModifiedDate: Instant? = Instant.now(),
             val version: Int? = ModelUtils.STARTING_VERSION
-    ) : DealState, QueryableState {
+    ) : LinearState, QueryableState {
         override val contract = com.barclays.indiacp.cordapp.contract.INDIA_CP_ID
-
-        override val ref = cpTradeID
 
         override val linearId: UniqueIdentifier
             get() = UniqueIdentifier(cpTradeID)
 
         //Only the Issuer and Investor should be party to the full state of this transaction
-        override val parties: List<Party>
+        val parties: List<Party>
             get() = listOf(issuer, beneficiary, ipa, depository)
 
         override val participants: List<CompositeKey>
@@ -93,12 +91,8 @@ class IndiaCommercialPaper : Contract {
             return parties.map { it.owningKey }.any { ck -> ck.containsAny(ourKeys) }
         }
 
-        override fun generateAgreement(notary: Party): TransactionBuilder {
-            throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
         val token: Issued<IndiaCommercialPaper.Terms>
-            get() = Issued(issuer.ref(CPUtils.getReference(ref)), IndiaCommercialPaper.Terms(faceValue.token, maturityDate))
+            get() = Issued(issuer.ref(CPUtils.getReference(cpTradeID)), IndiaCommercialPaper.Terms(faceValue.token, maturityDate))
 
         override fun toString() = "${Emoji.newspaper}CommercialPaper($cpProgramID:$cpTradeID of $faceValue redeemable on $maturityDate by '$issuer', owned by ${beneficiary.owningKey.toString()})"
 
@@ -222,10 +216,11 @@ class IndiaCommercialPaper : Contract {
     interface Clauses {
         class Group : GroupClauseVerifier<IndiaCommercialPaper.State, IndiaCommercialPaper.Commands, Issued<IndiaCommercialPaper.Terms>>(
                 clause = AnyComposition(
-                        IndiaCommercialPaper.Clauses.Redeem(),
                         IndiaCommercialPaper.Clauses.Issue(),
                         IndiaCommercialPaper.Clauses.Agree(),
+                        IndiaCommercialPaper.Clauses.Redeem(),
                         IndiaCommercialPaper.Clauses.AddSettlementDetails(),
+                        IndiaCommercialPaper.Clauses.AddISIN(),
                         IndiaCommercialPaper.Clauses.AddDealConfirmationDoc()
                 )) {
             override fun groupStates(tx: TransactionForContract): List<TransactionForContract.InOutGroup<IndiaCommercialPaper.State, Issued<IndiaCommercialPaper.Terms>>>
@@ -330,6 +325,37 @@ class IndiaCommercialPaper : Contract {
             }
         }
 
+        class AddISIN: AbstractIndiaCPClause() {
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaper.Commands.AddISIN::class.java)
+
+            override fun verify(tx: TransactionForContract,
+                                inputs: List<IndiaCommercialPaper.State>,
+                                outputs: List<IndiaCommercialPaper.State>,
+                                commands: List<AuthenticatedObject<IndiaCommercialPaper.Commands>>,
+                                groupingKey: Issued<IndiaCommercialPaper.Terms>?): Set<IndiaCommercialPaper.Commands> {
+
+                val command = commands.requireSingleCommand<IndiaCommercialPaper.Commands.AddISIN>()
+
+                val outputs = tx.outputs.filterIsInstance<IndiaCommercialPaper.State>()
+                val output = outputs.first()
+
+
+                val timestamp = tx.timestamp
+                val time = timestamp?.after ?: throw IllegalArgumentException("ISIN Request must be timestamped")
+
+                for (output in outputs) {
+                    requireThat {
+                        "the ISIN is not NULL" by (!output.isin.isNullOrBlank())
+                    }
+                }
+                requireThat {
+                    "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
+                    "the transaction is signed by the Depository" by (output.depository.owningKey in command.signers)
+                }
+                return setOf(command.value)
+            }
+        }
+
         class Agree: Clause<IndiaCommercialPaper.State, IndiaCommercialPaper.Commands, Issued<IndiaCommercialPaper.Terms>>() {
             override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaper.Commands.Move::class.java)
 
@@ -406,6 +432,7 @@ class IndiaCommercialPaper : Contract {
         class Agree : TypeOnlyCommandData(), Commands  // Both sides agree to trade
         class AddSettlementDetails(settlementDetails: SettlementDetails) : IndiaCommercialPaper.Commands
         class AddDealConfirmationDoc : TypeOnlyCommandData(), IndiaCommercialPaper.Commands
+        class AddISIN : TypeOnlyCommandData(), IndiaCommercialPaper.Commands
     }
 
     fun generateIssue(cpContractState: IndiaCommercialPaper.State,

@@ -129,4 +129,11 @@ object CPUtils {
         val docStatus = IndiaCPDocumentDetails.DocStatusEnum.fromValue(docHashAndStatus[1])
         return Pair(docHash, docStatus)
     }
+
+    fun  getAllCP(services: ServiceHub, cpProgramId: String): List<StateAndRef<IndiaCommercialPaper.State>> {
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaper.State>()
+        val indiacps = states.filter{it.value.state.data.cpProgramID.equals(cpProgramId)}
+        return indiacps.values.toList()
+
+    }
 }

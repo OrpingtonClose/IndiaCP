@@ -1,8 +1,10 @@
 package com.barclays.indiacp.cordapp.protocol.depository
 
 import co.paralleluniverse.fibers.Suspendable
+import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.protocol.agreements.IndiaCPDocumentPayload
+import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.model.Error
 import com.barclays.indiacp.model.IndiaCPDocumentDetails
 import com.barclays.indiacp.model.IndiaCPException
@@ -77,6 +79,17 @@ class AddISINFlow(val contractStateAndRef: StateAndRef<IndiaCommercialPaperProgr
             // Copy the transaction to other participant nodes
             parties.filter{!it.equals(initiator) && !it.equals(acceptorParty)}.forEach { send(it, stx) }
         }
+
+        //propogate to participants of the CP Issues
+        val cpIssues : List<StateAndRef<IndiaCommercialPaper.State>> = CPUtils.getAllCP(serviceHub, contractStateAndRef.state.data.programId)
+        for (cpIssue in cpIssues) {
+            val cpIssueParties = cpIssue.state.data.parties
+            if (cpIssueParties.isNotEmpty()) {
+                // Copy the transaction to other participant nodes
+                cpIssueParties.subtract(parties).forEach { send(it, stx) }
+            }
+        }
+
         return stx
     }
 
@@ -112,8 +125,9 @@ open class ISINCreationAcceptor(override val otherParty: Party,
 
     override fun assembleSharedTX(handshake: TwoPartyDealFlow.Handshake<IndiaCPDocumentPayload>): Pair<TransactionBuilder, List<CompositeKey>> {
         val cpProgramStateAndRef = handshake.payload.getCPProgramStateAndRef()
+        val cpIssues : List<StateAndRef<IndiaCommercialPaper.State>> = CPUtils.getAllCP(serviceHub, cpProgramStateAndRef.state.data.programId)
 
-        val tx = IndiaCommercialPaperProgram().generateTransactionWithISIN(cpProgramStateAndRef, handshake.payload.notary)
+        val tx = IndiaCommercialPaperProgram().generateTransactionWithISIN(cpProgramStateAndRef, cpIssues, handshake.payload.notary)
 
         // And add a request for timestamping
         tx.setTime(serviceHub.clock.instant(), 30.seconds)
