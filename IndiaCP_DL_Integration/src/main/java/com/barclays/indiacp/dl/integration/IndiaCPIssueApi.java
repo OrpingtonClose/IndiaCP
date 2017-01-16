@@ -62,6 +62,20 @@ public interface IndiaCPIssueApi {
                             @FormDataParam("documentDetails") IndiaCPDocumentDetails docDetails,
                             @FormDataParam("file") InputStream uploadedInputStream);
 
+
+    @GET
+    @Path("getTransactionHistory/{cpIssueId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTransactionHistory(@PathParam("cpIssueId") String cpIssueId);
+
+
+    @GET
+    @Path("getDocumentHistory/{cpIssueId}/{docType}/{docSubType}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDocumentHistory(@PathParam("cpIssueId") String cpIssueId,
+                                       @PathParam("docType") String docType,
+                                       @PathParam("docSubType") String docSubType);
+
     @Context
     public void setRequest(Request request);
 }

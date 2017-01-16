@@ -40,7 +40,7 @@ class AddCPDocFlow(val contractStateAndRef: StateAndRef<IndiaCommercialPaper.Sta
     class Services(services: PluginServiceHub) : SingletonSerializeAsToken() {
 
         init {
-            services.registerFlowInitiator(DocAttachmentUploadInitiator::class) { DocAttachmentUploadAcceptor(it) }
+            services.registerFlowInitiator(CPDocAttachmentUploadInitiator::class) { CPDocAttachmentUploadAcceptor(it) }
         }
     }
 
@@ -50,8 +50,9 @@ class AddCPDocFlow(val contractStateAndRef: StateAndRef<IndiaCommercialPaper.Sta
             override fun childProgressTracker(): ProgressTracker = TwoPartyDealFlow.Primary.tracker()
         }
         object RECEIVED_ACCEPTANCE : ProgressTracker.Step("Received Acceptance Response")
+        object COPYING_TO_PARTICIPANTS : ProgressTracker.Step("Propogating transaction to all participants")
 
-        fun tracker() = ProgressTracker(INITIATING_DOC_UPLOAD, RECEIVED_ACCEPTANCE)
+        fun tracker() = ProgressTracker(INITIATING_DOC_UPLOAD, RECEIVED_ACCEPTANCE, COPYING_TO_PARTICIPANTS)
     }
 
     override val progressTracker: ProgressTracker = tracker()
@@ -64,12 +65,20 @@ class AddCPDocFlow(val contractStateAndRef: StateAndRef<IndiaCommercialPaper.Sta
         val notary = serviceHub.networkMapCache.notaryNodes.first().notaryIdentity
         val myKey = serviceHub.legalIdentityKey
         progressTracker.currentStep = startingProgressStep
-        val instigator = DocAttachmentUploadInitiator(
+        val instigator = CPDocAttachmentUploadInitiator(
                 acceptor,
-                IndiaCPPayload(contractStateAndRef, docType, notary),
+                IndiaCPDocumentPayload(contractStateAndRef, docType, notary),
                 myKey,
                 progressTracker.getChildProgressTracker(startingProgressStep)!!)
         val stx = subFlow(instigator)
+
+        progressTracker.currentStep = COPYING_TO_PARTICIPANTS
+        val parties = contractStateAndRef.state.data.parties
+        val initiator = serviceHub.myInfo.legalIdentity
+        if (parties.isNotEmpty()) {
+            // Copy the transaction to other participant nodes
+            parties.filter{!it.equals(initiator) && !it.equals(acceptor)}.forEach { send(it, stx) }
+        }
         return stx
     }
 
@@ -79,10 +88,10 @@ class AddCPDocFlow(val contractStateAndRef: StateAndRef<IndiaCommercialPaper.Sta
  * Initiator Side of the Flow for Initiating the CP Attachment Upload. Currently only the Deal Confirmation Document flow
  * uses this
  */
-open class DocAttachmentUploadInitiator(override val otherParty: Party,
-                                override val payload: IndiaCPPayload,
-                                override val myKeyPair: KeyPair,
-                                override val progressTracker: ProgressTracker = TwoPartyDealFlow.Primary.tracker()) : TwoPartyDealFlow.Primary() {
+open class CPDocAttachmentUploadInitiator(override val otherParty: Party,
+                                          override val payload: IndiaCPDocumentPayload,
+                                          override val myKeyPair: KeyPair,
+                                          override val progressTracker: ProgressTracker = TwoPartyDealFlow.Primary.tracker()) : TwoPartyDealFlow.Primary() {
 
     override val notaryNode: NodeInfo get() =
     serviceHub.networkMapCache.notaryNodes.filter { it.notaryIdentity == payload.notary }.single()
@@ -93,10 +102,10 @@ open class DocAttachmentUploadInitiator(override val otherParty: Party,
  * Acceptor Side of the Flow for Receiving the CP Attachment. Currently only the Deal Confirmation Document flow
  * uses this
  */
-open class DocAttachmentUploadAcceptor(override val otherParty: Party,
-                               override val progressTracker: ProgressTracker = TwoPartyDealFlow.Secondary.tracker()) : TwoPartyDealFlow.Secondary<IndiaCPPayload>() {
+open class CPDocAttachmentUploadAcceptor(override val otherParty: Party,
+                                         override val progressTracker: ProgressTracker = TwoPartyDealFlow.Secondary.tracker()) : TwoPartyDealFlow.Secondary<IndiaCPDocumentPayload>() {
 
-    override fun validateHandshake(handshake: TwoPartyDealFlow.Handshake<IndiaCPPayload>): TwoPartyDealFlow.Handshake<IndiaCPPayload> {
+    override fun validateHandshake(handshake: TwoPartyDealFlow.Handshake<IndiaCPDocumentPayload>): TwoPartyDealFlow.Handshake<IndiaCPDocumentPayload> {
         val cpStateAndRef = handshake.payload.contractStateAndRef
         if (cpStateAndRef.state.data is IndiaCommercialPaper.State)
             return handshake
@@ -104,7 +113,7 @@ open class DocAttachmentUploadAcceptor(override val otherParty: Party,
             throw IndiaCPException("Unexpected '${cpStateAndRef.state.data.javaClass.simpleName}' Payload Received in ${this.javaClass.simpleName} Flow Logic. Expected: ${IndiaCommercialPaper.State::class.java.name}", Error.SourceEnum.DL_R3CORDA)
     }
 
-    override fun assembleSharedTX(handshake: TwoPartyDealFlow.Handshake<IndiaCPPayload>): Pair<TransactionBuilder, List<CompositeKey>> {
+    override fun assembleSharedTX(handshake: TwoPartyDealFlow.Handshake<IndiaCPDocumentPayload>): Pair<TransactionBuilder, List<CompositeKey>> {
         val cpStateAndRef = handshake.payload.getCPStateAndRef()
         val docType = handshake.payload.docType
         var tx : TransactionBuilder? = null

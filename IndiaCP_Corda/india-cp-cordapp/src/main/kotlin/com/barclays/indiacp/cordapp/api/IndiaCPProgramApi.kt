@@ -1,8 +1,8 @@
 package com.barclays.indiacp.cordapp.api
 
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
-import com.barclays.indiacp.cordapp.protocol.agreements.AddISINDocFlow
-import com.barclays.indiacp.cordapp.protocol.agreements.AddISINFlow
+import com.barclays.indiacp.cordapp.protocol.agreements.AddCPProgramDocFlow
+import com.barclays.indiacp.cordapp.protocol.depository.AddISINFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ErrorUtils
@@ -62,11 +62,15 @@ class IndiaCPProgramApi(val services: ServiceHub) {
     {
         try
         {
-            val contractStateRef = CPUtils.getCPProgramStateRefNonNull(services, cpProgramId)
-            if (!contractStateRef.state.data.isin.isNullOrBlank()) {
+            val cpProgramStateAndRef = CPUtils.getCPProgramStateRefNonNull(services, cpProgramId)
+            if (!cpProgramStateAndRef.state.data.isin.isNullOrBlank()) {
                 throw IndiaCPException(CPProgramError.ISIN_ALREADY_EXISTS_ERROR, Error.SourceEnum.DL_R3CORDA)
             }
-            val stx = services.invokeFlowAsync(AddISINFlow::class.java, contractStateRef).resultFuture.get()
+            val newStateRef = cpProgramStateAndRef.copy(state = cpProgramStateAndRef.state.copy(
+                    data = cpProgramStateAndRef.state.data.copy(isin = isin)
+            )
+            )
+            val stx = services.invokeFlowAsync(AddISINFlow::class.java, newStateRef).resultFuture.get()
             logger.info("CP Program ${cpProgramId}: New ISIN ${isin} Added as Issued by the Depository\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
 
             return Response.status(Response.Status.OK).entity(ModelUtils.indiaCPProgramModelFromState(getCPProgram(cpProgramId)!!)).build()
@@ -115,7 +119,7 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                     history = ModelUtils.getDocumentDetailsForCPProgram(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS)
                 }
                 IndiaCPDocumentDetails.DocTypeEnum.IPA_DOCS.name -> {
-                    val cpProgStatesForDocTypeTransactions = CPUtils.getDocumentTransactionHistory<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands.AddIPAVerification>(services, { programId == cpProgramId })
+                    val cpProgStatesForDocTypeTransactions = CPUtils.getDocumentTransactionHistory<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands.AddIPAVerificationDoc>(services, { programId == cpProgramId })
                     history = ModelUtils.getDocumentDetailsForCPProgram(cpProgramId, cpProgStatesForDocTypeTransactions, IndiaCPDocumentDetails.DocTypeEnum.IPA_DOCS)
                 }
                 IndiaCPDocumentDetails.DocTypeEnum.IPA_CERTIFICATE_DOC.name -> {
@@ -194,6 +198,8 @@ class IndiaCPProgramApi(val services: ServiceHub) {
 
             when (docDetails.docType) {
                 IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS -> {
+                    val initiator = cpProgramStateAndRef.state.data.issuer
+                    val acceptor = cpProgramStateAndRef.state.data.depository
                     val newStateRef = cpProgramStateAndRef.copy(state = cpProgramStateAndRef.state.copy(
                             data = cpProgramStateAndRef.state.data.copy(isinGenerationRequestDocId = docDetails.docHash + ":" + docDetails.docStatus ?:  IndiaCPDocumentDetails.DocStatusEnum.UNKNOWN.name,
                                                                         modifiedBy = docDetails.modifiedBy,
@@ -201,17 +207,47 @@ class IndiaCPProgramApi(val services: ServiceHub) {
                                                                         )
                                                                     )
                                                                 )
-                    val stx = services.invokeFlowAsync(AddISINDocFlow::class.java, newStateRef).resultFuture.get()
+                    val stx = services.invokeFlowAsync(AddCPProgramDocFlow::class.java, newStateRef, docDetails.docType, initiator, acceptor).resultFuture.get()
                     logger.info("ISIN Request Document Uploaded & Stamped on DL \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
                 }
                 IndiaCPDocumentDetails.DocTypeEnum.IPA_DOCS -> {
-
+                    val initiator = cpProgramStateAndRef.state.data.issuer
+                    val acceptor = cpProgramStateAndRef.state.data.ipa
+                    val newStateRef = cpProgramStateAndRef.copy(state = cpProgramStateAndRef.state.copy(
+                            data = cpProgramStateAndRef.state.data.copy(ipaVerificationRequestDocId = docDetails.docHash + ":" + docDetails.docStatus ?:  IndiaCPDocumentDetails.DocStatusEnum.UNKNOWN.name,
+                                    modifiedBy = docDetails.modifiedBy,
+                                    lastModifiedDate = docDetails.lastModifiedDate?.toInstant() ?: Instant.now()
+                            )
+                    )
+                    )
+                    val stx = services.invokeFlowAsync(AddCPProgramDocFlow::class.java, newStateRef, docDetails.docType, initiator, acceptor).resultFuture.get()
+                    logger.info("IPA Verification Documents Uploaded & Stamped on DL \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
                 }
                 IndiaCPDocumentDetails.DocTypeEnum.IPA_CERTIFICATE_DOC -> {
-
+                    val initiator = cpProgramStateAndRef.state.data.ipa
+                    val acceptor = cpProgramStateAndRef.state.data.issuer
+                    val newStateRef = cpProgramStateAndRef.copy(state = cpProgramStateAndRef.state.copy(
+                            data = cpProgramStateAndRef.state.data.copy(ipaCertificateDocId = docDetails.docHash + ":" + docDetails.docStatus ?:  IndiaCPDocumentDetails.DocStatusEnum.UNKNOWN.name,
+                                    modifiedBy = docDetails.modifiedBy,
+                                    lastModifiedDate = docDetails.lastModifiedDate?.toInstant() ?: Instant.now()
+                            )
+                    )
+                    )
+                    val stx = services.invokeFlowAsync(AddCPProgramDocFlow::class.java, newStateRef, docDetails.docType, initiator, acceptor).resultFuture.get()
+                    logger.info("IPA Certificate Documents Uploaded & Stamped on DL \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
                 }
                 IndiaCPDocumentDetails.DocTypeEnum.CORPORATE_ACTION_FORM -> {
-
+                    val initiator = cpProgramStateAndRef.state.data.issuer
+                    val acceptor = cpProgramStateAndRef.state.data.depository
+                    val newStateRef = cpProgramStateAndRef.copy(state = cpProgramStateAndRef.state.copy(
+                            data = cpProgramStateAndRef.state.data.copy(corporateActionFormDocId = docDetails.docHash + ":" + docDetails.docStatus ?:  IndiaCPDocumentDetails.DocStatusEnum.UNKNOWN.name,
+                                    modifiedBy = docDetails.modifiedBy,
+                                    lastModifiedDate = docDetails.lastModifiedDate?.toInstant() ?: Instant.now()
+                            )
+                    )
+                    )
+                    val stx = services.invokeFlowAsync(AddCPProgramDocFlow::class.java, newStateRef, docDetails.docType, initiator, acceptor).resultFuture.get()
+                    logger.info("Corporate Action Form Uploaded & Stamped on DL \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
                 }
                 else -> {
                     return ErrorUtils.errorHttpResponse(IndiaCPException("Unknown Document Type Uploaded to India Commercial Paper Program Smart Contract", Error.SourceEnum.DL_R3CORDA),

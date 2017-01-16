@@ -143,11 +143,10 @@ class IndiaCommercialPaperProgram : Contract {
                         IndiaCommercialPaperProgram.Clauses.Issue(),
                         IndiaCommercialPaperProgram.Clauses.Amend(),
                         IndiaCommercialPaperProgram.Clauses.AddIsinGenDoc(),
-                        IndiaCommercialPaperProgram.Clauses.AddIsin()
-//                    IndiaCommercialPaperProgram.Clauses.AddIPAVerificationDoc(),
-//                    IndiaCommercialPaperProgram.Clauses.AddIPACertifcateDoc(),
-//                    IndiaCommercialPaperProgram.Clauses.AddCorpActionFormDoc(),
-//                    IndiaCommercialPaperProgram.Clauses.AddAllotmentLetterDoc()
+                        IndiaCommercialPaperProgram.Clauses.AddIsin(),
+                        IndiaCommercialPaperProgram.Clauses.AddIPAVerificationDoc(),
+                        IndiaCommercialPaperProgram.Clauses.AddIPACertifcateDoc(),
+                        IndiaCommercialPaperProgram.Clauses.AddCorpActionFormDoc()
                 )) {
             override fun groupStates(tx: TransactionForContract): List<TransactionForContract.InOutGroup<IndiaCommercialPaperProgram.State, UniqueIdentifier>>
                     // Group by Program ID for in / out states
@@ -156,7 +155,7 @@ class IndiaCommercialPaperProgram : Contract {
 
         abstract class AbstractIndiaCPProgramClause : Clause<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, UniqueIdentifier>() {
 
-            fun  verifyDocAsPerStatus(doc: Attachment, docId: String): Boolean {
+            fun  verifyDocAsPerStatus(doc: Attachment, docId: String?): Boolean {
                 val docHashAndStatus = CPUtils.getDocHashAndStatus(docId)
 
                 return verifyDoc(doc, docHashAndStatus.first, docHashAndStatus.second)
@@ -281,12 +280,14 @@ class IndiaCommercialPaperProgram : Contract {
                 val attachment = tx.attachments.single()
 
                 val timestamp = tx.timestamp
-                val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
+                val time = timestamp?.before ?: throw IllegalArgumentException("AddISIN transaction must be timestamped")
 
                 requireThat {
                     "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
                     "the transaction is signed by the Depository" by (output.depository.owningKey in command.signers)
-                    "the ISIN Request Document - Letter of Intent - has been signed & uploaded by the Issuer" by (verifyDocIsSignedByIssuer(attachment, output.isinGenerationRequestDocId))
+                    "the ISIN Request Document has been uploaded" by (!output.isinGenerationRequestDocId.isNullOrBlank())
+                    "the ISIN Request Document - Letter of Intent - has been signed by the Issuer" by (verifyDocIsSignedByIssuer(attachment, output.isinGenerationRequestDocId))
+                    "the ISIN is generated" by (!output.isin.isNullOrBlank())
                 }
 
                 return setOf(command.value)
@@ -294,93 +295,93 @@ class IndiaCommercialPaperProgram : Contract {
         }
 
 
-//        class AddIPAVerificationDoc : AbstractIssue<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, IndiaCommercialPaperProgram.Terms>(
-//                { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
-//                { token -> map { Amount(it.programSize.quantity, it.token) }.sumOrZero(token) }
-//        ) {
-//            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIPAVerification::class.java)
-//
-//            override fun verify(tx: TransactionForContract,
-//                                inputs: List<IndiaCommercialPaperProgram.State>,
-//                                outputs: List<IndiaCommercialPaperProgram.State>,
-//                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
-//                                groupingKey: Issued<IndiaCommercialPaperProgram.Terms>?): Set<IndiaCommercialPaperProgram.Commands> {
-//                val consumedCommands = super.verify(tx, inputs, outputs, commands, groupingKey)
-//                commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.AddIPAVerification>()
-//                val timestamp = tx.timestamp
-//                val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
-//
-//                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
-//
-//                return consumedCommands
-//            }
-//        }
-//
-//        class AddIPACertifcateDoc : AbstractIssue<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, IndiaCommercialPaperProgram.Terms>(
-//                { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
-//                { token -> map { Amount(it.programSize.quantity, it.token) }.sumOrZero(token) }
-//        ) {
-//            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIPACertifcateDoc::class.java)
-//
-//            override fun verify(tx: TransactionForContract,
-//                                inputs: List<IndiaCommercialPaperProgram.State>,
-//                                outputs: List<IndiaCommercialPaperProgram.State>,
-//                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
-//                                groupingKey: Issued<IndiaCommercialPaperProgram.Terms>?): Set<IndiaCommercialPaperProgram.Commands> {
-//                val consumedCommands = super.verify(tx, inputs, outputs, commands, groupingKey)
-//                commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.AddIPACertifcateDoc>()
-//                val timestamp = tx.timestamp
-//                val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
-//
-//                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
-//
-//                return consumedCommands
-//            }
-//        }
-//
-//        class AddCorpActionFormDoc : AbstractIssue<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, IndiaCommercialPaperProgram.Terms>(
-//                { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
-//                { token -> map { Amount(it.programSize.quantity, it.token) }.sumOrZero(token) }
-//        ) {
-//            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddCorpActionFormDoc::class.java)
-//
-//            override fun verify(tx: TransactionForContract,
-//                                inputs: List<IndiaCommercialPaperProgram.State>,
-//                                outputs: List<IndiaCommercialPaperProgram.State>,
-//                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
-//                                groupingKey: Issued<IndiaCommercialPaperProgram.Terms>?): Set<IndiaCommercialPaperProgram.Commands> {
-//                val consumedCommands = super.verify(tx, inputs, outputs, commands, groupingKey)
-//                commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.AddCorpActionFormDoc>()
-//                val timestamp = tx.timestamp
-//                val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
-//
-//                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
-//
-//                return consumedCommands
-//            }
-//        }
-//
-//        class AddAllotmentLetterDoc : AbstractIssue<IndiaCommercialPaperProgram.State, IndiaCommercialPaperProgram.Commands, IndiaCommercialPaperProgram.Terms>(
-//                { map { Amount(it.programSize.quantity, it.token) }.sumOrThrow() },
-//                { token -> map { Amount(it.programSize.quantity, it.token) }.sumOrZero(token) }
-//        ) {
-//            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddAllotmentLetterDoc::class.java)
-//
-//            override fun verify(tx: TransactionForContract,
-//                                inputs: List<IndiaCommercialPaperProgram.State>,
-//                                outputs: List<IndiaCommercialPaperProgram.State>,
-//                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
-//                                groupingKey: Issued<IndiaCommercialPaperProgram.Terms>?): Set<IndiaCommercialPaperProgram.Commands> {
-//                val consumedCommands = super.verify(tx, inputs, outputs, commands, groupingKey)
-//                commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.AddAllotmentLetterDoc>()
-//                val timestamp = tx.timestamp
-//                val time = timestamp?.before ?: throw IllegalArgumentException("Issuances must be timestamped")
-//
-//                require(outputs.all { time < it.maturityDate }) { "maturity date is not in the past" }
-//
-//                return consumedCommands
-//            }
-//        }
+        class AddIPAVerificationDoc : AbstractIndiaCPProgramClause() {
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIPAVerificationDoc::class.java)
+
+            override fun verify(tx: TransactionForContract,
+                                inputs: List<IndiaCommercialPaperProgram.State>,
+                                outputs: List<IndiaCommercialPaperProgram.State>,
+                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
+                                groupingKey: UniqueIdentifier?): Set<IndiaCommercialPaperProgram.Commands> {
+
+                val command = commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.AddIPAVerificationDoc>()
+                val output = tx.outputs.filterIsInstance<IndiaCommercialPaperProgram.State>().single()
+                val attachment = tx.attachments.single()
+
+                val timestamp = tx.timestamp
+                val time = timestamp?.before ?: throw IllegalArgumentException("Add IPA Verification Doc Transaction must be timestamped")
+
+                requireThat {
+                    "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
+                    "the transaction is signed by the IPA" by (output.ipa.owningKey in command.signers)
+                    "the ISIN is generated" by (!output.isin.isNullOrBlank())
+                    "the IPA Verification Documents have been attached" by (attachment.id.toString() == output.ipaVerificationRequestDocId!!.split(":").first())
+                    "the IPA Verification Documents match the status as uploaded" by verifyDocAsPerStatus(attachment, output.ipaVerificationRequestDocId)
+                }
+
+                return setOf(command.value)
+            }
+        }
+
+        class AddIPACertifcateDoc : AbstractIndiaCPProgramClause() {
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddIPACertifcateDoc::class.java)
+
+            override fun verify(tx: TransactionForContract,
+                                inputs: List<IndiaCommercialPaperProgram.State>,
+                                outputs: List<IndiaCommercialPaperProgram.State>,
+                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
+                                groupingKey: UniqueIdentifier?): Set<IndiaCommercialPaperProgram.Commands> {
+
+                val command = commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.AddIPACertifcateDoc>()
+                val output = tx.outputs.filterIsInstance<IndiaCommercialPaperProgram.State>().single()
+                val attachment = tx.attachments.single()
+
+                val timestamp = tx.timestamp
+                val time = timestamp?.before ?: throw IllegalArgumentException("Add IPA Certificate Doc Transaction must be timestamped")
+
+                requireThat {
+                    "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
+                    "the transaction is signed by the IPA" by (output.ipa.owningKey in command.signers)
+                    "the IPA Verification Documents has been uploaded" by (!output.ipaVerificationRequestDocId.isNullOrBlank())
+                    //"the IPA Verification Documents has been signed by Issuer" by (verifyDocIsSignedByIssuer(attachment, output.ipaVerificationRequestDocId))
+                    "the IPA Certificate Document has been uploaded" by (!output.ipaCertificateDocId.isNullOrBlank())
+                    "the IPA Certificate Document has been attached" by (attachment.id.toString() == output.ipaCertificateDocId!!.split(":").first())
+                    "the IPA Certificate Documents matches the status as uploaded" by verifyDocAsPerStatus(attachment, output.ipaCertificateDocId)
+                }
+
+                return setOf(command.value)
+            }
+        }
+
+        class AddCorpActionFormDoc : AbstractIndiaCPProgramClause() {
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaperProgram.Commands.AddCorpActionFormDoc::class.java)
+
+            override fun verify(tx: TransactionForContract,
+                                inputs: List<IndiaCommercialPaperProgram.State>,
+                                outputs: List<IndiaCommercialPaperProgram.State>,
+                                commands: List<AuthenticatedObject<IndiaCommercialPaperProgram.Commands>>,
+                                groupingKey: UniqueIdentifier?): Set<IndiaCommercialPaperProgram.Commands> {
+
+                val command = commands.requireSingleCommand<IndiaCommercialPaperProgram.Commands.AddCorpActionFormDoc>()
+                val output = tx.outputs.filterIsInstance<IndiaCommercialPaperProgram.State>().single()
+                val attachment = tx.attachments.single()
+
+                val timestamp = tx.timestamp
+                val time = timestamp?.before ?: throw IllegalArgumentException("Add Corporate Action Form Transaction must be timestamped")
+
+                requireThat {
+                    "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
+                    "the transaction is signed by the Depository" by (output.depository.owningKey in command.signers)
+                    "the IPA Verification Documents has been uploaded" by (!output.ipaVerificationRequestDocId.isNullOrBlank())
+                    "the IPA Certificate Document has been uploaded" by (!output.ipaCertificateDocId.isNullOrBlank())
+                    "the CorpActionForm Document has been uploaded" by (!output.corporateActionFormDocId.isNullOrBlank())
+                    "the CorpActionForm Document has been attached" by (attachment.id.toString() == output.corporateActionFormDocId!!.split(":").first())
+                    "the CorpActionForm Document matches the status as uploaded" by verifyDocAsPerStatus(attachment, output.corporateActionFormDocId)
+                }
+
+                return setOf(command.value)
+            }
+        }
 
     }
 
@@ -389,10 +390,10 @@ class IndiaCommercialPaperProgram : Contract {
         class Amend() : TypeOnlyCommandData(), IndiaCommercialPaperProgram.Commands
         class AddIsinGenDoc() : TypeOnlyCommandData(), IndiaCommercialPaperProgram.Commands
         class AddIsin() : IndiaCommercialPaperProgram.Commands
-        class AddIPAVerification(ipaVerificationRequestDocId: String) : IndiaCommercialPaperProgram.Commands
-        class AddIPACertifcateDoc(ipaCertificateDocId: String) : IndiaCommercialPaperProgram.Commands
-        class AddCorpActionFormDoc(corporateActionFormDocId: String) : IndiaCommercialPaperProgram.Commands
-        class AddAllotmentLetterDoc(allotmentLetterDocId: String) : IndiaCommercialPaperProgram.Commands
+        class AddIPAVerificationDoc() : TypeOnlyCommandData(), IndiaCommercialPaperProgram.Commands
+        class AddIPACertifcateDoc() : TypeOnlyCommandData(), IndiaCommercialPaperProgram.Commands
+        class AddCorpActionFormDoc() : TypeOnlyCommandData(), IndiaCommercialPaperProgram.Commands
+        class AddAllotmentLetterDoc() : TypeOnlyCommandData(), IndiaCommercialPaperProgram.Commands
     }
 
     fun generateIssue(cpProgramContractState: IndiaCommercialPaperProgram.State,
@@ -502,183 +503,85 @@ class IndiaCommercialPaperProgram : Contract {
         return tx
     }
 
+    fun  generateTransactionWithIPADocAttachment(cpProgramContractStateAndRef: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party): TransactionBuilder? {
+        val tx = TransactionType.General.Builder(notary)
 
+        //Adding Inputs
+        tx.addInputState(cpProgramContractStateAndRef)
 
-    /**
-     * Returns a transaction that that updates the ISIN on to the CP Program.
-     * It should also stamp the ISIN Generated proof document on to DL
-     */
-    fun addIsinToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, isin:String, status: String): TransactionBuilder {
+        //Adding Outputs
+        tx.addOutputState(
+                cpProgramContractStateAndRef.state.data.copy(
+                        version = cpProgramContractStateAndRef.state.data.version!! + 1,
+                        lastModifiedDate = Instant.now(),
+                        status = IndiaCPProgramStatusEnum.IPA_VERIFICATION_DOC_ADDED.name
+                ),
+                cpProgramContractStateAndRef.state.notary
+        )
 
-        val ptx = TransactionType.General.Builder(notary)
-//        ptx.addInputState(indiaCPProgramSF)
-//
-//        val newVersion = Integer(indiaCPProgramSF.state.data.version!!.toInt() + 1)
-//
-//        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-//                isin  = isin,
-//                status = status,
-//                version = newVersion
-//        ))
+        //Adding Attachments
+        val docHash = cpProgramContractStateAndRef.state.data.ipaVerificationRequestDocId!!.split(":").first()
+        tx.addAttachment(SecureHash.parse(docHash))
 
-        return ptx
+        //Adding Required Commands
+        tx.addCommand(IndiaCommercialPaperProgram.Commands.AddIPAVerificationDoc(), listOf(cpProgramContractStateAndRef.state.data.issuer.owningKey,
+                cpProgramContractStateAndRef.state.data.ipa.owningKey))
+
+        return tx
     }
 
+    fun  generateTransactionWithIPACertificateDocAttachment(cpProgramContractStateAndRef: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party): TransactionBuilder? {
+        val tx = TransactionType.General.Builder(notary)
 
-    /**
-     * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
-     */
-    fun addIPAVerificationDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, docDetails:IndiaCPDocumentDetails, status: String): TransactionBuilder {
+        //Adding Inputs
+        tx.addInputState(cpProgramContractStateAndRef)
 
-        val ptx = TransactionType.General.Builder(notary)
-        ptx.addInputState(indiaCPProgramSF)
+        //Adding Outputs
+        tx.addOutputState(
+                cpProgramContractStateAndRef.state.data.copy(
+                        version = cpProgramContractStateAndRef.state.data.version!! + 1,
+                        lastModifiedDate = Instant.now(),
+                        status = IndiaCPProgramStatusEnum.IPA_CERTIFICATE_DOC_ADDED.name
+                ),
+                cpProgramContractStateAndRef.state.notary
+        )
 
-        val newVersion = Integer(indiaCPProgramSF.state.data.version!!.toInt() + 1)
+        //Adding Attachments
+        val docHash = cpProgramContractStateAndRef.state.data.ipaCertificateDocId!!.split(":").first()
+        tx.addAttachment(SecureHash.parse(docHash))
 
-//        val docHash:String = docDetails[0].docHash
-//
-//        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-//                ipaVerificationRequestDocId = docHash,
-//                status = status,
-//                version = newVersion
-//        ))
-//
-//        for(doc in docDetails)
-//        {
-//            val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer, indiaCPProgramSF.state.data.programId, doc.docType.toString(), doc.docSubType,
-//                    doc.docHash, doc.docStatus, doc.modifiedBy, Instant.now()), notary)
-//
-//
-//            ptx.addOutputState(docState)
-//        }
+        //Adding Required Commands
+        tx.addCommand(IndiaCommercialPaperProgram.Commands.AddIPACertifcateDoc(), listOf(cpProgramContractStateAndRef.state.data.issuer.owningKey,
+                cpProgramContractStateAndRef.state.data.ipa.owningKey))
 
-        return ptx
+        return tx
     }
 
+    fun  generateTransactionWithCAFormDocAttachment(cpProgramContractStateAndRef: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party): TransactionBuilder? {
+        val tx = TransactionType.General.Builder(notary)
 
-    /**
-     * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
-     */
-    fun addIPACertifcateDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, docDetails:IndiaCPDocumentDetails, status: String): TransactionBuilder {
+        //Adding Inputs
+        tx.addInputState(cpProgramContractStateAndRef)
 
-        val ptx = TransactionType.General.Builder(notary)
-        ptx.addInputState(indiaCPProgramSF)
+        //Adding Outputs
+        tx.addOutputState(
+                cpProgramContractStateAndRef.state.data.copy(
+                        version = cpProgramContractStateAndRef.state.data.version!! + 1,
+                        lastModifiedDate = Instant.now(),
+                        status = IndiaCPProgramStatusEnum.CORP_ACTION_FORM_DOC_ADDED.name
+                ),
+                cpProgramContractStateAndRef.state.notary
+        )
 
-        val newVersion = Integer(indiaCPProgramSF.state.data.version!!.toInt() + 1)
+        //Adding Attachments
+        val docHash = cpProgramContractStateAndRef.state.data.corporateActionFormDocId!!.split(":").first()
+        tx.addAttachment(SecureHash.parse(docHash))
 
-//        val docHash:String = docDetails[0].docHash
-//
-//        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-//                ipaCertificateDocId = docHash,
-//                status = status,
-//                version = newVersion
-//        ))
-//
-//        for(doc in docDetails)
-//        {
-//            val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer, indiaCPProgramSF.state.data.programId, doc.docType.toString(), doc.docSubType,
-//                    doc.docHash, doc.docStatus, doc.modifiedBy, Instant.now()), notary)
-//
-//
-//            ptx.addOutputState(docState)
-//        }
+        //Adding Required Commands
+        tx.addCommand(IndiaCommercialPaperProgram.Commands.AddCorpActionFormDoc(), listOf(cpProgramContractStateAndRef.state.data.issuer.owningKey,
+                cpProgramContractStateAndRef.state.data.depository.owningKey))
 
-        return ptx
-    }
-
-
-    /**
-     * Returns a transaction that that updates the ISIN on to the CP Program.
-     * It should also stamp the ISIN Generated proof document on to DL
-     */
-    fun addIsinGenDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, issuer: Party, notary: Party, docDetails:IndiaCPDocumentDetails, status:String): TransactionBuilder {
-
-        val ptx = TransactionType.General.Builder(notary)
-        ptx.addInputState(indiaCPProgramSF)
-
-        val newVersion = Integer(indiaCPProgramSF.state.data.version!!.toInt() + 1)
-
-//        val docHash = docDetails[0].docHash
-//
-//
-//        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-//                isinGenerationRequestDocId = docHash,
-//                status = status,
-//                version = newVersion
-//        ))
-//
-//        for(doc in docDetails)
-//        {
-//            val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer, indiaCPProgramSF.state.data.programId, doc.docType.toString(), doc.docSubType,
-//                    doc.docHash, doc.docStatus, doc.modifiedBy, Instant.now()), notary)
-//
-//
-//            ptx.addOutputState(docState)
-//        }
-
-        return ptx
-    }
-
-    /**
-     * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
-     */
-    fun addCorpActionFormDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, docDetails:IndiaCPDocumentDetails, status: String): TransactionBuilder {
-
-        val ptx = TransactionType.General.Builder(notary)
-        ptx.addInputState(indiaCPProgramSF)
-
-        val newVersion = Integer(indiaCPProgramSF.state.data.version!!.toInt() + 1)
-
-//        val docHash = docDetails[0].docHash
-//
-//        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-//                corporateActionFormDocId = docHash,
-//                status = status,
-//                version = newVersion
-//        ))
-//
-//        for(doc in docDetails)
-//        {
-//            val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer, indiaCPProgramSF.state.data.programId, doc.docType.toString(), doc.docSubType,
-//                    doc.docHash, doc.docStatus, doc.modifiedBy, Instant.now()), notary)
-//
-//
-//            ptx.addOutputState(docState)
-//        }
-
-        return ptx
-    }
-
-
-    /**
-     * Returns a transaction that that updates the IPA Verification Cert on to the CP Program.
-     */
-    fun addAllotmentLetterDocToCPProgram(indiaCPProgramSF: StateAndRef<IndiaCommercialPaperProgram.State>, notary: Party, docDetails:IndiaCPDocumentDetails, status: String): TransactionBuilder {
-
-        val ptx = TransactionType.General.Builder(notary)
-        ptx.addInputState(indiaCPProgramSF)
-
-        val newVersion = Integer(indiaCPProgramSF.state.data.version!!.toInt() + 1)
-
-        val docHash = docDetails.docHash
-
-//        ptx.addOutputState(indiaCPProgramSF.state.data.copy(
-//                allotmentLetterDocId = docHash,
-//                status = status,
-//                version = newVersion
-//        ))
-//
-//        for(doc in docDetails)
-//        {
-//            val docState = TransactionState(IndiaCommercialPaperProgram.DocState(indiaCPProgramSF.state.data.issuer, indiaCPProgramSF.state.data.programId, doc.docType.toString(), doc.docSubType,
-//                    doc.docHash, doc.docStatus, doc.modifiedBy, Instant.now()), notary)
-//
-//
-//            ptx.addOutputState(docState)
-//        }
-
-        return ptx
-    }
+        return tx    }
 }
 
 

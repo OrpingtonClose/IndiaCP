@@ -1,6 +1,9 @@
 package com.barclays.indiacp.cordapp.protocol.issuer
 
 import co.paralleluniverse.fibers.Suspendable
+import com.barclays.indiacp.cordapp.protocol.agreements.AddCPDocFlow
+import com.barclays.indiacp.cordapp.protocol.agreements.AddCPProgramDocFlow
+import com.barclays.indiacp.cordapp.protocol.depository.AddISINFlow
 import net.corda.core.crypto.Party
 import net.corda.core.flows.FlowLogic
 import net.corda.core.node.NodeInfo
@@ -9,6 +12,7 @@ import net.corda.core.serialization.SingletonSerializeAsToken
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.WireTransaction
 import net.corda.core.utilities.ProgressTracker
+import net.corda.flows.FetchAttachmentsFlow
 
 /**
  * Generic Acceptor Side of the Flow for Receiving the propogated fully signed transaction of CP or CP Program
@@ -19,8 +23,9 @@ class OtherParticipantsTransactionPropogationFlow(val otherParty: Party) : FlowL
         object VERIFYING : ProgressTracker.Step("Verifying the fully signed transaction")
         object RECORDING_TRANSACTION : ProgressTracker.Step("Recording Transaction in Local Storage")
         object TRANSACTION_RECORDED : ProgressTracker.Step("Transaction Recorded in Local Storage")
+        object FETCHING_MISSING_ATTACHMENTS : ProgressTracker.Step("Fetching missing attachments")
 
-        fun tracker() = ProgressTracker(RECEIVING, VERIFYING, RECORDING_TRANSACTION, TRANSACTION_RECORDED)
+        fun tracker() = ProgressTracker(RECEIVING, VERIFYING, RECORDING_TRANSACTION, TRANSACTION_RECORDED, FETCHING_MISSING_ATTACHMENTS)
     }
 
     override val progressTracker = tracker()
@@ -30,6 +35,9 @@ class OtherParticipantsTransactionPropogationFlow(val otherParty: Party) : FlowL
         init {
             services.registerFlowInitiator(IssueCPFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
             services.registerFlowInitiator(IssueCPProgramFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
+            services.registerFlowInitiator(AddISINFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
+            services.registerFlowInitiator(AddCPDocFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
+            services.registerFlowInitiator(AddCPProgramDocFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
         }
     }
 
@@ -61,6 +69,12 @@ class OtherParticipantsTransactionPropogationFlow(val otherParty: Party) : FlowL
         progressTracker.currentStep = RECORDING_TRANSACTION
         serviceHub.recordTransactions(listOf(stx))
         progressTracker.currentStep = TRANSACTION_RECORDED
+
+        //Resolve Any Missing Attachments
+        progressTracker.currentStep = FETCHING_MISSING_ATTACHMENTS
+        val attachments = wtx.attachments
+        val missingAttachments = attachments.filter { it.open() == null }
+        missingAttachments.forEach { subFlow(FetchAttachmentsFlow(setOf(it!!), otherParty)) }
 
         return stx
     }

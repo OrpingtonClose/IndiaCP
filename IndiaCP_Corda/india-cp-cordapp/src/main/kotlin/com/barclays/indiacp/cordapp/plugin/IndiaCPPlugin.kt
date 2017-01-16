@@ -9,8 +9,8 @@ import com.barclays.indiacp.cordapp.contract.CreditRating
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.protocol.agreements.AddCPDocFlow
-import com.barclays.indiacp.cordapp.protocol.agreements.AddISINDocFlow
-import com.barclays.indiacp.cordapp.protocol.agreements.AddISINFlow
+import com.barclays.indiacp.cordapp.protocol.agreements.AddCPProgramDocFlow
+import com.barclays.indiacp.cordapp.protocol.depository.AddISINFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.*
 import com.barclays.indiacp.model.IndiaCPDocumentDetails
 import com.barclays.indiacp.model.IndiaCPProgram
@@ -37,7 +37,7 @@ class IndiaCPPlugin : CordaPluginRegistry() {
             CreditRatingFlows::class.java.name to setOf(CreditRating.State::class.java.name, String::class.java.name),
             BorrowingLimitBoardResolutionFlows::class.java.name to setOf(BorrowingLimitBoardResolution.State::class.java.name, String::class.java.name),
             IssueCPProgramFlow::class.java.name to setOf(IndiaCommercialPaperProgram.State::class.java.name),
-            AddISINDocFlow::class.java.name to setOf(StateAndRef::class.java.name),
+            AddCPProgramDocFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCPDocumentDetails.DocTypeEnum::class.java.name, Party::class.java.name, Party::class.java.name),
             AddISINFlow::class.java.name to setOf(StateAndRef::class.java.name),
             IssueCPFlow::class.java.name to setOf(IndiaCommercialPaper.State::class.java.name),
             AddCPDocFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCPDocumentDetails.DocTypeEnum::class.java.name, Party::class.java.name)
@@ -47,7 +47,7 @@ class IndiaCPPlugin : CordaPluginRegistry() {
     )
 
     override val servicePlugins = listOf(
-            AddISINDocFlow.Services::class.java,
+            AddCPProgramDocFlow.Services::class.java,
             AddISINFlow.Services::class.java,
             AddCPDocFlow.Services::class.java,
             OtherParticipantsTransactionPropogationFlow.Services::class.java
