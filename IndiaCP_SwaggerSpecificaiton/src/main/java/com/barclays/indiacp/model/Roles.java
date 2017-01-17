@@ -1,4 +1,4 @@
-package com.barclays.indiacp.dl.integration;
+package com.barclays.indiacp.model;
 
 import java.util.Date;
 

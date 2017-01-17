@@ -1,42 +1,27 @@
 package com.barclays.indiacp.dl.integration;
 
-import com.barclays.indiacp.dl.EMVerifyClient.DSVerifyWSImplServiceLocator;
-import com.barclays.indiacp.dl.EMVerifyClient.DSVerifyWSImplServiceSoapBindingStub;
 import com.barclays.indiacp.dl.utils.DLAttachmentUtils;
-import com.barclays.indiacp.dl.utils.DLConfig;
-import com.barclays.indiacp.model.IndiaCPDocumentDetails;
-import com.barclays.indiacp.model.IndiaCPProgram;
-import jdk.nashorn.internal.parser.JSONParser;
-
+import com.barclays.indiacp.model.Roles;
+import com.barclays.indiacp.model.VerificationResult;
 import javax.ws.rs.*;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
 import java.util.Locale;
-import java.util.logging.Logger;
-import java.util.zip.ZipFile;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.json.simple.JSONObject;
 //import org.json.simple.parser.JSONParser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import org.json.simple.parser.ParseException;
 
 
 /**
@@ -45,7 +30,7 @@ import org.json.simple.parser.ParseException;
 @Path("indiacpdocuments")
 public class IndiaCPDocumentsApi {
 
-    @GET
+    @POST
     @Path("generateISINDocuments")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
@@ -293,7 +278,7 @@ public class IndiaCPDocumentsApi {
         //return Response.status(Response.Status.OK).build();
     }
 
-    @GET
+    @POST
     @Path("generateIPADocuments")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
@@ -404,7 +389,7 @@ public class IndiaCPDocumentsApi {
                 .build();
     }
 
-    @GET
+    @POST
     @Path("generateDealConfirmationDocument")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
@@ -651,7 +636,7 @@ public class IndiaCPDocumentsApi {
 
     }
 
-    @GET
+    @POST
     @Path("generateCAFDocument")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
