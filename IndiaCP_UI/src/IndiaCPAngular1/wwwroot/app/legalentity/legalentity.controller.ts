@@ -2,7 +2,6 @@ module app.legalentity {
     "use strict";
 
     interface ILegalEntityScope {
-        nodeType: string;
         brDetails: app.models.BoardResolutionDocs;
         crDetails: app.models.CreditRatingDocs;
         signCR(): void;
@@ -20,7 +19,7 @@ module app.legalentity {
             "Upload",
             "growl",
             "$uibModalInstance"];
-        nodeType: string;
+        nodeInfo: app.models.NodeInfo;
         brDetails: app.models.BoardResolutionDocs;
         crDetails: app.models.CreditRatingDocs;
         brFileUrl: string;
@@ -35,11 +34,11 @@ module app.legalentity {
             protected Upload: ng.angularFileUpload.IUploadService,
             protected growl: ng.growl.IGrowlService,
             protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance) {
-            this.nodeType = (this.localStorageService.get("nodeInfo") as app.models.NodeInfo).nodeType;
+            this.nodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
 
             // br details setup
             this.brDetails = new app.models.BoardResolutionDocs();
-            this.brDetails.legalEntityId = "Issuer1";
+            this.brDetails.legalEntityId = this.nodeInfo.dlNodeName;
             this.brDetails.boardResolutionBorrowingLimit = 10000;
             this.brDetails.boardResolutionIssuanceDate = new Date(); // Todays date
             this.brDetails.boardResolutionExpiryDate = new Date(2022, 12, 08); //5 years from now
@@ -49,7 +48,7 @@ module app.legalentity {
 
             // cr detsils setup
             this.crDetails = new app.models.CreditRatingDocs();
-            this.crDetails.legalEntityId = "Issuer1";
+            this.crDetails.legalEntityId = this.nodeInfo.dlNodeName;
             this.crDetails.creditRatingAgencyName = "ICRA";
             this.crDetails.creditRatingAmount = 10000;
             this.crDetails.creditRating = "AAA";

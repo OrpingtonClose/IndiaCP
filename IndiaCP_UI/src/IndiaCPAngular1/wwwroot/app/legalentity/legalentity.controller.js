@@ -13,10 +13,10 @@ var app;
                 this.Upload = Upload;
                 this.growl = growl;
                 this.$uibModalInstance = $uibModalInstance;
-                this.nodeType = this.localStorageService.get("nodeInfo").nodeType;
+                this.nodeInfo = this.localStorageService.get("nodeInfo");
                 // br details setup
                 this.brDetails = new app.models.BoardResolutionDocs();
-                this.brDetails.legalEntityId = "Issuer1";
+                this.brDetails.legalEntityId = this.nodeInfo.dlNodeName;
                 this.brDetails.boardResolutionBorrowingLimit = 10000;
                 this.brDetails.boardResolutionIssuanceDate = new Date(); // Todays date
                 this.brDetails.boardResolutionExpiryDate = new Date(2022, 12, 08); //5 years from now
@@ -25,7 +25,7 @@ var app;
                 this.brDetails.docHash = "XXXXXXXXXXX";
                 // cr detsils setup
                 this.crDetails = new app.models.CreditRatingDocs();
-                this.crDetails.legalEntityId = "Issuer1";
+                this.crDetails.legalEntityId = this.nodeInfo.dlNodeName;
                 this.crDetails.creditRatingAgencyName = "ICRA";
                 this.crDetails.creditRatingAmount = 10000;
                 this.crDetails.creditRating = "AAA";

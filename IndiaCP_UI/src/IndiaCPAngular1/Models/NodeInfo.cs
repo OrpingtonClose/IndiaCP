@@ -11,5 +11,6 @@ namespace IndiaCPAngular1.Models
         public string NodeName { get; set; }
         public string Host { get; set; }
         public int Port { get; set; }
+        public string DLNodeName { get; set; }
     }
 }
