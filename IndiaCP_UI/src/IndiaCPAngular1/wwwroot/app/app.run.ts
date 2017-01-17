@@ -46,7 +46,7 @@
             }
         });
         $timeout(function () {
-            $state.transitionTo("main.depository");
+            $state.transitionTo("login");
         }, 1000);
     }
 })();

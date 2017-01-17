@@ -14,7 +14,7 @@ module app.dashboard {
 
     class DashboardController implements IDashboardScope, ng.IController {
         loggedinUser: app.users.IUser;
-        cpPrograms: app.models.IndiaCPProgram[];
+        cpPrograms: Array<app.models.IndiaCPProgram>;
         workflowStates: app.models.WorkflowStates;
         dataRefresher: ng.IPromise<any>;
         nodeInfo: app.models.NodeInfo;
