@@ -5,7 +5,8 @@
         constructor(public nodeType?: string,
             public host?: string,
             public port?: number,
-            public nodeName?: string) {
+            public nodeName?: string,
+            public dlNodeName?: string) {
         }
     }
 

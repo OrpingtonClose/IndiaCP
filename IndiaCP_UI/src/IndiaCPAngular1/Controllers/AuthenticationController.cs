@@ -51,24 +51,28 @@ namespace IndiaCPAngular1.Controllers
                         nodeInfo.NodeName = "Barclays Investments and Loans (India) Ltd";
                         nodeInfo.Host = "52.172.46.253";
                         nodeInfo.Port = 8181;
+                        nodeInfo.DLNodeName = "BILL_ISSUER";
                         break;
                     case "investor1":
                         nodeInfo.NodeType = "INVESTOR";
                         nodeInfo.NodeName = "Barclays Shared Services";
                         nodeInfo.Host = "52.172.46.253";
                         nodeInfo.Port = 8182;
+                        nodeInfo.DLNodeName = "BSS_INVESTOR";
                         break;
                     case "nsdl1":
                         nodeInfo.NodeType = "DEPOSITORY";
                         nodeInfo.NodeName = "NSDL";
                         nodeInfo.Host = "52.172.46.253";
                         nodeInfo.Port = 8183;
+                        nodeInfo.DLNodeName = "NSDL_DEPOSITORY";
                         break;
                     default:
                         nodeInfo.NodeType = "IPA";
                         nodeInfo.NodeName = "HDFC";
                         nodeInfo.Host = "52.172.46.253";
                         nodeInfo.Port = 8184;
+                        nodeInfo.DLNodeName = "HDFC_IPA";
                         break;
                 }
 
