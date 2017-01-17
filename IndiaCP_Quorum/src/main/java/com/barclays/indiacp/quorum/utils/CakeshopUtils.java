@@ -32,7 +32,7 @@ public class CakeshopUtils {
 
     static {
         // setup cakeshop manager
-        cakeshopManager = ClientManager.create("http://52.172.46.253:8081/cakeshop");
+        cakeshopManager = ClientManager.create("http://52.172.46.253:8080/cakeshop");
         contractApi = cakeshopManager.getClient(ContractApi.class);
         transactionApi = cakeshopManager.getClient(TransactionApi.class);
     }
