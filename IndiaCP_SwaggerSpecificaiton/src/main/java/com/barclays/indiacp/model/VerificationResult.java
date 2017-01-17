@@ -1,8 +1,11 @@
-package com.barclays.indiacp.dl.integration;
+package com.barclays.indiacp.model;
 
 /**
  * Created by Electrania.com on 1/14/2017.
  */
+
+
+
 public class VerificationResult {
 
     public String result;
