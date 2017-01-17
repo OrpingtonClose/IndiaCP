@@ -4,11 +4,12 @@ var app;
     (function (legalentity) {
         "use strict";
         var LegalEntityController = (function () {
-            function LegalEntityController($sce, $state, authService, issuerService, localStorageService, Upload, growl, $uibModalInstance) {
+            function LegalEntityController($sce, $state, authService, issuerService, docSignService, localStorageService, Upload, growl, $uibModalInstance) {
                 this.$sce = $sce;
                 this.$state = $state;
                 this.authService = authService;
                 this.issuerService = issuerService;
+                this.docSignService = docSignService;
                 this.localStorageService = localStorageService;
                 this.Upload = Upload;
                 this.growl = growl;
@@ -19,7 +20,7 @@ var app;
                 this.brDetails.legalEntityId = this.nodeInfo.dlNodeName;
                 this.brDetails.boardResolutionBorrowingLimit = 10000;
                 this.brDetails.boardResolutionIssuanceDate = new Date(); // Todays date
-                this.brDetails.boardResolutionExpiryDate = new Date(2022, 12, 08); //5 years from now
+                this.brDetails.boardResolutionExpiryDate = new Date(2022, 12, 8); //5 years from now
                 this.brDetails.modifiedBy = "Ritu";
                 this.brDetails.currency = "INR";
                 this.brDetails.docHash = "XXXXXXXXXXX";
@@ -31,7 +32,7 @@ var app;
                 this.crDetails.creditRating = "AAA";
                 this.crDetails.creditRatingIssuanceDate = new Date();
                 this.crDetails.creditRatingEffectiveDate = new Date();
-                this.crDetails.creditRatingExpiryDate = new Date(2022, 12, 08); //5 years from now
+                this.crDetails.creditRatingExpiryDate = new Date(2022, 12, 8); //5 years from now
                 this.crDetails.modifiedBy = "Ritu";
                 this.crDetails.currency = "INR";
                 this.crDetails.docHash = "XXXXXXXXXXX";
@@ -43,17 +44,12 @@ var app;
             };
             LegalEntityController.prototype.signBR = function () {
                 var _this = this;
-                var httpUploadRequestParams = {
-                    url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/BoardResolution",
-                    data: { file: this.brFile },
-                    method: "POST"
-                };
-                this.Upload.upload(httpUploadRequestParams).
+                this.docSignService.signDoc(this.brFile, "BoardResolution").
                     then(function (response) {
                     _this.growl.success("BR document signed succesfully", { title: "BR Signed!" });
                     var streamData = response.data;
                     var url = "data:application/pdf;base64," + streamData;
-                    _this.crFileUrl = _this.$sce.trustAsResourceUrl(url);
+                    _this.brFileUrl = _this.$sce.trustAsResourceUrl(url);
                 }, function (error) {
                     _this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
                 });
@@ -88,12 +84,7 @@ var app;
             };
             LegalEntityController.prototype.signCR = function () {
                 var _this = this;
-                var httpUploadRequestParams = {
-                    url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/CreditRating",
-                    data: { file: this.crFile },
-                    method: "POST"
-                };
-                this.Upload.upload(httpUploadRequestParams).
+                this.docSignService.signDoc(this.brFile, "CreditRating").
                     then(function (response) {
                     _this.growl.success("Credit Details document signed succesfully", { title: "CR Signed!" });
                     var streamData = response.data;
@@ -124,6 +115,7 @@ var app;
             "$state",
             "app.services.AuthenticationService",
             "app.services.IssuerService",
+            "app.services.DocSignService",
             "localStorageService",
             "Upload",
             "growl",

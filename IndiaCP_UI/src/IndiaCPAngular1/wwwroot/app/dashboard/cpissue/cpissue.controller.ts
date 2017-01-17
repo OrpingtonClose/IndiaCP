@@ -25,8 +25,8 @@ module app.dashboard.cpissue {
         this.cpissue.issuerId = this.cpProgram.issuerId;
         this.cpissue.issuerName = this.cpProgram.issuerName;
         this.cpissue.cpTradeId = this.cpissue.issuerName + "-" + this.uuid4.generate();
-        this.cpissue.beneficiaryId = "Issuer";
-        this.cpissue.beneficiaryName = "Issuer";
+        this.cpissue.beneficiaryId = "BSS_INVESTOR";
+        this.cpissue.beneficiaryName = "BSS";
         this.cpissue.ipaId = this.cpProgram.ipaId;
         this.cpissue.ipaName = this.cpProgram.ipaName;
         this.cpissue.depositoryId = this.cpProgram.depositoryId;

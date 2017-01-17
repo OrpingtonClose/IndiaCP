@@ -67,8 +67,8 @@
                                 <span class="label label-default">{{cpprogram.status}}</span>
                             </td>
                             <td class="text-center">
-                                <button type="button" ng-click="vm.executeNextAction(cpprogram.nextAction, cpprogram)" ng-disabled="vm.nodeInfo.nodeType != 'DEPOSITORY'"
-                                    class="btn btn-success btn-raised btn-xs">{{cpprogram.nextAction}}</button>
+                                <button type="button" ng-click="vm.executeNextAction(cpprogram.nextAction.name, cpprogram)" ng-disabled="cpprogram.nextAction.allowedNodes.indexOf('DEPOSITORY') == -1"
+                                    class="btn btn-success btn-raised btn-xs">{{cpprogram.nextAction.name}}</button>
                             </td>
                             <td class="text-center">
                                 <button type="button" ng-click="vm.createCPISsue(cpprogram)" class="btn btn-success btn-raised btn-sm">Sell</button>

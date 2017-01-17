@@ -8,25 +8,35 @@ module app.dashboard.cpprogramcreate {
     class CPProgramCreateController implements ICPProgramCreateScope {
         isinDocPDF: string;
         cpprogram: app.models.IndiaCPProgram;
-        static $inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4", "growl"];
+        nodeInfo: app.models.NodeInfo;
+        ipacollection: Array<app.models.IPA>;
+        depositorycollection: Array<app.models.Depository>;
+        static $inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4", "growl", "localStorageService"];
         constructor(
             protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
             protected issuerService: app.services.IIssuerService,
             protected uuid4: any,
-            protected growl: ng.growl.IGrowlService) {
+            protected growl: ng.growl.IGrowlService,
+            protected localStorageService: ng.local.storage.ILocalStorageService) {
+
+            this.ipacollection = [{ displayName: "HDFC", id: "HDFC_IPA" }, { displayName: "SBI", id: "SBI_IPA" }];
+            this.depositorycollection = [{ displayName: "NSDL", id: "NSDL_DEPOSITORY" }, { displayName: "CDSL", id: "CDSL_IPA" }];
+
+            this.nodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
+
             this.cpprogram = new app.models.IndiaCPProgram();
-            this.cpprogram.issuerId = "Issuer1";
+            this.cpprogram.issuerId = this.nodeInfo.dlNodeName;
             this.cpprogram.programCurrency = "INR";
-            this.cpprogram.issuerName = "Issuer1";
+            this.cpprogram.issuerName = this.nodeInfo.nodeName;
             this.cpprogram.purpose = "ICP";
             this.cpprogram.issueCommencementDate = new Date();
             this.cpprogram.type = "India Commercial Paper";
             this.cpprogram.maturityDays = 7;
             this.cpprogram.programSize = 1000;
-            this.cpprogram.depositoryId = "Issuer1";
-            this.cpprogram.depositoryName = "Issuer1";
-            this.cpprogram.ipaId = "Issuer1";
-            this.cpprogram.ipaName = "Issuer1";
+            this.cpprogram.depositoryId = "HDFC_IPA";
+            this.cpprogram.depositoryName = "HDFC";
+            this.cpprogram.ipaId = "NSDL_DEPOSITORY";
+            this.cpprogram.ipaName = "NSDL";
         }
         public createCPProgram(): void {
             this.issuerService.issueCPProgram(this.cpprogram).then((): void => {

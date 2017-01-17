@@ -15,6 +15,7 @@ module app.legalentity {
             "$state",
             "app.services.AuthenticationService",
             "app.services.IssuerService",
+            "app.services.DocSignService",
             "localStorageService",
             "Upload",
             "growl",
@@ -30,6 +31,7 @@ module app.legalentity {
             protected $state: ng.ui.IStateService,
             protected authService: app.services.IAuthenticationService,
             protected issuerService: app.services.IIssuerService,
+            protected docSignService: app.services.IDocSignService,
             protected localStorageService: ng.local.storage.ILocalStorageService,
             protected Upload: ng.angularFileUpload.IUploadService,
             protected growl: ng.growl.IGrowlService,
@@ -41,7 +43,7 @@ module app.legalentity {
             this.brDetails.legalEntityId = this.nodeInfo.dlNodeName;
             this.brDetails.boardResolutionBorrowingLimit = 10000;
             this.brDetails.boardResolutionIssuanceDate = new Date(); // Todays date
-            this.brDetails.boardResolutionExpiryDate = new Date(2022, 12, 08); //5 years from now
+            this.brDetails.boardResolutionExpiryDate = new Date(2022, 12, 8); //5 years from now
             this.brDetails.modifiedBy = "Ritu";
             this.brDetails.currency = "INR";
             this.brDetails.docHash = "XXXXXXXXXXX";
@@ -54,7 +56,7 @@ module app.legalentity {
             this.crDetails.creditRating = "AAA";
             this.crDetails.creditRatingIssuanceDate = new Date();
             this.crDetails.creditRatingEffectiveDate = new Date();
-            this.crDetails.creditRatingExpiryDate = new Date(2022, 12, 08); //5 years from now
+            this.crDetails.creditRatingExpiryDate = new Date(2022, 12, 8); //5 years from now
             this.crDetails.modifiedBy = "Ritu";
             this.crDetails.currency = "INR";
             this.crDetails.docHash = "XXXXXXXXXXX";
@@ -70,17 +72,12 @@ module app.legalentity {
         }
 
         public signBR(): void {
-            let httpUploadRequestParams: any = {
-                url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/BoardResolution",
-                data: { file: this.brFile },
-                method: "POST"
-            }
-            this.Upload.upload(httpUploadRequestParams).
+            this.docSignService.signDoc(this.brFile,"BoardResolution").
                 then((response: any) => {
                     this.growl.success("BR document signed succesfully", { title: "BR Signed!" });
                     let streamData = response.data;
                     var url: string = "data:application/pdf;base64," + streamData;
-                    this.crFileUrl = this.$sce.trustAsResourceUrl(url);
+                    this.brFileUrl = this.$sce.trustAsResourceUrl(url);
 
                 }, (error: any) => {
                     this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
@@ -119,12 +116,7 @@ module app.legalentity {
         }
 
         public signCR(): void {
-            let httpUploadRequestParams: any = {
-                url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/CreditRating",
-                data: { file: this.crFile },
-                method: "POST"
-            }
-            this.Upload.upload(httpUploadRequestParams).
+            this.docSignService.signDoc(this.brFile,"CreditRating").
                 then((response: any) => {
                     this.growl.success("Credit Details document signed succesfully", { title: "CR Signed!" });
                     let streamData = response.data;

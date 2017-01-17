@@ -12,7 +12,7 @@ var app;
                 this.localStorageService = localStorageService;
                 this.issuerService = issuerService;
                 this.workflowStates = new app.models.WorkflowStates();
-                this.nodeInfo = localStorageService.get("nodeInfo");
+                this.nodeInfo = this.localStorageService.get("nodeInfo");
                 this.gridColumns = [{ field: "version", displayName: "#", width: 35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
                     { field: "issueCommencementDate", width: 125, displayName: "Date", cellTemplate: " <div><span class='small text-nowrap'>{{row.entity.issueCommencementDate | date:'dd-MM-yyyy'}}</span></div>" },
                     { field: "name", displayName: "Program Name", width: 170, enableColumnMenu: false, cellTemplate: "<div> <a href='' ng-click='grid.appScope.vm.showCPProgramDetails(row.entity.programId)' class='text-nowrap'>{{row.entity.name}}</a></div>" },

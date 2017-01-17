@@ -17,12 +17,24 @@
                                 <input class="form-control input-sm" type="text" ng-model="vm.crDetails.creditRating" />
                             </div>
                             <div class="form-group">
+                                <label class="control-label">Credit Rating Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon">₹</span>
+                                    <input type="text" ng-model="vm.crDetails.creditRatingAmount" class="form-control" aria-label="Amount (to the nearest dollar)">
+                                    <span class="input-group-addon">.00</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="control-label">Credit Rating Issued Date</label>
                                 <input class="form-control input-sm" type="date" ng-model="vm.crDetails.creditRatingIssuanceDate" />
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Credit Rating Effective Date</label>
                                 <input class="form-control" type="date" ng-model="vm.crDetails.creditRatingEffectiveDate" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Credit Rating Expiry Date</label>
+                                <input class="form-control" type="date" ng-model="vm.crDetails.creditRatingExpiryDate" />
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Credit Rating PDF Upload</label>
@@ -50,8 +62,9 @@
                                 </div>
                                 <div class="panel-body">
                                     <div class="embed-responsive embed-responsive-16by9">
-                                    <iframe id="dynamicIframe" ng-src={{vm.crFileUrl}} scrolling="auto"  class="embed-responsive-item" type="application/pdf"></iframe>
-                                </div></div>
+                                        <iframe id="dynamicIframe" ng-src={{vm.crFileUrl}} scrolling="auto" class="embed-responsive-item" type="application/pdf"></iframe>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

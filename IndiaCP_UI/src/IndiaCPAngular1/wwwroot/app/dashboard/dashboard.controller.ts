@@ -34,7 +34,7 @@ module app.dashboard {
             protected localStorageService: ng.local.storage.ILocalStorageService,
             protected issuerService: app.services.IIssuerService) {
             this.workflowStates = new app.models.WorkflowStates();
-            this.nodeInfo = localStorageService.get("nodeInfo") as app.models.NodeInfo;
+            this.nodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
 
 
             this.gridColumns = [{ field: "version", displayName: "#", width:35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
