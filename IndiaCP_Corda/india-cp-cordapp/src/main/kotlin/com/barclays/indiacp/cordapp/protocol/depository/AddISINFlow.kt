@@ -107,6 +107,7 @@ open class ISINCreationInitiator(override val otherParty: Party,
     serviceHub.networkMapCache.notaryNodes.filter { it.notaryIdentity == payload.notary }.single()
 
 }
+
 /**
  * Issuer Side of the Flow for Accepting the Newly Generated ISIN.
  * We could plug in some verification logic to ensure that the generated ISIN is authentic.

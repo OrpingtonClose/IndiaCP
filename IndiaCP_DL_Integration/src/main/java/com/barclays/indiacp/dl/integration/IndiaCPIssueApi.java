@@ -39,6 +39,12 @@ public interface IndiaCPIssueApi {
     public Response cancelCP(@PathParam("cpIssueId") String cpIssueId,
                                  @PathParam("cancellationReason") String cancellationReason);
 
+    @POST
+    @Path("moveBeneficiaryOwnershipToInvestor/{cpIssueId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response moveBeneficiaryOwnershipToInvestor(@PathParam("cpIssueId") String cpIssueId);
+
     @GET
     @Path("fetchAllCP/{cpProgramId}")
     @Produces(MediaType.APPLICATION_JSON)

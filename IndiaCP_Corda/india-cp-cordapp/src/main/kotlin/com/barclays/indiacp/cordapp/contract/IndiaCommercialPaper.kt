@@ -218,6 +218,7 @@ class IndiaCommercialPaper : Contract {
                         IndiaCommercialPaper.Clauses.AddDealConfirmationDoc(),
                         IndiaCommercialPaper.Clauses.AddISIN(),
                         IndiaCommercialPaper.Clauses.AddSettlementDetails(),
+                        IndiaCommercialPaper.Clauses.MoveBeneficiaryOwnership(),
                         IndiaCommercialPaper.Clauses.Redeem()
                 )) {
             override fun groupStates(tx: TransactionForContract): List<TransactionForContract.InOutGroup<IndiaCommercialPaper.State, Issued<IndiaCommercialPaper.Terms>>>
@@ -391,6 +392,37 @@ class IndiaCommercialPaper : Contract {
             }
         }
 
+        class MoveBeneficiaryOwnership: AbstractIndiaCPClause() {
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaper.Commands.MoveBeneficiaryOwnership::class.java)
+
+            override fun verify(tx: TransactionForContract,
+                                inputs: List<IndiaCommercialPaper.State>,
+                                outputs: List<IndiaCommercialPaper.State>,
+                                commands: List<AuthenticatedObject<IndiaCommercialPaper.Commands>>,
+                                groupingKey: Issued<IndiaCommercialPaper.Terms>?): Set<IndiaCommercialPaper.Commands> {
+
+                val command = commands.requireSingleCommand<IndiaCommercialPaper.Commands.MoveBeneficiaryOwnership>()
+
+                val output = tx.outputs.filterIsInstance<IndiaCommercialPaper.State>().single()
+
+                val dealConfirmationAttachment = tx.attachments.single()
+
+                val timestamp = tx.timestamp
+                val time = timestamp?.after ?: throw IllegalArgumentException("Move Beneficiary Ownership Transaction must be timestamped")
+
+                //todo: Add Payment Oracle to Confirm Payment Received before transferring Ownership
+                requireThat {
+                    "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
+                    "the transaction is signed by the Investor" by (output.investor.owningKey in command.signers)
+                    "the beneficiary has been transferred to the Investor" by (output.beneficiary.equals(output.investor))
+                    "the Deal Confirmation Document has been attached" by (dealConfirmationAttachment != null)
+                    "the Deal Confirmation Document is signed by the Issuer" by verifyDocIsSignedByIssuer(dealConfirmationAttachment, output.dealConfirmationDocId)
+                    "the Deal Confirmation Document is signed by the Investor" by verifyDocIsSignedByInvestor(dealConfirmationAttachment, output.dealConfirmationDocId)
+                }
+                return setOf(command.value)
+            }
+        }
+
         class Redeem(): Clause<IndiaCommercialPaper.State, IndiaCommercialPaper.Commands, Issued<IndiaCommercialPaper.Terms>>() {
             override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaper.Commands.Redeem::class.java)
 
@@ -423,7 +455,7 @@ class IndiaCommercialPaper : Contract {
 
     interface Commands : CommandData {
         data class Issue(override val nonce: Long = random63BitValue()) : IssueCommand, IndiaCommercialPaper.Commands
-        data class Move(override val contractHash: SecureHash? = null) : FungibleAsset.Commands.Move, IndiaCommercialPaper.Commands
+        class MoveBeneficiaryOwnership() : TypeOnlyCommandData(), IndiaCommercialPaper.Commands
         class Redeem : TypeOnlyCommandData(), IndiaCommercialPaper.Commands
         class AddSettlementDetails() : IndiaCommercialPaper.Commands
         class AddDealConfirmationDoc : TypeOnlyCommandData(), IndiaCommercialPaper.Commands
@@ -432,6 +464,7 @@ class IndiaCommercialPaper : Contract {
 
     fun generateIssue(cpContractState: IndiaCommercialPaper.State,
                       cpProgramStateRef: StateAndRef<IndiaCommercialPaperProgram.State>,
+                      programFullyAllocated: Boolean,
                       beneficiary: Party,
                       notary: Party): TransactionBuilder {
 
@@ -442,6 +475,7 @@ class IndiaCommercialPaper : Contract {
 
         //Adding Outputs
         val cpProgramInputState = cpProgramStateRef.state.data
+        val programStatus = if(programFullyAllocated) IndiaCPProgramStatusEnum.CP_PROGRAM_FULLY_ALLOCATED.name else IndiaCPProgramStatusEnum.CP_ISSUEED.name
 
         tx.addOutputState(
                 cpContractState.copy(
@@ -454,7 +488,7 @@ class IndiaCommercialPaper : Contract {
         )
         tx.addOutputState(
                 cpProgramInputState.copy(
-                        status = IndiaCPProgramStatusEnum.CP_ISSUEED.name,
+                        status = programStatus,
                         lastModifiedDate = Instant.now(),
                         version = cpProgramInputState.version!! + 1,
                         programAllocatedValue = cpProgramInputState.programAllocatedValue!!.copy (
@@ -539,6 +573,35 @@ class IndiaCommercialPaper : Contract {
 
         //Adding Required Commands
         tx.addCommand(IndiaCommercialPaper.Commands.AddSettlementDetails(), listOf(initiator.owningKey))
+
+        return tx
+    }
+
+    fun  generateMoveBeneficiaryOwnership(cpStateAndRef: StateAndRef<IndiaCommercialPaper.State>, notary: Party): TransactionBuilder? {
+        val tx = TransactionType.General.Builder(notary)
+
+        //Adding Inputs
+        tx.addInputState(cpStateAndRef)
+
+        //Adding Outputs
+        tx.addOutputState(
+                cpStateAndRef.state.data.copy(
+                        beneficiary = cpStateAndRef.state.data.investor,
+                        version = cpStateAndRef.state.data.version!! + 1,
+                        lastModifiedDate = Instant.now(),
+                        status = IndiaCPIssueStatusEnum.CP_OWNERSHIP_TRANSFERRED.name
+                ),
+                cpStateAndRef.state.notary
+        )
+
+        //Adding Attachments
+        val docHash = cpStateAndRef.state.data.dealConfirmationDocId!!.split(":").first()
+        tx.addAttachment(SecureHash.parse(docHash))
+
+        //Adding Required Commands
+        //In the Primary Market Flow the beneficiary would be the same as the Issuer. This is ensured at the time of Self Issuance
+        tx.addCommand(IndiaCommercialPaper.Commands.AddDealConfirmationDoc(), listOf(cpStateAndRef.state.data.beneficiary.owningKey,
+                cpStateAndRef.state.data.investor.owningKey))
 
         return tx
     }

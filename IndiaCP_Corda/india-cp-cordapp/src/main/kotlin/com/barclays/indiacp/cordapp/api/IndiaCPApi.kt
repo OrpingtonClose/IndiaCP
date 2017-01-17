@@ -4,6 +4,7 @@ import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.protocol.agreements.AddCPDocFlow
 import com.barclays.indiacp.cordapp.protocol.common.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
+import com.barclays.indiacp.cordapp.protocol.issuer.MoveCPBeneficiaryFlow
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ErrorUtils
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
@@ -226,22 +227,22 @@ class IndiaCPApi(val services: ServiceHub){
 
 
     @POST
-    @Path("enterDeal/{investor}")
+    @Path("moveBeneficiaryOwnershipToInvestor/{cpIssueId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    fun enterTrade(cp : CPReferenceAndAcceptablePrice, @PathParam("investor") investorName: String): Response? {
-        try {
-            if (investorName != null) {
-////                val investor = services.identityService.partyFromName(investorName)
-////                val stx = services.invokeFlowAsync(DealEntryFlow::class.java, cp.cpRefId, investor).resultFuture.get()
-////                val stx = rpc.startFlow(::DealEntryFlow, cp.cpRefId, investorName).returnValue.toBlocking().first()
-//                logger.info("CP Deal Finalized\n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
-                return Response.status(Response.Status.OK).build()
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST).entity("Invalid Investor reference").build()
-            }
+    @Produces(MediaType.APPLICATION_JSON)
+    fun enterTrade(@PathParam("cpIssueId") cpIssueId: String): Response? {
+        try
+        {
+            val cpStateAndRef = CPUtils.getCPStateRefNonNull(cpTradeId = cpIssueId, services = services)
+            val stx = services.invokeFlowAsync(MoveCPBeneficiaryFlow::class.java, cpStateAndRef).resultFuture.get()
+            logger.info("Beneficiary ownership transferred for cpIssueId: ${cpIssueId} for Party ${cpIssueId} \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+
+            val amendedContractState = CPUtils.getCPStateRefNonNull(cpTradeId = cpIssueId, services = services)
+            return Response.status(Response.Status.OK).entity(ModelUtils.indiaCPModelFromState(amendedContractState!!.state.data)).build()
+
         } catch (ex: Throwable) {
-            logger.info("Exception when fetching ecp: ${ex.toString()}")
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(ex.toString()).build()
+            logger.info("${CPIssueError.AMENDMENT_ERROR}: ${ex.toString()}")
+            return ErrorUtils.errorHttpResponse(ex, errorCode = CPIssueError.AMENDMENT_ERROR)
         }
     }
 }

@@ -40,6 +40,7 @@ class OtherParticipantsTransactionPropogationFlow(val otherParty: Party) : FlowL
             services.registerFlowInitiator(AddCPDocFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
             services.registerFlowInitiator(AddCPProgramDocFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
             services.registerFlowInitiator(AddSettlementDetailsFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
+            services.registerFlowInitiator(MoveCPBeneficiaryFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
         }
     }
 

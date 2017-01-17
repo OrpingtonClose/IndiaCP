@@ -42,15 +42,16 @@ class IndiaCPPlugin : CordaPluginRegistry() {
             AddISINFlow::class.java.name to setOf(StateAndRef::class.java.name),
             IssueCPFlow::class.java.name to setOf(IndiaCommercialPaper.State::class.java.name),
             AddCPDocFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCPDocumentDetails.DocTypeEnum::class.java.name, Party::class.java.name),
-            AddSettlementDetailsFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCommercialPaper.SettlementDetails::class.java.name)
-            //DealEntryFlow::class.java.name to setOf(String::class.java.name, Party::class.java.name),
+            AddSettlementDetailsFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCommercialPaper.SettlementDetails::class.java.name),
+            MoveCPBeneficiaryFlow::class.java.name to setOf(StateAndRef::class.java.name)
     )
 
     override val servicePlugins = listOf(
             AddCPProgramDocFlow.Services::class.java,
             AddISINFlow.Services::class.java,
             AddCPDocFlow.Services::class.java,
-            OtherParticipantsTransactionPropogationFlow.Services::class.java
+            OtherParticipantsTransactionPropogationFlow.Services::class.java,
+            MoveCPBeneficiaryFlow.Services::class.java
     )
 
     override fun registerRPCKryoTypes(kryo: Kryo): Boolean {

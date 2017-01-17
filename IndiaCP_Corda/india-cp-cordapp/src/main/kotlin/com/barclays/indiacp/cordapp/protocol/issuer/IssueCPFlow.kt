@@ -40,14 +40,18 @@ class IssueCPFlow(val contractState: IndiaCommercialPaper.State) : FlowLogic<Sig
 
         progressTracker.currentStep = PROGRAM_CEILING_CHECK
         val cpProgramStateRef = CPUtils.getCPProgramStateRefNonNull(serviceHub, contractState.cpProgramID)
+        var programFullyAlocated : Boolean = false
         //Perform limit check
-        if ((cpProgramStateRef.state.data.programAllocatedValue!!.quantity + contractState.faceValue.quantity) > (cpProgramStateRef.state.data.programSize.quantity)) {
+        val totalAllocatedQuantity = cpProgramStateRef.state.data.programAllocatedValue!!.quantity + contractState.faceValue.quantity
+        if (totalAllocatedQuantity > (cpProgramStateRef.state.data.programSize.quantity)) {
             throw IndiaCPException(CPIssueError.PROGRAM_CEILING_EXCEEDED_ERROR, Error.SourceEnum.DL_R3CORDA, "This Program Cannot be Initiated. The Face Value of this CP ${contractState.faceValue} exceeds the available allocation limit as restricted by the program ceiling ${cpProgramStateRef.state.data.programSize}.")
+        } else if (totalAllocatedQuantity == cpProgramStateRef.state.data.programSize.quantity) {
+            programFullyAlocated = true
         }
 
         progressTracker.currentStep = SELF_ISSUING
 
-        val tx = IndiaCommercialPaper().generateIssue(contractState, cpProgramStateRef = cpProgramStateRef, beneficiary = issuer, notary = notary.notaryIdentity)
+        val tx = IndiaCommercialPaper().generateIssue(contractState, cpProgramStateRef = cpProgramStateRef, programFullyAllocated = programFullyAlocated, beneficiary = issuer, notary = notary.notaryIdentity)
 
         // Requesting timestamping, all CP must be timestamped.
         tx.setTime(Instant.now(), 30.seconds)

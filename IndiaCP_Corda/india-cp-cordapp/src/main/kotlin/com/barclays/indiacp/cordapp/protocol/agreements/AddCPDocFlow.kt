@@ -77,7 +77,7 @@ class AddCPDocFlow(val contractStateAndRef: StateAndRef<IndiaCommercialPaper.Sta
         val initiator = serviceHub.myInfo.legalIdentity
         if (parties.isNotEmpty()) {
             // Copy the transaction to other participant nodes
-            parties.filter{!it.equals(initiator) && !it.equals(acceptor)}.forEach { send(it, stx) }
+            parties.filter{!it.equals(initiator)}.filter{!it.equals(acceptor)}.forEach { send(it, stx) }
         }
         return stx
     }
