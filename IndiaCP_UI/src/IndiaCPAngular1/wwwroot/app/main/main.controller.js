@@ -9,7 +9,7 @@ var app;
                 this.authService = authService;
                 this.localStorageService = localStorageService;
                 this.$uibModal = $uibModal;
-                this.nodeType = this.localStorageService.get("nodeInfo").nodeType;
+                this.nodeInfo = this.localStorageService.get("nodeInfo");
             }
             MainController.prototype.logout = function () {
                 this.authService.logout();
@@ -33,16 +33,6 @@ var app;
             };
             MainController.prototype.uploadCRDoc = function () {
                 var _this = this;
-                // this.$uibModal.open({
-                //     animation: true,
-                //     ariaLabelledBy: "modal-title",
-                //     ariaDescribedBy: "modal-body",
-                //     controller: "app.dashboard.isingeneration.ISINGenerationController",
-                //     controllerAs: "vm",
-                //     size: "lg",
-                //     backdrop: "static",
-                //     templateUrl: "app/dashboard/isingeneration/isingeneration.html"
-                // });
                 var uploadCRModal = this.$uibModal.open({
                     animation: true,
                     ariaLabelledBy: "modal-title",

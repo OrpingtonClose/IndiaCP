@@ -4,13 +4,30 @@ var app;
     (function (dashboard) {
         "use strict";
         var DashboardController = (function () {
-            function DashboardController($http, $scope, $uibModal, $interval, issuerService) {
+            function DashboardController($http, $scope, $uibModal, $interval, localStorageService, issuerService) {
                 this.$http = $http;
                 this.$scope = $scope;
                 this.$uibModal = $uibModal;
                 this.$interval = $interval;
+                this.localStorageService = localStorageService;
                 this.issuerService = issuerService;
                 this.workflowStates = new app.models.WorkflowStates();
+                this.nodeInfo = localStorageService.get("nodeInfo");
+                this.gridColumns = [{ field: "version", displayName: "#", width: 35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
+                    { field: "issueCommencementDate", width: 125, displayName: "Date", cellTemplate: " <div><span class='small text-nowrap'>{{row.entity.issueCommencementDate | date:'dd-MM-yyyy'}}</span></div>" },
+                    { field: "name", displayName: "Program Name", width: 170, enableColumnMenu: false, cellTemplate: "<div> <a href='' ng-click='grid.appScope.vm.showCPProgramDetails(row.entity.programId)' class='text-nowrap'>{{row.entity.name}}</a></div>" },
+                    { field: "programAllocatedValue", width: 100, displayName: "Allotment", cellTemplate: "<div height='20px' justgage min='0' max='100' ></div>", enableColumnMenu: false },
+                    { field: "status", displayName: "Status", enableColumnMenu: false, cellTemplate: "<span class='label label-default'>{{row.entity.status}}</span>" },
+                    { field: "nextAction", displayName: "Action", enableColumnMenu: false, cellTemplate: "<div><button type='button' ng-click='grid.appScope.vm.executeNextAction(row.entity.nextAction.name, row.entity)' ng-disabled='row.entity.nextAction.allowedNodes.indexOf(\"ISSUER\") == -1'  class='btn btn-success btn-raised btn-xs'>{{row.entity.nextAction.name}}</button></div>" },
+                    { field: "version", displayName: "Sell", width: 75, enableColumnMenu: false, cellTemplate: "<button type='button' ng-click='grid.appScope.vm.createCPISsue(row.entity)' class='btn btn-success btn-raised btn-sm'>Sell</button>" },
+                    { field: "version", displayName: "", width: 150, enableColumnMenu: false, cellTemplate: "app/dashboard/gridtemplates/gridoptionstemplate.html" }
+                ];
+                this.gridOptions = {
+                    data: this.cpPrograms,
+                    columnDefs: this.gridColumns,
+                    rowHeight: 75,
+                    appScopeProvider: this
+                };
                 this.fetchAllCPPrograms();
             }
             DashboardController.prototype.$onDestroy = function () {
@@ -18,6 +35,17 @@ var app;
             };
             DashboardController.prototype.fetchAllCPPrograms = function () {
                 var _this = this;
+                var vm = this;
+                this.issuerService.fetchAllCPProgram().then(function (response) {
+                    vm.cpPrograms = response.data;
+                    vm.cpPrograms.forEach(function (cpProgram) {
+                        vm.workflowStates.states.forEach(function (state) {
+                            if (state.status === cpProgram.status) {
+                                cpProgram.nextAction = state.nextAction;
+                            }
+                        });
+                    });
+                });
                 this.dataRefresher = this.$interval(function () {
                     var vm = _this;
                     _this.issuerService.fetchAllCPProgram().then(function (response) {
@@ -30,7 +58,7 @@ var app;
                             });
                         });
                     });
-                }, 10000);
+                }, 1000000);
             };
             DashboardController.prototype.executeNextAction = function (nextAction, selectedCPProgram) {
                 switch (nextAction) {
@@ -128,6 +156,7 @@ var app;
             "$scope",
             "$uibModal",
             "$interval",
+            "localStorageService",
             "app.services.IssuerService"];
         angular.module("app.dashboard")
             .controller("app.dashboard.DashboardController", DashboardController);

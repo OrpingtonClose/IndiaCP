@@ -16,7 +16,7 @@
     function run($state, $rootScope, $cookies, $timeout, $location, $trace, localStorageService, authService) {
         //$trace.enable('TRANSITION');
         $rootScope.$on("$routeChangeError", function () { });
-        localStorageService.set("nodeInfo", new app.models.NodeInfo("ISSUER", "52.172.46.253", 8182));
+        localStorageService.set("nodeInfo", new app.models.NodeInfo("DEPOSITORY", "52.172.46.253", 8183, "NSDL"));
         $rootScope.$on("$stateChangeStart", function (event, toState) {
             if (!authService.isAuthenticated && toState.name !== "login") {
                 console.log("DENY : Redirecting to Login");
@@ -29,7 +29,7 @@
             }
         });
         $timeout(function () {
-            $state.transitionTo("login");
+            $state.transitionTo("main.depository");
         }, 1000);
     }
 })();

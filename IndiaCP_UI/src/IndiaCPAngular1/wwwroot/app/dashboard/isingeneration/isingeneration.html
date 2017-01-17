@@ -14,27 +14,27 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Currency:</label>
-                            <p class="form-control-static col-sm-8" ng-bind="vm.test"></p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.currency"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Issue Value:</label>
-                            <p class="form-control-static col-sm-8" ng-bind="vm.docData.cp.issueValue"></p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.issueValue"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Maturity Value : </label>
-                            <p class="form-control-static col-sm-8" ng-bind="vm.docData.cp.maturityValue"></p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.maturityValue"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Allotment Date : </label>
-                            <p class="form-control-static col-sm-8" ng-bind="vm.docData.cp.allotDate"></p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.allotDate | date:'dd-MM-yyyy'"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Maturity Date : </label>
-                            <p class="form-control-static col-sm-8" ng-bind="vm.docData.cp.matDate"></p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.matDate | date:'dd-MM-yyyy'"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Tax : </label>
-                            <p class="form-control-static col-sm-8" ng-bind="vm.docData.cp.tax"> </p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.tax"> </p>
                         </div>
                     </form>
                 </div>
@@ -47,11 +47,11 @@
                     <form>
                         <div class="form-group">
                             <label class="control-label">Issuer Name : </label>
-                            <p class="form-control-static" ng-bind="vm.docData.cp.issuerName"></p>
+                            <p class="form-control-static" ng-bind="vm.docRefData.cp.issuerName"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label">Second Party : </label>
-                            <p class="form-control-static" ng-bind="vm.docData.cp.secondParty"></p>
+                            <p class="form-control-static" ng-bind="vm.docRefData.cp.secondParty"></p>
                         </div>
                     </form>
                 </div>

@@ -31,15 +31,14 @@ module app.dashboard.cpprogramcreate {
         public createCPProgram(): void {
             this.issuerService.issueCPProgram(this.cpprogram).then((): void => {
                 console.log("CPProgram created");
-                this.growl.success('CPProgram created suceesfully.', { title: 'Success!' });
+                this.growl.success("CPProgram created suceesfully.", { title: "Success!" });
                 this.$uibModalInstance.close();
             }, (error: any): void => {
                 console.log("CPProgram not created.");
-                this.growl.error("CPProgram not created.", { title: 'Error!' })
+                this.growl.error("CPProgram not created.", { title: "Error!" });
             });
         }
         public cancel(): void {
-            this.growl.success('This is success message.', { title: 'Success!' });
             this.$uibModalInstance.close();
         }
 

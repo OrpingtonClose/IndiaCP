@@ -43,6 +43,9 @@ module app.services {
         issueCreditRating(creditRatingDetails: app.models.CreditRatingDocs, file: any, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.CreditRatingDocs>;
         issueBoardResolution(boardResolutionDetails: app.models.BoardResolutionDocs, file: any, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.BoardResolutionDocs>;
         fetchBoardResolution(extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.BoardResolutionDocs>>;
+        CPissueGetTransactionHistory(cpIssueId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>>;
+        CPProgramGetTransactionHistory(cpProgramId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPProgram>>;
+
     }
 
     class IssuerService implements IIssuerService {
@@ -68,6 +71,66 @@ module app.services {
                 }
             }
             return <T1 & T2>objA;
+        }
+
+        /**
+         * Complete audit log of all changes/versions of given CP Issue
+         * A given CP Issue once initiated undergoes various changes as it progresses through the trade lifecycle of adding settlement details, Deal Confirmations till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.
+         * @param cpIssueId CP Issue ID that uniquely identifies the CP issued by the Issuer
+         */
+        public CPissueGetTransactionHistory(cpIssueId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>> {
+            const localVarPath = this.basePath + "/indiacpissue/getTransactionHistory/{cpIssueId}"
+                .replace("{" + "cpIssueId" + "}", String(cpIssueId));
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            // verify required parameter "cpIssueId" is not null or undefined
+            if (cpIssueId === null || cpIssueId === undefined) {
+                throw new Error("Required parameter cpIssueId was null or undefined when calling indiacpissueGetTransactionHistoryCpIssueIdGet.");
+            }
+            let httpRequestParams: any = {
+                method: "GET",
+                url: localVarPath,
+                json: true,
+                params: queryParameters,
+                headers: headerParams
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            return this.$http(httpRequestParams);
+        }
+
+        /**
+         * Complete audit log of all changes/versions of given CP Program
+         * A given CP Program once initiated undergoes various changes as it progresses through the trade lifecycle of generating ISIN, generating Deal Confirmations with each identified Investor, getting IPA Verification till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.
+         * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
+         */
+        public CPProgramGetTransactionHistory(cpProgramId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPProgram>> {
+            const localVarPath = this.basePath + "/indiacpprogram/getTransactionHistory/{cpProgramId}"
+                .replace("{" + "cpProgramId" + "}", String(cpProgramId));
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            // verify required parameter "cpProgramId" is not null or undefined
+            if (cpProgramId === null || cpProgramId === undefined) {
+                throw new Error("Required parameter cpProgramId was null or undefined when calling indiacpprogramGetTransactionHistoryCpProgramIdGet.");
+            }
+            let httpRequestParams: any = {
+                method: "GET",
+                url: localVarPath,
+                json: true,
+                params: queryParameters,
+                headers: headerParams
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            return this.$http(httpRequestParams);
         }
 
         /**
@@ -118,7 +181,14 @@ module app.services {
                 httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
             }
 
-            return this.$http(httpRequestParams);
+            let httpUploadRequestParams: any = {
+                url: localVarPath,
+                data: { file: file, documentDetails: this.Upload.jsonBlob(docData) },
+                method: "POST"
+            };
+
+            return this.Upload.upload(httpUploadRequestParams);
+            // return this.$http(httpRequestParams);
         }
         /**
          * Adds the ISIN to the India CP Program

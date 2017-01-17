@@ -21,6 +21,7 @@
             "app.investments",
             "app.legalentity",
             "app.depository",
+            "app.depository.addisin",
             "app.ipa",
             "app.sitesettings",
             "app.usersettings",

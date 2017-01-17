@@ -14,7 +14,9 @@
             "uuid4",
             "LocalStorageModule",
             "ngFileUpload",
-            "angular-loading-bar"
+            "angular-loading-bar",
+            "angular.filter",
+            "ui.grid"
 
             /*
             *3rd party modules

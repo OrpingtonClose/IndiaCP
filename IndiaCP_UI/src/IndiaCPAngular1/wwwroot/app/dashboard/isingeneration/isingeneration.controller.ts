@@ -5,7 +5,7 @@ module app.dashboard.isingeneration {
 		generateDocument(file: File): void;
 		sign(): void;
 		verify(): void;
-		upload(): void;
+		save(): void;
 		cancel(): void;
 	}
 
@@ -28,19 +28,20 @@ module app.dashboard.isingeneration {
 			protected Upload: ng.angularFileUpload.IUploadService,
 			protected growl: ng.growl.IGrowlService,
 			protected cpProgram: app.models.IndiaCPProgram) {
-			this.docRefData = new app.models.DocData();
+			this.docRefData = new app.models.DocRefData();
 			this.docRefData.cp.issuerName = "Barclays Investments & Loans (India) Ltd";
 			this.docRefData.cp.secondParty = "";
 			this.docRefData.cp.desc = "Commercial Paper 96";
 			this.docRefData.cp.boardResolutionDate = new Date();
-			this.docRefData.cp.valueDate = new Date();
-			this.docRefData.cp.tradeDate = new Date();
-			this.docRefData.cp.dateOfContract = new Date();
-			this.docRefData.cp.allotDate = new Date();
-			this.docRefData.cp.matDate = new Date();
-			this.docRefData.cp.issueValue = this.cpProgram.programAllocatedValue;
-			this.docRefData.cp.maturityValue = this.cpProgram.programAllocatedValue;
-			this.docRefData.cp.redemValue = this.cpProgram.programAllocatedValue;
+			this.docRefData.cp.valueDate = this.cpProgram.issueCommencementDate;
+			this.docRefData.cp.tradeDate = this.cpProgram.issueCommencementDate;
+			this.docRefData.cp.dateOfContract = this.cpProgram.issueCommencementDate;
+			this.docRefData.cp.allotDate = this.cpProgram.issueCommencementDate;
+			this.docRefData.cp.matDate = new Date(this.cpProgram.issueCommencementDate);
+			this.docRefData.cp.matDate.setDate(this.docRefData.cp.matDate.getDate() + this.cpProgram.maturityDays);
+			this.docRefData.cp.issueValue = this.cpProgram.programSize;
+			this.docRefData.cp.maturityValue = this.cpProgram.programSize;
+			this.docRefData.cp.redemValue = this.cpProgram.programSize;
 			this.docRefData.cp.totalAmount = 15000000000;
 			this.docRefData.cp.tax = 10000;
 			this.docRefData.cp.CIN = "U93090TN1937FLC001429";
@@ -94,7 +95,7 @@ module app.dashboard.isingeneration {
 			this.docDetails.docExtension = app.models.DOCEXTENSION.PDF;
 			this.docDetails.docStatus = app.models.DOCSTATUS.SIGNED_BY_ISSUER;
 			this.docDetails.docSubType = app.models.DOCTYPE.DEPOSITORY_DOCS;
-			this.docDetails.modifiedBy = "Ritu";
+			this.docDetails.modifiedBy = this.cpProgram.issuerName;
 
 		}
 		public cancel(): void {
@@ -126,18 +127,23 @@ module app.dashboard.isingeneration {
 		public verify(): void {
 		}
 
-		public upload(): void {
-			let tempFile: File = new File([new Blob([window.atob(this.isinSignedData)], { type: "application/pdf" })], "isinDoc.pdf");
-			this.issuerService.addDoc(this.cpProgram.programId, this.docDetails, tempFile).
-				then((response: any): void => {
-					console.log(response);
-					this.growl.success("ISIN document uploaded succesfully", { title: "ISIN Document Uploaded." });
-				},
-				(error: any) => {
-					let errorMssg: app.models.Error = error.data;
-					console.log(`${errorMssg.source}-${errorMssg.message}`);
-					this.growl.error(errorMssg.message, { title: `Upload Failed - ${errorMssg.source}` });
-				});
+		public save(): void {
+			let isinZip: JSZip = new JSZip();
+			isinZip.file("isindoc.pdf", this.isinSignedData, { base64: true });
+			// [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
+			isinZip.generateAsync({type:"blob"}).then((zippedFile:Blob) => {
+				let tempFile: File = new File([zippedFile], "isinDoc.zip");
+				this.issuerService.addDoc(this.cpProgram.programId, this.docDetails, tempFile).
+					then((response: any): void => {
+						console.log(response);
+						this.growl.success("ISIN document uploaded succesfully", { title: "ISIN Document Uploaded." });
+					},
+					(error: any) => {
+						let errorMssg: app.models.Error = error.data;
+						console.log(`${errorMssg.source}-${errorMssg.message}`);
+						this.growl.error(errorMssg.message, { title: `Upload Failed - ${errorMssg.source}` });
+					});
+			});
 		}
 	}
 

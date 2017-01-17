@@ -3,7 +3,7 @@ module app.main {
 
     interface IMainScope {
         logout(): void;
-        nodeType: string;
+        nodeInfo: app.models.NodeInfo;
     }
 
     class MainController implements IMainScope {
@@ -11,12 +11,12 @@ module app.main {
             "app.services.AuthenticationService",
             "localStorageService",
             "$uibModal"];
-        nodeType: string;
+        nodeInfo: app.models.NodeInfo;
         constructor(protected $state: ng.ui.IStateService,
             protected authService: app.services.IAuthenticationService,
             protected localStorageService: ng.local.storage.ILocalStorageService,
             protected $uibModal: ng.ui.bootstrap.IModalService) {
-            this.nodeType = (this.localStorageService.get("nodeInfo") as app.models.NodeInfo).nodeType;
+            this.nodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
         }
         public logout(): void {
             this.authService.logout();
@@ -40,16 +40,6 @@ module app.main {
             });
         }
         public uploadCRDoc(): void {
-            // this.$uibModal.open({
-            //     animation: true,
-            //     ariaLabelledBy: "modal-title",
-            //     ariaDescribedBy: "modal-body",
-            //     controller: "app.dashboard.isingeneration.ISINGenerationController",
-            //     controllerAs: "vm",
-            //     size: "lg",
-            //     backdrop: "static",
-            //     templateUrl: "app/dashboard/isingeneration/isingeneration.html"
-            // });
             var uploadCRModal: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open({
                 animation: true,
                 ariaLabelledBy: "modal-title",

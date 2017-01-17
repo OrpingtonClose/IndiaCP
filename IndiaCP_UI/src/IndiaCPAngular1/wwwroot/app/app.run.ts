@@ -31,7 +31,7 @@
 
         //$trace.enable('TRANSITION');
         $rootScope.$on("$routeChangeError", (): void => { });
-        localStorageService.set("nodeInfo", new app.models.NodeInfo("ISSUER", "52.172.46.253", 8182));
+        localStorageService.set("nodeInfo", new app.models.NodeInfo("DEPOSITORY", "52.172.46.253", 8183,"NSDL"));
 
 
         $rootScope.$on("$stateChangeStart", function (event: ng.IAngularEvent, toState: any): void {
@@ -46,7 +46,7 @@
             }
         });
         $timeout(function () {
-            $state.transitionTo("login");
+            $state.transitionTo("main.depository");
         }, 1000);
     }
 })();

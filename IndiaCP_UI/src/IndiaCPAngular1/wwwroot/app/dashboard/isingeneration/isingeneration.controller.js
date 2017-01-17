@@ -13,19 +13,20 @@ var app;
                     this.Upload = Upload;
                     this.growl = growl;
                     this.cpProgram = cpProgram;
-                    this.docRefData = new app.models.DocData();
+                    this.docRefData = new app.models.DocRefData();
                     this.docRefData.cp.issuerName = "Barclays Investments & Loans (India) Ltd";
                     this.docRefData.cp.secondParty = "";
                     this.docRefData.cp.desc = "Commercial Paper 96";
                     this.docRefData.cp.boardResolutionDate = new Date();
-                    this.docRefData.cp.valueDate = new Date();
-                    this.docRefData.cp.tradeDate = new Date();
-                    this.docRefData.cp.dateOfContract = new Date();
-                    this.docRefData.cp.allotDate = new Date();
-                    this.docRefData.cp.matDate = new Date();
-                    this.docRefData.cp.issueValue = this.cpProgram.programAllocatedValue;
-                    this.docRefData.cp.maturityValue = this.cpProgram.programAllocatedValue;
-                    this.docRefData.cp.redemValue = this.cpProgram.programAllocatedValue;
+                    this.docRefData.cp.valueDate = this.cpProgram.issueCommencementDate;
+                    this.docRefData.cp.tradeDate = this.cpProgram.issueCommencementDate;
+                    this.docRefData.cp.dateOfContract = this.cpProgram.issueCommencementDate;
+                    this.docRefData.cp.allotDate = this.cpProgram.issueCommencementDate;
+                    this.docRefData.cp.matDate = new Date(this.cpProgram.issueCommencementDate);
+                    this.docRefData.cp.matDate.setDate(this.docRefData.cp.matDate.getDate() + this.cpProgram.maturityDays);
+                    this.docRefData.cp.issueValue = this.cpProgram.programSize;
+                    this.docRefData.cp.maturityValue = this.cpProgram.programSize;
+                    this.docRefData.cp.redemValue = this.cpProgram.programSize;
                     this.docRefData.cp.totalAmount = 15000000000;
                     this.docRefData.cp.tax = 10000;
                     this.docRefData.cp.CIN = "U93090TN1937FLC001429";
@@ -78,7 +79,7 @@ var app;
                     this.docDetails.docExtension = app.models.DOCEXTENSION.PDF;
                     this.docDetails.docStatus = app.models.DOCSTATUS.SIGNED_BY_ISSUER;
                     this.docDetails.docSubType = app.models.DOCTYPE.DEPOSITORY_DOCS;
-                    this.docDetails.modifiedBy = "Ritu";
+                    this.docDetails.modifiedBy = this.cpProgram.issuerName;
                 }
                 ISINGenerationController.prototype.cancel = function () {
                     this.$uibModalInstance.close();
@@ -106,17 +107,22 @@ var app;
                 };
                 ISINGenerationController.prototype.verify = function () {
                 };
-                ISINGenerationController.prototype.upload = function () {
+                ISINGenerationController.prototype.save = function () {
                     var _this = this;
-                    var tempFile = new File([new Blob([window.atob(this.isinSignedData)], { type: "application/pdf" })], "isinDoc.pdf");
-                    this.issuerService.addDoc(this.cpProgram.programId, this.docDetails, tempFile).
-                        then(function (response) {
-                        console.log(response);
-                        _this.growl.success("ISIN document uploaded succesfully", { title: "ISIN Document Uploaded." });
-                    }, function (error) {
-                        var errorMssg = error.data;
-                        console.log(errorMssg.source + "-" + errorMssg.message);
-                        _this.growl.error(errorMssg.message, { title: "Upload Failed - " + errorMssg.source });
+                    var isinZip = new JSZip();
+                    isinZip.file("isindoc.pdf", this.isinSignedData, { base64: true });
+                    // [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
+                    isinZip.generateAsync({ type: "blob" }).then(function (zippedFile) {
+                        var tempFile = new File([zippedFile], "isinDoc.zip");
+                        _this.issuerService.addDoc(_this.cpProgram.programId, _this.docDetails, tempFile).
+                            then(function (response) {
+                            console.log(response);
+                            _this.growl.success("ISIN document uploaded succesfully", { title: "ISIN Document Uploaded." });
+                        }, function (error) {
+                            var errorMssg = error.data;
+                            console.log(errorMssg.source + "-" + errorMssg.message);
+                            _this.growl.error(errorMssg.message, { title: "Upload Failed - " + errorMssg.source });
+                        });
                     });
                 };
                 return ISINGenerationController;
