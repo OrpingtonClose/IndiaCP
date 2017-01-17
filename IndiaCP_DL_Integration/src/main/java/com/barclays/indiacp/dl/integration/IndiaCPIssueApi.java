@@ -39,6 +39,12 @@ public interface IndiaCPIssueApi {
     public Response cancelCP(@PathParam("cpIssueId") String cpIssueId,
                                  @PathParam("cancellationReason") String cancellationReason);
 
+    @POST
+    @Path("moveBeneficiaryOwnershipToInvestor/{cpIssueId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response moveBeneficiaryOwnershipToInvestor(@PathParam("cpIssueId") String cpIssueId);
+
     @GET
     @Path("fetchAllCP/{cpProgramId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -59,8 +65,22 @@ public interface IndiaCPIssueApi {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDocs(@PathParam("cpIssueId") String cpIssueId,
-                            //@FormDataParam("documentDetails") IndiaCPDocumentDetails docDetails,
+                            @FormDataParam("documentDetails") IndiaCPDocumentDetails docDetails,
                             @FormDataParam("file") InputStream uploadedInputStream);
+
+
+    @GET
+    @Path("getTransactionHistory/{cpIssueId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTransactionHistory(@PathParam("cpIssueId") String cpIssueId);
+
+
+    @GET
+    @Path("getDocumentHistory/{cpIssueId}/{docType}/{docSubType}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDocumentHistory(@PathParam("cpIssueId") String cpIssueId,
+                                       @PathParam("docType") String docType,
+                                       @PathParam("docSubType") String docSubType);
 
     @Context
     public void setRequest(Request request);

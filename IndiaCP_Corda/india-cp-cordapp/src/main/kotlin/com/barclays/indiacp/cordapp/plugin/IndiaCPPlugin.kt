@@ -2,20 +2,24 @@ package com.barclays.indiacp.cordapp.plugin
 
 import com.barclays.indiacp.cordapp.api.BorrowingLimitBoardResolutionApi
 import com.barclays.indiacp.cordapp.api.CreditRatingApi
+import com.barclays.indiacp.cordapp.api.IndiaCPApi
 import com.barclays.indiacp.cordapp.api.IndiaCPProgramApi
 import com.barclays.indiacp.cordapp.contract.BorrowingLimitBoardResolution
 import com.barclays.indiacp.cordapp.contract.CreditRating
+import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
-import com.barclays.indiacp.cordapp.protocol.agreements.AddISINDocFlow
-import com.barclays.indiacp.cordapp.protocol.agreements.AddISINFlow
-import com.barclays.indiacp.cordapp.protocol.issuer.BorrowingLimitBoardResolutionFlows
-import com.barclays.indiacp.cordapp.protocol.issuer.CreditRatingFlows
-import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPProgramFlow
+import com.barclays.indiacp.cordapp.protocol.agreements.AddCPDocFlow
+import com.barclays.indiacp.cordapp.protocol.agreements.AddCPProgramDocFlow
+import com.barclays.indiacp.cordapp.protocol.common.AddSettlementDetailsFlow
+import com.barclays.indiacp.cordapp.protocol.depository.AddISINFlow
+import com.barclays.indiacp.cordapp.protocol.issuer.*
+import com.barclays.indiacp.model.IndiaCPDocumentDetails
 import com.barclays.indiacp.model.IndiaCPProgram
 import com.barclays.indiacp.model.IndiaCPProgramStatusEnum
 import com.barclays.indiacp.model.LegalEntityCreditRatingDocument
 import com.esotericsoftware.kryo.Kryo
 import net.corda.core.contracts.StateAndRef
+import net.corda.core.crypto.Party
 import net.corda.core.node.CordaPluginRegistry
 import net.corda.node.services.vault.CashBalanceAsMetricsObserver
 import java.util.*
@@ -25,7 +29,8 @@ class IndiaCPPlugin : CordaPluginRegistry() {
     override val webApis: List<Class<*>> = listOf(
             CreditRatingApi::class.java,
             BorrowingLimitBoardResolutionApi::class.java,
-            IndiaCPProgramApi::class.java
+            IndiaCPProgramApi::class.java,
+            IndiaCPApi::class.java
     )
 
     // A list of protocol that are required for this cordapp
@@ -33,16 +38,20 @@ class IndiaCPPlugin : CordaPluginRegistry() {
             CreditRatingFlows::class.java.name to setOf(CreditRating.State::class.java.name, String::class.java.name),
             BorrowingLimitBoardResolutionFlows::class.java.name to setOf(BorrowingLimitBoardResolution.State::class.java.name, String::class.java.name),
             IssueCPProgramFlow::class.java.name to setOf(IndiaCommercialPaperProgram.State::class.java.name),
-            AddISINDocFlow::class.java.name to setOf(StateAndRef::class.java.name),
-            AddISINFlow::class.java.name to setOf(StateAndRef::class.java.name)
-
-            //DealEntryFlow::class.java.name to setOf(String::class.java.name, Party::class.java.name),
-            //IssueCPFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
+            AddCPProgramDocFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCPDocumentDetails.DocTypeEnum::class.java.name, Party::class.java.name, Party::class.java.name),
+            AddISINFlow::class.java.name to setOf(StateAndRef::class.java.name),
+            IssueCPFlow::class.java.name to setOf(IndiaCommercialPaper.State::class.java.name),
+            AddCPDocFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCPDocumentDetails.DocTypeEnum::class.java.name, Party::class.java.name),
+            AddSettlementDetailsFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCommercialPaper.SettlementDetails::class.java.name),
+            MoveCPBeneficiaryFlow::class.java.name to setOf(StateAndRef::class.java.name)
     )
 
     override val servicePlugins = listOf(
-            AddISINDocFlow.Services::class.java,
-            AddISINFlow.Services::class.java
+            AddCPProgramDocFlow.Services::class.java,
+            AddISINFlow.Services::class.java,
+            AddCPDocFlow.Services::class.java,
+            OtherParticipantsTransactionPropogationFlow.Services::class.java,
+            MoveCPBeneficiaryFlow.Services::class.java
     )
 
     override fun registerRPCKryoTypes(kryo: Kryo): Boolean {

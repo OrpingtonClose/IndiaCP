@@ -31,6 +31,20 @@
             <artifactId>jersey-media-multipart</artifactId>
         </dependency>-->
         <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.bundles</groupId>
+            <artifactId>jaxrs-ri</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-multipart</artifactId>
             <version>2.23</version>
@@ -120,6 +134,90 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <!--<plugin>-->
+                <!--<artifactId>maven-assembly-plugin</artifactId>-->
+                <!--<version>3.0.0</version>-->
+                <!--<configuration>-->
+                    <!--<appendAssemblyId>false</appendAssemblyId>-->
+                    <!--<descriptors>-->
+                        <!--<descriptor>src/assembly/bin.xml</descriptor>-->
+                    <!--</descriptors>-->
+                    <!--&lt;!&ndash;<descriptorRefs>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<descriptorRef>jar-with-dependencies</descriptorRef>&ndash;&gt;-->
+                    <!--&lt;!&ndash;</descriptorRefs>&ndash;&gt;-->
+                    <!--<finalName>indiacp_dl</finalName>-->
+                    <!--<archive>-->
+                        <!--<manifest>-->
+                            <!--&lt;!&ndash;<addClasspath>true</addClasspath>&ndash;&gt;-->
+                            <!--<mainClass>com.barclays.indiacp.Main</mainClass>-->
+                        <!--</manifest>-->
+                    <!--</archive>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>make-assembly</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;-->
+                        <!--<phase>package</phase> &lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
+                        <!--<goals>-->
+                            <!--<goal>single</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>com.barclays.indiacp.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <copydir src="target" dest="build/indiacpdemo/BILL_ISSUER"/>
+                                <copy file="src/main/resources/DL_CONFIG_BILL_ISSUER.properties" tofile="build/indiacpdemo/BILL_ISSUER/DL_CONFIG_BILL_ISSUER.properties"/>
+                                <copydir src="target" dest="build/indiacpdemo/BSS_INVESTOR"/>
+                                <copy file="src/main/resources/DL_CONFIG_BSS_INVESTOR.properties" tofile="build/indiacpdemo/BSS_INVESTOR/DL_CONFIG_BSS_INVESTOR.properties"/>
+                                <copydir src="target" dest="build/indiacpdemo/HDFC_IPA"/>
+                                <copy file="src/main/resources/DL_CONFIG_HDFC_IPA.properties" tofile="build/indiacpdemo/HDFC_IPA/DL_CONFIG_HDFC_IPA.properties"/>
+                                <copydir src="target" dest="build/indiacpdemo/NSDL_DEPOSITORY"/>
+                                <copy file="src/main/resources/DL_CONFIG_NSDL_DEPOSITORY.properties" tofile="build/indiacpdemo/NSDL_DEPOSITORY/DL_CONFIG_NSDL_DEPOSITORY.properties"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

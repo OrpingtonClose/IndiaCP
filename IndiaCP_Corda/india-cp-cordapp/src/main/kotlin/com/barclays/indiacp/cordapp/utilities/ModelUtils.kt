@@ -1,15 +1,12 @@
 package com.barclays.indiacp.cordapp.utilities;
 
 import com.barclays.indiacp.cordapp.contract.BorrowingLimitBoardResolution
-import com.barclays.indiacp.cordapp.contract.CreditRating;
+import com.barclays.indiacp.cordapp.contract.CreditRating
+import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.model.*
-import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.contracts.Amount
-import net.corda.core.contracts.DOLLARS
-import net.corda.core.contracts.Issued
 import net.corda.core.contracts.`issued by`
-import net.corda.core.crypto.Party
 import net.corda.core.crypto.composite
 import net.corda.core.days
 import net.corda.core.node.ServiceHub
@@ -17,10 +14,8 @@ import java.time.Instant
 import java.util.*
 
 /**
- * Created by ritukedia on 08/01/17.
+ * Created by ritukedia
  */
-
-
 object ModelUtils {
 
     final val DEFAULT_MODIFIED_BY : String
@@ -136,7 +131,7 @@ object ModelUtils {
                                         Amount(0, currency)
                                     },
             programCurrency = Currency.getInstance("INR"), //TODO fix the hardcoding to INR and DOLLAR
-            maturityDate =  Instant.now() + model.maturityDays.days,
+            maturityDate =  Instant.now() + model.maturityDays.days, //TODO fix this just maintain maturity days as maturity days in the Smart Contract
             issueCommencementDate = model.issueCommencementDate?.toInstant() ?: Date().toInstant(),
             isin = model.isin,
 
@@ -189,7 +184,25 @@ object ModelUtils {
         return model
     }
 
-    fun  getDocumentDetails(cpProgId: String, cpProgStatesForDocTypeHistory: List<IndiaCommercialPaperProgram.State>, docType: IndiaCPDocumentDetails.DocTypeEnum): List<IndiaCPDocumentDetails> {
+    fun  getDocumentDetailsForCP(cpTradeId: String, cpStatesForDocTypeHistory: List<IndiaCommercialPaper.State>, docType: IndiaCPDocumentDetails.DocTypeEnum): List<IndiaCPDocumentDetails> {
+
+        val documentDetailsList = ArrayList<IndiaCPDocumentDetails>()
+        for (cpState in cpStatesForDocTypeHistory) {
+            val documentDetails = IndiaCPDocumentDetails ()
+            documentDetails.docType(docType)
+            documentDetails.cpProgramId(cpState.cpProgramID)
+            documentDetails.cpIssueId(cpState.cpTradeID)
+            val docHashAndStatus = getDocHashAndStatus(cpState.dealConfirmationDocId, IndiaCPDocumentDetails.DocTypeEnum.DEAL_CONFIRMATION_DOC, cpState.cpTradeID)
+            documentDetails.docHash(docHashAndStatus.first)
+            documentDetails.docStatus(docHashAndStatus.second)
+            documentDetails.lastModifiedDate(Date(cpState.lastModifiedDate!!.toEpochMilli()))
+            documentDetails.modifiedBy(cpState.modifiedBy)
+            documentDetailsList.add(documentDetails)
+        }
+        return documentDetailsList
+    }
+
+    fun  getDocumentDetailsForCPProgram(cpProgId: String, cpProgStatesForDocTypeHistory: List<IndiaCommercialPaperProgram.State>, docType: IndiaCPDocumentDetails.DocTypeEnum): List<IndiaCPDocumentDetails> {
 
         val documentDetailsList = ArrayList<IndiaCPDocumentDetails>()
         for (cpProgramState in cpProgStatesForDocTypeHistory) {
@@ -206,17 +219,152 @@ object ModelUtils {
 
     private fun  setDocHashAndStatus(documentDetails: IndiaCPDocumentDetails, cpProgramState: IndiaCommercialPaperProgram.State, docType: IndiaCPDocumentDetails.DocTypeEnum) {
 
-        val DOC_HASH_NOT_FOUND_ERROR_MESSAGE = "Document Hash Not Found in Smart Contract for Doc Type ${docType}, CPProgram Id ${cpProgramState.programId}"
         when (docType) {
             IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS -> {
-                val docHashAndStatus = cpProgramState.isinGenerationRequestDocId?.split(":") ?: throw IndiaCPException(DOC_HASH_NOT_FOUND_ERROR_MESSAGE, Error.SourceEnum.DL_R3CORDA)
-                val docHash = docHashAndStatus[0]
-                val docStatus = docHashAndStatus[1]
-                val docStatusEnum = IndiaCPDocumentDetails.DocStatusEnum.fromValue(docStatus) ?: IndiaCPDocumentDetails.DocStatusEnum.UNKNOWN
-                documentDetails.docHash(docHash)
-                documentDetails.docStatus(docStatusEnum)
+                val docHashAndStatus = getDocHashAndStatus(cpProgramState.isinGenerationRequestDocId, IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS, cpProgramState.programId)
+                documentDetails.docHash(docHashAndStatus.first)
+                documentDetails.docStatus(docHashAndStatus.second)
             }
         }
     }
 
+    private fun getDocHashAndStatus(docId: String?, docType: IndiaCPDocumentDetails.DocTypeEnum, ref: String) : Pair<String, IndiaCPDocumentDetails.DocStatusEnum> {
+        val DOC_HASH_NOT_FOUND_ERROR_MESSAGE = "Document Hash Not Found in Smart Contract for Doc Type ${docType}, Ref: ${ref}"
+        val DOC_ID_MALFORMED_ERROR_MESSAGE = "Document ID in the Smart Contract is expected to be of the format 'SecureHash:Status' but found ${docId} for Doc Type ${docType}, Smart Contract Ref: ${ref}"
+
+        if (docId.isNullOrBlank()) {
+            throw IndiaCPException(DOC_HASH_NOT_FOUND_ERROR_MESSAGE, Error.SourceEnum.DL_R3CORDA)
+        }
+        if (!docId!!.contains(":")) {
+            throw IndiaCPException(DOC_ID_MALFORMED_ERROR_MESSAGE, Error.SourceEnum.DL_R3CORDA)
+        }
+        val docHashAndStatus = docId!!.split(":")
+        val docHash = docHashAndStatus[0]
+        val docStatus = docHashAndStatus[1]
+        val docStatusEnum = IndiaCPDocumentDetails.DocStatusEnum.fromValue(docStatus) ?: IndiaCPDocumentDetails.DocStatusEnum.UNKNOWN
+
+        return Pair(docHash, docStatusEnum)
+    }
+
+    fun  indiaCPStateFromModel(model: IndiaCPIssue, serviceHub: ServiceHub): IndiaCommercialPaper.State {
+        val currency = Currency.getInstance(model.currency)
+        val valueDate = model.valueDate?.toInstant() ?: Date().toInstant()
+        val faceValue = model.facevaluePerUnit.toLong() * model.noOfUnits
+        val contractState = IndiaCommercialPaper.State (
+                issuer = CPUtils.getPartyByName(serviceHub, model.issuerId),
+                investor = CPUtils.getPartyByName(serviceHub, model.investorId),
+                ipa =  CPUtils.getPartyByName(serviceHub, model.ipaId),
+                depository = CPUtils.getPartyByName(serviceHub, model.depositoryId),
+                beneficiary = CPUtils.getPartyByName(serviceHub, model.beneficiaryId),
+
+                cpProgramID = model.cpProgramId,
+                cpTradeID = model.cpTradeId,
+                tradeDate = model.tradeDate?.toInstant() ?: Date().toInstant(),
+                valueDate = model.valueDate?.toInstant() ?: Date().toInstant(),
+                faceValue = Amount(faceValue, currency) `issued by` CPUtils.getCashIssuerForThisNode(serviceHub),
+                yieldOnMaturity = model.rate,
+                faceValuePerUnit = Amount(model.facevaluePerUnit.toLong(), currency),
+                noOfunits = model.noOfUnits,
+                maturityDate = valueDate + model.maturityDays.days,
+                isin = model.isin,
+                issuerSettlementDetails = settlementDetailsFromModel(model.issuerSettlementDetails),
+                investorSettlementDetails = settlementDetailsFromModel(model.investorSettlementDetails),
+                ipaSettlementDetails = settlementDetailsFromModel(model.ipaSettlementDetails),
+
+                dealConfirmationDocId = model.dealConfirmationDocId,
+
+                modifiedBy = model.modifiedBy ?: DEFAULT_MODIFIED_BY,//todo default to logged in user
+                lastModifiedDate = model.lastModifiedDate?.toInstant() ?: Date().toInstant(),
+                status = model.status?.toString() ?: IndiaCPIssueStatusEnum.UNKNOWN.name,
+                version = model.version ?: STARTING_VERSION
+        )
+
+        return contractState
+    }
+
+    fun  settlementDetailsFromModel(model: SettlementDetails): IndiaCommercialPaper.SettlementDetails? {
+        val depositoryAccountDetails = ArrayList<IndiaCommercialPaper.DepositoryAccountDetails> ()
+        for (d in model.depositoryAccountDetails) {
+            val dpAccount = IndiaCommercialPaper.DepositoryAccountDetails(
+                    dpName = d.dpName,
+                    dpType = d.dpType.name,
+                    clientId = d.clientId,
+                    dpID = d.dpId
+            )
+            depositoryAccountDetails.add(dpAccount)
+        }
+        val settlementDetails = IndiaCommercialPaper.SettlementDetails (
+                partyType = model.partyType.name,
+                paymentAccountDetails = IndiaCommercialPaper.PaymentAccountDetails(
+                        creditorName = model.paymentAccountDetails.creditorName,
+                        bankAccountDetails = model.paymentAccountDetails.bankAccountNo,
+                        bankName = model.paymentAccountDetails.bankName,
+                        rtgsCode = model.paymentAccountDetails.rtgsIfscCode
+                ),
+                depositoryAccountDetails = depositoryAccountDetails
+        )
+
+        return settlementDetails
+    }
+
+    fun  indiaCPModelFromState(contractState: IndiaCommercialPaper.State): IndiaCPIssue {
+        val model = IndiaCPIssue ()
+        model.issuerId = contractState.issuer.name
+        model.issuerName = contractState.issuer.name
+        model.ipaId = contractState.ipa.name
+        model.ipaName = contractState.ipa.name
+        model.depositoryId = contractState.depository.name
+        model.depositoryName = contractState.depository.name
+
+        model.cpProgramId = contractState.cpProgramID
+        model.cpTradeId = contractState.cpTradeID
+        model.tradeDate = Date(contractState.tradeDate.toEpochMilli())
+        model.valueDate = Date(contractState.valueDate.toEpochMilli())
+        model.facevaluePerUnit = contractState.faceValuePerUnit.quantity.toInt()
+        model.noOfUnits = contractState.noOfunits
+        model.rate = contractState.yieldOnMaturity
+        model.isin = contractState.isin
+        model.maturityDays = 7 //TODO: calculate: contractState.maturityDate. - contractState.valueDate
+
+        model.issuerSettlementDetails = if(contractState.issuerSettlementDetails == null) null else settlementDetailsModelFromState(contractState.issuerSettlementDetails!!)
+        model.investorSettlementDetails = if(contractState.investorSettlementDetails == null) null else settlementDetailsModelFromState(contractState.investorSettlementDetails!!)
+        model.ipaSettlementDetails = if(contractState.ipaSettlementDetails == null) null else settlementDetailsModelFromState(contractState.ipaSettlementDetails!!)
+
+        model.dealConfirmationDocId = contractState.dealConfirmationDocId
+
+        model.modifiedBy = contractState.modifiedBy
+        model.lastModifiedDate = if (contractState.lastModifiedDate == null) null else Date(contractState.lastModifiedDate.toEpochMilli())
+        model.status = IndiaCPIssueStatusEnum.valueOf(contractState.status?.toString() ?: IndiaCPIssueStatusEnum.UNKNOWN.name).toString()
+        model.version = contractState.version?.toInt() ?: 1
+
+        return model
+    }
+
+    private fun  settlementDetailsModelFromState(settlementDetailsContractState: IndiaCommercialPaper.SettlementDetails): SettlementDetails {
+        val settlementDetailsModel = SettlementDetails ()
+        settlementDetailsModel.partyType = SettlementDetails.PartyTypeEnum.fromValue(settlementDetailsContractState.partyType)
+        if (settlementDetailsContractState.paymentAccountDetails != null) {
+            settlementDetailsModel.paymentAccountDetails = PaymentAccountDetails()
+            settlementDetailsModel.paymentAccountDetails.creditorName = settlementDetailsContractState.paymentAccountDetails.creditorName
+            settlementDetailsModel.paymentAccountDetails.bankAccountNo = settlementDetailsContractState.paymentAccountDetails.bankAccountDetails
+            settlementDetailsModel.paymentAccountDetails.bankName = settlementDetailsContractState.paymentAccountDetails.bankName
+            settlementDetailsModel.paymentAccountDetails.rtgsIfscCode = settlementDetailsContractState.paymentAccountDetails.rtgsCode
+        }
+        if (settlementDetailsContractState.depositoryAccountDetails != null && settlementDetailsContractState.depositoryAccountDetails.isNotEmpty()) {
+            val depositoryAccountDetails = ArrayList<DepositoryAccountDetails> ()
+            for (dpStateDetails in settlementDetailsContractState.depositoryAccountDetails!!) {
+                val dpAccountModel = DepositoryAccountDetails()
+                dpAccountModel.clientId = dpStateDetails.clientId
+                dpAccountModel.dpId = dpStateDetails.dpID
+                dpAccountModel.dpName = dpStateDetails.dpName
+                dpAccountModel.dpType = DepositoryAccountDetails.DpTypeEnum.fromValue(dpStateDetails.dpType)
+
+                depositoryAccountDetails.add(dpAccountModel)
+            }
+            settlementDetailsModel.depositoryAccountDetails = depositoryAccountDetails
+        }
+
+        return settlementDetailsModel
+
+    }
 }

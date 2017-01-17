@@ -2,7 +2,7 @@ package com.barclays.indiacp.cordapp.protocol.investor
 
 import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
-import com.barclays.indiacp.cordapp.protocol.issuer.DealEntryFlow
+import com.barclays.indiacp.cordapp.protocol.issuer.MoveCPFlow
 import net.corda.core.contracts.*
 import net.corda.core.node.NodeInfo
 import net.corda.core.node.PluginServiceHub
@@ -38,7 +38,7 @@ class BuyerFlow(val seller: net.corda.core.crypto.Party,
                 it.automaticallyExtractAttachments = true
                 it.storePath
             }
-            services.registerFlowInitiator(DealEntryFlow::class) { BuyerFlow(it, attachmentsPath) }
+            services.registerFlowInitiator(MoveCPFlow::class) { BuyerFlow(it, attachmentsPath) }
         }
     }
 

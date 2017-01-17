@@ -1,8 +1,12 @@
-package com.barclays.indiacp.cordapp.protocol.agreements
+package com.barclays.indiacp.cordapp.protocol.depository
 
 import co.paralleluniverse.fibers.Suspendable
+import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
+import com.barclays.indiacp.cordapp.protocol.agreements.IndiaCPDocumentPayload
+import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.model.Error
+import com.barclays.indiacp.model.IndiaCPDocumentDetails
 import com.barclays.indiacp.model.IndiaCPException
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.crypto.CompositeKey
@@ -41,14 +45,15 @@ class AddISINFlow(val contractStateAndRef: StateAndRef<IndiaCommercialPaperProgr
             override fun childProgressTracker(): ProgressTracker = TwoPartyDealFlow.Primary.tracker()
         }
         object RECEIVED_ACCEPTANCE : ProgressTracker.Step("Received Issuer Acceptance Response")
+        object COPYING_TO_PARTICIPANTS : ProgressTracker.Step("Propogating transaction to all participants")
 
         // We vend a progress tracker that already knows there's going to be a TwoPartyTradingFlow involved at some
         // point: by setting up the tracker in advance, the user can see what's coming in more detail, instead of being
         // surprised when it appears as a new set of tasks below the current one.
-        fun tracker() = ProgressTracker(INITIATING_ISIN_CREATION, RECEIVED_ACCEPTANCE)
+        fun tracker() = ProgressTracker(INITIATING_ISIN_CREATION, RECEIVED_ACCEPTANCE, COPYING_TO_PARTICIPANTS)
     }
 
-    override val progressTracker: ProgressTracker = AddISINFlow.tracker()
+    override val progressTracker: ProgressTracker = tracker()
 
     val acceptorParty: Party = contractStateAndRef.state.data.issuer
 
@@ -62,10 +67,29 @@ class AddISINFlow(val contractStateAndRef: StateAndRef<IndiaCommercialPaperProgr
         progressTracker.currentStep = startingProgressStep
         val instigator = ISINCreationInitiator(
                 acceptorParty,
-                IndiaCPPayload(contractStateAndRef, notary),
+                IndiaCPDocumentPayload(contractStateAndRef, IndiaCPDocumentDetails.DocTypeEnum.DEPOSITORY_DOCS, notary),
                 myKey,
                 progressTracker.getChildProgressTracker(startingProgressStep)!!)
         val stx = subFlow(instigator)
+
+        progressTracker.currentStep = COPYING_TO_PARTICIPANTS
+        val parties = contractStateAndRef.state.data.parties
+        val initiator = serviceHub.myInfo.legalIdentity
+        if (parties.isNotEmpty()) {
+            // Copy the transaction to other participant nodes
+            parties.filter{!it.equals(initiator) && !it.equals(acceptorParty)}.forEach { send(it, stx) }
+        }
+
+        //propogate to participants of the CP Issues
+        val cpIssues : List<StateAndRef<IndiaCommercialPaper.State>> = CPUtils.getAllCP(serviceHub, contractStateAndRef.state.data.programId)
+        for (cpIssue in cpIssues) {
+            val cpIssueParties = cpIssue.state.data.parties
+            if (cpIssueParties.isNotEmpty()) {
+                // Copy the transaction to other participant nodes
+                cpIssueParties.subtract(parties).forEach { send(it, stx) }
+            }
+        }
+
         return stx
     }
 
@@ -75,23 +99,24 @@ class AddISINFlow(val contractStateAndRef: StateAndRef<IndiaCommercialPaperProgr
  * NSDL Side of the Flow for Initiating the New ISIN Creation Flow
  */
 open class ISINCreationInitiator(override val otherParty: Party,
-                                override val payload: IndiaCPPayload,
-                                override val myKeyPair: KeyPair,
-                                override val progressTracker: ProgressTracker = TwoPartyDealFlow.Primary.tracker()) : TwoPartyDealFlow.Primary() {
+                                 override val payload: IndiaCPDocumentPayload,
+                                 override val myKeyPair: KeyPair,
+                                 override val progressTracker: ProgressTracker = TwoPartyDealFlow.Primary.tracker()) : TwoPartyDealFlow.Primary() {
 
     override val notaryNode: NodeInfo get() =
     serviceHub.networkMapCache.notaryNodes.filter { it.notaryIdentity == payload.notary }.single()
 
 }
+
 /**
  * Issuer Side of the Flow for Accepting the Newly Generated ISIN.
  * We could plug in some verification logic to ensure that the generated ISIN is authentic.
  * At the moment it assumes that the signature of the Depository on the transaction is sufficient as a proof of authenticity
  */
 open class ISINCreationAcceptor(override val otherParty: Party,
-                               override val progressTracker: ProgressTracker = TwoPartyDealFlow.Secondary.tracker()) : TwoPartyDealFlow.Secondary<IndiaCPPayload>() {
+                                override val progressTracker: ProgressTracker = TwoPartyDealFlow.Secondary.tracker()) : TwoPartyDealFlow.Secondary<IndiaCPDocumentPayload>() {
 
-    override fun validateHandshake(handshake: TwoPartyDealFlow.Handshake<IndiaCPPayload>): TwoPartyDealFlow.Handshake<IndiaCPPayload> {
+    override fun validateHandshake(handshake: TwoPartyDealFlow.Handshake<IndiaCPDocumentPayload>): TwoPartyDealFlow.Handshake<IndiaCPDocumentPayload> {
         val cpProgramStateAndRef = handshake.payload.contractStateAndRef
         if (cpProgramStateAndRef.state.data is IndiaCommercialPaperProgram.State)
             return handshake
@@ -99,10 +124,11 @@ open class ISINCreationAcceptor(override val otherParty: Party,
             throw IndiaCPException("Unexpected '${cpProgramStateAndRef.state.data.javaClass.simpleName}' Payload Received in ${this.javaClass.simpleName} Flow Logic. Expected: ${IndiaCommercialPaperProgram.State::class.java.name}", Error.SourceEnum.DL_R3CORDA)
     }
 
-    override fun assembleSharedTX(handshake: TwoPartyDealFlow.Handshake<IndiaCPPayload>): Pair<TransactionBuilder, List<CompositeKey>> {
+    override fun assembleSharedTX(handshake: TwoPartyDealFlow.Handshake<IndiaCPDocumentPayload>): Pair<TransactionBuilder, List<CompositeKey>> {
         val cpProgramStateAndRef = handshake.payload.getCPProgramStateAndRef()
+        val cpIssues : List<StateAndRef<IndiaCommercialPaper.State>> = CPUtils.getAllCP(serviceHub, cpProgramStateAndRef.state.data.programId)
 
-        val tx = IndiaCommercialPaperProgram().generateTransactionWithISIN(cpProgramStateAndRef, handshake.payload.notary)
+        val tx = IndiaCommercialPaperProgram().generateTransactionWithISIN(cpProgramStateAndRef, cpIssues, handshake.payload.notary)
 
         // And add a request for timestamping
         tx.setTime(serviceHub.clock.instant(), 30.seconds)
