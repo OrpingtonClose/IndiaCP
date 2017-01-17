@@ -23,7 +23,7 @@ import java.util.Date;
 /**
  * IndiaCPIssue
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-14T02:47:08.972Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2017-01-17T04:38:32.277Z")
 public class IndiaCPIssue   {
   @JsonProperty("cpProgramId")
   private String cpProgramId = null;
@@ -45,6 +45,12 @@ public class IndiaCPIssue   {
 
   @JsonProperty("issuerName")
   private String issuerName = null;
+
+  @JsonProperty("investorId")
+  private String investorId = null;
+
+  @JsonProperty("investorName")
+  private String investorName = null;
 
   @JsonProperty("beneficiaryId")
   private String beneficiaryId = null;
@@ -242,17 +248,55 @@ public class IndiaCPIssue   {
     this.issuerName = issuerName;
   }
 
+  public IndiaCPIssue investorId(String investorId) {
+    this.investorId = investorId;
+    return this;
+  }
+
+   /**
+   * Unique identifier of the Investor
+   * @return investorId
+  **/
+  @JsonProperty("investorId")
+  @ApiModelProperty(value = "Unique identifier of the Investor")
+  public String getInvestorId() {
+    return investorId;
+  }
+
+  public void setInvestorId(String investorId) {
+    this.investorId = investorId;
+  }
+
+  public IndiaCPIssue investorName(String investorName) {
+    this.investorName = investorName;
+    return this;
+  }
+
+   /**
+   * Display name of the Investor
+   * @return investorName
+  **/
+  @JsonProperty("investorName")
+  @ApiModelProperty(value = "Display name of the Investor")
+  public String getInvestorName() {
+    return investorName;
+  }
+
+  public void setInvestorName(String investorName) {
+    this.investorName = investorName;
+  }
+
   public IndiaCPIssue beneficiaryId(String beneficiaryId) {
     this.beneficiaryId = beneficiaryId;
     return this;
   }
 
    /**
-   * Unique identifier of the Investor. This also uniquely identifies the Investor DL Node
+   * Unique identifier of the Beneficiary. When Self-Issued the Beneficiary is initially the Issuer. After receiving the payment the Beneficiary is the Investor
    * @return beneficiaryId
   **/
   @JsonProperty("beneficiaryId")
-  @ApiModelProperty(value = "Unique identifier of the Investor. This also uniquely identifies the Investor DL Node")
+  @ApiModelProperty(value = "Unique identifier of the Beneficiary. When Self-Issued the Beneficiary is initially the Issuer. After receiving the payment the Beneficiary is the Investor")
   public String getBeneficiaryId() {
     return beneficiaryId;
   }
@@ -267,11 +311,11 @@ public class IndiaCPIssue   {
   }
 
    /**
-   * Display name of the Investor
+   * Display name of the Beneficiary
    * @return beneficiaryName
   **/
   @JsonProperty("beneficiaryName")
-  @ApiModelProperty(value = "Display name of the Investor")
+  @ApiModelProperty(value = "Display name of the Beneficiary")
   public String getBeneficiaryName() {
     return beneficiaryName;
   }
@@ -658,6 +702,8 @@ public class IndiaCPIssue   {
         Objects.equals(this.traderId, indiaCPIssue.traderId) &&
         Objects.equals(this.issuerId, indiaCPIssue.issuerId) &&
         Objects.equals(this.issuerName, indiaCPIssue.issuerName) &&
+        Objects.equals(this.investorId, indiaCPIssue.investorId) &&
+        Objects.equals(this.investorName, indiaCPIssue.investorName) &&
         Objects.equals(this.beneficiaryId, indiaCPIssue.beneficiaryId) &&
         Objects.equals(this.beneficiaryName, indiaCPIssue.beneficiaryName) &&
         Objects.equals(this.ipaId, indiaCPIssue.ipaId) &&
@@ -683,7 +729,7 @@ public class IndiaCPIssue   {
 
   @Override
   public int hashCode() {
-    return Objects.hash(cpProgramId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, beneficiaryId, beneficiaryName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDays, currency, facevaluePerUnit, noOfUnits, rate, issuerSettlementDetails, investorSettlementDetails, ipaSettlementDetails, dealConfirmationDocId, status, version, modifiedBy, lastModifiedDate);
+    return Objects.hash(cpProgramId, cpTradeId, bookId, isin, traderId, issuerId, issuerName, investorId, investorName, beneficiaryId, beneficiaryName, ipaId, ipaName, depositoryId, depositoryName, tradeDate, valueDate, maturityDays, currency, facevaluePerUnit, noOfUnits, rate, issuerSettlementDetails, investorSettlementDetails, ipaSettlementDetails, dealConfirmationDocId, status, version, modifiedBy, lastModifiedDate);
   }
 
 
@@ -699,6 +745,8 @@ public class IndiaCPIssue   {
     sb.append("    traderId: ").append(toIndentedString(traderId)).append("\n");
     sb.append("    issuerId: ").append(toIndentedString(issuerId)).append("\n");
     sb.append("    issuerName: ").append(toIndentedString(issuerName)).append("\n");
+    sb.append("    investorId: ").append(toIndentedString(investorId)).append("\n");
+    sb.append("    investorName: ").append(toIndentedString(investorName)).append("\n");
     sb.append("    beneficiaryId: ").append(toIndentedString(beneficiaryId)).append("\n");
     sb.append("    beneficiaryName: ").append(toIndentedString(beneficiaryName)).append("\n");
     sb.append("    ipaId: ").append(toIndentedString(ipaId)).append("\n");

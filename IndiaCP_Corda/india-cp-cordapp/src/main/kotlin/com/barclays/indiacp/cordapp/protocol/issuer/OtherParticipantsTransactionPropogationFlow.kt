@@ -3,6 +3,7 @@ package com.barclays.indiacp.cordapp.protocol.issuer
 import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.protocol.agreements.AddCPDocFlow
 import com.barclays.indiacp.cordapp.protocol.agreements.AddCPProgramDocFlow
+import com.barclays.indiacp.cordapp.protocol.common.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.protocol.depository.AddISINFlow
 import net.corda.core.crypto.Party
 import net.corda.core.flows.FlowLogic
@@ -38,6 +39,7 @@ class OtherParticipantsTransactionPropogationFlow(val otherParty: Party) : FlowL
             services.registerFlowInitiator(AddISINFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
             services.registerFlowInitiator(AddCPDocFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
             services.registerFlowInitiator(AddCPProgramDocFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
+            services.registerFlowInitiator(AddSettlementDetailsFlow::class) { OtherParticipantsTransactionPropogationFlow(it) }
         }
     }
 

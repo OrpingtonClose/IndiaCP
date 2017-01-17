@@ -2,6 +2,7 @@ package com.barclays.indiacp.cordapp.api
 
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.protocol.agreements.AddCPDocFlow
+import com.barclays.indiacp.cordapp.protocol.common.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.IssueCPFlow
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ErrorUtils
@@ -64,6 +65,28 @@ class IndiaCPApi(val services: ServiceHub){
                 outputNotary = notary,
                 ownedBy = services.myInfo.legalIdentity.owningKey)
         return Response.status(Response.Status.CREATED).build()
+    }
+
+    @POST
+    @Path("addSettlementDetails/{cpIssueId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun addSettlementDetails(@PathParam("cpIssueId") cpIssueId: String,
+                            settlementDetailsModel: SettlementDetails ): Response {
+        try
+        {
+            val settlementDetailsState = ModelUtils.settlementDetailsFromModel(settlementDetailsModel)
+            val cpStateAndRef = CPUtils.getCPStateRefNonNull(cpTradeId = cpIssueId, services = services)
+            val stx = services.invokeFlowAsync(AddSettlementDetailsFlow::class.java, cpStateAndRef, settlementDetailsState).resultFuture.get()
+            logger.info("Settlement Details amended for cpIssueId: ${cpIssueId} for Party ${settlementDetailsState?.partyType} \n\nFinal transaction is:\n\n${Emoji.renderIfSupported(stx.tx)}")
+
+            val createdContractState = getCP(cpIssueId) ?: throw IndiaCPException(CPIssueError.CREATION_ERROR, Error.SourceEnum.DL_R3CORDA, "Could not fetch the newly created CP from the DL");
+            return Response.status(Response.Status.OK).entity(ModelUtils.indiaCPModelFromState(createdContractState!!)).build()
+
+        } catch (ex: Throwable) {
+            logger.info("${CPIssueError.AMENDMENT_ERROR}: ${ex.toString()}")
+            return ErrorUtils.errorHttpResponse(ex, errorCode = CPIssueError.AMENDMENT_ERROR)
+        }
     }
 
     @GET

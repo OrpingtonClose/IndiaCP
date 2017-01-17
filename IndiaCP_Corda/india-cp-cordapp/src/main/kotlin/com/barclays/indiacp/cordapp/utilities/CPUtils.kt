@@ -1,6 +1,5 @@
 package com.barclays.indiacp.cordapp.utilities
 
-import com.barclays.indiacp.cordapp.contract.CreditRating
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.search.IndiaCPHistorySearch
@@ -10,23 +9,10 @@ import net.corda.core.contracts.*
 import net.corda.core.crypto.Party
 import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.composite
-import net.corda.core.node.NodeInfo
 import net.corda.core.node.ServiceHub
-import net.corda.core.node.services.dealsWith
 import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.serialization.OpaqueBytes
 import net.corda.core.transactions.WireTransaction
-import java.io.PrintWriter
-import java.io.StringWriter
-import javax.ws.rs.core.Response
-import kotlin.reflect.KClass
-
-enum class Role {
-    BUYER,
-    SELLER
-}
-
-val DEFAULT_BASE_DIRECTORY = "./build/indiacpdemo"
 
 object CPUtils {
 
@@ -86,24 +72,15 @@ object CPUtils {
         return cpStateAndRef
     }
 
-    fun getContractState(serviceHub: ServiceHub, cpRefId: String) : StateAndRef<OwnableState> {
-        val states = serviceHub.vaultService.currentVault.statesOfType<IndiaCommercialPaper.State>()
-        for (stateAndRef: StateAndRef<IndiaCommercialPaper.State> in states) {
-            val ref = getReference(cpRefId)
-            //TODO
-//            if (stateAndRef.state.data.issuance.reference.equals(ref)) {
-//                return stateAndRef
-//            }
-        }
-        throw Exception("ECPTradeAndSettlementProtocol: Commercial Paper referenced by $cpRefId not found")
-    }
-
     fun getPartyAndRef(party: Party, reference: OpaqueBytes) : PartyAndReference {
         return PartyAndReference(party, reference)
     }
 
     fun getPartyByName(serviceHub: ServiceHub, partyName: String) : Party {
-        return checkNotNull(serviceHub.networkMapCache.getNodeByLegalName(partyName)).legalIdentity
+        if (serviceHub.networkMapCache.getNodeByLegalName(partyName) == null) {
+            throw IndiaCPException ("Corda Node ${partyName} is Not Available", Error.SourceEnum.DL_R3CORDA)
+        }
+        return serviceHub.networkMapCache.getNodeByLegalName(partyName)!!.legalIdentity
     }
 
     fun getReference(cpRefId: String): OpaqueBytes {

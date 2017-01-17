@@ -33,6 +33,9 @@ object IndiaCommercialPaperSchemaV1 : MappedSchema(schemaFamily = IndiaCommercia
             @Column(name = "beneficiary_key")
             var beneficiaryParty: String,
 
+            @Column(name = "investor_key")
+            var investorParty: String,
+
             @Column(name = "ipa_key")
             var ipaParty: String,
 

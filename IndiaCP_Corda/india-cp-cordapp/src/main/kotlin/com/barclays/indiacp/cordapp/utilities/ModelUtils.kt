@@ -252,6 +252,7 @@ object ModelUtils {
         val faceValue = model.facevaluePerUnit.toLong() * model.noOfUnits
         val contractState = IndiaCommercialPaper.State (
                 issuer = CPUtils.getPartyByName(serviceHub, model.issuerId),
+                investor = CPUtils.getPartyByName(serviceHub, model.investorId),
                 ipa =  CPUtils.getPartyByName(serviceHub, model.ipaId),
                 depository = CPUtils.getPartyByName(serviceHub, model.depositoryId),
                 beneficiary = CPUtils.getPartyByName(serviceHub, model.beneficiaryId),
@@ -281,7 +282,7 @@ object ModelUtils {
         return contractState
     }
 
-    private fun  settlementDetailsFromModel(model: SettlementDetails): IndiaCommercialPaper.SettlementDetails? {
+    fun  settlementDetailsFromModel(model: SettlementDetails): IndiaCommercialPaper.SettlementDetails? {
         val depositoryAccountDetails = ArrayList<IndiaCommercialPaper.DepositoryAccountDetails> ()
         for (d in model.depositoryAccountDetails) {
             val dpAccount = IndiaCommercialPaper.DepositoryAccountDetails(

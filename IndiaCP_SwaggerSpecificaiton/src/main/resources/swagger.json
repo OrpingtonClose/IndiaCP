@@ -1105,13 +1105,21 @@
                     "type": "string",
                     "description": "Display name of the Issuer"
                 },
+                "investorId": {
+                    "type": "string",
+                    "description": "Unique identifier of the Investor"
+                },
+                "investorName": {
+                    "type": "string",
+                    "description": "Display name of the Investor"
+                },
                 "beneficiaryId": {
                     "type": "string",
-                    "description": "Unique identifier of the Investor. This also uniquely identifies the Investor DL Node"
+                    "description": "Unique identifier of the Beneficiary. When Self-Issued the Beneficiary is initially the Issuer. After receiving the payment the Beneficiary is the Investor"
                 },
                 "beneficiaryName": {
                     "type": "string",
-                    "description": "Display name of the Investor"
+                    "description": "Display name of the Beneficiary"
                 },
                 "ipaId": {
                     "type": "string",

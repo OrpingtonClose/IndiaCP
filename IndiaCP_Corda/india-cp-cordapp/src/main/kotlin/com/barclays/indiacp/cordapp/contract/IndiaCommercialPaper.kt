@@ -51,6 +51,7 @@ class IndiaCommercialPaper : Contract {
     data class State(
             val issuer: Party,
             val beneficiary: Party,
+            val investor: Party,
             val ipa: Party,
             val depository: Party,
 
@@ -82,10 +83,10 @@ class IndiaCommercialPaper : Contract {
 
         //Only the Issuer and Investor should be party to the full state of this transaction
         val parties: List<Party>
-            get() = listOf(issuer, beneficiary, ipa, depository)
+            get() = listOf(issuer, beneficiary, investor, ipa, depository)
 
         override val participants: List<CompositeKey>
-            get() = listOf(issuer, beneficiary, ipa, depository).map { it.owningKey }
+            get() = listOf(issuer, beneficiary, investor, ipa, depository).map { it.owningKey }
 
         override fun isRelevant(ourKeys: Set<PublicKey>): Boolean {
             return parties.map { it.owningKey }.any { ck -> ck.containsAny(ourKeys) }
@@ -107,6 +108,7 @@ class IndiaCommercialPaper : Contract {
                     val cpPersistedObject = IndiaCommercialPaperSchemaV1.PersistentIndiaCommericalPaperState(
                         issuanceParty = this.issuer.owningKey.toBase58String(),
                         beneficiaryParty = this.beneficiary.owningKey.toBase58String(),
+                        investorParty = this.investor.owningKey.toBase58String(),
                         ipaParty = this.ipa.owningKey.toBase58String(),
                         depositoryParty = this.depository.owningKey.toBase58String(),
 
@@ -189,10 +191,6 @@ class IndiaCommercialPaper : Contract {
         }
     }
 
-//    private fun  getSettlementPersistedStates(issuerSettlementDetails: IndiaCommercialPaper.SettlementDetails?, investorSettlementDetails: IndiaCommercialPaper.SettlementDetails?, ipaSettlementDetails: IndiaCommercialPaper.SettlementDetails?): List<PersistentSettlementSchemaState>? {
-//        return ArrayList<PersistentSettlementSchemaState>()
-//    }
-
     data class SettlementDetails (
         val partyType : String,
         val paymentAccountDetails: PaymentAccountDetails?,
@@ -217,11 +215,10 @@ class IndiaCommercialPaper : Contract {
         class Group : GroupClauseVerifier<IndiaCommercialPaper.State, IndiaCommercialPaper.Commands, Issued<IndiaCommercialPaper.Terms>>(
                 clause = AnyComposition(
                         IndiaCommercialPaper.Clauses.Issue(),
-                        IndiaCommercialPaper.Clauses.Agree(),
-                        IndiaCommercialPaper.Clauses.Redeem(),
-                        IndiaCommercialPaper.Clauses.AddSettlementDetails(),
+                        IndiaCommercialPaper.Clauses.AddDealConfirmationDoc(),
                         IndiaCommercialPaper.Clauses.AddISIN(),
-                        IndiaCommercialPaper.Clauses.AddDealConfirmationDoc()
+                        IndiaCommercialPaper.Clauses.AddSettlementDetails(),
+                        IndiaCommercialPaper.Clauses.Redeem()
                 )) {
             override fun groupStates(tx: TransactionForContract): List<TransactionForContract.InOutGroup<IndiaCommercialPaper.State, Issued<IndiaCommercialPaper.Terms>>>
                     = tx.groupStates<IndiaCommercialPaper.State, Issued<IndiaCommercialPaper.Terms>> { it.token }
@@ -356,22 +353,40 @@ class IndiaCommercialPaper : Contract {
             }
         }
 
-        class Agree: Clause<IndiaCommercialPaper.State, IndiaCommercialPaper.Commands, Issued<IndiaCommercialPaper.Terms>>() {
-            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaper.Commands.Move::class.java)
+        class AddSettlementDetails: AbstractIndiaCPClause() {
+            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaper.Commands.AddSettlementDetails::class.java)
 
             override fun verify(tx: TransactionForContract,
                                 inputs: List<IndiaCommercialPaper.State>,
                                 outputs: List<IndiaCommercialPaper.State>,
                                 commands: List<AuthenticatedObject<IndiaCommercialPaper.Commands>>,
                                 groupingKey: Issued<IndiaCommercialPaper.Terms>?): Set<IndiaCommercialPaper.Commands> {
-                val command = commands.requireSingleCommand<IndiaCommercialPaper.Commands.Move>()
-                val input = inputs.single()
-                requireThat {
-                    "the transaction is signed by the beneficiary of the CP" by (input.beneficiary.owningKey in command.signers)
-                    "the state is propagated" by (outputs.size == 1)
-                    // Don't need to check anything else, as if outputs.size == 1 then the output is equal to
-                    // the input ignoring the owner field due to the grouping.
+
+                val command = commands.requireSingleCommand<IndiaCommercialPaper.Commands.AddSettlementDetails>()
+                val input = tx.inputs.filterIsInstance<IndiaCommercialPaper.State>().single()
+
+                val output = tx.outputs.filterIsInstance<IndiaCommercialPaper.State>().single()
+                val timestamp = tx.timestamp
+                val time = timestamp?.after ?: throw IllegalArgumentException("Add Settlement Details Request must be timestamped")
+
+                when (output.status) {
+                    IndiaCPIssueStatusEnum.CP_ISSUER_SETTLEMENT_DETAILS_AMENDED.name -> {
+                        requireThat {
+                            "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
+                        }
+                    }
+                    IndiaCPIssueStatusEnum.CP_INVESTOR_SETTLEMENT_DETAILS_AMENDED.name -> {
+                        requireThat {
+                            "the transaction is signed by the Issuer" by (output.investor.owningKey in command.signers)
+                        }
+                    }
+                    IndiaCPIssueStatusEnum.CP_IPA_SETTLEMENT_DETAILS_AMENDED.name -> {
+                        requireThat {
+                            "the transaction is signed by the Issuer" by (output.ipa.owningKey in command.signers)
+                        }
+                    }
                 }
+
                 return setOf(command.value)
             }
         }
@@ -404,39 +419,20 @@ class IndiaCommercialPaper : Contract {
 
         }
 
-        class AddSettlementDetails: Clause<IndiaCommercialPaper.State, IndiaCommercialPaper.Commands, Issued<IndiaCommercialPaper.Terms>>() {
-            override val requiredCommands: Set<Class<out CommandData>> = setOf(IndiaCommercialPaper.Commands.AddSettlementDetails::class.java)
-
-            override fun verify(tx: TransactionForContract,
-                                inputs: List<IndiaCommercialPaper.State>,
-                                outputs: List<IndiaCommercialPaper.State>,
-                                commands: List<AuthenticatedObject<IndiaCommercialPaper.Commands>>,
-                                groupingKey: Issued<IndiaCommercialPaper.Terms>?): Set<IndiaCommercialPaper.Commands> {
-                val command = commands.requireSingleCommand<IndiaCommercialPaper.Commands.AddSettlementDetails>()
-                val input = inputs.single()
-                val timestamp = tx.timestamp
-                val time = timestamp?.before ?: throw IllegalArgumentException("AddSettlementDetails must be timestamped")
-                //Ownership is still with issuer so we should check with issuer key
-                requireThat { "the transaction is signed by the issuer of the CP" by (input.issuer.owningKey in command.signers)}
-
-                return setOf(command.value)
-            }
-        }
-
     }
 
     interface Commands : CommandData {
         data class Issue(override val nonce: Long = random63BitValue()) : IssueCommand, IndiaCommercialPaper.Commands
         data class Move(override val contractHash: SecureHash? = null) : FungibleAsset.Commands.Move, IndiaCommercialPaper.Commands
         class Redeem : TypeOnlyCommandData(), IndiaCommercialPaper.Commands
-        class Agree : TypeOnlyCommandData(), Commands  // Both sides agree to trade
-        class AddSettlementDetails(settlementDetails: SettlementDetails) : IndiaCommercialPaper.Commands
+        class AddSettlementDetails() : IndiaCommercialPaper.Commands
         class AddDealConfirmationDoc : TypeOnlyCommandData(), IndiaCommercialPaper.Commands
         class AddISIN : TypeOnlyCommandData(), IndiaCommercialPaper.Commands
     }
 
     fun generateIssue(cpContractState: IndiaCommercialPaper.State,
                       cpProgramStateRef: StateAndRef<IndiaCommercialPaperProgram.State>,
+                      beneficiary: Party,
                       notary: Party): TransactionBuilder {
 
         val tx = TransactionType.General.Builder(notary)
@@ -449,6 +445,7 @@ class IndiaCommercialPaper : Contract {
 
         tx.addOutputState(
                 cpContractState.copy(
+                        beneficiary = beneficiary,
                         status = IndiaCPIssueStatusEnum.CP_ISSUED.name,
                         lastModifiedDate = Instant.now(),
                         version = ModelUtils.STARTING_VERSION
@@ -501,17 +498,49 @@ class IndiaCommercialPaper : Contract {
         return tx
     }
 
-    fun addSettlementDetails(tx: TransactionBuilder, cp: StateAndRef<State>, settlementDetails: SettlementDetails): TransactionBuilder {
-        //todo - need to fix the settlement details
-        /*
+    fun generateAddSettlementDetails(cp: StateAndRef<State>, settlementDetails: SettlementDetails, initiator: Party, notary: Party): TransactionBuilder {
+        val tx = TransactionType.General.Builder(notary)
+
+        //Adding Inputs
         tx.addInputState(cp)
-        val newVersion = Integer(cp.state.data.version.toInt() + 1)
+
+        var issuerSettlementDetails : SettlementDetails? = cp.state.data.issuerSettlementDetails
+        var investorSettlementDetails : SettlementDetails? = cp.state.data.investorSettlementDetails
+        var ipaSettlementDetails : SettlementDetails? = cp.state.data.ipaSettlementDetails
+        var status : String? = cp.state.data.status
+
+        when (settlementDetails.partyType) {
+            com.barclays.indiacp.model.SettlementDetails.PartyTypeEnum.ISSUER.name -> {
+                issuerSettlementDetails = settlementDetails
+                status = IndiaCPIssueStatusEnum.CP_ISSUER_SETTLEMENT_DETAILS_AMENDED.name
+            }
+            com.barclays.indiacp.model.SettlementDetails.PartyTypeEnum.INVESTOR.name -> {
+                investorSettlementDetails = settlementDetails
+                status = IndiaCPIssueStatusEnum.CP_INVESTOR_SETTLEMENT_DETAILS_AMENDED.name
+            }
+            com.barclays.indiacp.model.SettlementDetails.PartyTypeEnum.IPA.name -> {
+                ipaSettlementDetails = settlementDetails
+                status = IndiaCPIssueStatusEnum.CP_IPA_SETTLEMENT_DETAILS_AMENDED.name
+            }
+        }
+
+        //Adding Outputs
         tx.addOutputState(
-                cp.state.data.copy(settlementDetails = settlementDetails, version = newVersion),
+                cp.state.data.copy(
+                        version = cp.state.data.version!! + 1,
+                        lastModifiedDate = Instant.now(),
+                        status = status,
+                        issuerSettlementDetails = issuerSettlementDetails,
+                        investorSettlementDetails = investorSettlementDetails,
+                        ipaSettlementDetails = ipaSettlementDetails
+                ),
                 cp.state.notary
-        )*/
-        tx.addCommand(Commands.AddSettlementDetails(settlementDetails), listOf(cp.state.data.issuer.owningKey))
-        return tx;
+        )
+
+        //Adding Required Commands
+        tx.addCommand(IndiaCommercialPaper.Commands.AddSettlementDetails(), listOf(initiator.owningKey))
+
+        return tx
     }
 
 }

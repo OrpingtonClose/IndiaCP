@@ -10,6 +10,7 @@ import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
 import com.barclays.indiacp.cordapp.protocol.agreements.AddCPDocFlow
 import com.barclays.indiacp.cordapp.protocol.agreements.AddCPProgramDocFlow
+import com.barclays.indiacp.cordapp.protocol.common.AddSettlementDetailsFlow
 import com.barclays.indiacp.cordapp.protocol.depository.AddISINFlow
 import com.barclays.indiacp.cordapp.protocol.issuer.*
 import com.barclays.indiacp.model.IndiaCPDocumentDetails
@@ -40,10 +41,9 @@ class IndiaCPPlugin : CordaPluginRegistry() {
             AddCPProgramDocFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCPDocumentDetails.DocTypeEnum::class.java.name, Party::class.java.name, Party::class.java.name),
             AddISINFlow::class.java.name to setOf(StateAndRef::class.java.name),
             IssueCPFlow::class.java.name to setOf(IndiaCommercialPaper.State::class.java.name),
-            AddCPDocFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCPDocumentDetails.DocTypeEnum::class.java.name, Party::class.java.name)
-
+            AddCPDocFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCPDocumentDetails.DocTypeEnum::class.java.name, Party::class.java.name),
+            AddSettlementDetailsFlow::class.java.name to setOf(StateAndRef::class.java.name, IndiaCommercialPaper.SettlementDetails::class.java.name)
             //DealEntryFlow::class.java.name to setOf(String::class.java.name, Party::class.java.name),
-            //IssueCPFlow::class.java.name to setOf(IndiaCPApi.CPJSONObject::class.java.name),
     )
 
     override val servicePlugins = listOf(

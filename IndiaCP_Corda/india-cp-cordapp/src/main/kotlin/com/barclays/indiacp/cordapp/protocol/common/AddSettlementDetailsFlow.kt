@@ -1,4 +1,4 @@
-package com.barclays.indiacp.cordapp.protocol.issuer
+package com.barclays.indiacp.cordapp.protocol.common
 
 import co.paralleluniverse.fibers.Suspendable
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
@@ -6,6 +6,7 @@ import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.model.CPIssueError
 import com.barclays.indiacp.model.Error
 import com.barclays.indiacp.model.IndiaCPException
+import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.FlowLogic
 import net.corda.core.node.NodeInfo
 import net.corda.core.seconds
@@ -17,18 +18,17 @@ import java.time.Instant
 /**
  * This is the Flow Logic for Issuing Commercial Paper under a previously commenced Commercial Paper Program umbrella.
  */
-class IssueCPFlow(val contractState: IndiaCommercialPaper.State) : FlowLogic<SignedTransaction>() {
+class AddSettlementDetailsFlow(val cpStateAndRef: StateAndRef<IndiaCommercialPaper.State>, val settlementDetails: IndiaCommercialPaper.SettlementDetails) : FlowLogic<SignedTransaction>() {
 
     companion object {
-        object PROGRAM_CEILING_CHECK : ProgressTracker.Step("Checking Program Ceiling Amount against Outstanding Issues")
-        object SELF_ISSUING : ProgressTracker.Step("Issuing and timestamping some commercial paper")
+        object AMENDING_SETTLEMENT_DETAILS : ProgressTracker.Step("Amending settlement details on the CP")
         object OBTAINING_NOTARY_SIGNATURE : ProgressTracker.Step("Obtaining Notary Signature")
         object NOTARY_SIGNATURE_OBTAINED : ProgressTracker.Step("Notary Signature Obtained")
         object RECORDING_TRANSACTION : ProgressTracker.Step("Recording Transaction in Local Storage")
         object TRANSACTION_RECORDED : ProgressTracker.Step("Transaction Recorded in Local Storage")
         object COPYING_TO_PARTICIPANTS : ProgressTracker.Step("Propogating transaction to all participants")
 
-        fun tracker() = ProgressTracker(PROGRAM_CEILING_CHECK, SELF_ISSUING, OBTAINING_NOTARY_SIGNATURE, NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED, COPYING_TO_PARTICIPANTS)
+        fun tracker() = ProgressTracker(AMENDING_SETTLEMENT_DETAILS, OBTAINING_NOTARY_SIGNATURE, NOTARY_SIGNATURE_OBTAINED, RECORDING_TRANSACTION, TRANSACTION_RECORDED, COPYING_TO_PARTICIPANTS)
     }
 
     override val progressTracker = tracker()
@@ -36,24 +36,16 @@ class IssueCPFlow(val contractState: IndiaCommercialPaper.State) : FlowLogic<Sig
     @Suspendable
     override fun call(): SignedTransaction {
         val notary: NodeInfo = serviceHub.networkMapCache.notaryNodes[0]
-        val issuer = serviceHub.myInfo.legalIdentity
+        val initiator = serviceHub.myInfo.legalIdentity
 
-        progressTracker.currentStep = PROGRAM_CEILING_CHECK
-        val cpProgramStateRef = CPUtils.getCPProgramStateRefNonNull(serviceHub, contractState.cpProgramID)
-        //Perform limit check
-        if ((cpProgramStateRef.state.data.programAllocatedValue!!.quantity + contractState.faceValue.quantity) > (cpProgramStateRef.state.data.programSize.quantity)) {
-            throw IndiaCPException(CPIssueError.PROGRAM_CEILING_EXCEEDED_ERROR, Error.SourceEnum.DL_R3CORDA, "This Program Cannot be Initiated. The Face Value of this CP ${contractState.faceValue} exceeds the available allocation limit as restricted by the program ceiling ${cpProgramStateRef.state.data.programSize}.")
-        }
+        progressTracker.currentStep = AMENDING_SETTLEMENT_DETAILS
 
-        progressTracker.currentStep = SELF_ISSUING
-
-        val tx = IndiaCommercialPaper().generateIssue(contractState, cpProgramStateRef = cpProgramStateRef, beneficiary = issuer, notary = notary.notaryIdentity)
+        val tx = IndiaCommercialPaper().generateAddSettlementDetails(cpStateAndRef, settlementDetails, initiator, notary = notary.notaryIdentity)
 
         // Requesting timestamping, all CP must be timestamped.
         tx.setTime(Instant.now(), 30.seconds)
 
-        // Sign it as Issuer.
-        val issuerNode = serviceHub.myInfo
+        // Sign it as an Initiator
         tx.signWith(serviceHub.legalIdentityKey)
 
         // Get the notary to sign the timestamp
@@ -69,10 +61,10 @@ class IssueCPFlow(val contractState: IndiaCommercialPaper.State) : FlowLogic<Sig
         progressTracker.currentStep = TRANSACTION_RECORDED
 
         progressTracker.currentStep = COPYING_TO_PARTICIPANTS
-        val parties = contractState.parties
+        val parties = cpStateAndRef.state.data.parties
         if (parties.isNotEmpty()) {
             // Copy the transaction to other participant nodes
-            parties.filter{!it.equals(issuerNode.legalIdentity)}.forEach { send(it, stx) }
+            parties.filter{!it.equals(initiator)}.forEach { send(it, stx) }
         }
 
         return stx
