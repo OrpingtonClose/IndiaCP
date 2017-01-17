@@ -3,7 +3,7 @@ module app.main {
 
     interface IMainScope {
         logout(): void;
-        nodeType: string;
+        nodeInfo: app.models.NodeInfo;
     }
 
     class MainController implements IMainScope {
@@ -11,20 +11,20 @@ module app.main {
             "app.services.AuthenticationService",
             "localStorageService",
             "$uibModal"];
-        nodeType: string;
+        nodeInfo: app.models.NodeInfo;
         constructor(protected $state: ng.ui.IStateService,
             protected authService: app.services.IAuthenticationService,
             protected localStorageService: ng.local.storage.ILocalStorageService,
             protected $uibModal: ng.ui.bootstrap.IModalService) {
-            this.nodeType = (this.localStorageService.get("nodeInfo") as app.models.NodeInfo).nodeType;
+            this.nodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
         }
         public logout(): void {
             this.authService.logout();
             this.$state.go("login");
         }
 
-        public showBRDoc(): void {
-            this.$uibModal.open({
+        public uploadBRDoc(): void {
+            var uploadBRModal: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open({
                 animation: true,
                 ariaLabelledBy: "modal-title",
                 ariaDescribedBy: "modal-body",
@@ -34,9 +34,13 @@ module app.main {
                 backdrop: "static",
                 templateUrl: "app/legalentity/uploadbr.html"
             });
+
+            uploadBRModal.closed.then(() => {
+                this.$state.transitionTo("main.dashboard");
+            });
         }
-        public showCRDoc(): void {
-            this.$uibModal.open({
+        public uploadCRDoc(): void {
+            var uploadCRModal: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open({
                 animation: true,
                 ariaLabelledBy: "modal-title",
                 ariaDescribedBy: "modal-body",
@@ -44,7 +48,11 @@ module app.main {
                 controllerAs: "vm",
                 size: "lg",
                 backdrop: "static",
-                templateUrl: "app/legalentity/uploadcr.html"
+                templateUrl: "app/legalentity/uploadcr.html",
+            });
+
+            uploadCRModal.closed.then(() => {
+                this.$state.transitionTo("main.dashboard");
             });
         }
     }

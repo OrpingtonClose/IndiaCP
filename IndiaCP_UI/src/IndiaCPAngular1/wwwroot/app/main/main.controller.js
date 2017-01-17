@@ -9,14 +9,15 @@ var app;
                 this.authService = authService;
                 this.localStorageService = localStorageService;
                 this.$uibModal = $uibModal;
-                this.nodeType = this.localStorageService.get("nodeInfo").nodeType;
+                this.nodeInfo = this.localStorageService.get("nodeInfo");
             }
             MainController.prototype.logout = function () {
                 this.authService.logout();
                 this.$state.go("login");
             };
-            MainController.prototype.showBRDoc = function () {
-                this.$uibModal.open({
+            MainController.prototype.uploadBRDoc = function () {
+                var _this = this;
+                var uploadBRModal = this.$uibModal.open({
                     animation: true,
                     ariaLabelledBy: "modal-title",
                     ariaDescribedBy: "modal-body",
@@ -26,9 +27,13 @@ var app;
                     backdrop: "static",
                     templateUrl: "app/legalentity/uploadbr.html"
                 });
+                uploadBRModal.closed.then(function () {
+                    _this.$state.transitionTo("main.dashboard");
+                });
             };
-            MainController.prototype.showCRDoc = function () {
-                this.$uibModal.open({
+            MainController.prototype.uploadCRDoc = function () {
+                var _this = this;
+                var uploadCRModal = this.$uibModal.open({
                     animation: true,
                     ariaLabelledBy: "modal-title",
                     ariaDescribedBy: "modal-body",
@@ -36,7 +41,10 @@ var app;
                     controllerAs: "vm",
                     size: "lg",
                     backdrop: "static",
-                    templateUrl: "app/legalentity/uploadcr.html"
+                    templateUrl: "app/legalentity/uploadcr.html",
+                });
+                uploadCRModal.closed.then(function () {
+                    _this.$state.transitionTo("main.dashboard");
                 });
             };
             return MainController;

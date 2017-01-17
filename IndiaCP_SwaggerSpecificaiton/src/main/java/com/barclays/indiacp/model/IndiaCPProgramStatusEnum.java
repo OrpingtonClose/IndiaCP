@@ -7,6 +7,7 @@ public enum IndiaCPProgramStatusEnum {
 
         UNKNOWN,
         CP_PROGRAM_CREATED,
+        CP_PROGRAM_FULLY_ALLOCATED,
         ISIN_GEN_DOC_ADDED,
         ISIN_ADDED,
         CP_ISSUEED,

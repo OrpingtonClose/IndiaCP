@@ -30,7 +30,7 @@ module app.services {
     "use strict";
 
     export interface IIssuerService {
-        addDoc(cpProgramId: string, metadata: string, file: any, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.IndiaCPProgram>;
+        addDoc(cpProgramId: string, docData: app.models.CPDocData, file: any, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.IndiaCPProgram>;
         addISIN(cpProgramId: string, isin: string, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.IndiaCPProgram>;
         fetchAllCP(cpProgramId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>>;
         fetchAllCPOnThisNode(extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>>;
@@ -41,6 +41,11 @@ module app.services {
         issueCP(cpDetails: app.models.IndiaCPIssue, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.IndiaCPIssue>;
         issueCPProgram(cpprogramDetails: app.models.IndiaCPProgram, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.IndiaCPProgram>;
         issueCreditRating(creditRatingDetails: app.models.CreditRatingDocs, file: any, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.CreditRatingDocs>;
+        issueBoardResolution(boardResolutionDetails: app.models.BoardResolutionDocs, file: any, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.BoardResolutionDocs>;
+        fetchBoardResolution(extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.BoardResolutionDocs>>;
+        CPissueGetTransactionHistory(cpIssueId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>>;
+        CPProgramGetTransactionHistory(cpProgramId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPProgram>>;
+
     }
 
     class IssuerService implements IIssuerService {
@@ -69,13 +74,75 @@ module app.services {
         }
 
         /**
-             * Uploads and attaches the provided document to the CPProgram on the DL
-             * Uploads and attaches the provided document to the CPProgram on the DL
-             * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
-             * @param metadata Document Attachment Details
-             * @param file Document Attachment
-             */
-        public addDoc(cpProgramId: string, metadata: string, file: any, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.IndiaCPProgram> {
+         * Complete audit log of all changes/versions of given CP Issue
+         * A given CP Issue once initiated undergoes various changes as it progresses through the trade lifecycle of adding settlement details, Deal Confirmations till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.
+         * @param cpIssueId CP Issue ID that uniquely identifies the CP issued by the Issuer
+         */
+        public CPissueGetTransactionHistory(cpIssueId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>> {
+            const localVarPath = this.basePath + "/indiacpissue/getTransactionHistory/{cpIssueId}"
+                .replace("{" + "cpIssueId" + "}", String(cpIssueId));
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            // verify required parameter "cpIssueId" is not null or undefined
+            if (cpIssueId === null || cpIssueId === undefined) {
+                throw new Error("Required parameter cpIssueId was null or undefined when calling indiacpissueGetTransactionHistoryCpIssueIdGet.");
+            }
+            let httpRequestParams: any = {
+                method: "GET",
+                url: localVarPath,
+                json: true,
+                params: queryParameters,
+                headers: headerParams
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            return this.$http(httpRequestParams);
+        }
+
+        /**
+         * Complete audit log of all changes/versions of given CP Program
+         * A given CP Program once initiated undergoes various changes as it progresses through the trade lifecycle of generating ISIN, generating Deal Confirmations with each identified Investor, getting IPA Verification till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.
+         * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
+         */
+        public CPProgramGetTransactionHistory(cpProgramId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPProgram>> {
+            const localVarPath = this.basePath + "/indiacpprogram/getTransactionHistory/{cpProgramId}"
+                .replace("{" + "cpProgramId" + "}", String(cpProgramId));
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            // verify required parameter "cpProgramId" is not null or undefined
+            if (cpProgramId === null || cpProgramId === undefined) {
+                throw new Error("Required parameter cpProgramId was null or undefined when calling indiacpprogramGetTransactionHistoryCpProgramIdGet.");
+            }
+            let httpRequestParams: any = {
+                method: "GET",
+                url: localVarPath,
+                json: true,
+                params: queryParameters,
+                headers: headerParams
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            return this.$http(httpRequestParams);
+        }
+
+        /**
+         * Uploads and attaches the provided document to the CPProgram on the DL
+         * Uploads and attaches the provided document to the CPProgram on the DL
+         * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
+         * @param metadata Document Attachment Details
+         * @param file Document Attachment
+         */
+        public addDoc(cpProgramId: string,
+            docData: app.models.DocData,
+            file: any, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.IndiaCPProgram> {
             const localVarPath = this.basePath + "/indiacpprogram/addDocs/{cpProgramId}"
                 .replace("{" + "cpProgramId" + "}", String(cpProgramId));
 
@@ -88,7 +155,7 @@ module app.services {
                 throw new Error("Required parameter cpProgramId was null or undefined when calling addDoc.");
             }
             // verify required parameter "metadata" is not null or undefined
-            if (metadata === null || metadata === undefined) {
+            if (docData === null || docData === undefined) {
                 throw new Error("Required parameter metadata was null or undefined when calling addDoc.");
             }
             // verify required parameter "file" is not null or undefined
@@ -97,7 +164,7 @@ module app.services {
             }
             headerParams["Content-Type"] = "application/x-www-form-urlencoded";
 
-            formParams["metadata"] = metadata;
+            formParams["documentDetails"] = docData;
 
             formParams["file"] = file;
 
@@ -114,7 +181,14 @@ module app.services {
                 httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
             }
 
-            return this.$http(httpRequestParams);
+            let httpUploadRequestParams: any = {
+                url: localVarPath,
+                data: { file: file, documentDetails: this.Upload.jsonBlob(docData) },
+                method: "POST"
+            };
+
+            return this.Upload.upload(httpUploadRequestParams);
+            // return this.$http(httpRequestParams);
         }
         /**
          * Adds the ISIN to the India CP Program
@@ -298,7 +372,10 @@ module app.services {
                 url: localVarPath,
                 json: true,
                 params: queryParameters,
-                headers: headerParams
+                headers: headerParams,
+                transformResponse: [function (data) {
+                    return data;
+                }]
             };
 
             if (extraHttpRequestParams) {
@@ -404,7 +481,7 @@ module app.services {
                 httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
             }
 
-            let httpUploadRequestParams:any = {
+            let httpUploadRequestParams: any = {
                 url: localVarPath,
                 data: { file: file, creditRatingDetails: this.Upload.jsonBlob(creditRatingDetails) },
                 method: "POST"
@@ -413,6 +490,84 @@ module app.services {
             return this.Upload.upload(httpUploadRequestParams);
 
             //return this.$http(httpRequestParams);
+        }
+
+        /**
+         * Uploads the Board Resolution Document and Creates a Smart Contract for the same on the DL to establish immutable golden copy
+         * Uploads the Board Resolution Document and Creates a Smart Contract for the same on the DL to establish immutable golden copy
+         * @param boardResolutionDetails Board Resolution Details for creating the Smart Contract
+         * @param file Document Attachment
+         */
+        public issueBoardResolution(boardResolutionDetails: app.models.BoardResolutionDocs, file: any, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.BoardResolutionDocs> {
+            const localVarPath = this.basePath + "/boardresolution/issueBoardResolution";
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            let formParams: any = {};
+
+            // verify required parameter "boardResolutionDetails" is not null or undefined
+            if (boardResolutionDetails === null || boardResolutionDetails === undefined) {
+                throw new Error("Required parameter boardResolutionDetails was null or undefined when calling issueBoardResolution.");
+            }
+            // verify required parameter "file" is not null or undefined
+            if (file === null || file === undefined) {
+                throw new Error("Required parameter file was null or undefined when calling issueBoardResolution.");
+            }
+            headerParams["Content-Type"] = "application/x-www-form-urlencoded";
+
+            formParams["boardResolutionDetails"] = boardResolutionDetails;
+
+            formParams["file"] = file;
+
+            let httpRequestParams: any = {
+                method: "POST",
+                url: localVarPath,
+                json: false,
+                data: this.$httpParamSerializer(formParams),
+                params: queryParameters,
+                headers: headerParams
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            let httpUploadRequestParams: any = {
+                url: localVarPath,
+                data: { file: file, boardResolutionDetails: this.Upload.jsonBlob(boardResolutionDetails) },
+                method: "POST"
+            };
+
+            return this.Upload.upload(httpUploadRequestParams);
+
+            //return this.$http(httpRequestParams);
+        }
+
+        /**
+         * Get current active Board Resolution details
+         * This returns only the current active board resolution details
+         */
+        public fetchBoardResolution(extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.BoardResolutionDocs>> {
+            const localVarPath = this.basePath + "/boardresolution/fetchBoardResolution";
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            let httpRequestParams: any = {
+                method: "GET",
+                url: localVarPath,
+                json: true,
+                params: queryParameters,
+                headers: headerParams,
+                transformResponse: [function (data) {
+                    return data;
+                }]
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            return this.$http(httpRequestParams);
         }
     }
 

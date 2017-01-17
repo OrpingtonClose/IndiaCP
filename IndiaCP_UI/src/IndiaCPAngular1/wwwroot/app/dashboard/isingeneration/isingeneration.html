@@ -14,27 +14,27 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Currency:</label>
-                            <p class="form-control-static col-sm-8" ng-model="vm.docData.cp.currency"></p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.currency"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Issue Value:</label>
-                            <p class="form-control-static col-sm-8" ng-model="vm.docData.cp.issueValue"></p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.issueValue"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Maturity Value : </label>
-                            <p class="form-control-static col-sm-8" ng-model="vm.docData.cp.maturityValue"></p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.maturityValue"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Allotment Date : </label>
-                            <p class="form-control-static col-sm-8" ng-model="vm.docData.cp.allotDate"></p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.allotDate | date:'dd-MM-yyyy'"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Maturity Date : </label>
-                            <p class="form-control-static col-sm-8" ng-model="vm.docData.cp.matDate"></p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.matDate | date:'dd-MM-yyyy'"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label col-sm-4">Tax : </label>
-                            <p class="form-control-static col-sm-8" ng-model="vm.docData.cp.tax"> </p>
+                            <p class="form-control-static col-sm-8" ng-bind="vm.docRefData.cp.tax"> </p>
                         </div>
                     </form>
                 </div>
@@ -47,21 +47,23 @@
                     <form>
                         <div class="form-group">
                             <label class="control-label">Issuer Name : </label>
-                            <p class="form-control-static" ng-model="vm.docData.cp.issuerName"></p>
+                            <p class="form-control-static" ng-bind="vm.docRefData.cp.issuerName"></p>
                         </div>
                         <div class="form-group">
                             <label class="control-label">Second Party : </label>
-                            <p class="form-control-static" ng-model="vm.docData.cp.secondParty"></p>
+                            <p class="form-control-static" ng-bind="vm.docRefData.cp.secondParty"></p>
                         </div>
                     </form>
                 </div>
             </div>
             <div class="well">
                 <div class="btn-group" role="group">
-                    <button class="btn btn-default" ng-click="vm.sign()" type="button">Sign </button>
-                    <button class="btn btn-default" ng-click="vm.save()" type="button">Save </button>
-                    <button class="btn btn-default" ng-disabled="true" type="button">Edit </button>
-                    <button class="btn btn-default" ng-click="vm.cancel()" type="button">Cancel </button>
+                    <input type="file" class="btn btn-default" ngf-select="vm.generateDocument($file)" accept="*" ngf-max-height="1000" />
+                    <!--<button class="btn btn-primary" ng-click="vm.generateDocument()" type="button">Generate </button>-->
+                    <button class="btn btn-primary" ng-click="vm.sign()" type="button">Sign </button>
+                    <button class="btn btn-primary" ng-click="vm.save()" type="button">Save </button>
+                    <button class="btn btn-primary" ng-disabled="true" type="button">Edit </button>
+                    <button class="btn btn-primary" ng-click="vm.cancel()" type="button">Cancel </button>
                 </div>
             </div>
         </div>
@@ -71,7 +73,9 @@
                     <h3 class="panel-title">ISIN Document</h3>
                 </div>
                 <div class="panel-body">
-                    <iframe id="dynamicIframe" ng-src={{vm.isinDocPDF}} scrolling="auto" width="100%" height="750px" type="application/pdf"></iframe>
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe id="dynamicIframe" ng-src={{vm.isinFileUrl}} scrolling="auto" class="embed-responsive-item" type="application/pdf"></iframe>
+                    </div>
                 </div>
             </div>
         </div>

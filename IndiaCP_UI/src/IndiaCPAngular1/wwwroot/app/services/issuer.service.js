@@ -49,13 +49,65 @@ var app;
                 return objA;
             };
             /**
-                 * Uploads and attaches the provided document to the CPProgram on the DL
-                 * Uploads and attaches the provided document to the CPProgram on the DL
-                 * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
-                 * @param metadata Document Attachment Details
-                 * @param file Document Attachment
-                 */
-            IssuerService.prototype.addDoc = function (cpProgramId, metadata, file, extraHttpRequestParams) {
+             * Complete audit log of all changes/versions of given CP Issue
+             * A given CP Issue once initiated undergoes various changes as it progresses through the trade lifecycle of adding settlement details, Deal Confirmations till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.
+             * @param cpIssueId CP Issue ID that uniquely identifies the CP issued by the Issuer
+             */
+            IssuerService.prototype.CPissueGetTransactionHistory = function (cpIssueId, extraHttpRequestParams) {
+                var localVarPath = this.basePath + "/indiacpissue/getTransactionHistory/{cpIssueId}"
+                    .replace("{" + "cpIssueId" + "}", String(cpIssueId));
+                var queryParameters = {};
+                var headerParams = this.extendObj({}, this.defaultHeaders);
+                // verify required parameter "cpIssueId" is not null or undefined
+                if (cpIssueId === null || cpIssueId === undefined) {
+                    throw new Error("Required parameter cpIssueId was null or undefined when calling indiacpissueGetTransactionHistoryCpIssueIdGet.");
+                }
+                var httpRequestParams = {
+                    method: "GET",
+                    url: localVarPath,
+                    json: true,
+                    params: queryParameters,
+                    headers: headerParams
+                };
+                if (extraHttpRequestParams) {
+                    httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+                }
+                return this.$http(httpRequestParams);
+            };
+            /**
+             * Complete audit log of all changes/versions of given CP Program
+             * A given CP Program once initiated undergoes various changes as it progresses through the trade lifecycle of generating ISIN, generating Deal Confirmations with each identified Investor, getting IPA Verification till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.
+             * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
+             */
+            IssuerService.prototype.CPProgramGetTransactionHistory = function (cpProgramId, extraHttpRequestParams) {
+                var localVarPath = this.basePath + "/indiacpprogram/getTransactionHistory/{cpProgramId}"
+                    .replace("{" + "cpProgramId" + "}", String(cpProgramId));
+                var queryParameters = {};
+                var headerParams = this.extendObj({}, this.defaultHeaders);
+                // verify required parameter "cpProgramId" is not null or undefined
+                if (cpProgramId === null || cpProgramId === undefined) {
+                    throw new Error("Required parameter cpProgramId was null or undefined when calling indiacpprogramGetTransactionHistoryCpProgramIdGet.");
+                }
+                var httpRequestParams = {
+                    method: "GET",
+                    url: localVarPath,
+                    json: true,
+                    params: queryParameters,
+                    headers: headerParams
+                };
+                if (extraHttpRequestParams) {
+                    httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+                }
+                return this.$http(httpRequestParams);
+            };
+            /**
+             * Uploads and attaches the provided document to the CPProgram on the DL
+             * Uploads and attaches the provided document to the CPProgram on the DL
+             * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
+             * @param metadata Document Attachment Details
+             * @param file Document Attachment
+             */
+            IssuerService.prototype.addDoc = function (cpProgramId, docData, file, extraHttpRequestParams) {
                 var localVarPath = this.basePath + "/indiacpprogram/addDocs/{cpProgramId}"
                     .replace("{" + "cpProgramId" + "}", String(cpProgramId));
                 var queryParameters = {};
@@ -66,7 +118,7 @@ var app;
                     throw new Error("Required parameter cpProgramId was null or undefined when calling addDoc.");
                 }
                 // verify required parameter "metadata" is not null or undefined
-                if (metadata === null || metadata === undefined) {
+                if (docData === null || docData === undefined) {
                     throw new Error("Required parameter metadata was null or undefined when calling addDoc.");
                 }
                 // verify required parameter "file" is not null or undefined
@@ -74,7 +126,7 @@ var app;
                     throw new Error("Required parameter file was null or undefined when calling addDoc.");
                 }
                 headerParams["Content-Type"] = "application/x-www-form-urlencoded";
-                formParams["metadata"] = metadata;
+                formParams["documentDetails"] = docData;
                 formParams["file"] = file;
                 var httpRequestParams = {
                     method: "POST",
@@ -87,7 +139,13 @@ var app;
                 if (extraHttpRequestParams) {
                     httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
                 }
-                return this.$http(httpRequestParams);
+                var httpUploadRequestParams = {
+                    url: localVarPath,
+                    data: { file: file, documentDetails: this.Upload.jsonBlob(docData) },
+                    method: "POST"
+                };
+                return this.Upload.upload(httpUploadRequestParams);
+                // return this.$http(httpRequestParams);
             };
             /**
              * Adds the ISIN to the India CP Program
@@ -252,7 +310,10 @@ var app;
                     url: localVarPath,
                     json: true,
                     params: queryParameters,
-                    headers: headerParams
+                    headers: headerParams,
+                    transformResponse: [function (data) {
+                            return data;
+                        }]
                 };
                 if (extraHttpRequestParams) {
                     httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
@@ -351,6 +412,70 @@ var app;
                 };
                 return this.Upload.upload(httpUploadRequestParams);
                 //return this.$http(httpRequestParams);
+            };
+            /**
+             * Uploads the Board Resolution Document and Creates a Smart Contract for the same on the DL to establish immutable golden copy
+             * Uploads the Board Resolution Document and Creates a Smart Contract for the same on the DL to establish immutable golden copy
+             * @param boardResolutionDetails Board Resolution Details for creating the Smart Contract
+             * @param file Document Attachment
+             */
+            IssuerService.prototype.issueBoardResolution = function (boardResolutionDetails, file, extraHttpRequestParams) {
+                var localVarPath = this.basePath + "/boardresolution/issueBoardResolution";
+                var queryParameters = {};
+                var headerParams = this.extendObj({}, this.defaultHeaders);
+                var formParams = {};
+                // verify required parameter "boardResolutionDetails" is not null or undefined
+                if (boardResolutionDetails === null || boardResolutionDetails === undefined) {
+                    throw new Error("Required parameter boardResolutionDetails was null or undefined when calling issueBoardResolution.");
+                }
+                // verify required parameter "file" is not null or undefined
+                if (file === null || file === undefined) {
+                    throw new Error("Required parameter file was null or undefined when calling issueBoardResolution.");
+                }
+                headerParams["Content-Type"] = "application/x-www-form-urlencoded";
+                formParams["boardResolutionDetails"] = boardResolutionDetails;
+                formParams["file"] = file;
+                var httpRequestParams = {
+                    method: "POST",
+                    url: localVarPath,
+                    json: false,
+                    data: this.$httpParamSerializer(formParams),
+                    params: queryParameters,
+                    headers: headerParams
+                };
+                if (extraHttpRequestParams) {
+                    httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+                }
+                var httpUploadRequestParams = {
+                    url: localVarPath,
+                    data: { file: file, boardResolutionDetails: this.Upload.jsonBlob(boardResolutionDetails) },
+                    method: "POST"
+                };
+                return this.Upload.upload(httpUploadRequestParams);
+                //return this.$http(httpRequestParams);
+            };
+            /**
+             * Get current active Board Resolution details
+             * This returns only the current active board resolution details
+             */
+            IssuerService.prototype.fetchBoardResolution = function (extraHttpRequestParams) {
+                var localVarPath = this.basePath + "/boardresolution/fetchBoardResolution";
+                var queryParameters = {};
+                var headerParams = this.extendObj({}, this.defaultHeaders);
+                var httpRequestParams = {
+                    method: "GET",
+                    url: localVarPath,
+                    json: true,
+                    params: queryParameters,
+                    headers: headerParams,
+                    transformResponse: [function (data) {
+                            return data;
+                        }]
+                };
+                if (extraHttpRequestParams) {
+                    httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+                }
+                return this.$http(httpRequestParams);
             };
             return IssuerService;
         }());

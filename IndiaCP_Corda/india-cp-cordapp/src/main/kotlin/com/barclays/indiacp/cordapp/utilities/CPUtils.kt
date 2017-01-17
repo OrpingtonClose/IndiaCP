@@ -1,32 +1,18 @@
 package com.barclays.indiacp.cordapp.utilities
 
-import com.barclays.indiacp.cordapp.contract.CreditRating
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaper
 import com.barclays.indiacp.cordapp.contract.IndiaCommercialPaperProgram
-import com.barclays.indiacp.model.Error
-import com.barclays.indiacp.model.IndiaCPException
+import com.barclays.indiacp.cordapp.search.IndiaCPHistorySearch
+import com.barclays.indiacp.model.*
 import net.corda.contracts.asset.DUMMY_CASH_ISSUER_KEY
-import net.corda.core.contracts.ContractState
-import net.corda.core.contracts.OwnableState
-import net.corda.core.contracts.PartyAndReference
-import net.corda.core.contracts.StateAndRef
+import net.corda.core.contracts.*
 import net.corda.core.crypto.Party
+import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.composite
-import net.corda.core.node.NodeInfo
 import net.corda.core.node.ServiceHub
-import net.corda.core.node.services.dealsWith
+import net.corda.core.node.services.linearHeadsOfType
 import net.corda.core.serialization.OpaqueBytes
-import java.io.PrintWriter
-import java.io.StringWriter
-import javax.ws.rs.core.Response
-import kotlin.reflect.KClass
-
-enum class Role {
-    BUYER,
-    SELLER
-}
-
-val DEFAULT_BASE_DIRECTORY = "./build/indiacpdemo"
+import net.corda.core.transactions.WireTransaction
 
 object CPUtils {
 
@@ -35,16 +21,55 @@ object CPUtils {
         return if (states.isEmpty()) null else states[0]
     }
 
-    fun getContractState(serviceHub: ServiceHub, cpRefId: String) : StateAndRef<OwnableState> {
-        val states = serviceHub.vaultService.currentVault.statesOfType<IndiaCommercialPaper.State>()
-        for (stateAndRef: StateAndRef<IndiaCommercialPaper.State> in states) {
-            val ref = getReference(cpRefId)
-            //TODO
-//            if (stateAndRef.state.data.issuance.reference.equals(ref)) {
-//                return stateAndRef
-//            }
+    inline fun<reified T: LinearState> getTransactionHistory(services: ServiceHub, referenceSelector: T.() -> Boolean ): List<T> {
+        val states = services.vaultService.linearHeadsOfType<T>().filterValues{ referenceSelector(it.state.data)}
+        if (states == null || states.values == null || states.values.isEmpty()) {
+            throw IndiaCPException("History Fetch Error", Error.SourceEnum.DL_R3CORDA)
         }
-        throw Exception("ECPTradeAndSettlementProtocol: Commercial Paper referenced by $cpRefId not found")
+        val stx = services.storageService.validatedTransactions.getTransaction(states.values.first()!!.ref.txhash)
+
+        val search = IndiaCPHistorySearch(services.storageService.validatedTransactions, listOf(stx!!.tx))
+        search.query = IndiaCPHistorySearch.QueryByInputStateType(followInputsOfType = T::class.java)
+        val txHistory : List<WireTransaction> = search.call()
+
+        return search.filterLinearStatesOfType<T>(txHistory)
+
+    }
+
+    inline fun<reified T: LinearState, reified C: CommandData> getDocumentTransactionHistory(services: ServiceHub, referenceSelector: T.() -> Boolean ): List<T> {
+        val states = services.vaultService.linearHeadsOfType<T>().filterValues{ referenceSelector(it.state.data)}
+        if (states == null || states.values == null || states.values.isEmpty()) {
+            throw IndiaCPException("History Fetch Error", Error.SourceEnum.DL_R3CORDA)
+        }
+        val stx = services.storageService.validatedTransactions.getTransaction(states.values.first()!!.ref.txhash)
+        val search = IndiaCPHistorySearch(services.storageService.validatedTransactions, listOf(stx!!.tx))
+        search.query = IndiaCPHistorySearch.QueryByCommand(withCommandOfType = C::class.java, followInputsOfType = T::class.java)
+        val txHistory : List<WireTransaction> = search.call()
+
+        return search.filterLinearStatesOfType<T>(txHistory)
+
+    }
+
+    fun getCPProgramStateRefNonNull(services: ServiceHub, cpProgramId: String): StateAndRef<IndiaCommercialPaperProgram.State> {
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaperProgram.State>().filterValues { it.state.data.programId == cpProgramId }
+        if (states == null || states.isEmpty()) {
+            throw IndiaCPException(CPProgramError.DOES_NOT_EXIST_ERROR, Error.SourceEnum.DL_R3CORDA)
+        }
+
+        val cpProgramStateAndRef : StateAndRef<IndiaCommercialPaperProgram.State> = states.values.first()
+
+        return cpProgramStateAndRef
+    }
+
+    fun getCPStateRefNonNull(services: ServiceHub, cpTradeId: String): StateAndRef<IndiaCommercialPaper.State> {
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaper.State>().filterValues { it.state.data.cpTradeID == cpTradeId }
+        if (states == null || states.isEmpty()) {
+            throw IndiaCPException(CPIssueError.DOES_NOT_EXIST_ERROR, Error.SourceEnum.DL_R3CORDA)
+        }
+
+        val cpStateAndRef : StateAndRef<IndiaCommercialPaper.State> = states.values.first()
+
+        return cpStateAndRef
     }
 
     fun getPartyAndRef(party: Party, reference: OpaqueBytes) : PartyAndReference {
@@ -52,7 +77,10 @@ object CPUtils {
     }
 
     fun getPartyByName(serviceHub: ServiceHub, partyName: String) : Party {
-        return checkNotNull(serviceHub.networkMapCache.getNodeByLegalName(partyName)).legalIdentity
+        if (serviceHub.networkMapCache.getNodeByLegalName(partyName) == null) {
+            throw IndiaCPException ("Corda Node ${partyName} is Not Available", Error.SourceEnum.DL_R3CORDA)
+        }
+        return serviceHub.networkMapCache.getNodeByLegalName(partyName)!!.legalIdentity
     }
 
     fun getReference(cpRefId: String): OpaqueBytes {
@@ -67,5 +95,22 @@ object CPUtils {
 
     fun getCashIssuerForThisNode(party: Party) : PartyAndReference {
         return party.ref(1)
+    }
+
+    fun  getDocHashAndStatus(docId: String?): Pair<SecureHash, IndiaCPDocumentDetails.DocStatusEnum> {
+        if (docId == null || docId.isEmpty()) {
+            throw IndiaCPException(CPProgramError.DOC_UPLOAD_ERROR, Error.SourceEnum.DL_R3CORDA)
+        }
+        val docHashAndStatus = docId?.split(":")
+        val docHash = SecureHash.parse(docHashAndStatus[0])
+        val docStatus = IndiaCPDocumentDetails.DocStatusEnum.fromValue(docHashAndStatus[1])
+        return Pair(docHash, docStatus)
+    }
+
+    fun  getAllCP(services: ServiceHub, cpProgramId: String): List<StateAndRef<IndiaCommercialPaper.State>> {
+        val states = services.vaultService.linearHeadsOfType<IndiaCommercialPaper.State>()
+        val indiacps = states.filter{it.value.state.data.cpProgramID.equals(cpProgramId)}
+        return indiacps.values.toList()
+
     }
 }

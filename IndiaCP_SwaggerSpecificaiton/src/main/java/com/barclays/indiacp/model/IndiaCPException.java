@@ -31,6 +31,12 @@ public class IndiaCPException extends Exception {
         this.error = error;
     }
 
+    public IndiaCPException(String errorMessage, Error.SourceEnum sourceOfError)
+    {
+        this("", sourceOfError, errorMessage, "");
+        this.error = error;
+    }
+
     public IndiaCPException(CPIssueError cpIssueError, Error.SourceEnum sourceOfError, String errorMessage, String errorDetails)
     {
         this(cpIssueError.name(), sourceOfError, errorMessage, "");

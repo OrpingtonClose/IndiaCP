@@ -38,7 +38,8 @@ public interface IndiaCPProgramApi {
     @POST
     @Path("addISIN/{cpProgramId}/{isin}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response addISIN(@PathParam("cpProgramId") String cpProgramId);
+    public Response addISIN(@PathParam("cpProgramId") String cpProgramId,
+                            @PathParam("isin") String isin);
 
     @POST
     @Path("addDocs/{cpProgramId}")
@@ -47,6 +48,19 @@ public interface IndiaCPProgramApi {
     public Response addDocs(@PathParam("cpProgramId") String cpProgramId,
                             @FormDataParam("documentDetails") IndiaCPDocumentDetails docDetails,
                             @FormDataParam("file") InputStream uploadedInputStream);
+
+    @GET
+    @Path("getTransactionHistory/{cpProgramId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTransactionHistory(@PathParam("cpProgramId") String cpProgramId);
+
+
+    @GET
+    @Path("getDocumentHistory/{cpProgramId}/{docType}/{docSubType}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDocumentHistory(@PathParam("cpProgramId") String cpProgramId,
+                                        @PathParam("docType") String docType,
+                                        @PathParam("docSubType") String docSubType);
 
     @Context
     public void setRequest(Request request);

@@ -1105,13 +1105,21 @@
                     "type": "string",
                     "description": "Display name of the Issuer"
                 },
+                "investorId": {
+                    "type": "string",
+                    "description": "Unique identifier of the Investor"
+                },
+                "investorName": {
+                    "type": "string",
+                    "description": "Display name of the Investor"
+                },
                 "beneficiaryId": {
                     "type": "string",
-                    "description": "Unique identifier of the Investor. This also uniquely identifies the Investor DL Node"
+                    "description": "Unique identifier of the Beneficiary. When Self-Issued the Beneficiary is initially the Issuer. After receiving the payment the Beneficiary is the Investor"
                 },
                 "beneficiaryName": {
                     "type": "string",
-                    "description": "Display name of the Investor"
+                    "description": "Display name of the Beneficiary"
                 },
                 "ipaId": {
                     "type": "string",
@@ -1224,6 +1232,7 @@
                     "type": "string",
                     "description": "The current status of the document. Possible values are UNSIGNED, SIGNED_BY_ISSUER, SIGNED_BY_INVESTOR, SIGNED_BY_IPA, SIGNED_BY_NSDL",
                     "enum": [
+                        "UNKNOWN",
                         "UNSIGNED",
                         "SIGNED_BY_ISSUER",
                         "SIGNED_BY_INVESTOR",
@@ -1358,6 +1367,7 @@
                 "CP_PROGRAM_DOC_GENERATION_ERROR",
                 "CP_PROGRAM_DOC_UPLOAD_ERROR",
                 "CP_PROGRAM_ISIN_CREATION_ERROR",
+                "CP_PROGRAM_ISIN_ALREADY_EXISTS_ERROR",
                 "CP_PROGRAM_HISTORY_SEARCH_ERROR"
             ]
         },
@@ -1365,6 +1375,7 @@
             "type": "string",
             "enum": [
                 "CP_CREATION_ERROR",
+                "CP_PROGRAM_CEILING_EXCEEDED_ERROR",
                 "CP_FETCH_ERROR",
                 "CP_DOES_NOT_EXIST_ERROR",
                 "CP_AMENDMENT_ERROR",

@@ -15,6 +15,7 @@ import net.corda.core.schemas.PersistentState
 import net.corda.core.schemas.QueryableState
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.Emoji
+import java.security.PublicKey
 import java.util.*
 
 val BORROWING_LIMIT_BOARD_RESOLUTION_ID = BorrowingLimitBoardResolution()
@@ -33,7 +34,7 @@ class BorrowingLimitBoardResolution : Contract, LegalEntityDocumentContract {
 
     data class State(
             override val issuer: Party,
-            override val owner: CompositeKey,
+            val owner: CompositeKey,
             val currency: Currency,
             val boardResolutionBorrowingLimit: Amount<Currency>,
             val currentOutstandingCreditBorrowing: Amount<Currency>? = Amount(0, currency),
@@ -44,12 +45,20 @@ class BorrowingLimitBoardResolution : Contract, LegalEntityDocumentContract {
             val lastModifiedDate: Date? = Date(),
             val version: Int? = ModelUtils.STARTING_VERSION,
             val status: String? = ModelUtils.DocumentStatus.ACTIVE.name
-    ) : LegalEntityDocumentOwnableState, OwnableState, QueryableState {
+    ) : LegalEntityDocumentOwnableState, LinearState, QueryableState {
+        override fun isRelevant(ourKeys: Set<PublicKey>): Boolean {
+            return participants.any { ck -> ck.containsAny(ourKeys) }
+        }
+
+        override val linearId: UniqueIdentifier
+            get() = UniqueIdentifier(issuer.name)
+
         override val contract = BORROWING_LIMIT_BOARD_RESOLUTION_ID
+
         override val participants: List<CompositeKey>
             get() = listOf(owner)
 
-        override fun withNewOwner(newOwner: CompositeKey): Pair<CommandData, OwnableState> = throw IllegalStateException()
+        //override fun withNewOwner(newOwner: CompositeKey): Pair<CommandData, OwnableState> = throw IllegalStateException()
         override fun toString() = "${Emoji.newspaper}Borrowing Limit Board Resolution (issued by ${issuer.name}, applicable from $boardResolutionIssuanceDate, expiring on $boardResolutionExpiryDate for '$issuer', owned by ${owner.toString()})"
 
         /** Object Relational Mapping support. */

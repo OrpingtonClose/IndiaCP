@@ -12,29 +12,29 @@ module app.legalentity {
     }
 
     class LegalEntityController implements ILegalEntityScope {
-        static $inject = ["$scope",
-            "$sce",
+        static $inject = ["$sce",
             "$state",
             "app.services.AuthenticationService",
             "app.services.IssuerService",
             "localStorageService",
             "Upload",
-            "growl"];
+            "growl",
+            "$uibModalInstance"];
         nodeType: string;
         brDetails: app.models.BoardResolutionDocs;
         crDetails: app.models.CreditRatingDocs;
         brFileUrl: string;
         crFileUrl: string;
-        signedBRFile: File;
-        signedCRFile: File;
-        constructor(protected $scope: ng.IScope,
-            protected $sce: ng.ISCEService,
+        brFile: File;
+        crFile: File;
+        constructor(protected $sce: ng.ISCEService,
             protected $state: ng.ui.IStateService,
             protected authService: app.services.IAuthenticationService,
             protected issuerService: app.services.IIssuerService,
             protected localStorageService: ng.local.storage.ILocalStorageService,
             protected Upload: ng.angularFileUpload.IUploadService,
-            protected growl: ng.growl.IGrowlService) {
+            protected growl: ng.growl.IGrowlService,
+            protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance) {
             this.nodeType = (this.localStorageService.get("nodeInfo") as app.models.NodeInfo).nodeType;
 
             // br details setup
@@ -47,7 +47,7 @@ module app.legalentity {
             this.brDetails.currency = "INR";
             this.brDetails.docHash = "XXXXXXXXXXX";
 
-            //cr detsils setup
+            // cr detsils setup
             this.crDetails = new app.models.CreditRatingDocs();
             this.crDetails.legalEntityId = "Issuer1";
             this.crDetails.creditRatingAgencyName = "ICRA";
@@ -66,16 +66,43 @@ module app.legalentity {
         }
 
         public displayBR(file): void {
-            this.signedBRFile = file;
+            this.brFile = file;
             this.brFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
         }
 
+        public signBR(): void {
+            let httpUploadRequestParams: any = {
+                url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/BoardResolution",
+                data: { file: this.brFile },
+                method: "POST"
+            }
+            this.Upload.upload(httpUploadRequestParams).
+                then((response: any) => {
+                    this.growl.success("BR document signed succesfully", { title: "BR Signed!" });
+                    let streamData = response.data;
+                    var url: string = "data:application/pdf;base64," + streamData;
+                    this.crFileUrl = this.$sce.trustAsResourceUrl(url);
+
+                }, (error: any) => {
+                    this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
+                });
+        }
+
         public uploadBR(): void {
-            // pending once br services are defined
+            this.issuerService.issueBoardResolution(this.brDetails, this.brFile).
+                then((response: any): void => {
+                    console.log(response);
+                    this.growl.success("Board Resolution document uploaded succesfully", { title: "BR Uploaded" });
+                },
+                (error: any) => {
+                    let errorMssg: app.models.Error = error.data;
+                    console.log(`${errorMssg.source}-${errorMssg.message}`);
+                    this.growl.error(errorMssg.message, { title: `Upload Failed - ${errorMssg.source}` });
+                });
         }
 
         public displayCR(file): void {
-            this.signedCRFile = file;
+            this.crFile = file;
             this.crFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
 
             // var r: FileReader = new FileReader();
@@ -92,8 +119,26 @@ module app.legalentity {
             // r.readAsArrayBuffer(file);
         }
 
+        public signCR(): void {
+            let httpUploadRequestParams: any = {
+                url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/CreditRating",
+                data: { file: this.crFile },
+                method: "POST"
+            }
+            this.Upload.upload(httpUploadRequestParams).
+                then((response: any) => {
+                    this.growl.success("Credit Details document signed succesfully", { title: "CR Signed!" });
+                    let streamData = response.data;
+                    var url: string = "data:application/pdf;base64," + streamData;
+                    this.crFileUrl = this.$sce.trustAsResourceUrl(url);
+
+                }, (error: any) => {
+                    this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
+                });
+        }
+
         public uploadCR(): void {
-            this.issuerService.issueCreditRating(this.crDetails, this.signedCRFile).
+            this.issuerService.issueCreditRating(this.crDetails, this.crFile).
                 then((response: any): void => {
                     console.log(response);
                     this.growl.success("Credit Details document uploaded succesfully", { title: "CR Uploaded" });
@@ -105,43 +150,8 @@ module app.legalentity {
                 });
         }
 
-        public signCR(): void {
-            let httpUploadRequestParams: any = {
-                url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/CreditRating",
-                data: { file: this.signedCRFile },
-                method: "POST"
-            }
-            this.Upload.upload(httpUploadRequestParams).
-                then((response:any) => {
-                    this.growl.success("Credit Details document signed succesfully", { title: "CR Signed" });
-                    let streamData = response.data;
-                    var url:string = "data:application/pdf;base64," + streamData;
-                    // this.crFileUrl = this.$sce.trustAsResourceUrl(url);
-
-                }, (error: any) => {
-                    this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
-                });
-        }
-        public signBR(): void {
-            let httpUploadRequestParams: any = {
-                url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/CreditRating",
-                data: { file: this.signedCRFile },
-                method: "POST"
-            }
-            this.Upload.upload(httpUploadRequestParams).
-                then((response:any) => {
-                    this.growl.success("Credit Details document signed succesfully", { title: "CR Signed" });
-                    let streamData = response.data;
-                    var url:string = "data:application/pdf;base64," + streamData;
-                    this.crFileUrl = this.$sce.trustAsResourceUrl(url);
-
-                }, (error: any) => {
-                    this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
-                });
-        }
-
-        public close(){
-           
+        public close() {
+            this.$uibModalInstance.close();
         }
 
     }

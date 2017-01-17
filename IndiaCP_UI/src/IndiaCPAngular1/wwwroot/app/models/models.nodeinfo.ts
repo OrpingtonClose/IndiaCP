@@ -2,10 +2,10 @@
     "use strict";
 
     export class NodeInfo {
-        constructor(public nodeType: string,
-            public host: string,
-            public port: number) {
-
+        constructor(public nodeType?: string,
+            public host?: string,
+            public port?: number,
+            public nodeName?: string) {
         }
     }
 

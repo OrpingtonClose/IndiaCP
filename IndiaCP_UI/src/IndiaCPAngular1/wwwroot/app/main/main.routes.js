@@ -8,13 +8,19 @@
         $stateProvider
             .state("main", {
             url: "/",
+            cache: false,
+            abstract: true,
             templateUrl: "app/main/main.html",
+            controller: "app.main.MainController",
+            controllerAs: "vm"
+        })
+            .state("main.uploaddocs", {
+            cache: false,
+            url: "main/uploaddocs",
+            templateUrl: "app/legalentity/uploaddocsmessage.html",
             controller: "app.main.MainController",
             controllerAs: "vm"
         });
     }
-    // resolveCPPrograms.$inject = ["app.services.CPProgramService"];
-    // function resolveCPPrograms(cpprogramService):
-    // {}
 })();
 //# sourceMappingURL=main.routes.js.map

@@ -5,6 +5,7 @@
         * Angular modules
         */
         "ui.router",
+        "ui.router.state.events",
         "ui.bootstrap",
         "ngSanitize",
         "ngCookies",
@@ -13,7 +14,9 @@
         "uuid4",
         "LocalStorageModule",
         "ngFileUpload",
-        "angular-loading-bar"
+        "angular-loading-bar",
+        "angular.filter",
+        "ui.grid"
     ]);
 })();
 //# sourceMappingURL=app.core.module.js.map

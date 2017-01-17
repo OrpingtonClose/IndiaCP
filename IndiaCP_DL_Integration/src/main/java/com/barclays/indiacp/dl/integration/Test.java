@@ -77,4 +77,17 @@ public class Test {
 
         return Response.status(Response.Status.OK).build();
     }
+
+    @POST
+    @Path("addDocs")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addDocs(
+                            @FormDataParam("documentDetails") IndiaCPDocumentDetails docDetails,
+                            @FormDataParam("file") InputStream uploadedInputStream) {
+        System.out.println(docDetails);
+
+        return Response.status(Response.Status.OK).entity(docDetails).build();
+    }
+
 }

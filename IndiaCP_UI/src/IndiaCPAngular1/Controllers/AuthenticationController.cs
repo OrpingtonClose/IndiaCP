@@ -43,19 +43,45 @@ namespace IndiaCPAngular1.Controllers
                 NodeInfo nodeInfo = new NodeInfo();
 
 
-
-#if DEBUG
-                if (credentials.Username == "investor1")
+ 
+                switch (credentials.Username)
                 {
-                    nodeInfo.NodeType = "INVESTOR";
+                    case "issuer1":
+                        nodeInfo.NodeType = "ISSUER";
+                        nodeInfo.NodeName = "Barclays Investments and Loans (India) Ltd";
+                        nodeInfo.Host = "52.172.46.253";
+                        nodeInfo.Port = 8181;
+                        break;
+                    case "investor1":
+                        nodeInfo.NodeType = "INVESTOR";
+                        nodeInfo.NodeName = "Barclays Shared Services";
+                        nodeInfo.Host = "52.172.46.253";
+                        nodeInfo.Port = 8182;
+                        break;
+                    case "nsdl1":
+                        nodeInfo.NodeType = "DEPOSITORY";
+                        nodeInfo.NodeName = "NSDL";
+                        nodeInfo.Host = "52.172.46.253";
+                        nodeInfo.Port = 8183;
+                        break;
+                    default:
+                        nodeInfo.NodeType = "IPA";
+                        nodeInfo.NodeName = "HDFC";
+                        nodeInfo.Host = "52.172.46.253";
+                        nodeInfo.Port = 8184;
+                        break;
                 }
-                else
-                    nodeInfo.NodeType = "ISSUER";
-#else
-                nodeInfo.NodeType = Environment.GetEnvironmentVariable("NODETYPE");
-#endif
-                nodeInfo.Host = Environment.GetEnvironmentVariable("HOST");
-                nodeInfo.Port = Int32.Parse(Environment.GetEnvironmentVariable("PORT"));
+
+
+//#if DEBUG                 
+//#else
+//                nodeInfo.NodeType = Environment.GetEnvironmentVariable("NODETYPE");
+//#endif
+//                nodeInfo.Host = Environment.GetEnvironmentVariable("HOST");
+//                nodeInfo.NodeName = Environment.GetEnvironmentVariable("NODENAME");
+//                nodeInfo.Port = Int32.Parse(Environment.GetEnvironmentVariable("PORT"));
+
+
                 Dictionary<string, object> info = new Dictionary<string, object>();
                 info["nodeInfo"] = nodeInfo;
                 info["accessToken"] = tokenResponse.AccessToken;

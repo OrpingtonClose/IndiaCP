@@ -29,15 +29,14 @@ var app;
                     var _this = this;
                     this.issuerService.issueCPProgram(this.cpprogram).then(function () {
                         console.log("CPProgram created");
-                        _this.growl.success('CPProgram created suceesfully.', { title: 'Success!' });
+                        _this.growl.success("CPProgram created suceesfully.", { title: "Success!" });
                         _this.$uibModalInstance.close();
                     }, function (error) {
                         console.log("CPProgram not created.");
-                        _this.growl.error("CPProgram not created.", { title: 'Error!' });
+                        _this.growl.error("CPProgram not created.", { title: "Error!" });
                     });
                 };
                 CPProgramCreateController.prototype.cancel = function () {
-                    this.growl.success('This is success message.', { title: 'Success!' });
                     this.$uibModalInstance.close();
                 };
                 CPProgramCreateController.prototype.updateProgramId = function () {

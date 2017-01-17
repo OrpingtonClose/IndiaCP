@@ -130,6 +130,6 @@ module app.models {
         /**
          * Current status of the CP Program
          */
-        "nextAction"?: string;
+        "nextAction"?: app.models.Action;
     }
 }

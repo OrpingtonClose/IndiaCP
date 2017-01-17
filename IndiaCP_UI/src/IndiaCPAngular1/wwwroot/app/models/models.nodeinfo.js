@@ -4,10 +4,11 @@ var app;
     (function (models) {
         "use strict";
         var NodeInfo = (function () {
-            function NodeInfo(nodeType, host, port) {
+            function NodeInfo(nodeType, host, port, nodeName) {
                 this.nodeType = nodeType;
                 this.host = host;
                 this.port = port;
+                this.nodeName = nodeName;
             }
             return NodeInfo;
         }());

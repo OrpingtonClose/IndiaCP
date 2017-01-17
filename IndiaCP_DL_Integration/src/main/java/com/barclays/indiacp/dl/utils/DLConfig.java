@@ -14,12 +14,17 @@ public class DLConfig extends Properties {
 
     private DLConfig() {
         try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource("DL_CONFIG.properties").getFile());
+            String dlConfigFilePath = System.getProperty("DL_CONFIG_FILE");
+            if (dlConfigFilePath == null) {
+                ClassLoader classLoader = getClass().getClassLoader();
+                dlConfigFilePath = classLoader.getResource("DL_CONFIG_TEST.properties").getFile();
+            }
+            File file = new File(dlConfigFilePath);
             FileInputStream input = new FileInputStream(file);
             load(input);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 
