@@ -407,10 +407,10 @@ public class IndiaCPDocumentsApi {
     }
 
     @POST
-    @Path("generateIPADocuments")
+    @Path("generateIPACertificateDocument")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response generateIPADocuments(String inputJSON) {
+    public Response generateIPACertificateDocument(String inputJSON) {
 
         String pdfFileBase64 = "";
         try
@@ -642,8 +642,86 @@ public class IndiaCPDocumentsApi {
             document.add(new Paragraph("ON BEHALF OF \n\n", smallBold));
             document.add(new Paragraph(invDetails.investorName, smallBold));
 
+            document.close();
+            pdfFileBase64 = encodeFileToBase64Binary(path);
 
-            document.newPage();
+        }  catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Response.ok(pdfFileBase64, MediaType.TEXT_PLAIN)
+                .build();
+
+
+
+    }
+
+    @POST
+    @Path("generateIPAVerificationDocuments")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response generateIPAVerificationDocuments(String inputJSON) {
+
+        String pdfFileBase64 = "";
+        try {
+            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
+            Roles roleObj = gson.fromJson(inputJSON.toString(), Roles.class);
+            Roles.CP cpDetails = roleObj.cp;
+
+            Roles.Investor invDetails = roleObj.investor;
+            Roles.IPA ipaDetails = roleObj.ipa;
+            Roles.NSDL nsdlDetails = roleObj.nsdl;
+
+            final File tempFile = File.createTempFile("IPA", ".pdf");
+
+            tempFile.deleteOnExit();
+
+            String path = tempFile.getPath();
+
+            Font mainFont = new Font(Font.FontFamily.TIMES_ROMAN, 18,
+                    Font.BOLD);
+            Font subFont = new Font(Font.FontFamily.TIMES_ROMAN, 16,
+                    Font.BOLD);
+            Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12,
+                    Font.BOLD);
+            Font normal = new Font(Font.FontFamily.TIMES_ROMAN, 12);
+
+            Font smallFont = new Font(Font.FontFamily.TIMES_ROMAN, 10);
+
+
+            DateFormat dtf = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+            DateFormat dtf1 = new SimpleDateFormat("MMMM dd, yyyy", Locale.ENGLISH);
+            String todayStr = dtf1.format(new Date());
+            //String today = dtf1.format(new Date());
+
+               /* String dueDateStr = dtf.format(cpDetails.matDate);
+                String validityStr = dtf.format(cpDetails.ratingValidityDate);
+                String dateOfRatingStr = dtf.format(cpDetails.dateOfRating);
+                String effectiveDateForRatingStr = dtf.format(cpDetails.effectiveDateOfRating);
+                String valueDateStr = dtf.format(cpDetails.valueDate);
+                String dateOfContractStr = dtf.format(cpDetails.dateOfContract);
+                String tradeDateStr = dtf.format(cpDetails.tradeDate);*/
+
+            String dueDateStr = cpDetails.matDate;
+            String validityStr = cpDetails.ratingValidityDate;
+            String dateOfRatingStr = cpDetails.dateOfRating;
+            String effectiveDateForRatingStr = cpDetails.effectiveDateOfRating;
+            String valueDateStr = cpDetails.valueDate;
+            String dateOfContractStr = cpDetails.dateOfContract;
+            String tradeDateStr = cpDetails.tradeDate;
+            // Instantiation of document object
+            Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+
+            // Creation of PdfWriter object
+            PdfWriter writer = PdfWriter.getInstance(document,
+                    new FileOutputStream(path));
+
+            document.open();
+
+            // Creation of paragraph object
             document.add(new Paragraph(todayStr, normal));
             document.add(new Paragraph("\n"));
             document.add(new Paragraph(ipaDetails.ipaName, smallBold));
@@ -748,6 +826,7 @@ public class IndiaCPDocumentsApi {
                     " : " + cpDetails.amountOfCPOutstanding, normal));
 
 
+            document.close();
             pdfFileBase64 = encodeFileToBase64Binary(path);
 
         }  catch (FileNotFoundException e) {
