@@ -924,14 +924,14 @@ public class IndiaCPDocumentsApi {
     @Produces(MediaType.APPLICATION_JSON)
     public Response verifyDocTest(@FormDataParam("file") InputStream uploadedInputStream)
     {
-        String output = "";
-        VerifySignature verify = new VerifySignature();
-        output = verify.verify(verify.convertIStoB64(uploadedInputStream));
-        VerificationResult vr = verify.readXML(output);
-
-        return Response.ok(vr, MediaType.APPLICATION_JSON)
-                .build();
-
+//        String output = "";
+//        VerifySignature verify = new VerifySignature();
+//        output = verify.verify(verify.convertIStoB64(uploadedInputStream));
+//        VerificationResult vr = verify.readXML(output);
+//
+//        return Response.ok(vr, MediaType.APPLICATION_JSON)
+//                .build();
+        return null;
     }
 
     @POST
