@@ -68,8 +68,8 @@ public class IndiaCPDocumentsApi {
              }
              DateFormat dtf = new SimpleDateFormat("dd MMM yyyy", Locale.ENGLISH);
              //allotmentDate = new Date();
-             String allotmentDateStr = dtf.format(cpDetails.allotDate);
-             String maturityDateStr = dtf.format(cpDetails.matDate);
+             String allotmentDateStr = cpDetails.allotDate;
+             String maturityDateStr = cpDetails.matDate;
 
 
 
@@ -343,6 +343,7 @@ public class IndiaCPDocumentsApi {
              document.add(new Paragraph("Signature : \n\n" , normal));
 
 
+             document.newPage();
 
 
              Paragraph issuerPara = new Paragraph(cpDetails.issuerName + "\n"
