@@ -108,9 +108,11 @@ public class IndiaCPDocumentsApi {
              document.add(title11);
              // Listing 7. Creation of list object
 
-             Paragraph nsdlAddress = new Paragraph(String.format(nsdlDetails.nsdlAddress.replace(',', "\n".charAt(0))));
-             nsdlAddress.setIndentationLeft(300);
+             Paragraph nsdlAddress = new Paragraph(String.format(nsdlDetails.nsdlAddress.replaceAll(", ", "\n")), smallFont);
+             nsdlAddress.setIndentationLeft(0);
+
              document.add(nsdlAddress);
+
              document.add(new Paragraph("\n"));
 
              Paragraph docSubject = new Paragraph("Sub: Admission of Commercial Paper", smallBold);
@@ -193,7 +195,7 @@ public class IndiaCPDocumentsApi {
 
 
              document.newPage();
-             document.add(new Paragraph("Contact Persons of the Company", smallBold));
+             document.add(new Paragraph("Contact Persons of the Company\n", smallBold));
              PdfPTable issuerTable = new PdfPTable(2);
 
              issuerTable.addCell(new Phrase("Compliance Officer", smallFont));
@@ -218,7 +220,7 @@ public class IndiaCPDocumentsApi {
              issuerTable.addCell(new Phrase(cpDetails.investorRelationsOfficerEmail, smallFont));
              document.add(issuerTable);
              document.add(new Paragraph("Address of the registry operations where the physical securities for " +
-                     "dematerialisaion are to be delivered by the Depository Participants", smallBold));
+                     "dematerialisaion are to be delivered by the Depository Participants\n", smallBold));
              PdfPTable issuerDTable = new PdfPTable(2);
 
              issuerDTable.addCell(new Phrase("Name of organisation", smallFont));
