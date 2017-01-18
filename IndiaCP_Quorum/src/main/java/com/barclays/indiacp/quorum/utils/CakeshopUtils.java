@@ -2,6 +2,7 @@ package com.barclays.indiacp.quorum.utils;
 
 import com.barclays.indiacp.quorum.contract.code.SolidityContract;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCodeFactory;
+import com.barclays.indiacp.util.StringUtils;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.jpmorgan.cakeshop.client.ClientManager;
@@ -16,9 +17,22 @@ import com.jpmorgan.cakeshop.client.model.req.ContractMethodCallCommand;
 import com.jpmorgan.cakeshop.client.model.res.APIData;
 import com.jpmorgan.cakeshop.client.model.res.APIResponse;
 import feign.FeignException;
+import io.ipfs.api.IPFS;
+import io.ipfs.api.MerkleNode;
+import io.ipfs.api.NamedStreamable;
+import io.ipfs.multihash.Multihash;
+import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.async.WebAsyncTask;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -29,12 +43,14 @@ public class CakeshopUtils {
     private static ClientManager cakeshopManager;
     private static ContractApi contractApi;
     private static TransactionApi transactionApi;
+    private static IPFS ipfs;
 
     static {
         // setup cakeshop manager
-        cakeshopManager = ClientManager.create("http://52.172.46.253:8081/cakeshop");
+        cakeshopManager = ClientManager.create("http://localhost:8080/cakeshop");
         contractApi = cakeshopManager.getClient(ContractApi.class);
         transactionApi = cakeshopManager.getClient(TransactionApi.class);
+        ipfs = new IPFS("localhost",6969);
     }
 
     public static String getAddrFromTxId (String txnID) {
@@ -125,5 +141,43 @@ public class CakeshopUtils {
         contractMethodCallCommand.setAddress(contractAddress);
         contractMethodCallCommand.setMethod(methodName);
         return contractMethodCallCommand;
+    }
+
+    // Uploads document to IPFS and returns hashcode
+    public static String uploadDocumentToIPFS(InputStream inputFileStream) throws RuntimeException {
+        final String PREFIX = StringUtils.toString(System.currentTimeMillis());
+        final String SUFFIX = "garbage";
+        File tempFile = null;
+        try {
+            tempFile = File.createTempFile(PREFIX, SUFFIX);
+        } catch (IOException e) {
+            System.out.println("Temp file creation failed");
+            throw new RuntimeException();
+        }
+        tempFile.deleteOnExit();
+
+        try {
+            IOUtils.copy(inputFileStream, new FileOutputStream(tempFile));
+        } catch (IOException e) {
+            System.out.println("Could not persist input stream");
+            throw new RuntimeException();
+        }
+
+        MerkleNode fileAddResult = null;
+        try {
+            fileAddResult = ipfs.add(new NamedStreamable.FileWrapper(tempFile));
+        } catch (IOException e) {
+            System.out.println("Upload to ipfs failed");
+            throw new RuntimeException();
+        }
+        return fileAddResult.hash.toBase58();
+    }
+
+    // Downloads doc from IPFS given a hash
+    public static void downloadDocumentFromIPFS(String dochash, String destPath) throws IOException {
+        FileOutputStream fos = new FileOutputStream(destPath);
+        byte[] fileContents = ipfs.cat(Multihash.fromBase58(dochash));
+        fos.write(fileContents);
+        fos.close();
     }
 }
