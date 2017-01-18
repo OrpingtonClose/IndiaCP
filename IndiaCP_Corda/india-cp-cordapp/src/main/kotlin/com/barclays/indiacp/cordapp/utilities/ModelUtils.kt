@@ -282,9 +282,12 @@ object ModelUtils {
         return contractState
     }
 
-    fun  settlementDetailsFromModel(model: SettlementDetails): IndiaCommercialPaper.SettlementDetails? {
+    fun  settlementDetailsFromModel(model: SettlementDetails?): IndiaCommercialPaper.SettlementDetails? {
+        if (model == null || model.partyType == null) {
+            return null
+        }
         val depositoryAccountDetails = ArrayList<IndiaCommercialPaper.DepositoryAccountDetails> ()
-        for (d in model.depositoryAccountDetails) {
+        for (d in model!!.depositoryAccountDetails) {
             val dpAccount = IndiaCommercialPaper.DepositoryAccountDetails(
                     dpName = d.dpName,
                     dpType = d.dpType.name,
@@ -293,15 +296,16 @@ object ModelUtils {
             )
             depositoryAccountDetails.add(dpAccount)
         }
+        val paymentAccountDetails = if (model.paymentAccountDetails == null) null else IndiaCommercialPaper.PaymentAccountDetails(
+                creditorName = model.paymentAccountDetails.creditorName,
+                bankAccountDetails = model.paymentAccountDetails.bankAccountNo,
+                bankName = model.paymentAccountDetails.bankName,
+                rtgsCode = model.paymentAccountDetails.rtgsIfscCode
+        )
         val settlementDetails = IndiaCommercialPaper.SettlementDetails (
                 partyType = model.partyType.name,
-                paymentAccountDetails = IndiaCommercialPaper.PaymentAccountDetails(
-                        creditorName = model.paymentAccountDetails.creditorName,
-                        bankAccountDetails = model.paymentAccountDetails.bankAccountNo,
-                        bankName = model.paymentAccountDetails.bankName,
-                        rtgsCode = model.paymentAccountDetails.rtgsIfscCode
-                ),
-                depositoryAccountDetails = depositoryAccountDetails
+                paymentAccountDetails = paymentAccountDetails,
+                depositoryAccountDetails = if (depositoryAccountDetails.isEmpty()) null else depositoryAccountDetails
         )
 
         return settlementDetails
