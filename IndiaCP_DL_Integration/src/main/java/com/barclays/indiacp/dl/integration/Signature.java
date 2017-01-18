@@ -7,8 +7,10 @@ import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 import org.apache.axis.encoding.Base64;
 import org.apache.commons.io.IOUtils;
-
+import org.apache.commons.lang3.StringUtils;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -265,6 +267,34 @@ public class Signature {
         {
             throw new RuntimeException("File could not be uploaded.");
         }
+    }
+
+    public void getSignatureLocation (String docType, String currentUser, String currentUserRole)
+    {
+        try {
+        String content = new String(Files.readAllBytes(
+                Paths.get("E:\\Shweta\\Blockchain\\docs\\table.txt")));
+
+
+
+        String [][] result = new String [StringUtils.countMatches(content, "\n")][];
+        int count = 0;
+        for (String line : content.split ("[" + "\n" + "]"))
+        {
+            if(line.contains("|"))
+                result [count++] =  line.split ("[" + "|" + "]");
+        }
+
+        for (String [] ar : result) {
+            if(ar[1].equals(  docType))
+                System.out.println(ar[4]);
+        }
+    }
+    catch (IOException e)
+    {
+    e.printStackTrace();
+    }
+
     }
 
 
