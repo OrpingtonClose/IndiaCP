@@ -84,9 +84,19 @@ var app;
                 ISINGenerationController.prototype.cancel = function () {
                     this.$uibModalInstance.close();
                 };
-                ISINGenerationController.prototype.generateDocument = function (file) {
-                    this.isinFile = file;
-                    this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
+                ISINGenerationController.prototype.generateDocument = function () {
+                    var _this = this;
+                    // this.isinFile = file;
+                    // this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
+                    this.issuerService.generateISINDocument(this.docRefData).
+                        then(function (response) {
+                        _this.growl.success("ISIN document generated succesfully", { title: "ISIN Doc Generated!" });
+                        _this.isinSignedData = response.data;
+                        var url = "data:application/pdf;base64," + _this.isinSignedData;
+                        _this.isinFileUrl = _this.$sce.trustAsResourceUrl(url);
+                    }, function (error) {
+                        _this.growl.error("ISIN document generation unsuccesful", { title: "ISIN Doc Failed!" });
+                    });
                 };
                 ISINGenerationController.prototype.sign = function () {
                     var _this = this;

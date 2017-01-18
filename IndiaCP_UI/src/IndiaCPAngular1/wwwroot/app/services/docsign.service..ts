@@ -29,7 +29,7 @@ module app.services {
     "use strict";
 
     export interface IDocSignService {
-        signDoc(file: File, docName: string, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.IndiaCPProgram>;
+        signDoc(file: File, docName: string, extraHttpRequestParams?: any): ng.IHttpPromise<any>;
     }
 
     class DocSignService implements IDocSignService {

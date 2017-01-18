@@ -16,7 +16,8 @@
             "ngFileUpload",
             "angular-loading-bar",
             "angular.filter",
-            "ui.grid"
+            "ui.grid",
+            "ui.grid.expandable"
 
             /*
             *3rd party modules

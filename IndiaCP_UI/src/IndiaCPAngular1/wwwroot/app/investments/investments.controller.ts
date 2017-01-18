@@ -2,7 +2,6 @@ module app.investments {
     "use strict";
 
     interface IInvestmentsScope {
-        nodeType: string;
         fetchCPIssues():void;
         workflowStates: app.models.WorkflowStates;
     }
@@ -12,7 +11,7 @@ module app.investments {
             "app.services.AuthenticationService",
             "app.services.InvestorService",
             "localStorageService"];
-        nodeType: string;
+        nodeInfo: app.models.NodeInfo;
         workflowStates: app.models.WorkflowStates;
         cpIssues:Array<app.models.IndiaCPIssue>;
         
@@ -20,11 +19,11 @@ module app.investments {
             protected authService: app.services.IAuthenticationService,
             protected InvestorService:app.services.IInvestorService,
             protected localStorageService: ng.local.storage.ILocalStorageService, ) {
-            this.nodeType = (this.localStorageService.get("nodeInfo") as app.models.NodeInfo).nodeType;
+            this.nodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
     }
 
     public fetchCPIssues():void{
-        this.InvestorService.fetchAllCP("ddd").then((response)=> {
+        this.InvestorService.fetchAllCPOnThisNode().then((response)=> {
             this.cpIssues = response.data;
         },(error)=>{})
     }

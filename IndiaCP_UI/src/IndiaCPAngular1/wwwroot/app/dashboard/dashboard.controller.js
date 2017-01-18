@@ -13,7 +13,8 @@ var app;
                 this.issuerService = issuerService;
                 this.workflowStates = new app.models.WorkflowStates();
                 this.nodeInfo = this.localStorageService.get("nodeInfo");
-                this.gridColumns = [{ field: "version", displayName: "#", width: 35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
+                this.gridOptions = {};
+                this.gridOptions.columnDefs = [{ field: "version", displayName: "#", width: 35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
                     { field: "issueCommencementDate", width: 125, displayName: "Date", cellTemplate: " <div><span class='small text-nowrap'>{{row.entity.issueCommencementDate | date:'dd-MM-yyyy'}}</span></div>" },
                     { field: "name", displayName: "Program Name", width: 170, enableColumnMenu: false, cellTemplate: "<div> <a href='' ng-click='grid.appScope.vm.showCPProgramDetails(row.entity.programId)' class='text-nowrap'>{{row.entity.name}}</a></div>" },
                     { field: "programAllocatedValue", width: 100, displayName: "Allotment", cellTemplate: "<div height='20px' justgage min='0' max='100' ></div>", enableColumnMenu: false },
@@ -22,12 +23,20 @@ var app;
                     { field: "version", displayName: "Sell", width: 75, enableColumnMenu: false, cellTemplate: "<button type='button' ng-click='grid.appScope.vm.createCPISsue(row.entity)' class='btn btn-success btn-raised btn-sm'>Sell</button>" },
                     { field: "version", displayName: "", width: 150, enableColumnMenu: false, cellTemplate: "app/dashboard/gridtemplates/gridoptionstemplate.html" }
                 ];
-                this.gridOptions = {
-                    data: this.cpPrograms,
-                    columnDefs: this.gridColumns,
-                    rowHeight: 75,
-                    appScopeProvider: this
-                };
+                this.gridOptions.data = this.cpPrograms;
+                this.gridOptions.rowHeight = 75;
+                // this.gridOptions = {
+                //     data: this.cpPrograms,
+                //     columnDefs: this.gridColumns,
+                //     rowHeight: 75,
+                //     // expandableRowTemplate: 'expandableRowTemplate.html',
+                //     // expandableRowHeight: 150,
+                //     // //subGridVariable will be available in subGrid scope
+                //     // expandableRowScope: {
+                //     //     subGridVariable: 'subGridScopeVariable'
+                //     // }
+                // };
+                // { data: vm.cpPrograms, columnDefs: vm.gridColumns, rowHeight:75 }
                 this.fetchAllCPPrograms();
             }
             DashboardController.prototype.$onDestroy = function () {

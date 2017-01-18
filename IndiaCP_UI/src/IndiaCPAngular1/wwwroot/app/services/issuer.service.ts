@@ -45,7 +45,7 @@ module app.services {
         fetchBoardResolution(extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.BoardResolutionDocs>>;
         CPissueGetTransactionHistory(cpIssueId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>>;
         CPProgramGetTransactionHistory(cpProgramId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPProgram>>;
-
+        generateISINDocument(docData: app.models.DocRefData, extraHttpRequestParams?: any): ng.IHttpPromise<any>;
     }
 
     class IssuerService implements IIssuerService {
@@ -71,6 +71,34 @@ module app.services {
                 }
             }
             return <T1 & T2>objA;
+        }
+
+        /** 
+         * This is to generate the ISIN documents from the docrefData    
+        **/
+        public generateISINDocument(docRefData: app.models.DocRefData, extraHttpRequestParams?: any): ng.IHttpPromise<any> {
+            const localVarPath = this.basePath + "/indiacpdocuments/generateISINDocuments";
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            // verify required parameter "docData" is not null or undefined
+            if (docRefData === null || docRefData === undefined) {
+                throw new Error("Required parameter docData was null or undefined when calling generateISINDocument.");
+            }
+            let httpRequestParams: any = {
+                method: "POST",
+                url: localVarPath,
+                json: true,
+                data: docRefData,
+                params: queryParameters,
+                headers: headerParams
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            return this.$http(httpRequestParams);
         }
 
         /**

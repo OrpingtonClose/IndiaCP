@@ -2,7 +2,7 @@ module app.dashboard.isingeneration {
 	"use strict";
 
 	interface IISINGenerationScope {
-		generateDocument(file: File): void;
+		generateDocument(): void;
 		sign(): void;
 		verify(): void;
 		save(): void;
@@ -101,10 +101,18 @@ module app.dashboard.isingeneration {
 		public cancel(): void {
 			this.$uibModalInstance.close();
 		}
-		public generateDocument(file: File): void {
-			this.isinFile = file;
-			this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
-
+		public generateDocument(): void {
+			// this.isinFile = file;
+			// this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
+			this.issuerService.generateISINDocument(this.docRefData).
+				then((response: any) => {
+					this.growl.success("ISIN document generated succesfully", { title: "ISIN Doc Generated!" });
+					this.isinSignedData = response.data;
+					var url: string = "data:application/pdf;base64," + this.isinSignedData;
+					this.isinFileUrl = this.$sce.trustAsResourceUrl(url);
+				}, (error: any) => {
+					this.growl.error("ISIN document generation unsuccesful", { title: "ISIN Doc Failed!" });
+				});
 		}
 
 		public sign(): void {
@@ -131,7 +139,7 @@ module app.dashboard.isingeneration {
 			let isinZip: JSZip = new JSZip();
 			isinZip.file("isindoc.pdf", this.isinSignedData, { base64: true });
 			// [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
-			isinZip.generateAsync({type:"blob"}).then((zippedFile:Blob) => {
+			isinZip.generateAsync({ type: "blob" }).then((zippedFile: Blob) => {
 				let tempFile: File = new File([zippedFile], "isinDoc.zip");
 				this.issuerService.addDoc(this.cpProgram.programId, this.docDetails, tempFile).
 					then((response: any): void => {

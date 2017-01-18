@@ -2,6 +2,12 @@ module app.models {
     "use strict";
 
     export class IndiaCPIssue {
+        
+        "nextAction" : app.models.Action;
+
+        "investorName"?:string;
+
+        "investorId"?: string;
     /**
          * Unique identifier representing a specific CP Program raised by an Issuer. This CP Issue is allotted under this umbrella program
          */

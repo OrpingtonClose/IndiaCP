@@ -25,8 +25,10 @@ module app.dashboard.cpissue {
         this.cpissue.issuerId = this.cpProgram.issuerId;
         this.cpissue.issuerName = this.cpProgram.issuerName;
         this.cpissue.cpTradeId = this.cpissue.issuerName + "-" + this.uuid4.generate();
-        this.cpissue.beneficiaryId = "BSS_INVESTOR";
-        this.cpissue.beneficiaryName = "BSS";
+        this.cpissue.investorId = "BSS_INVESTOR";
+        this.cpissue.investorName = "Barclays Shared Services";
+        this.cpissue.beneficiaryId = this.cpProgram.issuerId;
+        this.cpissue.beneficiaryName = this.cpProgram.issuerName;
         this.cpissue.ipaId = this.cpProgram.ipaId;
         this.cpissue.ipaName = this.cpProgram.ipaName;
         this.cpissue.depositoryId = this.cpProgram.depositoryId;
@@ -39,6 +41,16 @@ module app.dashboard.cpissue {
         this.cpissue.facevaluePerUnit = 100;
         this.cpissue.noOfUnits = 10;
         this.cpissue.rate = 7;
+        
+        this.cpissue.investorSettlementDetails = new app.models.SettlementDetails();
+        this.cpissue.investorSettlementDetails.depositoryAccountDetails = [new app.models.DepositoryAccountDetails()];
+        
+        this.cpissue.ipaSettlementDetails = new app.models.SettlementDetails();
+        this.cpissue.ipaSettlementDetails.depositoryAccountDetails = [new app.models.DepositoryAccountDetails(),new app.models.DepositoryAccountDetails()];
+        
+        this.cpissue.issuerSettlementDetails = new app.models.SettlementDetails();
+        this.cpissue.issuerSettlementDetails.paymentAccountDetails = new app.models.PaymentAccountDetails();
+        
      }
         public issueCP(): void {
            this.issuerService.issueCP(this.cpissue).then(():void => {

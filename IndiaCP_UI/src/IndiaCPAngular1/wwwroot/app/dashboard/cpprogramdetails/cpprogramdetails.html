@@ -81,10 +81,22 @@
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <label class="control-label col-sm-3">Depository Letter : </label>
-                                                                <button type="button" class="btn btn-primary col-sm-1 btn-xs" aria-label="Left Align">
-                                                                    <span class="glyphicon glyphicon-download" aria-hidden="true"></span>Download</button>
-                                                                
+                                                                <a ng-click="vm.showISINDocument()" class="control-label col-sm-3">Depository Letter : </a>
+
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Status :  </a>
+
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified By :  </a>
+
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified Date :  </a>
+
+                                                                <!--<button type="button" class="btn btn-primary col-sm-1 btn-xs" aria-label="Left Align">
+                                                                    <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>Upload
+                                                                </button>
+
+                                                                <button type="button" class="btn btn-primary col-sm-1 btn-xs col-sm-offset-1" aria-label="Left Align">
+                                                                    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>Show
+                                                                </button>-->
+
                                                                 <button type="button" class="btn btn-primary col-sm-1 btn-xs col-sm-offset-1" aria-label="Left Align">
                                                                     <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
                                                                 </button>
@@ -94,10 +106,13 @@
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <label class="control-label col-sm-3">IPA verification documents : </label>
-                                                                <button type="button" class="btn btn-primary col-sm-1 btn-xs" aria-label="Left Align">
-                                                                    <span class="glyphicon glyphicon-download" aria-hidden="true"></span>Download</button>
-                                                                
+                                                                <a ng-click="vm.showIPAVerification()" class="control-label col-sm-3">IPA verification documents : </a>
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Status :  </a>
+
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified By :  </a>
+
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified Date :  </a>
+
                                                                 <button type="button" class="btn btn-primary col-sm-1 btn-xs col-sm-offset-1" aria-label="Left Align">
                                                                     <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
                                                                 </button>
@@ -107,23 +122,29 @@
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <label class="control-label col-sm-3">IPA Certificate : </label>
-                                                                <button type="button" class="btn btn-primary col-sm-1 btn-xs" aria-label="Left Align">
-                                                                    <span class="glyphicon glyphicon-download" aria-hidden="true"></span>Download</button>
-                                                                
+                                                                <a ng-click="vm.showIPACertificate()" class="control-label col-sm-3">IPA Certificate : </a>
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Status :  </a>
+
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified By :  </a>
+
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified Date :  </a>
+
                                                                 <button type="button" class="btn btn-primary col-sm-1 btn-xs col-sm-offset-1" aria-label="Left Align">
                                                                     <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
                                                                 </button>
-                                                             </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-group">
-                                                                <label class="control-label col-sm-3">Corporate action form : </label>
-                                                                <button type="button" class="btn btn-primary col-sm-1 btn-xs" aria-label="Left Align">
-                                                                    <span class="glyphicon glyphicon-download" aria-hidden="true"></span>Download</button>
-                                                                
+                                                                <a ng-click="vm.showCorpActionForm()" class="control-label col-sm-3">Corporate action form : </a>
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Status :  </a>
+
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified By :  </a>
+
+                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified Date :  </a>
+
                                                                 <button type="button" class="btn btn-primary col-sm-1 btn-xs col-sm-offset-1" aria-label="Left Align">
                                                                     <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
                                                                 </button>
@@ -202,7 +223,67 @@
 
             </div>
             <div role="tabpanel" class="tab-pane" id="tab-3">
-                <p>Third tab content.</p>
+                <div class="table-responsive table-responsive-dropdowns">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="table-cell-id">#</th>
+                                <th data-toggle="sort" data-sort-onload="asc" class="col-sm-2 sorting-asc" tabindex="0">Date</th>
+                                <th data-toggle="sort" class="col-sm-2" tabindex="0">Issue Name</th>
+                                <th data-toggle="sort" class="col-sm-1 text-right" tabindex="0">Value</th>
+                                <th class="col-sm-2 text-center">Status</th>
+                                <th class="col-sm-2 text-center">Action</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="cpissue in vm.cpIssues">
+                                <td class="table-cell-id">
+                                    {{$index + 1}}
+                                </td>
+                                <td>
+                                    <span class="small text-nowrap">{{cpissue.issueCommencementDate.epochSecond * 1000 | date:'dd-MM-yyyy'}}</span>
+                                </td>
+                                <td>
+                                    <a href="" ng-click="vm.showCPProgramDetails(cpissue.programId)" class="text-nowrap">{{cpissue.name}}</a>
+                                </td>
+                                <td class="text-right">
+                                    <div justgage ng-value="{{(cpissue.programAllocatedValue.quantity | number)*100/(cpissue.programSize.quantity | number)}}"
+                                        min="0" max="100"></div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="label label-default">{{cpissue.status}}</span>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" ng-click="vm.executeNextAction(cpissue.nextAction.name, cpissue)" ng-disabled="cpissue.nextAction.allowedNodes.indexOf('ISSUER') == -1"
+                                        class="btn btn-success btn-raised btn-xs">{{cpissue.nextAction.name}}</button>
+                                </td>
+                                <td class="table-cell-actions">
+                                    <a ng-click="vm.showCPProgramDetails(cpissue.programId)" class="item-action" title="Edit">
+                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                    </a>
+                                    <a href="#" class="item-action" title="Mark as delivered">
+                                        <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
+                                    </a>
+                                    <div class="btn-group">
+                                        <button class="item-action" type="button" id="itemOptions1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                                    </button>
+                                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="itemOptions1">
+                                            <li>
+                                                <button type="button" class="btn btn-dropdown" data-toggle="confirm" data-confirm-message="Do you really want to cancel this order?"
+                                                    data-confirm-yes="Yes" data-confirm-no="No">
+                                                <span class="glyphicon glyphicon-remove-sign offset-right" aria-hidden="true"></span>
+                                                Cancel order
+                                            </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

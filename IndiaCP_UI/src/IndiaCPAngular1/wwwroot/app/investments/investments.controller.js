@@ -9,11 +9,11 @@ var app;
                 this.authService = authService;
                 this.InvestorService = InvestorService;
                 this.localStorageService = localStorageService;
-                this.nodeType = this.localStorageService.get("nodeInfo").nodeType;
+                this.nodeInfo = this.localStorageService.get("nodeInfo");
             }
             InvestmentsController.prototype.fetchCPIssues = function () {
                 var _this = this;
-                this.InvestorService.fetchAllCP("ddd").then(function (response) {
+                this.InvestorService.fetchAllCPOnThisNode().then(function (response) {
                     _this.cpIssues = response.data;
                 }, function (error) { });
             };

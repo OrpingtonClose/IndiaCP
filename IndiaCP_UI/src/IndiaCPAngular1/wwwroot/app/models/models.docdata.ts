@@ -129,6 +129,11 @@ module app.models {
 
     export class IPADocData {
         "ipaName"?: string;
+        "ipaContactPerson": string;
+        "ipaContactDept": string;
+        "ipaContactAddress": string;
+        "ipaContactTelephone": string;
+        "ipaContactEmail": string;
         "ipaAddress"?: string;
         "ipaAllotmentDPID"?: string;
         "ipaAllotmentClientID"?: string;

@@ -5,6 +5,11 @@ var app;
         "use strict";
         var PaymentAccountDetails = (function () {
             function PaymentAccountDetails() {
+                this.creditorName = "";
+                this.bankAccountNo = "";
+                this.bankAccountType = "";
+                this.bankName = "";
+                this.rtgsIfscCode = "";
             }
             return PaymentAccountDetails;
         }());

@@ -6,6 +6,7 @@ npm install --save @types/angular-growl-v2
 npm install --save @types/angular-local-storage
 npm install --save @types/ng-file-upload
 npm install --save @types/jszip
+npm install --save @types/ui-grid
 
 Angular2
 http://blog.stevensanderson.com/2016/10/04/angular2-template-for-visual-studio/
