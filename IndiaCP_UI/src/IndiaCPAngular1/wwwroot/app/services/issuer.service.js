@@ -209,7 +209,7 @@ var app;
              * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
              */
             IssuerService.prototype.fetchAllCP = function (cpProgramId, extraHttpRequestParams) {
-                var localVarPath = this.basePath + "/fetchAllCP/{cpProgramId}"
+                var localVarPath = this.basePath + "/indiacpissue/fetchAllCP/{cpProgramId}"
                     .replace("{" + "cpProgramId" + "}", String(cpProgramId));
                 var queryParameters = {};
                 var headerParams = this.extendObj({}, this.defaultHeaders);

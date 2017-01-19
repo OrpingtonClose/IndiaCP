@@ -67,7 +67,7 @@ var app;
                             });
                         });
                     });
-                }, 1000000);
+                }, 10000);
             };
             DashboardController.prototype.executeNextAction = function (nextAction, selectedCPProgram) {
                 switch (nextAction) {

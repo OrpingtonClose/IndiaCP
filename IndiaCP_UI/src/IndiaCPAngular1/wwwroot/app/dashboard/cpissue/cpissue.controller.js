@@ -6,9 +6,10 @@ var app;
         (function (cpissue) {
             "use strict";
             var CPIssueController = (function () {
-                function CPIssueController($uibModalInstance, issuerService, uuid4, cpProgram, growl) {
+                function CPIssueController($uibModalInstance, issuerService, authService, uuid4, cpProgram, growl) {
                     this.$uibModalInstance = $uibModalInstance;
                     this.issuerService = issuerService;
+                    this.authService = authService;
                     this.uuid4 = uuid4;
                     this.cpProgram = cpProgram;
                     this.growl = growl;
@@ -37,6 +38,7 @@ var app;
                     this.cpissue.facevaluePerUnit = 100;
                     this.cpissue.noOfUnits = 10;
                     this.cpissue.rate = 7;
+                    this.cpissue.modifiedBy = this.authService.currentUser.username;
                     this.cpissue.investorSettlementDetails = new app.models.SettlementDetails();
                     this.cpissue.investorSettlementDetails.depositoryAccountDetails = [new app.models.DepositoryAccountDetails()];
                     this.cpissue.ipaSettlementDetails = new app.models.SettlementDetails();
@@ -69,7 +71,12 @@ var app;
                 };
                 return CPIssueController;
             }());
-            CPIssueController.$inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4", "cpProgram", "growl"];
+            CPIssueController.$inject = ["$uibModalInstance",
+                "app.services.IssuerService",
+                "app.services.AuthenticationService",
+                "uuid4",
+                "cpProgram",
+                "growl"];
             angular
                 .module("app.dashboard.cpissue")
                 .controller("app.dashboard.cpissue.CPIssueController", CPIssueController);

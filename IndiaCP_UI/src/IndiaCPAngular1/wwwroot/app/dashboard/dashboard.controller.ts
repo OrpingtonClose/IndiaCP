@@ -18,7 +18,7 @@ module app.dashboard {
         workflowStates: app.models.WorkflowStates;
         dataRefresher: ng.IPromise<any>;
         nodeInfo: app.models.NodeInfo;
-        gridColumns: Array<any>;
+        gridColumns:  Array<any>;
         gridOptions: uiGrid.IGridOptions;
         
         static $inject = ["$http",
@@ -97,7 +97,7 @@ module app.dashboard {
                         });
                     });
                 });
-            }, 1000000);
+            }, 10000);
         }
 
         public executeNextAction(nextAction: string, selectedCPProgram: app.models.IndiaCPProgram) {

@@ -28,8 +28,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Allotment Date</label>
-                                <input class="form-control input-sm" type="text" disabled ng-value="vm.cpprogram.issueCommencementDate | date:'dd-MM-yyyy'"
-                                />
+                                <input class="form-control input-sm" type="text" disabled ng-value="vm.cpprogram.issueCommencementDate | date:'dd-MM-yyyy'" />
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Program Value</label>
@@ -75,85 +74,110 @@
                                         <h3 class="panel-title">Associated Documents</h3>
                                     </div>
                                     <div class="panel-body">
-                                        <form id="Doc-form">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <a ng-click="vm.showISINDocument()" class="control-label col-sm-3">Depository Letter : </a>
-
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Status :  </a>
-
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified By :  </a>
-
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified Date :  </a>
-
-                                                                <!--<button type="button" class="btn btn-primary col-sm-1 btn-xs" aria-label="Left Align">
-                                                                    <span class="glyphicon glyphicon-upload" aria-hidden="true"></span>Upload
-                                                                </button>
-
-                                                                <button type="button" class="btn btn-primary col-sm-1 btn-xs col-sm-offset-1" aria-label="Left Align">
-                                                                    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>Show
-                                                                </button>-->
-
-                                                                <button type="button" class="btn btn-primary col-sm-1 btn-xs col-sm-offset-1" aria-label="Left Align">
-                                                                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <a ng-click="vm.showIPAVerification()" class="control-label col-sm-3">IPA verification documents : </a>
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Status :  </a>
-
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified By :  </a>
-
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified Date :  </a>
-
-                                                                <button type="button" class="btn btn-primary col-sm-1 btn-xs col-sm-offset-1" aria-label="Left Align">
-                                                                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <a ng-click="vm.showIPACertificate()" class="control-label col-sm-3">IPA Certificate : </a>
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Status :  </a>
-
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified By :  </a>
-
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified Date :  </a>
-
-                                                                <button type="button" class="btn btn-primary col-sm-1 btn-xs col-sm-offset-1" aria-label="Left Align">
-                                                                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <a ng-click="vm.showCorpActionForm()" class="control-label col-sm-3">Corporate action form : </a>
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Status :  </a>
-
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified By :  </a>
-
-                                                                <a class="control-label col-sm-2 col-sm-offset-1">Modified Date :  </a>
-
-                                                                <button type="button" class="btn btn-primary col-sm-1 btn-xs col-sm-offset-1" aria-label="Left Align">
-                                                                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
+                                        <div class="table-responsive table-responsive-dropdowns">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th data-toggle="sort" class="col-sm-3" tabindex="0">Doc Name</th>
+                                                        <th data-toggle="sort" class="col-sm-2" tabindex="0">Status</th>
+                                                        <th data-toggle="sort" class="col-sm-2 text-right" tabindex="0">Modified By</th>
+                                                        <th class="col-sm-2" tabindex="0">Modified Date</th>
+                                                        <th class="col-sm-2" tabindex="0">History</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <a href="#" ng-click="vm.showISINDocument()" class="control-label">Depository Letter : </a>
+                                                        </td>
+                                                        <td>
+                                                            <!--Status-->
+                                                        </td>
+                                                        <td>
+                                                            <!--Modified By-->
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <!--Modified Data-->
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span class="label label-default">{{cpprogram.status}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-primary btn-xs" aria-label="Left Align">
+                                                                <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <a ng-click="vm.showISINDocument()" class="control-label">IPA verification documents : </a>
+                                                        </td>
+                                                        <td>
+                                                            <!--Status-->
+                                                        </td>
+                                                        <td>
+                                                            <!--Modified By-->
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <!--Modified Data-->
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span class="label label-default">{{cpprogram.status}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-primary btn-xs" aria-label="Left Align">
+                                                                <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <a ng-click="vm.showISINDocument()" class="control-label">IPA Certificate : </a>
+                                                        </td>
+                                                        <td>
+                                                            <!--Status-->
+                                                        </td>
+                                                        <td>
+                                                            <!--Modified By-->
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <!--Modified Data-->
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span class="label label-default">{{cpprogram.status}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-primary btn-xs" aria-label="Left Align">
+                                                                <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <a ng-click="vm.showISINDocument()" class="control-label">Corporate action form : </a>
+                                                        </td>
+                                                        <td>
+                                                            <!--Status-->
+                                                        </td>
+                                                        <td>
+                                                            <!--Modified By-->
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <!--Modified Data-->
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span class="label label-default">{{cpprogram.status}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-primary btn-xs" aria-label="Left Align">
+                                                                <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -164,7 +188,7 @@
                             <div class="form-group">
                                 <div class="form-group">
                                     <button class="btn btn-primary" type="button">Update </button>
-                                    <button class="btn btn-primary" ng-click="vm.cancel()" type="button">Cancel </button>
+                                    <button class="btn btn-primary" ng-click="vm.cancel()" type="button">Close </button>
                                 </div>
                             </div>
                         </div>
@@ -197,7 +221,7 @@
                                                 <td> </td>
                                                 <td>{{trandetail.status}}</td>
                                                 <td> </td>
-                                                <td> </td>
+                                                <td>{{trandetail.modifiedBy}} </td>
                                                 <td>{{trandetail.lastModifiedDate | date:'dd-MM-yyyy'}}</td>
                                             </tr>
                                         </tbody>
@@ -210,7 +234,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <div class="form-group">
-                                    <button class="btn btn-default" type="button">Close </button>
+                                    <button class="btn btn-primary" ng-click="vm.cancel()" type="button">Close </button>
                                 </div>
                             </div>
                         </div>
@@ -249,14 +273,16 @@
                                 </td>
                                 <td class="text-right">
                                     <div justgage ng-value="{{(cpissue.programAllocatedValue.quantity | number)*100/(cpissue.programSize.quantity | number)}}"
-                                        min="0" max="100"></div>
+                                         min="0" max="100"></div>
                                 </td>
                                 <td class="text-center">
                                     <span class="label label-default">{{cpissue.status}}</span>
                                 </td>
                                 <td class="text-center">
                                     <button type="button" ng-click="vm.executeNextAction(cpissue.nextAction.name, cpissue)" ng-disabled="cpissue.nextAction.allowedNodes.indexOf('ISSUER') == -1"
-                                        class="btn btn-success btn-raised btn-xs">{{cpissue.nextAction.name}}</button>
+                                            class="btn btn-success btn-raised btn-xs">
+                                        {{cpissue.nextAction.name}}
+                                    </button>
                                 </td>
                                 <td class="table-cell-actions">
                                     <a ng-click="vm.showCPProgramDetails(cpissue.programId)" class="item-action" title="Edit">
@@ -267,15 +293,15 @@
                                     </a>
                                     <div class="btn-group">
                                         <button class="item-action" type="button" id="itemOptions1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
-                                    </button>
+                                            <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                                        </button>
                                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="itemOptions1">
                                             <li>
                                                 <button type="button" class="btn btn-dropdown" data-toggle="confirm" data-confirm-message="Do you really want to cancel this order?"
-                                                    data-confirm-yes="Yes" data-confirm-no="No">
-                                                <span class="glyphicon glyphicon-remove-sign offset-right" aria-hidden="true"></span>
-                                                Cancel order
-                                            </button>
+                                                        data-confirm-yes="Yes" data-confirm-no="No">
+                                                    <span class="glyphicon glyphicon-remove-sign offset-right" aria-hidden="true"></span>
+                                                    Cancel order
+                                                </button>
                                             </li>
                                         </ul>
                                     </div>
@@ -283,6 +309,15 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <button class="btn btn-primary" ng-click="vm.cancel()" type="button">Close </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

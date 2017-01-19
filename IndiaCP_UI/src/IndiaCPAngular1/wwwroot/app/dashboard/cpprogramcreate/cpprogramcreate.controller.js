@@ -6,12 +6,13 @@ var app;
         (function (cpprogramcreate) {
             "use strict";
             var CPProgramCreateController = (function () {
-                function CPProgramCreateController($uibModalInstance, issuerService, uuid4, growl, localStorageService) {
+                function CPProgramCreateController($uibModalInstance, issuerService, uuid4, growl, localStorageService, authService) {
                     this.$uibModalInstance = $uibModalInstance;
                     this.issuerService = issuerService;
                     this.uuid4 = uuid4;
                     this.growl = growl;
                     this.localStorageService = localStorageService;
+                    this.authService = authService;
                     this.ipacollection = [{ displayName: "HDFC", id: "HDFC_IPA" }, { displayName: "SBI", id: "SBI_IPA" }];
                     this.depositorycollection = [{ displayName: "NSDL", id: "NSDL_DEPOSITORY" }, { displayName: "CDSL", id: "CDSL_IPA" }];
                     this.nodeInfo = this.localStorageService.get("nodeInfo");
@@ -28,6 +29,7 @@ var app;
                     this.cpprogram.depositoryName = "HDFC";
                     this.cpprogram.ipaId = "NSDL_DEPOSITORY";
                     this.cpprogram.ipaName = "NSDL";
+                    this.cpprogram.modifiedBy = authService.currentUser.username;
                 }
                 CPProgramCreateController.prototype.createCPProgram = function () {
                     var _this = this;
@@ -48,7 +50,12 @@ var app;
                 };
                 return CPProgramCreateController;
             }());
-            CPProgramCreateController.$inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4", "growl", "localStorageService"];
+            CPProgramCreateController.$inject = ["$uibModalInstance",
+                "app.services.IssuerService",
+                "uuid4",
+                "growl",
+                "localStorageService",
+                "app.services.AuthenticationService"];
             angular
                 .module("app.dashboard.cpprogramcreate")
                 .controller("app.dashboard.cpprogramcreate.CPProgramCreateController", CPProgramCreateController);
