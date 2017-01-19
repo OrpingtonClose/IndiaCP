@@ -28,7 +28,8 @@
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Allotment Date</label>
-                                <input class="form-control input-sm" type="text" disabled ng-value="vm.cpprogram.issueCommencementDate | date:'dd-MM-yyyy'" />
+                                <input class="form-control input-sm" type="text" disabled ng-value="vm.cpprogram.issueCommencementDate | date:'dd-MM-yyyy'"
+                                />
                             </div>
                             <div class="form-group">
                                 <label class="control-label">Program Value</label>
@@ -240,11 +241,6 @@
                         </div>
                     </div>
                 </div>
-
-
-
-
-
             </div>
             <div role="tabpanel" class="tab-pane" id="tab-3">
                 <div class="table-responsive table-responsive-dropdowns">
@@ -252,9 +248,14 @@
                         <thead>
                             <tr>
                                 <th class="table-cell-id">#</th>
-                                <th data-toggle="sort" data-sort-onload="asc" class="col-sm-2 sorting-asc" tabindex="0">Date</th>
-                                <th data-toggle="sort" class="col-sm-2" tabindex="0">Issue Name</th>
-                                <th data-toggle="sort" class="col-sm-1 text-right" tabindex="0">Value</th>
+                                <th data-toggle="sort" class="col-sm-1 text-right" tabindex="0">Issuer Name</th>
+                                <th data-toggle="sort" class="col-sm-1 text-right" tabindex="0">Yield(%)</th>
+                                <th data-toggle="sort" class="col-sm-1 text-right" tabindex="0">Face Value(in ₹)</th>
+
+                                <th data-toggle="sort" data-sort-onload="asc" class="col-sm-1 sorting-asc" tabindex="0">Trade Date</th>
+                                <th data-toggle="sort" class="col-sm-1" tabindex="0">Value Date</th>
+                                <th data-toggle="sort" class="col-sm-2" tabindex="0">Maturity Date</th>
+
                                 <th class="col-sm-2 text-center">Status</th>
                                 <th class="col-sm-2 text-center">Action</th>
                                 <th></th>
@@ -266,23 +267,29 @@
                                     {{$index + 1}}
                                 </td>
                                 <td>
-                                    <span class="small text-nowrap">{{cpissue.issueCommencementDate.epochSecond * 1000 | date:'dd-MM-yyyy'}}</span>
+                                    <span class="small text-nowrap">{{cpissue.issuerName}}</span>
                                 </td>
                                 <td>
-                                    <a href="" ng-click="vm.showCPProgramDetails(cpissue.programId)" class="text-nowrap">{{cpissue.name}}</a>
+                                    <span class="small text-nowrap">{{cpissue.rate}}</span>
                                 </td>
-                                <td class="text-right">
-                                    <div justgage ng-value="{{(cpissue.programAllocatedValue.quantity | number)*100/(cpissue.programSize.quantity | number)}}"
-                                         min="0" max="100"></div>
+                                <td>
+                                    <span class="small text-nowrap">{{cpissue.facevaluePerUnit * cpissue.noOfUnits}}</span>
+                                </td>
+                                <td>
+                                    <span class="small text-nowrap">{{cpissue.tradeDate | date:'dd-MM-yyyy'}}</span>
+                                </td>
+                                <td>
+                                    <span class="small text-nowrap">{{cpissue.valueDate | date:'dd-MM-yyyy'}}</span>
+                                </td>
+                                <td>
+                                    <span class="small text-nowrap">{{cpissue.maturityDate | date:'dd-MM-yyyy'}}</span>
                                 </td>
                                 <td class="text-center">
                                     <span class="label label-default">{{cpissue.status}}</span>
                                 </td>
                                 <td class="text-center">
                                     <button type="button" ng-click="vm.executeNextAction(cpissue.nextAction.name, cpissue)" ng-disabled="cpissue.nextAction.allowedNodes.indexOf('ISSUER') == -1"
-                                            class="btn btn-success btn-raised btn-xs">
-                                        {{cpissue.nextAction.name}}
-                                    </button>
+                                        class="btn btn-success btn-raised btn-xs">ADD_DEAL_CONFIRMATION</button>
                                 </td>
                                 <td class="table-cell-actions">
                                     <a ng-click="vm.showCPProgramDetails(cpissue.programId)" class="item-action" title="Edit">
@@ -293,15 +300,15 @@
                                     </a>
                                     <div class="btn-group">
                                         <button class="item-action" type="button" id="itemOptions1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
-                                        </button>
+                                        <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                                    </button>
                                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="itemOptions1">
                                             <li>
                                                 <button type="button" class="btn btn-dropdown" data-toggle="confirm" data-confirm-message="Do you really want to cancel this order?"
-                                                        data-confirm-yes="Yes" data-confirm-no="No">
-                                                    <span class="glyphicon glyphicon-remove-sign offset-right" aria-hidden="true"></span>
-                                                    Cancel order
-                                                </button>
+                                                    data-confirm-yes="Yes" data-confirm-no="No">
+                                                <span class="glyphicon glyphicon-remove-sign offset-right" aria-hidden="true"></span>
+                                                Cancel order
+                                            </button>
                                             </li>
                                         </ul>
                                     </div>

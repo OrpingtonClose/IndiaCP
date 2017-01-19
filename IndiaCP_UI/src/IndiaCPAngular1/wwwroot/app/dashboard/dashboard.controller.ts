@@ -35,7 +35,6 @@ module app.dashboard {
             protected issuerService: app.services.IIssuerService) {
             this.workflowStates = new app.models.WorkflowStates();
             this.nodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
-
             this.gridOptions = {};
             
             this.gridOptions.columnDefs = [{ field: "version", displayName: "#", width: 35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },

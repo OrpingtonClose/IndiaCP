@@ -78,7 +78,7 @@ var app;
              * This returns all the Open CP Issues for the given DL Node
              */
             InvestorService.prototype.fetchAllCPOnThisNode = function (extraHttpRequestParams) {
-                var localVarPath = this.basePath + "/fetchAllCP";
+                var localVarPath = this.basePath + "/indiacpissue/fetchAllCP";
                 var queryParameters = {};
                 var headerParams = this.extendObj({}, this.defaultHeaders);
                 var httpRequestParams = {

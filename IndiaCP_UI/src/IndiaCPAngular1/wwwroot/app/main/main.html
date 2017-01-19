@@ -10,7 +10,7 @@
         </div>
     </nav>
 
-    <nav ng-if="vm.nodeInfo.nodeType == 'IPA'" class="navbar navbar-fixed-top navbar-primary first-navbar" style="background-color:#004c8f">
+    <nav ng-if="vm.nodeInfo.nodeType == 'IPA'" class="navbar navbar-fixed-top navbar-primary first-navbar" style="background-color:#ffffff">
         <div class="container">
             <!-- Brand and menu toggle -->
             <div class="navbar-header">
@@ -54,7 +54,7 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
+                    <li ng-if="vm.nodeInfo.nodeType == 'ISSUER'" class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="My account">
                             Legal Entity Setup
                             <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
@@ -124,7 +124,7 @@
                             <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li class="dropdown-header">James Brown</li>
+                            <li class="dropdown-header">{{vm.currentUser.username}}</li>
                             <li class="divider"></li>
                             <li>
                                 <a href="" ng-click="vm.logout()">

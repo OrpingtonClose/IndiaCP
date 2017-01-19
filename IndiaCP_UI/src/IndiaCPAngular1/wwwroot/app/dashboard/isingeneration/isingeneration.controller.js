@@ -6,10 +6,11 @@ var app;
         (function (isingeneration) {
             "use strict";
             var ISINGenerationController = (function () {
-                function ISINGenerationController($sce, $uibModalInstance, issuerService, Upload, growl, cpProgram) {
+                function ISINGenerationController($sce, $uibModalInstance, issuerService, docSignService, Upload, growl, cpProgram) {
                     this.$sce = $sce;
                     this.$uibModalInstance = $uibModalInstance;
                     this.issuerService = issuerService;
+                    this.docSignService = docSignService;
                     this.Upload = Upload;
                     this.growl = growl;
                     this.cpProgram = cpProgram;
@@ -74,12 +75,16 @@ var app;
                     this.docRefData.cp.outstandingBankBorrowing = 0;
                     this.docRefData.cp.faceValue = 500000;
                     this.docRefData.cp.amountOfCPOutstanding = 14250000000.00;
+                    this.docRefData.nsdl.nsdlAddress = "The Depository Branch of Maharashtra";
+                    this.docRefData.nsdl.nsdlContactPerson = "Mr. Right Smith";
                     this.docDetails = new app.models.DocData();
                     this.docDetails.cpProgramId = this.cpProgram.programId;
                     this.docDetails.docExtension = app.models.DOCEXTENSION.PDF;
                     this.docDetails.docStatus = app.models.DOCSTATUS.SIGNED_BY_ISSUER;
+                    this.docDetails.docType = app.models.DOCTYPE.DEPOSITORY_DOCS;
                     this.docDetails.docSubType = app.models.DOCTYPE.DEPOSITORY_DOCS;
                     this.docDetails.modifiedBy = this.cpProgram.issuerName;
+                    this.generateDocument();
                 }
                 ISINGenerationController.prototype.cancel = function () {
                     this.$uibModalInstance.close();
@@ -93,6 +98,14 @@ var app;
                         _this.growl.success("ISIN document generated succesfully", { title: "ISIN Doc Generated!" });
                         _this.isinSignedData = response.data;
                         var url = "data:application/pdf;base64," + _this.isinSignedData;
+                        // http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
+                        var byteCharacters = atob(_this.isinSignedData);
+                        var byteNumbers = new Array(byteCharacters.length);
+                        for (var i = 0; i < byteCharacters.length; i++) {
+                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        }
+                        var byteArray = new Uint8Array(byteNumbers);
+                        _this.isinFile = new File([new Blob([byteArray], { type: "application/pdf" })], "isinDoc.pdf");
                         _this.isinFileUrl = _this.$sce.trustAsResourceUrl(url);
                     }, function (error) {
                         _this.growl.error("ISIN document generation unsuccesful", { title: "ISIN Doc Failed!" });
@@ -100,16 +113,17 @@ var app;
                 };
                 ISINGenerationController.prototype.sign = function () {
                     var _this = this;
-                    var httpUploadRequestParams = {
-                        url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/ISINDocument",
-                        data: { file: this.isinFile },
-                        method: "POST"
-                    };
-                    this.Upload.upload(httpUploadRequestParams).
+                    this.docSignService.signDoc(this.isinFile, "ISINDocument").
                         then(function (response) {
                         _this.growl.success("ISIN document signed succesfully", { title: "ISIN Signed!" });
-                        _this.isinSignedData = response.data;
-                        var url = "data:application/pdf;base64," + _this.isinSignedData;
+                        var streamData = response.data;
+                        var byteCharacters = atob(streamData);
+                        var byteNumbers = new Array(byteCharacters.length);
+                        for (var i = 0; i < byteCharacters.length; i++) {
+                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        }
+                        _this.isinByteArray = new Uint8Array(byteNumbers);
+                        var url = "data:application/pdf;base64," + streamData;
                         _this.isinFileUrl = _this.$sce.trustAsResourceUrl(url);
                     }, function (error) {
                         _this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
@@ -120,7 +134,7 @@ var app;
                 ISINGenerationController.prototype.save = function () {
                     var _this = this;
                     var isinZip = new JSZip();
-                    isinZip.file("isindoc.pdf", this.isinSignedData, { base64: true });
+                    isinZip.file("isindoc.pdf", this.isinByteArray, { base64: false });
                     // [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
                     isinZip.generateAsync({ type: "blob" }).then(function (zippedFile) {
                         var tempFile = new File([zippedFile], "isinDoc.zip");
@@ -140,6 +154,7 @@ var app;
             ISINGenerationController.$inject = ["$sce",
                 "$uibModalInstance",
                 "app.services.IssuerService",
+                "app.services.DocSignService",
                 "Upload",
                 "growl",
                 "cpProgram"];

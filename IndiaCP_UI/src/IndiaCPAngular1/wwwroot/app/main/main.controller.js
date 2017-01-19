@@ -10,6 +10,7 @@ var app;
                 this.localStorageService = localStorageService;
                 this.$uibModal = $uibModal;
                 this.nodeInfo = this.localStorageService.get("nodeInfo");
+                this.currentUser = this.authService.currentUser;
             }
             MainController.prototype.logout = function () {
                 this.authService.logout();

@@ -28,6 +28,10 @@ module app.investments {
         public fetchCPIssues(): void {
             this.InvestorService.fetchAllCPOnThisNode().then((response) => {
                 this.cpIssues = response.data;
+                this.cpIssues.forEach((cpissue: app.models.IndiaCPIssue) => {
+                    cpissue.maturityDate = new Date(cpissue.valueDate);
+                    cpissue.maturityDate.setDate(cpissue.maturityDate.getDate() + cpissue.maturityDays);
+                });
             }, (error) => {
                 this.growl.error("Could not fetch cpissues for this node.", { title: "Error!" });
                 console.log("CPIssues could not be fetched." + error);

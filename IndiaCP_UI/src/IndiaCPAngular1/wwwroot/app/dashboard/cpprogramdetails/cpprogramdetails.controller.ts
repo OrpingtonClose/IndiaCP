@@ -42,6 +42,10 @@ module app.dashboard.cpprogramdetails {
         public fetchCPIssuesForProgram(): void {
             this.issuerService.fetchAllCP(this.cpProgramId).then((response): void => {
                 this.cpIssues = response.data;
+                this.cpIssues.forEach((cpissue: app.models.IndiaCPIssue) => {
+                    cpissue.maturityDate = new Date(cpissue.valueDate);
+                    cpissue.maturityDate.setDate(cpissue.maturityDate.getDate() + cpissue.maturityDays);
+                });
                 console.log("CPIssues for CP Program fetched");
             }, (error: any): void => {
                 this.growl.error("Could not fetch cpissues for program.", { title: "Error!" });

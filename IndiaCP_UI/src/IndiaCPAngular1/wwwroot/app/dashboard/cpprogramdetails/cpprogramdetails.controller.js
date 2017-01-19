@@ -30,6 +30,10 @@ var app;
                     var _this = this;
                     this.issuerService.fetchAllCP(this.cpProgramId).then(function (response) {
                         _this.cpIssues = response.data;
+                        _this.cpIssues.forEach(function (cpissue) {
+                            cpissue.maturityDate = new Date(cpissue.valueDate);
+                            cpissue.maturityDate.setDate(cpissue.maturityDate.getDate() + cpissue.maturityDays);
+                        });
                         console.log("CPIssues for CP Program fetched");
                     }, function (error) {
                         _this.growl.error("Could not fetch cpissues for program.", { title: "Error!" });

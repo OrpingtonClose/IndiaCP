@@ -17,6 +17,10 @@ var app;
                 var _this = this;
                 this.InvestorService.fetchAllCPOnThisNode().then(function (response) {
                     _this.cpIssues = response.data;
+                    _this.cpIssues.forEach(function (cpissue) {
+                        cpissue.maturityDate = new Date(cpissue.valueDate);
+                        cpissue.maturityDate.setDate(cpissue.maturityDate.getDate() + cpissue.maturityDays);
+                    });
                 }, function (error) {
                     _this.growl.error("Could not fetch cpissues for this node.", { title: "Error!" });
                     console.log("CPIssues could not be fetched." + error);

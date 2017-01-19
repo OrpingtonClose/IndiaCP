@@ -89,6 +89,11 @@ module app.models {
         "maturityDays"?: number;
 
         /**
+         * Tenor of the CP maturity calculated from value date
+         */
+        "maturityDate"?: Date;
+
+        /**
          * Currency of the issued CP Notes
          */
         "currency"?: string;
