@@ -18,12 +18,7 @@ namespace IndiaCPAngular1.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public void Test()
-        {
-            int i = 1;
-        }
-
+        
         [HttpPost(Name = "Post")]
         public ActionResult Post([FromBody] UserCredentials credentials)
         {

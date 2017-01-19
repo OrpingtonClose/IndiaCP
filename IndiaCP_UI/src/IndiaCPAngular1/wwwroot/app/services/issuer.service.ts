@@ -259,7 +259,7 @@ module app.services {
          * @param cpProgramId CP Program ID that uniquely identifies the CP Program issued by the Issuer
          */
         public fetchAllCP(cpProgramId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>> {
-            const localVarPath = this.basePath + "/fetchAllCP/{cpProgramId}"
+            const localVarPath = this.basePath + "/indiacpissue/fetchAllCP/{cpProgramId}"
                 .replace("{" + "cpProgramId" + "}", String(cpProgramId));
 
             let queryParameters: any = {};

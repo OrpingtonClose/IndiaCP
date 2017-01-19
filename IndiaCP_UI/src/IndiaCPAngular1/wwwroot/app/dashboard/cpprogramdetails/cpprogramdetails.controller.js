@@ -6,15 +6,15 @@ var app;
         (function (cpprogramdetails) {
             "use strict";
             var CPProgramDetailsController = (function () {
-                function CPProgramDetailsController($uibModalInstance, $uibModal, issuerService, investorService, growl, cpProgramId) {
+                function CPProgramDetailsController($uibModalInstance, $uibModal, issuerService, growl, cpProgramId) {
                     this.$uibModalInstance = $uibModalInstance;
                     this.$uibModal = $uibModal;
                     this.issuerService = issuerService;
-                    this.investorService = investorService;
                     this.growl = growl;
                     this.cpProgramId = cpProgramId;
                     this.fetchCPProgram();
                     this.fetchTransactionHistory();
+                    this.fetchCPIssuesForProgram();
                 }
                 CPProgramDetailsController.prototype.fetchCPProgram = function () {
                     var _this = this;
@@ -28,7 +28,7 @@ var app;
                 };
                 CPProgramDetailsController.prototype.fetchCPIssuesForProgram = function () {
                     var _this = this;
-                    this.investorService.fetchAllCP(this.cpProgramId).then(function (response) {
+                    this.issuerService.fetchAllCP(this.cpProgramId).then(function (response) {
                         _this.cpIssues = response.data;
                         console.log("CPIssues for CP Program fetched");
                     }, function (error) {
@@ -105,7 +105,6 @@ var app;
             CPProgramDetailsController.$inject = ["$uibModalInstance",
                 "$uibModal",
                 "app.services.IssuerService",
-                "app.services.InvestorService",
                 "growl",
                 "programId"];
             angular

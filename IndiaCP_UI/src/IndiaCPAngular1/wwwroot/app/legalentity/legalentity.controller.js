@@ -84,7 +84,7 @@ var app;
             };
             LegalEntityController.prototype.signCR = function () {
                 var _this = this;
-                this.docSignService.signDoc(this.brFile, "CreditRating").
+                this.docSignService.signDoc(this.crFile, "CreditRating").
                     then(function (response) {
                     _this.growl.success("Credit Details document signed succesfully", { title: "CR Signed!" });
                     var streamData = response.data;

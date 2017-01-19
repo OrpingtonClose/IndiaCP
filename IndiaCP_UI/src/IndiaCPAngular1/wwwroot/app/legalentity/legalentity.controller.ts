@@ -116,7 +116,7 @@ module app.legalentity {
         }
 
         public signCR(): void {
-            this.docSignService.signDoc(this.brFile,"CreditRating").
+            this.docSignService.signDoc(this.crFile,"CreditRating").
                 then((response: any) => {
                     this.growl.success("Credit Details document signed succesfully", { title: "CR Signed!" });
                     let streamData = response.data;

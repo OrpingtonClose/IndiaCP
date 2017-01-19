@@ -11,13 +11,19 @@ module app.dashboard.cpprogramcreate {
         nodeInfo: app.models.NodeInfo;
         ipacollection: Array<app.models.IPA>;
         depositorycollection: Array<app.models.Depository>;
-        static $inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4", "growl", "localStorageService"];
+        static $inject = ["$uibModalInstance",
+            "app.services.IssuerService",
+            "uuid4",
+            "growl",
+            "localStorageService",
+            "app.services.AuthenticationService"];
         constructor(
             protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
             protected issuerService: app.services.IIssuerService,
             protected uuid4: any,
             protected growl: ng.growl.IGrowlService,
-            protected localStorageService: ng.local.storage.ILocalStorageService) {
+            protected localStorageService: ng.local.storage.ILocalStorageService,
+            protected authService : app.services.IAuthenticationService) {
 
             this.ipacollection = [{ displayName: "HDFC", id: "HDFC_IPA" }, { displayName: "SBI", id: "SBI_IPA" }];
             this.depositorycollection = [{ displayName: "NSDL", id: "NSDL_DEPOSITORY" }, { displayName: "CDSL", id: "CDSL_IPA" }];
@@ -37,6 +43,7 @@ module app.dashboard.cpprogramcreate {
             this.cpprogram.depositoryName = "HDFC";
             this.cpprogram.ipaId = "NSDL_DEPOSITORY";
             this.cpprogram.ipaName = "NSDL";
+            this.cpprogram.modifiedBy = authService.currentUser.username;
         }
         public createCPProgram(): void {
             this.issuerService.issueCPProgram(this.cpprogram).then((): void => {

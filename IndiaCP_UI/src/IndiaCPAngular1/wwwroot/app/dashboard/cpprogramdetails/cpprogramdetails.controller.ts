@@ -17,18 +17,17 @@ module app.dashboard.cpprogramdetails {
         static $inject = ["$uibModalInstance",
             "$uibModal",
             "app.services.IssuerService",
-            "app.services.InvestorService",
             "growl",
             "programId"];
         constructor(
             protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
             protected $uibModal: ng.ui.bootstrap.IModalService,
             protected issuerService: app.services.IIssuerService,
-            protected investorService: app.services.IInvestorService,
             protected growl: ng.growl.IGrowlService,
             protected cpProgramId: string) {
             this.fetchCPProgram();
             this.fetchTransactionHistory();
+            this.fetchCPIssuesForProgram();
         }
         public fetchCPProgram(): void {
             this.issuerService.fetchCPProgram(this.cpProgramId).then((response): void => {
@@ -41,7 +40,7 @@ module app.dashboard.cpprogramdetails {
         }
 
         public fetchCPIssuesForProgram(): void {
-            this.investorService.fetchAllCP(this.cpProgramId).then((response): void => {
+            this.issuerService.fetchAllCP(this.cpProgramId).then((response): void => {
                 this.cpIssues = response.data;
                 console.log("CPIssues for CP Program fetched");
             }, (error: any): void => {

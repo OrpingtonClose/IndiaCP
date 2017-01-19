@@ -7,6 +7,8 @@ module app.services {
         clear(): void;
         isAuthenticated: boolean;
         logout(): void;
+        currentUser:app.models.CurrentUser;
+        
     }
 
     class AuthenticationService implements IAuthenticationService {
@@ -14,6 +16,7 @@ module app.services {
         public defaultHeaders: any = {};
         isAuthenticated: boolean;
         accessToken: string = "";
+        currentUser:app.models.CurrentUser;
    
         static $inject: string[] = ["$http", "$q", "growl",  "localStorageService", "$sessionStorage"];
 
@@ -27,6 +30,7 @@ module app.services {
             this.$http.post(this.basePath + "/authentication", JSON.stringify(userInfo))
                 .then((response: any): void => {
                     this.isAuthenticated = true;
+                    this.currentUser = userInfo;
                     this.localStorageService.set("accessToken",response.data.accessToken);
                     this.localStorageService.set("nodeInfo",response.data.nodeInfo);
                     deferred.resolve(response);
