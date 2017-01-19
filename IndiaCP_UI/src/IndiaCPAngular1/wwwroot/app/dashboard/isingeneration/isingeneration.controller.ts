@@ -21,6 +21,7 @@ module app.dashboard.isingeneration {
 			"$uibModalInstance",
 			"app.services.IssuerService",
 			"app.services.DocSignService",
+			"app.services.AuthenticationService",
 			"Upload",
 			"growl",
 			"cpProgram",
@@ -29,6 +30,7 @@ module app.dashboard.isingeneration {
 			protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
 			protected issuerService: app.services.IIssuerService,
 			protected docSignService: app.services.IDocSignService,
+			protected authService : app.services.IAuthenticationService,
 			protected Upload: ng.angularFileUpload.IUploadService,
 			protected growl: ng.growl.IGrowlService,
 			protected cpProgram: app.models.IndiaCPProgram,
@@ -105,7 +107,7 @@ module app.dashboard.isingeneration {
 			this.docDetails.docStatus = app.models.DOCSTATUS.SIGNED_BY_ISSUER;
 			this.docDetails.docType = app.models.DOCTYPE.DEPOSITORY_DOCS;
 			this.docDetails.docSubType = app.models.DOCTYPE.DEPOSITORY_DOCS;
-			this.docDetails.modifiedBy = this.cpProgram.issuerName;
+			this.docDetails.modifiedBy = this.authService.currentUser.username;
 			if (this.generateDoc === true) {
 				this.generateDocument();
 			}

@@ -65,6 +65,10 @@
                                 <label class="control-label">Currency </label>
                                 <input class="form-control input-sm" type="text" ng-model="vm.cpprogram.programCurrency" />
                             </div>
+                             <div class="form-group">
+                                <label class="control-label">ISIN </label>
+                                <input disabled class="form-control input-sm" type="text" ng-value="vm.cpprogram.isin" />
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -93,7 +97,7 @@
                                                             <a href="#" ng-click="vm.showISINDocument()" class="control-label">Depository Letter : </a>
                                                         </td>
                                                         <td>
-                                                            <!--Status-->
+                                                           <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null"> {{(vm.cpprogram.isinGenerationRequestDocId | split)[1]}} </span>
                                                         </td>
                                                         <td>
                                                             <!--Modified By-->
@@ -112,32 +116,10 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <a ng-click="vm.showISINDocument()" class="control-label">IPA verification documents : </a>
+                                                            <a href="#" ng-click="vm.showIPAVerificcationDocument()" class="control-label">IPA verification documents : </a>
                                                         </td>
                                                         <td>
-                                                            <!--Status-->
-                                                        </td>
-                                                        <td>
-                                                            <!--Modified By-->
-                                                        </td>
-                                                        <td class="text-right">
-                                                            <!--Modified Data-->
-                                                        </td>
-                                                        <td class="text-center">
-                                                            <span class="label label-default">{{cpprogram.status}}</span>
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-primary btn-xs" aria-label="Left Align">
-                                                                <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <a ng-click="vm.showISINDocument()" class="control-label">IPA Certificate : </a>
-                                                        </td>
-                                                        <td>
-                                                            <!--Status-->
+                                                            <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null"> {{(vm.cpprogram.ipaVerificationRequestDocId | split)[1]}} </span>
                                                         </td>
                                                         <td>
                                                             <!--Modified By-->
@@ -156,10 +138,32 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <a ng-click="vm.showISINDocument()" class="control-label">Corporate action form : </a>
+                                                            <a href="#" ng-click="vm.showIPACertificateDocument()" class="control-label">IPA Certificate : </a>
                                                         </td>
                                                         <td>
-                                                            <!--Status-->
+                                                            <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null"> {{(vm.cpprogram.ipaCertificateDocId | split)[1]}} </span>
+                                                        </td>
+                                                        <td>
+                                                            <!--Modified By-->
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <!--Modified Data-->
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <span class="label label-default">{{cpprogram.status}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-primary btn-xs" aria-label="Left Align">
+                                                                <span class="glyphicon glyphicon-list" aria-hidden="true"></span> History
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <a href="#" ng-click="vm.showCorporateActionForm()" class="control-label">Corporate action form : </a>
+                                                        </td>
+                                                        <td>
+                                                            <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null"> {{(vm.cpprogram.corporateActionFormDocId | split)[1]}} </span>
                                                         </td>
                                                         <td>
                                                             <!--Modified By-->
@@ -209,9 +213,8 @@
                                         <thead>
                                             <tr>
                                                 <th>Version</th>
-                                                <th>Node </th>
                                                 <th>Status </th>
-                                                <th>Action </th>
+                                                <th>Node </th>
                                                 <th>Modified By</th>
                                                 <th>Modified Time</th>
                                             </tr>
@@ -219,9 +222,8 @@
                                         <tbody>
                                             <tr ng-repeat="trandetail in vm.transactionHistory">
                                                 <td>{{trandetail.version}}</td>
-                                                <td> </td>
                                                 <td>{{trandetail.status}}</td>
-                                                <td> </td>
+                                                <td></td>
                                                 <td>{{trandetail.modifiedBy}} </td>
                                                 <td>{{trandetail.lastModifiedDate | date:'dd-MM-yyyy'}}</td>
                                             </tr>

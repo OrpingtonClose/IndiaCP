@@ -6,11 +6,12 @@ var app;
         (function (isingeneration) {
             "use strict";
             var ISINGenerationController = (function () {
-                function ISINGenerationController($sce, $uibModalInstance, issuerService, docSignService, Upload, growl, cpProgram, generateDoc) {
+                function ISINGenerationController($sce, $uibModalInstance, issuerService, docSignService, authService, Upload, growl, cpProgram, generateDoc) {
                     this.$sce = $sce;
                     this.$uibModalInstance = $uibModalInstance;
                     this.issuerService = issuerService;
                     this.docSignService = docSignService;
+                    this.authService = authService;
                     this.Upload = Upload;
                     this.growl = growl;
                     this.cpProgram = cpProgram;
@@ -84,7 +85,7 @@ var app;
                     this.docDetails.docStatus = app.models.DOCSTATUS.SIGNED_BY_ISSUER;
                     this.docDetails.docType = app.models.DOCTYPE.DEPOSITORY_DOCS;
                     this.docDetails.docSubType = app.models.DOCTYPE.DEPOSITORY_DOCS;
-                    this.docDetails.modifiedBy = this.cpProgram.issuerName;
+                    this.docDetails.modifiedBy = this.authService.currentUser.username;
                     if (this.generateDoc === true) {
                         this.generateDocument();
                     }
@@ -170,6 +171,7 @@ var app;
                 "$uibModalInstance",
                 "app.services.IssuerService",
                 "app.services.DocSignService",
+                "app.services.AuthenticationService",
                 "Upload",
                 "growl",
                 "cpProgram",

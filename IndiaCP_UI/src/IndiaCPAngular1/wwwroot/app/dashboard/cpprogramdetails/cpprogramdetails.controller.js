@@ -12,6 +12,7 @@ var app;
                     this.issuerService = issuerService;
                     this.growl = growl;
                     this.cpProgramId = cpProgramId;
+                    this.nodeMappings = new app.models.NodeMapping();
                     this.fetchCPProgram();
                     this.fetchTransactionHistory();
                     this.fetchCPIssuesForProgram();
