@@ -12,11 +12,13 @@ module app.main {
             "localStorageService",
             "$uibModal"];
         nodeInfo: app.models.NodeInfo;
+        currentUser: app.models.CurrentUser;
         constructor(protected $state: ng.ui.IStateService,
             protected authService: app.services.IAuthenticationService,
             protected localStorageService: ng.local.storage.ILocalStorageService,
             protected $uibModal: ng.ui.bootstrap.IModalService) {
             this.nodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
+            this.currentUser = this.authService.currentUser;
         }
         public logout(): void {
             this.authService.logout();

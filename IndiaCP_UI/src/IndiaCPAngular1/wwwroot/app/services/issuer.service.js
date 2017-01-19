@@ -65,7 +65,10 @@ var app;
                     json: true,
                     data: docRefData,
                     params: queryParameters,
-                    headers: headerParams
+                    headers: headerParams,
+                    transformResponse: [function (data) {
+                            return data;
+                        }]
                 };
                 if (extraHttpRequestParams) {
                     httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);

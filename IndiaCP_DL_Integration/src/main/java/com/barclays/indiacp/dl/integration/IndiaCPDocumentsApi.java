@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.barclays.indiacp.dl.utils.ErrorUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -391,19 +392,12 @@ public class IndiaCPDocumentsApi {
 
              pdfFileBase64 = encodeFileToBase64Binary(path);
 
-         }  catch (FileNotFoundException e) {
-             e.printStackTrace();
-         } catch (DocumentException e) {
-             e.printStackTrace();
-         } catch (IOException e) {
-             e.printStackTrace();
-         } catch (Exception e) {
-             e.printStackTrace();
+         }  catch (Exception ex) {
+             ex.printStackTrace();
+             return ErrorUtils.errorHttpResponse(ex, "ISIN Document Generation Error");
          }
 
-        return Response.ok(pdfFileBase64, MediaType.TEXT_PLAIN)
-                .build();
-        //return Response.status(Response.Status.OK).build();
+        return Response.status(Response.Status.OK).entity(pdfFileBase64).build();
     }
 
     @POST
@@ -506,15 +500,12 @@ public class IndiaCPDocumentsApi {
             document.close();
             pdfFileBase64 = encodeFileToBase64Binary(path);
 
-        }  catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }  catch (Exception ex) {
+            ex.printStackTrace();
+            return ErrorUtils.errorHttpResponse(ex, "IPA Certificate Document Generation Error");
         }
-        return Response.ok(pdfFileBase64, MediaType.TEXT_PLAIN)
-                .build();
+
+        return Response.status(Response.Status.OK).entity(pdfFileBase64).build();
     }
 
     @POST
@@ -645,16 +636,12 @@ public class IndiaCPDocumentsApi {
             document.close();
             pdfFileBase64 = encodeFileToBase64Binary(path);
 
-        }  catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }  catch (Exception ex) {
+            ex.printStackTrace();
+            return ErrorUtils.errorHttpResponse(ex, "Deal Confirmation Document Generation Error");
         }
-        return Response.ok(pdfFileBase64, MediaType.TEXT_PLAIN)
-                .build();
 
+        return Response.status(Response.Status.OK).entity(pdfFileBase64).build();
 
 
     }
@@ -829,18 +816,12 @@ public class IndiaCPDocumentsApi {
             document.close();
             pdfFileBase64 = encodeFileToBase64Binary(path);
 
-        }  catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }  catch (Exception ex) {
+            ex.printStackTrace();
+            return ErrorUtils.errorHttpResponse(ex, "IPA Verification Document Generation Error");
         }
-        return Response.ok(pdfFileBase64, MediaType.TEXT_PLAIN)
-                .build();
 
-
-
+        return Response.status(Response.Status.OK).entity(pdfFileBase64).build();
     }
 
     @POST
@@ -931,15 +912,12 @@ public class IndiaCPDocumentsApi {
             document.close();
             pdfFileBase64 = encodeFileToBase64Binary(path);
 
-        }  catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        }  catch (Exception ex) {
+            ex.printStackTrace();
+            return ErrorUtils.errorHttpResponse(ex, "Corporate Action Form Document Generation Error");
         }
-        return Response.ok(pdfFileBase64, MediaType.TEXT_PLAIN)
-                .build();
+
+        return Response.status(Response.Status.OK).entity(pdfFileBase64).build();
     }
 
 
@@ -976,10 +954,10 @@ public class IndiaCPDocumentsApi {
     {
 
         Signature sign = new Signature();
+
          String outputB64Str = sign.initiateSignatureWorkflow(uploadedInputStream, docType, currentUser, role);
         return Response.ok(outputB64Str, MediaType.TEXT_PLAIN)
                 .build();
-
     }
 
    /* @POST

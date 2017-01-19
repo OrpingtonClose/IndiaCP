@@ -91,7 +91,10 @@ module app.services {
                 json: true,
                 data: docRefData,
                 params: queryParameters,
-                headers: headerParams
+                headers: headerParams,
+                transformResponse: [function (data) {
+                    return data;
+                }]
             };
 
             if (extraHttpRequestParams) {

@@ -92,7 +92,7 @@ module app.services {
          * This returns all the Open CP Issues for the given DL Node
          */
         public fetchAllCPOnThisNode (extraHttpRequestParams?: any ) : ng.IHttpPromise<Array<app.models.IndiaCPIssue>> {
-            const localVarPath = this.basePath + "/fetchAllCP";
+            const localVarPath = this.basePath + "/indiacpissue/fetchAllCP";
 
             let queryParameters: any = {};
             let headerParams: any = this.extendObj({}, this.defaultHeaders);

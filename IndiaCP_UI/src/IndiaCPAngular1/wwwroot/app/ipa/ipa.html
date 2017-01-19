@@ -45,7 +45,6 @@
                             <th data-toggle="sort" class="col-sm-1 text-right" tabindex="0">Allotment</th>
                             <th class="col-sm-2 text-center">Status</th>
                             <th class="col-sm-2 text-center">Action</th>
-                            <th class="col-sm-1 text-center">Sell</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -63,9 +62,9 @@
                             <td>
                                 <span class="small text-nowrap">{{cpprogram.programSize}}</span>
                             </td>
-                            <td class="text-right">
-                                <div justgage ng-value="{{(cpprogram.programAllocatedValue.quantity | number)*100/(cpprogram.programSize.quantity | number)}}"
-                                    min="0" max="100"></div>
+                               <td class="text-right">
+                                <div justgage value="{{cpprogram.programAllocatedValue*100/cpprogram.programSize}}" min="0" max="100"></div>
+                                <!--ng-value="{{(cpprogram.programAllocatedValue.quantity | number)*100/(cpprogram.programSize.quantity | number)}}"-->
                             </td>
                             <td class="text-center">
                                 <span class="label label-default">{{cpprogram.status}}</span>
