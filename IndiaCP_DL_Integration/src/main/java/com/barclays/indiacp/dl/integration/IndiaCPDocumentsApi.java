@@ -947,16 +947,31 @@ public class IndiaCPDocumentsApi {
     }
 
     @POST
-    @Path("signDoc/{docName}")
+    @Path("signDoc/{docType}/{currentUser}/{role}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response signDoc(@FormDataParam("file") InputStream uploadedInputStream)
+    public Response signDoc(@FormDataParam("file") InputStream uploadedInputStream, @PathParam("docType") String docType, @PathParam("currentUser") String currentUser, @PathParam("role") String role  )
+    {
+
+        Signature sign = new Signature();
+
+         String outputB64Str = sign.initiateSignatureWorkflow(uploadedInputStream, docType, currentUser, role);
+        return Response.ok(outputB64Str, MediaType.TEXT_PLAIN)
+                .build();
+    }
+
+   /* @POST
+    @Path("signDocFlow/{docName}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response signDocFlow(@FormDataParam("file") InputStream uploadedInputStream, @PathParam("docType") String docType)
     {
         Signature sign = new Signature();
-         String outputB64Str = sign.inputStreamSign(uploadedInputStream, "ISIN");
-        return Response.status(Response.Status.OK).entity(outputB64Str).build();
+        String outputB64Str = sign.inputStreamSign(uploadedInputStream, docType);
+        return Response.ok(outputB64Str, MediaType.TEXT_PLAIN)
+                .build();
 
-    }
+    }*/
 
 
     @POST
