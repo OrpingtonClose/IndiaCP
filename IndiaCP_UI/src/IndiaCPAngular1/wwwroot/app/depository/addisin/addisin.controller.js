@@ -20,8 +20,9 @@ var app;
                         _this.growl.success("ISIN added suceesfully.", { title: "Success!" });
                         _this.$uibModalInstance.close();
                     }, function (error) {
-                        console.log("ISIN not added.");
-                        _this.growl.error("ISIN not added.", { title: "Error!" });
+                        var errorMssg = error.data;
+                        console.log("ISIN not added." + (errorMssg.source + "-" + errorMssg.message));
+                        _this.growl.error("ISIN not added. - " + errorMssg.message, { title: "" + errorMssg.source });
                     });
                 };
                 AddISINController.prototype.cancel = function () {

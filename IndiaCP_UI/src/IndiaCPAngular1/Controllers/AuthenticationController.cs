@@ -59,14 +59,14 @@ namespace IndiaCPAngular1.Controllers
                         nodeInfo.NodeType = "DEPOSITORY";
                         nodeInfo.NodeName = "NSDL";
                         nodeInfo.Host = "52.172.46.253";
-                        nodeInfo.Port = 8183;
+                        nodeInfo.Port = 8184;
                         nodeInfo.DLNodeName = "NSDL_DEPOSITORY";
                         break;
                     default:
                         nodeInfo.NodeType = "IPA";
                         nodeInfo.NodeName = "HDFC";
                         nodeInfo.Host = "52.172.46.253";
-                        nodeInfo.Port = 8184;
+                        nodeInfo.Port = 8183;
                         nodeInfo.DLNodeName = "HDFC_IPA";
                         break;
                 }

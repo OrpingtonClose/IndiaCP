@@ -23,14 +23,16 @@ module app.dashboard.isingeneration {
 			"app.services.DocSignService",
 			"Upload",
 			"growl",
-			"cpProgram"];
+			"cpProgram",
+			"generateDoc"];
 		constructor(protected $sce: ng.ISCEService,
 			protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
 			protected issuerService: app.services.IIssuerService,
 			protected docSignService: app.services.IDocSignService,
 			protected Upload: ng.angularFileUpload.IUploadService,
 			protected growl: ng.growl.IGrowlService,
-			protected cpProgram: app.models.IndiaCPProgram) {
+			protected cpProgram: app.models.IndiaCPProgram,
+			protected generateDoc: boolean) {
 			this.docRefData = new app.models.DocRefData();
 			this.docRefData.cp.issuerName = "Barclays Investments & Loans (India) Ltd";
 			this.docRefData.cp.secondParty = "";
@@ -104,12 +106,31 @@ module app.dashboard.isingeneration {
 			this.docDetails.docType = app.models.DOCTYPE.DEPOSITORY_DOCS;
 			this.docDetails.docSubType = app.models.DOCTYPE.DEPOSITORY_DOCS;
 			this.docDetails.modifiedBy = this.cpProgram.issuerName;
-			this.generateDocument();
-
+			if (this.generateDoc === true) {
+				this.generateDocument();
+			}
+			else {
+				//this.fetchDoc();
+			}
 		}
 		public cancel(): void {
 			this.$uibModalInstance.close();
 		}
+
+
+		public fetchDoc(): void {
+			let docHash = this.cpProgram.isinGenerationRequestDocId.split(":")[0];
+			this.issuerService.getDocument(docHash, app.models.DOCTYPE.DEPOSITORY_DOCS.toString(), "pdf").then((response) => {
+				this.isinSignedData = btoa(response.data);
+				var url: string = "data:application/pdf;base64," + this.isinSignedData;
+				this.isinFileUrl = this.$sce.trustAsResourceUrl(url);
+			}, (error) => {
+
+			})
+		}
+
+
+
 		public generateDocument(): void {
 			// this.isinFile = file;
 			// this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
@@ -118,7 +139,7 @@ module app.dashboard.isingeneration {
 					this.growl.success("ISIN document generated succesfully", { title: "ISIN Doc Generated!" });
 					this.isinSignedData = response.data;
 					var url: string = "data:application/pdf;base64," + this.isinSignedData;
-
+					this.isinFileUrl = this.$sce.trustAsResourceUrl(url);
 					// http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
 					var byteCharacters = atob(this.isinSignedData);
 					var byteNumbers = new Array(byteCharacters.length);
@@ -129,7 +150,7 @@ module app.dashboard.isingeneration {
 
 
 					this.isinFile = new File([new Blob([byteArray], { type: "application/pdf" })], "isinDoc.pdf");
-					this.isinFileUrl = this.$sce.trustAsResourceUrl(url);
+
 				}, (error: any) => {
 					this.growl.error("ISIN document generation unsuccesful", { title: "ISIN Doc Failed!" });
 				});
@@ -162,7 +183,7 @@ module app.dashboard.isingeneration {
 
 		public save(): void {
 			let isinZip: JSZip = new JSZip();
-			isinZip.file("isindoc.pdf", this.isinByteArray, { base64: false });
+			isinZip.file(`${this.docDetails.docSubType}.pdf`, this.isinByteArray, { base64: false });
 			// [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
 			isinZip.generateAsync({ type: "blob" }).then((zippedFile: Blob) => {
 				let tempFile: File = new File([zippedFile], "isinDoc.zip");

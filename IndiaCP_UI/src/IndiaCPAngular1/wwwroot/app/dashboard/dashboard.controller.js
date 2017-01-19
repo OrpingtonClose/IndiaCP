@@ -67,7 +67,7 @@ var app;
                             });
                         });
                     });
-                }, 10000);
+                }, 20000);
             };
             DashboardController.prototype.executeNextAction = function (nextAction, selectedCPProgram) {
                 switch (nextAction) {
@@ -94,7 +94,7 @@ var app;
                     size: "lg",
                     backdrop: "static",
                     templateUrl: "app/dashboard/isingeneration/isingeneration.html",
-                    resolve: { cpProgram: selectedCPProgram }
+                    resolve: { cpProgram: selectedCPProgram, generateDoc: true }
                 });
             };
             DashboardController.prototype.createCPISsue = function (selectedCPProgram) {

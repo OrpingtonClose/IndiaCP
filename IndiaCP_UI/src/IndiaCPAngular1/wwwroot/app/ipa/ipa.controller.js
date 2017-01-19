@@ -58,7 +58,7 @@ var app;
                             });
                         });
                     });
-                }, 1000000);
+                }, 20000);
             };
             IPAController.prototype.executeNextAction = function (nextAction, selectedCPProgram) {
                 switch (nextAction) {

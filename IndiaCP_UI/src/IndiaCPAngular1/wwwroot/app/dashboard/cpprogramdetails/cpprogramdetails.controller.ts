@@ -74,7 +74,10 @@ module app.dashboard.cpprogramdetails {
                 size: "lg",
                 backdrop: "static",
                 templateUrl: "app/dashboard/isingeneration/isingeneration.html",
-                resolve: { cpProgram: this.cpprogram }
+                resolve: {
+                    cpProgram: this.cpprogram,
+                    generateDoc: false
+                }
             });
         }
 

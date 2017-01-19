@@ -6,7 +6,7 @@ var app;
         (function (isingeneration) {
             "use strict";
             var ISINGenerationController = (function () {
-                function ISINGenerationController($sce, $uibModalInstance, issuerService, docSignService, Upload, growl, cpProgram) {
+                function ISINGenerationController($sce, $uibModalInstance, issuerService, docSignService, Upload, growl, cpProgram, generateDoc) {
                     this.$sce = $sce;
                     this.$uibModalInstance = $uibModalInstance;
                     this.issuerService = issuerService;
@@ -14,6 +14,7 @@ var app;
                     this.Upload = Upload;
                     this.growl = growl;
                     this.cpProgram = cpProgram;
+                    this.generateDoc = generateDoc;
                     this.docRefData = new app.models.DocRefData();
                     this.docRefData.cp.issuerName = "Barclays Investments & Loans (India) Ltd";
                     this.docRefData.cp.secondParty = "";
@@ -84,10 +85,24 @@ var app;
                     this.docDetails.docType = app.models.DOCTYPE.DEPOSITORY_DOCS;
                     this.docDetails.docSubType = app.models.DOCTYPE.DEPOSITORY_DOCS;
                     this.docDetails.modifiedBy = this.cpProgram.issuerName;
-                    this.generateDocument();
+                    if (this.generateDoc === true) {
+                        this.generateDocument();
+                    }
+                    else {
+                    }
                 }
                 ISINGenerationController.prototype.cancel = function () {
                     this.$uibModalInstance.close();
+                };
+                ISINGenerationController.prototype.fetchDoc = function () {
+                    var _this = this;
+                    var docHash = this.cpProgram.isinGenerationRequestDocId.split(":")[0];
+                    this.issuerService.getDocument(docHash, app.models.DOCTYPE.DEPOSITORY_DOCS.toString(), "pdf").then(function (response) {
+                        _this.isinSignedData = btoa(response.data);
+                        var url = "data:application/pdf;base64," + _this.isinSignedData;
+                        _this.isinFileUrl = _this.$sce.trustAsResourceUrl(url);
+                    }, function (error) {
+                    });
                 };
                 ISINGenerationController.prototype.generateDocument = function () {
                     var _this = this;
@@ -98,6 +113,7 @@ var app;
                         _this.growl.success("ISIN document generated succesfully", { title: "ISIN Doc Generated!" });
                         _this.isinSignedData = response.data;
                         var url = "data:application/pdf;base64," + _this.isinSignedData;
+                        _this.isinFileUrl = _this.$sce.trustAsResourceUrl(url);
                         // http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
                         var byteCharacters = atob(_this.isinSignedData);
                         var byteNumbers = new Array(byteCharacters.length);
@@ -106,7 +122,6 @@ var app;
                         }
                         var byteArray = new Uint8Array(byteNumbers);
                         _this.isinFile = new File([new Blob([byteArray], { type: "application/pdf" })], "isinDoc.pdf");
-                        _this.isinFileUrl = _this.$sce.trustAsResourceUrl(url);
                     }, function (error) {
                         _this.growl.error("ISIN document generation unsuccesful", { title: "ISIN Doc Failed!" });
                     });
@@ -134,7 +149,7 @@ var app;
                 ISINGenerationController.prototype.save = function () {
                     var _this = this;
                     var isinZip = new JSZip();
-                    isinZip.file("isindoc.pdf", this.isinByteArray, { base64: false });
+                    isinZip.file(this.docDetails.docSubType + ".pdf", this.isinByteArray, { base64: false });
                     // [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
                     isinZip.generateAsync({ type: "blob" }).then(function (zippedFile) {
                         var tempFile = new File([zippedFile], "isinDoc.zip");
@@ -157,7 +172,8 @@ var app;
                 "app.services.DocSignService",
                 "Upload",
                 "growl",
-                "cpProgram"];
+                "cpProgram",
+                "generateDoc"];
             angular
                 .module("app.dashboard.isingeneration")
                 .controller("app.dashboard.isingeneration.ISINGenerationController", ISINGenerationController);
