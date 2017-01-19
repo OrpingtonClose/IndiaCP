@@ -45,7 +45,8 @@ class IssueCPFlow(val contractState: IndiaCommercialPaper.State) : FlowLogic<Sig
         val totalAllocatedQuantity = cpProgramStateRef.state.data.programAllocatedValue!!.quantity + contractState.faceValue.quantity
         if (totalAllocatedQuantity > (cpProgramStateRef.state.data.programSize.quantity)) {
             throw IndiaCPException(CPIssueError.PROGRAM_CEILING_EXCEEDED_ERROR, Error.SourceEnum.DL_R3CORDA, "This Program Cannot be Initiated. The Face Value of this CP ${contractState.faceValue} exceeds the available allocation limit as restricted by the program ceiling ${cpProgramStateRef.state.data.programSize}.")
-        } else if (totalAllocatedQuantity == cpProgramStateRef.state.data.programSize.quantity) {
+        }
+        if (totalAllocatedQuantity == cpProgramStateRef.state.data.programSize.quantity) {
             programFullyAlocated = true
         }
 
