@@ -1,8 +1,8 @@
 Category|NameOfDoc|Signatories|Role|Person|Pages|First_Coordinates|Second_Coordinates
-1|BOARD_RESOLUTION_BORROWING_LIMIT_DOC|Company Secretary & Compliance Officer|Issuer|Yagya_Turker|all|400,170,500,250|
-2|CREDIT_RATING_DOC|Company Secretary & Compliance Officer|Issuer|Nirav_Modi|all|400,170,500,250|400,290,500,370
-3|CORPORATE_ACTION_FORM|Director, Director|Issuer|Nirav_Mody, Gurupad_Pavan|all|400,170,500,250|400,290,500,370
-4|IPA_CERTIFICATE_DOC|AVP Treasury Operations, Senior Manager Treasury Operations|IPA|Aspi_Makuna, Amit_Agrawal|all|400,170,500,250|400,290,500,370
-5|DEPOSITORY_DOCS|Director, Director|Issuer|Ruzbeh_Sutaria, Gurupad_Pavan|all|400,170,500,250|400,290,500,370
-6|DEAL_CONFIRMATION_DOC|Director|Issuer, Investor||all|400,170,500,250|400,290,500,370
-7|IPA_DOCS|Director, Director|Issuer|Nirav_Mody, Gurupad_Pavan|all|400,170,500,250|400,290,500,370
+1|BOARD_RESOLUTION_BORROWING_LIMIT_DOC|Company Secretary & Compliance Officer|Issuer|Yagya_Turker|all|50,100,150,170|
+2|CREDIT_RATING_DOC|Company Secretary & Compliance Officer|Issuer|Nirav_Modi|all|50,100,150,170|
+3|CORPORATE_ACTION_FORM|Director, Director|Issuer|Nirav_Mody, Gurupad_Pavan|all|50,100,150,170|250,100,350,170
+4|IPA_CERTIFICATE_DOC|AVP Treasury Operations, Senior Manager Treasury Operations|IPA|Aspi_Makuna, Amit_Agrawal|all|50,100,150,170|250,100,350,170
+5|DEPOSITORY_DOCS|Director, Director|Issuer|Ruzbeh_Sutaria, Gurupad_Pavan|all|50,100,150,170|250,100,350,170
+6|DEAL_CONFIRMATION_DOC|Director|Issuer, Investor||all|50,100,150,170|250,100,350,170
+7|IPA_DOCS|Director, Director|Issuer|Nirav_Mody, Gurupad_Pavan|all|50,100,150,170|250,100,350,170

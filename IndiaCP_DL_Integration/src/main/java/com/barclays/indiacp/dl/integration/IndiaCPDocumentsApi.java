@@ -196,7 +196,7 @@ public class IndiaCPDocumentsApi {
 
 
              document.newPage();
-             document.add(new Paragraph("Contact Persons of the Company\n", smallBold));
+             document.add(new Paragraph("Contact Persons of the Company\n\n", normal));
              PdfPTable issuerTable = new PdfPTable(2);
 
              issuerTable.addCell(new Phrase("Compliance Officer", smallFont));
@@ -221,7 +221,7 @@ public class IndiaCPDocumentsApi {
              issuerTable.addCell(new Phrase(cpDetails.investorRelationsOfficerEmail, smallFont));
              document.add(issuerTable);
              document.add(new Paragraph("Address of the registry operations where the physical securities for " +
-                     "dematerialisaion are to be delivered by the Depository Participants\n", smallBold));
+                     "dematerialisaion are to be delivered by the Depository Participants\n\n", normal));
              PdfPTable issuerDTable = new PdfPTable(2);
 
              issuerDTable.addCell(new Phrase("Name of organisation", smallFont));
@@ -242,7 +242,7 @@ public class IndiaCPDocumentsApi {
 
              document.newPage();
              document.add(new Paragraph("Section B", smallBold));
-             document.add(new Paragraph("1) Type of Security", normal));
+             document.add(new Paragraph("1) Type of Security\n\n", normal));
 
              PdfPTable secTable = new PdfPTable(4);
              secTable.addCell(new Phrase("Sr. No.", smallBold));
@@ -259,7 +259,7 @@ public class IndiaCPDocumentsApi {
              secTable.addCell(new Phrase("Discounted", smallFont));
              document.add(secTable);
 
-             document.add(new Paragraph("Security Details", smallBold));
+             document.add(new Paragraph("Security Details\n\n", smallBold));
              PdfPTable secDTable = new PdfPTable(2);
              secDTable.addCell(new Phrase("Security Name", smallFont));
              secDTable.addCell(new Phrase(cpDetails.desc, smallBold));
@@ -285,7 +285,7 @@ public class IndiaCPDocumentsApi {
 
 
              document.newPage();
-             document.add(new Paragraph("IPA Details", smallBold));
+             document.add(new Paragraph("IPA Details\n\n", smallBold));
              PdfPTable ipaTable = new PdfPTable(2);
              ipaTable.addCell(new Phrase("Name of the IPA", smallFont));
              ipaTable.addCell(new Phrase(ipaDetails.ipaName, smallBold));
@@ -300,8 +300,7 @@ public class IndiaCPDocumentsApi {
              ipaTable.addCell(new Phrase("Email Address", smallFont));
              ipaTable.addCell(new Phrase(ipaDetails.ipaContactEmail, normal));
              ipaTable.addCell(new Phrase("Total Issue size", smallFont));
-             ipaTable.addCell(new Phrase(" " , smallFont));
-             ipaTable.addCell(new Phrase(" " , smallFont));
+             ipaTable.addCell(new Phrase(cpDetails.totalAmount , smallFont));
              ipaTable.addCell(new Phrase("IPA Demat Account Details " , smallFont));
              ipaTable.addCell(new Phrase(" " , smallFont));
              ipaTable.addCell(new Phrase("DP ID" , smallFont));
@@ -318,7 +317,7 @@ public class IndiaCPDocumentsApi {
                      "that these details reach NSDL prior to the corporate action for all such cases where it is not provided in the MCF.", smallBold));
 
              document.newPage();
-             document.add(new Paragraph("Stock Exchange Details", smallBold));
+             document.add(new Paragraph("Stock Exchange Details\n\n", smallBold));
              PdfPTable stTable = new PdfPTable(2);
              stTable.addCell(new Phrase("Name of the Stock Exchange", smallFont));
              stTable.addCell(new Phrase(cpDetails.stockExchange, smallBold));
@@ -357,7 +356,7 @@ public class IndiaCPDocumentsApi {
              document.add(issuerPara);
              document.add(new Paragraph("To,\n" + nsdlDetails.nsdlContactPerson + "\n" + String.format(nsdlDetails.nsdlAddress.replaceAll(", ", "\n") + "\n"), normal));
              document.add(new Paragraph("We wish to issue Commercial Papers (CP) of our company in the demat mode." +
-                     " The details of the CP are as follows: \n", normal));
+                     " The details of the CP are as follows: \n\n", normal));
 
 
              PdfPTable isinTable = new PdfPTable(2);
@@ -368,7 +367,7 @@ public class IndiaCPDocumentsApi {
              isinTable.addCell(new Phrase("Date of Allotment ", smallFont));
              isinTable.addCell(new Phrase(allotmentDateStr, smallFont));
              isinTable.addCell(new Phrase("Face Value", smallFont));
-             isinTable.addCell(new Phrase(cpDetails.faceValue, smallFont));
+             isinTable.addCell(new Phrase(cpDetails.currency + " " + cpDetails.faceValue, smallFont));
              isinTable.addCell(new Phrase("No. of Units to be credited", smallFont));
              isinTable.addCell(new Phrase(units.toString(), smallFont));
              isinTable.addCell(new Phrase("Name of the IPA", smallFont));
@@ -384,7 +383,7 @@ public class IndiaCPDocumentsApi {
 
              document.add(isinTable);
              document.add(new Paragraph("We request you to credit the above mentioned securities to the CP Allotment" +
-                     " account of the IPA.", normal));
+                     " account of the IPA.\n\n", normal));
              document.add(new Paragraph("Yours faithfully,", normal));
              document.add(new Paragraph("Name of the Authorized Signatory", normal));
 
@@ -577,9 +576,9 @@ public class IndiaCPDocumentsApi {
             document.add(new Paragraph("\n"));
 
             document.add(new Paragraph("Date of contract : " + dateOfContractStr, normal));
-            document.add(new Paragraph("CP (Maturity Value) : " + cpDetails.maturityValue, normal));
+            document.add(new Paragraph("CP (Maturity Value) : " + cpDetails.currency + " " + cpDetails.maturityValue, normal));
             document.add(new Paragraph("Due Date : " + dueDateStr, normal));
-            document.add(new Paragraph("Price : " + cpDetails.price, normal));
+            document.add(new Paragraph("Price : " + cpDetails.currency + " "  + cpDetails.price, normal));
             document.add(new Paragraph("Disc. rate : " + cpDetails.discRate, normal));
             document.add(new Paragraph("Issue Reference : " + cpDetails.issueRef, normal));
             document.add(new Paragraph("ISIN Code : " + cpDetails.isinCode, normal));
@@ -588,11 +587,11 @@ public class IndiaCPDocumentsApi {
             document.add(new Paragraph("Date of rating : " + dateOfRatingStr, normal));
             document.add(new Paragraph("Validity : " + validityStr, normal));
             document.add(new Paragraph("Effective date for rating : " + effectiveDateForRatingStr, normal));
-            document.add(new Paragraph("For amount : " + cpDetails.issueValue, normal));
+            document.add(new Paragraph("For amount : " + cpDetails.currency + " "  + cpDetails.issueValue, normal));
             document.add(new Paragraph("Conditions (if any) : " + cpDetails.conditions, normal));
             document.add(new Paragraph("Credit Support (if any) : " + cpDetails.creditSupport, normal));
             document.add(new Paragraph("Description of instrument : " + cpDetails.desc, normal));
-            document.add(new Paragraph("Amount : " + cpDetails.totalAmount, normal));
+            document.add(new Paragraph("Amount : " + cpDetails.currency + " "  + cpDetails.totalAmount, normal));
             document.add(new Paragraph("Issued by : " + cpDetails.issuerName, normal));
             document.add(new Paragraph("\n"));
             document.add(new Paragraph("In favor of : " + invDetails.investorName, smallBold));
@@ -606,7 +605,7 @@ public class IndiaCPDocumentsApi {
             document.add(new Paragraph("\n"));
             document.add(new Paragraph("Purchaser of CP : " + invDetails.investorName, smallBold));
             document.add(new Paragraph("\n\n"));
-
+            document.newPage();
 
             document.add(new Paragraph("SETTLEMENT INSTRUCTIONS", subFont));
             document.add(new Paragraph("Value Date : " + valueDateStr, normal));
@@ -626,11 +625,11 @@ public class IndiaCPDocumentsApi {
             document.add(new Paragraph("No recourse is available to the purchaser of CP against previous holders of the CP. : ", normal));
             document.add(new Paragraph("This contract note is executed by \n", normal));
             document.add(new Paragraph("ON BEHALF OF : ", smallBold));
-            document.add(new Paragraph("\n\n"));
+            document.add(new Paragraph("\n"));
 
             document.add(new Paragraph(cpDetails.issuerName, smallBold));
             document.add(new Paragraph("\n\n"));
-            document.add(new Paragraph("ON BEHALF OF \n\n", smallBold));
+            document.add(new Paragraph("ON BEHALF OF \n", smallBold));
             document.add(new Paragraph(invDetails.investorName, smallBold));
 
             document.close();
@@ -712,7 +711,8 @@ public class IndiaCPDocumentsApi {
             document.add(new Paragraph(todayStr, normal));
             document.add(new Paragraph("\n"));
             document.add(new Paragraph(ipaDetails.ipaName, smallBold));
-            document.add(new Paragraph(ipaDetails.ipaAddress, normal));
+            Paragraph ipaAddress2 = new Paragraph(String.format(ipaDetails.ipaAddress.replaceAll(", ", "\n")), smallFont);
+            document.add(ipaAddress2);
             document.add(new Paragraph("\n"));
             document.add(new Paragraph("Sub: Issuance of Commercial Paper in Dematerialised form.", smallBold));
             document.add(new Paragraph("\n"));
@@ -721,7 +721,7 @@ public class IndiaCPDocumentsApi {
                     " by Reserve Bank of India\nIn connection with the above, we would like to confirm that:\n"));
             document.add(new Paragraph("a) We are eligible to issue commercial Paper as per the norms fixed by " +
                     "Reserve Bank of India.\n"));
-            document.add(new Paragraph("b) The amount of " + cpDetails.maturityValue + " proposed to be raised by us by " +
+            document.add(new Paragraph("b) The amount of " + cpDetails.currency + " "  + cpDetails.maturityValue + " proposed to be raised by us by " +
                     "issue of Commercial Paper including the amounts already raised is within the amounts mentioned" +
                     "by " + cpDetails.ratingIssuedBy + " vide their letter dated " + dateOfRatingStr + " and amounts" +
                     " approved by the Board.\n"));
@@ -737,13 +737,16 @@ public class IndiaCPDocumentsApi {
             document.add(title);
             document.add(new Paragraph("\n\n"));
             document.add(new Paragraph(todayStr, normal));
-            document.add(new Paragraph("To\nThe Chief General Manager\nFinancial Markets Department\n" +
+            document.add(new Paragraph("\nTo\nThe Chief General Manager\nFinancial Markets Department\n" +
                     "Reserve Bank of India (RBI)\nCentral Ofiice\nMumbai – 400 001\n\n", normal));
             document.add(new Paragraph("Through \n", normal));
             document.add(new Paragraph(ipaDetails.ipaName, smallBold));
-            document.add(new Paragraph(ipaDetails.ipaAddress + "\n", normal));
+            Paragraph ipaAddress1 = new Paragraph(String.format(ipaDetails.ipaAddress.replaceAll(", ", "\n")), smallFont);
+            document.add(ipaAddress1);
             document.add(new Paragraph("Dear Sir, \n", normal));
-            document.add(new Paragraph("Issue of Commercial Paper", smallBold));
+            Paragraph Subject = new Paragraph("Sub : Issue of Commercial Paper", smallBold);
+            Subject.setIndentationLeft(20);
+            document.add(Subject);
             document.add(new Paragraph("In terms of the Guidelines for issuance of Commercial paper issued " +
                     "by the Reserve Bank of India (RBI) dated August 19,2003 we have issued Commercial Paper as per" +
                     " details furnished hereunder : \n", normal));
@@ -757,17 +760,17 @@ public class IndiaCPDocumentsApi {
             document.add(new Paragraph("vi) Total Working Capital Limit : " + cpDetails.workingCapitalLimit, smallBold));
             document.add(new Paragraph("vii) Outstanding  Bank Borrowings : " + cpDetails.outstandingBankBorrowing, normal));
             document.add(new Paragraph("viii) (a) Details of Commercial Paper ", normal));
-            document.add(new Paragraph("Issued (Face Value) : " + cpDetails.faceValue, normal));
+            document.add(new Paragraph("Issued (Face Value) : " + cpDetails.currency + " "  + cpDetails.faceValue, normal));
             document.add(new Paragraph("Date of Issue : " + cpDetails.valueDate, normal));
             document.add(new Paragraph("Date of Maturity : " + cpDetails.matDate, normal));
-            document.add(new Paragraph("Amount : " + cpDetails.maturityValue, normal));
+            document.add(new Paragraph("Amount : " + cpDetails.currency + " "  + cpDetails.maturityValue, normal));
             document.add(new Paragraph("Rate : " + cpDetails.discRate, normal));
             document.add(new Paragraph("b) Amount of CP outstanding (Face value) Including the present issue (Including" +
-                    " Short term Debts) : " + cpDetails.amountOfCPOutstanding, normal));
+                    " Short term Debts) : " + cpDetails.currency + " "  + cpDetails.amountOfCPOutstanding, normal));
             document.add(new Paragraph("ix) Rating(s) obtained from the Credit Rating Information Services of India " +
                     "Ltd. (CRISIL) Or any other agency approved by the Reserve Bank of India (RBI) : "
                     + cpDetails.creditRating, normal));
-            document.add(new Paragraph("For and on behalf of" + cpDetails.effectiveDateOfRating, normal));
+            document.add(new Paragraph("For and on behalf of ", normal));
             document.add(new Paragraph("\n\n", normal));
             document.add(new Paragraph(cpDetails.issuerName, normal));
 
@@ -790,16 +793,16 @@ public class IndiaCPDocumentsApi {
             document.add(new Paragraph("DUE DATE : " + cpDetails.matDate, normal));
             document.add(new Paragraph("ISSUE REFERENCE : " + cpDetails.issueRef, normal));
             document.add(new Paragraph("ISIN CODE : " + cpDetails.isinCode, normal));
-            document.add(new Paragraph("ISSUE SIZE (Maturity Value) : " + cpDetails.maturityValue, normal));
+            document.add(new Paragraph("ISSUE SIZE (Maturity Value) : " + cpDetails.currency + " "  + cpDetails.maturityValue, normal));
             document.add(new Paragraph("CREDIT RATING : " + cpDetails.creditRating, normal));
             document.add(new Paragraph("ISSUED BY : " + cpDetails.ratingIssuedBy, normal));
             document.add(new Paragraph("DATE OF RATING : " + cpDetails.effectiveDateOfRating, normal));
             document.add(new Paragraph("VALIDITY : " + cpDetails.ratingValidityDate, normal));
-            document.add(new Paragraph("FOR AMOUNT : " + cpDetails.issueValue, normal));
+            document.add(new Paragraph("FOR AMOUNT : " + cpDetails.currency + " "  + cpDetails.issueValue, normal));
             document.add(new Paragraph("CONDITIONS (if any) : " + cpDetails.conditions, normal));
             document.add(new Paragraph("CREDIT SUPPORT  (if any) : " + cpDetails.creditSupport, normal));
             document.add(new Paragraph("DESCRIPTION OF INSTRUMENT : " + cpDetails.desc, normal));
-            document.add(new Paragraph("AMOUNT : " + cpDetails.totalAmount, normal));
+            document.add(new Paragraph("AMOUNT : " + cpDetails.currency + " "  + cpDetails.totalAmount, normal));
             document.add(new Paragraph("ISSUED BY : " + cpDetails.issuerName, normal));
             document.add(new Paragraph("\n"));
             document.add(new Paragraph("IN FAVOUR OF : " + invDetails.investorName, smallBold));
@@ -810,10 +813,81 @@ public class IndiaCPDocumentsApi {
             document.add(new Paragraph("MARKET CONVENTIONS : " + cpDetails.marketConventions, normal));
             document.add(new Paragraph("SUPPORTING BOARD RESOLUTION : " + cpDetails.boardResolutionDate, normal));
             document.add(new Paragraph("TOTAL CP OUTSTANDING (as on date) (Including Short term Debts)" +
-                    " : " + cpDetails.amountOfCPOutstanding, normal));
+                    " : " + cpDetails.currency + " "  + cpDetails.amountOfCPOutstanding, normal));
+            document.newPage();
+            document.add(new Paragraph(todayStr));
+            Paragraph subTitle2 = new Paragraph("TO WHOMSOEVER IT MAY CONCERN\n\n", subFont);
+            subTitle2.setAlignment(Element.ALIGN_CENTER);
+            document.add(subTitle2);
+            document.add(new Paragraph("This is to inform you that Company is eligible to raise funds through " +
+                    "Commercial Papers as per " + cpDetails.marketConventions + " & RBI guidelines.\n\nWe have working capital requirement sanctioned by Barclays Bank Plc. We hereby\n" +
+                    "confirm that the above working capital with Barclays Bank PLC is a standard asset.\n\nThanking you,", normal));
+            document.add(new Paragraph("For and on behalf of\n\n" + cpDetails.issuerName + "\n" + "Authorised Signatories\n\n", normal));
+            document.newPage();
+            document.add(new Paragraph(todayStr));
+            document.add(new Paragraph("\n\nTo\n",normal));
+            Paragraph ipaName = new Paragraph(ipaDetails.ipaName, smallBold);
+            document.add(ipaName);
+            Paragraph ipaAddress = new Paragraph(String.format(ipaDetails.ipaAddress.replaceAll(", ", "\n")), smallFont);
+            document.add(ipaAddress);
+            document.add(new Paragraph("\nWith reference to our proposed Issue of Commercial Paper dated "
+                    + cpDetails.tradeDate + " to the extent of " + cpDetails.currency + " " + cpDetails.issueValue + ", " +
+                    "we declare that the amount proposed to be raised is within the ceiling mentioned by the credit " +
+                    "rating agency or as approved by the Board whichever is lower.\n\n", normal));
+            document.add(new Paragraph("We also confirm that the above issuance along with the earlier short term debts" +
+                    " that are issued, subscribed and outstanding as on date is " + cpDetails.currency + " " + cpDetails.amountOfCPOutstanding
+                    + "does not exceed the Commercial Paper/Short term debt program size mentioned in the " + cpDetails.ratingIssuedBy +
+                    " rating letter dated " + cpDetails.dateOfRating + ".\n\nWith reference to our letter dated " + todayStr +
+                    ",  we confirm that our eligibility to issue Commercial Paper as per the below norms fixed by RBI " +
+                    "& " + cpDetails.marketConventions + " guidelines continues:\n\n",normal));
+            Paragraph points = new Paragraph("1.	Net worth\n2.	Working capital facilities sanctioned by banks" +
+                    "/financial institutions\n3.	Classification of our liabilities with the financing banks and " +
+                    "institutions as Standard Asset\n\n", normal);
+            points.setIndentationLeft(20);
+            document.add(points);
+            document.add(new Paragraph("Thanking you,\nFor and on behalf of\n\n" + cpDetails.issuerName + "\n" + "Authorised Signatories\n\n", normal));
+            document.newPage();
 
 
-            document.close();
+
+            document.add(new Paragraph(todayStr));
+            document.add(new Paragraph("\n\nTo\n",normal));
+            Paragraph nextIpaName = new Paragraph(ipaDetails.ipaName, smallBold);
+            document.add(nextIpaName);
+            Paragraph nextIpaAddress = new Paragraph(String.format(ipaDetails.ipaAddress.replaceAll(", ", "\n")), smallFont);
+            document.add(nextIpaAddress);
+            document.add(new Paragraph("With reference to our proposed Issue of Commercial Paper dated "
+                    + cpDetails.tradeDate + " to the extent of " + cpDetails.currency + " " + cpDetails.issueValue + "(Issue):\n\n", normal));
+            document.add(new Paragraph("1.	We confirm that currently" + ipaDetails.ipaName + " is the only Issuing and " +
+                    "Payment Agent appointed for the company for commercial paper issuances.\n\n2.	Also  " +
+                    cpDetails.ratingIssuedBy + " rating letter dated " + cpDetails.dateOfRating + " is the only rating " +
+                    "certificate letter obtained from among all the rating agencies authorized to assign rating for " +
+                    "Commercial Paper Issuances.\n\n",normal));
+            document.add(new Paragraph("Thanking you,\nFor and on behalf of\n\n" + cpDetails.issuerName + "\n" + "Authorised Signatories\n\n", normal));
+            document.newPage();
+            document.add(new Paragraph(todayStr));
+            document.add(new Paragraph("\n\nTo\n",normal));
+            Paragraph IpaName1 = new Paragraph(ipaDetails.ipaName, smallBold);
+            document.add(IpaName1);
+            Paragraph IpaAddress1 = new Paragraph(String.format(ipaDetails.ipaAddress.replaceAll(", ", "\n")), smallFont);
+            document.add(IpaAddress1);
+            document.add(new Paragraph("\nWith reference to our proposed Issue of Commercial Paper dated "
+                    + cpDetails.tradeDate + " to the extent of " + cpDetails.currency + " " + cpDetails.issueValue + "(Issue)," +
+                    " we declare that the amount proposed to be raised is within the ceiling amount of " + cpDetails.currency
+                    + " " + cpDetails.issueValue + " specified by the Rating Agency " + cpDetails.ratingIssuedBy + " Ltd in their letter dated " +
+                    "" + cpDetails.dateOfRating + " and the amount specified by the Board of Directors, in their " +
+                    "resolution authorizing the issue of Commercial Paper, dated " + cpDetails.boardResolutionDate + ".\n\n", normal));
+            document.add(new Paragraph("We also confirm that the above issuance along with the earlier short term debts " +
+                    "that are issued, subscribed and outstanding as on date is " +  cpDetails.currency + " " + cpDetails.amountOfCPOutstanding
+                    + " and does not exceed the " +
+                    "Commercial Paper/Short term debt program size mentioned in the Rating Letter.\n\nWith reference to our letter dated " +
+                    todayStr + ", we confirm that we are eligible to issue Commercial Paper and are in full compliance" +
+                    " with the requirements stipulated under the circulars, guidelines and norms as issued from time to" +
+                    " time and laid down by Reserve Bank of India (“RBI”) and the operating procedures and guidelines " +
+                    "issued from time to time by " + cpDetails.marketConventions + "\n\n", normal));
+                    document.add(new Paragraph("Thanking you,\nFor and on behalf of\n\n" + cpDetails.issuerName
+                            + "\n" + "Authorised Signatories\n\n", normal));
+                    document.close();
             pdfFileBase64 = encodeFileToBase64Binary(path);
 
         }  catch (Exception ex) {
@@ -890,7 +964,7 @@ public class IndiaCPDocumentsApi {
             t.addCell(new Phrase("Date of Allotment ", smallFont));
             t.addCell(new Phrase(allotmentDateStr, smallFont));
             t.addCell(new Phrase("Face Value", smallFont));
-            t.addCell(new Phrase(cpDetails.faceValue, smallFont));
+            t.addCell(new Phrase(cpDetails.currency + " " + cpDetails.faceValue, smallFont));
             t.addCell(new Phrase("No. of Units to be credited", smallFont));
             t.addCell(new Phrase(units.toString(), smallFont));
             t.addCell(new Phrase("Name of the IPA", smallFont));
