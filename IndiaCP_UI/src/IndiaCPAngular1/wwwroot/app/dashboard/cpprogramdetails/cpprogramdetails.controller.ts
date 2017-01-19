@@ -12,7 +12,7 @@ module app.dashboard.cpprogramdetails {
         cpprogramMaturityDate: Date;
         transactionHistory: Array<app.models.IndiaCPProgram>;
         cpIssues: Array<app.models.IndiaCPIssue>;
-
+        nodeMappings: app.models.NodeMapping;
 
         static $inject = ["$uibModalInstance",
             "$uibModal",
@@ -25,6 +25,7 @@ module app.dashboard.cpprogramdetails {
             protected issuerService: app.services.IIssuerService,
             protected growl: ng.growl.IGrowlService,
             protected cpProgramId: string) {
+            this.nodeMappings = new app.models.NodeMapping();
             this.fetchCPProgram();
             this.fetchTransactionHistory();
             this.fetchCPIssuesForProgram();
@@ -74,7 +75,10 @@ module app.dashboard.cpprogramdetails {
                 size: "lg",
                 backdrop: "static",
                 templateUrl: "app/dashboard/isingeneration/isingeneration.html",
-                resolve: { cpProgram: this.cpprogram }
+                resolve: {
+                    cpProgram: this.cpprogram,
+                    generateDoc: false
+                }
             });
         }
 

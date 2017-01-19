@@ -231,7 +231,8 @@ class IndiaCommercialPaperProgram : Contract {
 
                 requireThat {
                     "the transaction is signed by the Issuer" by (output.issuer.owningKey in command.signers)
-                    "the amendment is for changing programAllocatedValue as part of the new CP Issue" by (output.status.equals(IndiaCPProgramStatusEnum.CP_ISSUEED.name))
+                    "the amendment is for changing programAllocatedValue as part of the new CP Issue" by (output.status.equals(IndiaCPProgramStatusEnum.CP_ISSUEED.name) ||
+                                                                                                        output.status.equals(IndiaCPProgramStatusEnum.CP_PROGRAM_FULLY_ALLOCATED.name) )
                 }
 
                 return setOf(command.value)

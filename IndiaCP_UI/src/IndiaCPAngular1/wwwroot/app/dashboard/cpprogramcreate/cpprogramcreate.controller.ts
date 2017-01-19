@@ -39,10 +39,10 @@ module app.dashboard.cpprogramcreate {
             this.cpprogram.type = "India Commercial Paper";
             this.cpprogram.maturityDays = 7;
             this.cpprogram.programSize = 1000;
-            this.cpprogram.depositoryId = "HDFC_IPA";
-            this.cpprogram.depositoryName = "HDFC";
-            this.cpprogram.ipaId = "NSDL_DEPOSITORY";
-            this.cpprogram.ipaName = "NSDL";
+            this.cpprogram.depositoryId = "NSDL_DEPOSITORY";
+            this.cpprogram.depositoryName = "NSDL";
+            this.cpprogram.ipaId = "HDFC_IPA";
+            this.cpprogram.ipaName = "HDFC";
             this.cpprogram.modifiedBy = authService.currentUser.username;
         }
         public createCPProgram(): void {

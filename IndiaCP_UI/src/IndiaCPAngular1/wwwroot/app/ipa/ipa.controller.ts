@@ -87,7 +87,7 @@ module app.ipa {
                         });
                     });
                 });
-            }, 1000000);
+            }, 20000);
         }
 
         public executeNextAction(nextAction: string, selectedCPProgram: app.models.IndiaCPProgram) {

@@ -63,7 +63,7 @@ module app.depository {
         public fetchAllCPPrograms(): void {
             this.dataRefresher = this.$interval(() => {
                 this.fetchAllCPProgramsOnce();
-            }, 10000);
+            }, 20000);
         }
 
         public fetchAllCPProgramsOnce() {

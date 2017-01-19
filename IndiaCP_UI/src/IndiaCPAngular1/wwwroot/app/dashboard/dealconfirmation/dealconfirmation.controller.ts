@@ -1,7 +1,7 @@
-module app.dashboard.isingeneration {
+module app.dashboard.dealconfirmation {
 	"use strict";
 
-	interface IISINGenerationScope {
+	interface IDealConfirmationScope {
 		generateDocument(): void;
 		sign(): void;
 		verify(): void;
@@ -9,7 +9,7 @@ module app.dashboard.isingeneration {
 		cancel(): void;
 	}
 
-	class ISINGenerationController implements IISINGenerationScope {
+	class DealConfirmationController implements IDealConfirmationScope {
 		isinFile: File;
 		isinFileUrl: string;
 		isinSignedData: string;
@@ -204,7 +204,7 @@ module app.dashboard.isingeneration {
 	}
 
 	angular
-		.module("app.dashboard.isingeneration")
-		.controller("app.dashboard.isingeneration.ISINGenerationController",
-		ISINGenerationController);
+		.module("app.dashboard.dealconfirmation")
+		.controller("app.dashboard.dealconfirmation.DealConfirmationController",
+		DealConfirmationController);
 } 

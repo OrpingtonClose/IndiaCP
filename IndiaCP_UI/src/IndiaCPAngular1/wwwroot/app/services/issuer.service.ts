@@ -46,6 +46,8 @@ module app.services {
         CPissueGetTransactionHistory(cpIssueId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>>;
         CPProgramGetTransactionHistory(cpProgramId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPProgram>>;
         generateISINDocument(docData: app.models.DocRefData, extraHttpRequestParams?: any): ng.IHttpPromise<any>;
+        getDocument(docHash: string, docSubType: string, docExtension: string, extraHttpRequestParams?: any): ng.IHttpPromise<any>;
+
     }
 
     class IssuerService implements IIssuerService {
@@ -72,6 +74,42 @@ module app.services {
             }
             return <T1 & T2>objA;
         }
+
+
+        public getDocument(docHash:string,docSubType: string, docExtension: string,extraHttpRequestParams?: any):ng.IHttpPromise<any>{
+            const localVarPath = this.basePath + "/indiacpdocuments/getDoc/{docHash}/{docSubType}/{docExtension}"
+            .replace("{" + "docHash" + "}", String(docHash))
+            .replace("{" + "docSubType" + "}", String(docSubType))
+            .replace("{" + "docExtension" + "}", String(docExtension));
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            // verify required parameter "docData" is not null or undefined
+            if (docHash === null || docHash === undefined) {
+                throw new Error("Required parameter docHash was null or undefined when calling getDoc.");
+            }
+            if (docSubType === null || docSubType === undefined) {
+                throw new Error("Required parameter docData was null or undefined when calling getDoc.");
+            }
+            if (docExtension === null || docExtension === undefined) {
+                throw new Error("Required parameter docExtension was null or undefined when calling getDoc.");
+            }
+
+            let httpRequestParams: any = {
+                method: "GET",
+                url: localVarPath,
+                json: true,
+                params: queryParameters,
+                headers: headerParams
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            return this.$http(httpRequestParams);
+        }
+
 
         /** 
          * This is to generate the ISIN documents from the docrefData    

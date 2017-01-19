@@ -96,7 +96,7 @@ module app.dashboard {
                         });
                     });
                 });
-            }, 10000);
+            }, 20000);
         }
 
         public executeNextAction(nextAction: string, selectedCPProgram: app.models.IndiaCPProgram) {
@@ -125,7 +125,7 @@ module app.dashboard {
                 size: "lg",
                 backdrop: "static",
                 templateUrl: "app/dashboard/isingeneration/isingeneration.html",
-                resolve: { cpProgram: selectedCPProgram }
+                resolve: { cpProgram: selectedCPProgram, generateDoc:true }
             });
         }
 

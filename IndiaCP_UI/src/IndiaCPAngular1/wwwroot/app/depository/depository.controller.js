@@ -38,7 +38,7 @@ var app;
                 var _this = this;
                 this.dataRefresher = this.$interval(function () {
                     _this.fetchAllCPProgramsOnce();
-                }, 10000);
+                }, 20000);
             };
             DepositoryController.prototype.fetchAllCPProgramsOnce = function () {
                 var vm = this;

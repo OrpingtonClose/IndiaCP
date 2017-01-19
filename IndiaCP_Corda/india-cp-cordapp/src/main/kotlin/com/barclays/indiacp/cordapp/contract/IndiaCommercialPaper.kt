@@ -2,7 +2,6 @@ package com.barclays.indiacp.cordapp.contract
 
 import com.barclays.indiacp.cordapp.schemas.*
 import com.barclays.indiacp.cordapp.schemas.PersistentDepositoryAccountSchemaState
-import net.corda.contracts.ICommercialPaperState
 import net.corda.contracts.asset.sumCashBy
 import net.corda.contracts.clause.AbstractIssue
 import net.corda.core.contracts.*
@@ -10,7 +9,6 @@ import net.corda.core.contracts.clauses.AnyComposition
 import net.corda.core.contracts.clauses.Clause
 import net.corda.core.contracts.clauses.GroupClauseVerifier
 import net.corda.core.contracts.clauses.verifyClause
-import net.corda.core.node.services.VaultService
 import net.corda.core.random63BitValue
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.schemas.PersistentState
@@ -20,13 +18,11 @@ import net.corda.core.utilities.Emoji
 import com.barclays.indiacp.cordapp.utilities.CPUtils
 import com.barclays.indiacp.cordapp.utilities.ModelUtils
 import com.barclays.indiacp.model.*
-import net.corda.contracts.asset.DUMMY_CASH_ISSUER
 import net.corda.core.crypto.*
-import net.corda.core.days
+import net.corda.core.flows.FlowLogicRefFactory
 import java.security.PublicKey
 import java.time.Instant
 import java.util.*
-import javax.print.attribute.IntegerSyntax
 
 /**
  * Created for Barclays Mumbai Rise Accelerator Demo. This is intended to be a proof of concept of how the primary
@@ -76,6 +72,14 @@ class IndiaCommercialPaper : Contract {
             val lastModifiedDate: Instant? = Instant.now(),
             val version: Int? = ModelUtils.STARTING_VERSION
     ) : LinearState, QueryableState {
+
+//        override fun nextScheduledActivity(thisStateRef: StateRef, flowLogicRefFactory: FlowLogicRefFactory): ScheduledActivity {
+//            if (this.status.equals(IndiaCPIssueStatusEnum.CP_AWAITING_PAYMENT.name)) {
+//                val instant = Instant.now()
+//                return ScheduledActivity(flowLogicRefFactory.create(FixingFlow.FixingRoleDecider::class.java, thisStateRef), instant)
+//            }
+//        }
+
         override val contract = com.barclays.indiacp.cordapp.contract.INDIA_CP_ID
 
         override val linearId: UniqueIdentifier

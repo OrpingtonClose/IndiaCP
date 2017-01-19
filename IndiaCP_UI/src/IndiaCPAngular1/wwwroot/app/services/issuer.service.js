@@ -48,6 +48,35 @@ var app;
                 }
                 return objA;
             };
+            IssuerService.prototype.getDocument = function (docHash, docSubType, docExtension, extraHttpRequestParams) {
+                var localVarPath = this.basePath + "/indiacpdocuments/getDoc/{docHash}/{docSubType}/{docExtension}"
+                    .replace("{" + "docHash" + "}", String(docHash))
+                    .replace("{" + "docSubType" + "}", String(docSubType))
+                    .replace("{" + "docExtension" + "}", String(docExtension));
+                var queryParameters = {};
+                var headerParams = this.extendObj({}, this.defaultHeaders);
+                // verify required parameter "docData" is not null or undefined
+                if (docHash === null || docHash === undefined) {
+                    throw new Error("Required parameter docHash was null or undefined when calling getDoc.");
+                }
+                if (docSubType === null || docSubType === undefined) {
+                    throw new Error("Required parameter docData was null or undefined when calling getDoc.");
+                }
+                if (docExtension === null || docExtension === undefined) {
+                    throw new Error("Required parameter docExtension was null or undefined when calling getDoc.");
+                }
+                var httpRequestParams = {
+                    method: "GET",
+                    url: localVarPath,
+                    json: true,
+                    params: queryParameters,
+                    headers: headerParams
+                };
+                if (extraHttpRequestParams) {
+                    httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+                }
+                return this.$http(httpRequestParams);
+            };
             /**
              * This is to generate the ISIN documents from the docrefData
             **/

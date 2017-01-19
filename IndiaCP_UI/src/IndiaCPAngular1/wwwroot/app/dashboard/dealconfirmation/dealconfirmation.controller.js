@@ -2,11 +2,11 @@ var app;
 (function (app) {
     var dashboard;
     (function (dashboard) {
-        var isingeneration;
-        (function (isingeneration) {
+        var dealconfirmation;
+        (function (dealconfirmation) {
             "use strict";
-            var ISINGenerationController = (function () {
-                function ISINGenerationController($sce, $uibModalInstance, issuerService, docSignService, authService, Upload, growl, cpProgram, generateDoc) {
+            var DealConfirmationController = (function () {
+                function DealConfirmationController($sce, $uibModalInstance, issuerService, docSignService, authService, Upload, growl, cpProgram, generateDoc) {
                     this.$sce = $sce;
                     this.$uibModalInstance = $uibModalInstance;
                     this.issuerService = issuerService;
@@ -92,10 +92,10 @@ var app;
                     else {
                     }
                 }
-                ISINGenerationController.prototype.cancel = function () {
+                DealConfirmationController.prototype.cancel = function () {
                     this.$uibModalInstance.close();
                 };
-                ISINGenerationController.prototype.fetchDoc = function () {
+                DealConfirmationController.prototype.fetchDoc = function () {
                     var _this = this;
                     var docHash = this.cpProgram.isinGenerationRequestDocId.split(":")[0];
                     this.issuerService.getDocument(docHash, app.models.DOCTYPE.DEPOSITORY_DOCS.toString(), "pdf").then(function (response) {
@@ -105,7 +105,7 @@ var app;
                     }, function (error) {
                     });
                 };
-                ISINGenerationController.prototype.generateDocument = function () {
+                DealConfirmationController.prototype.generateDocument = function () {
                     var _this = this;
                     // this.isinFile = file;
                     // this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
@@ -127,7 +127,7 @@ var app;
                         _this.growl.error("ISIN document generation unsuccesful", { title: "ISIN Doc Failed!" });
                     });
                 };
-                ISINGenerationController.prototype.sign = function () {
+                DealConfirmationController.prototype.sign = function () {
                     var _this = this;
                     this.docSignService.signDoc(this.isinFile, "ISINDocument").
                         then(function (response) {
@@ -145,9 +145,9 @@ var app;
                         _this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
                     });
                 };
-                ISINGenerationController.prototype.verify = function () {
+                DealConfirmationController.prototype.verify = function () {
                 };
-                ISINGenerationController.prototype.save = function () {
+                DealConfirmationController.prototype.save = function () {
                     var _this = this;
                     var isinZip = new JSZip();
                     isinZip.file(this.docDetails.docSubType + ".pdf", this.isinByteArray, { base64: false });
@@ -165,9 +165,9 @@ var app;
                         });
                     });
                 };
-                return ISINGenerationController;
+                return DealConfirmationController;
             }());
-            ISINGenerationController.$inject = ["$sce",
+            DealConfirmationController.$inject = ["$sce",
                 "$uibModalInstance",
                 "app.services.IssuerService",
                 "app.services.DocSignService",
@@ -177,9 +177,9 @@ var app;
                 "cpProgram",
                 "generateDoc"];
             angular
-                .module("app.dashboard.isingeneration")
-                .controller("app.dashboard.isingeneration.ISINGenerationController", ISINGenerationController);
-        })(isingeneration = dashboard.isingeneration || (dashboard.isingeneration = {}));
+                .module("app.dashboard.dealconfirmation")
+                .controller("app.dashboard.dealconfirmation.DealConfirmationController", DealConfirmationController);
+        })(dealconfirmation = dashboard.dealconfirmation || (dashboard.dealconfirmation = {}));
     })(dashboard = app.dashboard || (app.dashboard = {}));
 })(app || (app = {}));
-//# sourceMappingURL=isingeneration.controller.js.map
+//# sourceMappingURL=dealconfirmation.controller.js.map

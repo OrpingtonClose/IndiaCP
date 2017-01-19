@@ -9,8 +9,11 @@
                 new WorkflowState("CP_PROGRAM_CREATED", new Action("ADD_ISIN_GEN_DOC", [NODETYPE.ISSUER])),
                 new WorkflowState("ISIN_GEN_DOC_ADDED", new Action("ADD_ISIN", [NODETYPE.DEPOSITORY])),
                 new WorkflowState("ISIN_ADDED", new Action("ISSUECP", [NODETYPE.ISSUER])),
-                new WorkflowState("CP_ISSUEED", new Action("ADD_IPA_VERI_DOC", [NODETYPE.ISSUER])),
-                new WorkflowState("IPA_VERI_DOC_ADDED", new Action("ADD_IPA_CERT_DOC", [NODETYPE.ISSUER]))];
+                new WorkflowState("CP_ISSUEED", new Action("ISSUECP", [NODETYPE.ISSUER])),
+                new WorkflowState("CP_PROGRAM_FULLY_ALLOCATED", new Action("ADD_IPA_VERI_DOC", [NODETYPE.ISSUER])),
+                new WorkflowState("IPA_VERIFICATION_DOC_ADDED", new Action("ADD_IPA_CERT_DOC", [NODETYPE.IPA])),
+                new WorkflowState("IPA_CERTIFICATE_DOC_ADDED", new Action("", [NODETYPE.IPA]))
+                ];
 
 
             // this.states = [
