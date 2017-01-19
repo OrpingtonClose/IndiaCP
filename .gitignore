@@ -2,3 +2,5 @@
 *.class binary
 .idea/workspace.xml
 IndiaCP_DL_Integration/.idea/workspace.xml
+IndiaCP_SwaggerSpecification/.idea/workspace.xml
+IndiaCP_DL_Integration/indiacp_dl_integration.iml
