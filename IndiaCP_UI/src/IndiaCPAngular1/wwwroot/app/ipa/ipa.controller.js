@@ -71,9 +71,25 @@ var app;
                     case "ADD_IPA_VERI_DOC":
                         this.createCPISsue(selectedCPProgram);
                         break;
+                    case "ADD_IPA_CERT_DOC":
+                        this.addIPACertificationDoc(selectedCPProgram);
+                        break;
                     default:
                         this.createCPISsue(selectedCPProgram);
                 }
+            };
+            IPAController.prototype.addIPACertificationDoc = function (selectedCPProgram) {
+                this.$uibModal.open({
+                    animation: true,
+                    ariaLabelledBy: "modal-title",
+                    ariaDescribedBy: "modal-body",
+                    controller: "app.dashboard.ipacertificate.IPACertificateController",
+                    controllerAs: "vm",
+                    size: "lg",
+                    backdrop: "static",
+                    templateUrl: "app/dashboard/ipacertificate/ipacertificate.html",
+                    resolve: { cpProgram: selectedCPProgram }
+                });
             };
             IPAController.prototype.generateISINDocs = function (selectedCPProgram) {
                 this.$uibModal.open({

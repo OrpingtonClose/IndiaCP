@@ -18,9 +18,9 @@ module app.dashboard {
         workflowStates: app.models.WorkflowStates;
         dataRefresher: ng.IPromise<any>;
         nodeInfo: app.models.NodeInfo;
-        gridColumns:  Array<any>;
+        gridColumns: Array<any>;
         gridOptions: uiGrid.IGridOptions;
-        
+
         static $inject = ["$http",
             "$scope",
             "$uibModal",
@@ -36,7 +36,7 @@ module app.dashboard {
             this.workflowStates = new app.models.WorkflowStates();
             this.nodeInfo = this.localStorageService.get("nodeInfo") as app.models.NodeInfo;
             this.gridOptions = {};
-            
+
             this.gridOptions.columnDefs = [{ field: "version", displayName: "#", width: 35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
             { field: "issueCommencementDate", width: 125, displayName: "Date", cellTemplate: " <div><span class='small text-nowrap'>{{row.entity.issueCommencementDate | date:'dd-MM-yyyy'}}</span></div>" },
             { field: "name", displayName: "Program Name", width: 170, enableColumnMenu: false, cellTemplate: "<div> <a href='' ng-click='grid.appScope.vm.showCPProgramDetails(row.entity.programId)' class='text-nowrap'>{{row.entity.name}}</a></div>" },
@@ -108,7 +108,7 @@ module app.dashboard {
                     this.createCPISsue(selectedCPProgram);
                     break;
                 case "ADD_IPA_VERI_DOC":
-                    this.createCPISsue(selectedCPProgram);
+                    this.addIPAVerificationDoc(selectedCPProgram);
                     break;
                 default:
                     this.createCPISsue(selectedCPProgram);
@@ -125,9 +125,25 @@ module app.dashboard {
                 size: "lg",
                 backdrop: "static",
                 templateUrl: "app/dashboard/isingeneration/isingeneration.html",
-                resolve: { cpProgram: selectedCPProgram, generateDoc:true }
+                resolve: { cpProgram: selectedCPProgram, generateDoc: true }
             });
         }
+
+        public addIPAVerificationDoc(selectedCPProgram: app.models.IndiaCPProgram): void {
+                 this.$uibModal.open({
+                animation: true,
+                ariaLabelledBy: "modal-title",
+                ariaDescribedBy: "modal-body",
+                controller: "app.dashboard.ipaverification.IPAverificationController",
+                controllerAs: "vm",
+                size: "lg",
+                backdrop: "static",
+                templateUrl: "app/dashboard/ipaverification/ipaverification.html",
+                resolve: { cpProgram: selectedCPProgram }
+            });
+        }
+
+
 
         public createCPISsue(selectedCPProgram: app.models.IndiaCPProgram): void {
             this.$uibModal.open({

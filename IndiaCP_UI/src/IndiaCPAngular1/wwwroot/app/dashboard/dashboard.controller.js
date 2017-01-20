@@ -78,7 +78,7 @@ var app;
                         this.createCPISsue(selectedCPProgram);
                         break;
                     case "ADD_IPA_VERI_DOC":
-                        this.createCPISsue(selectedCPProgram);
+                        this.addIPAVerificationDoc(selectedCPProgram);
                         break;
                     default:
                         this.createCPISsue(selectedCPProgram);
@@ -95,6 +95,19 @@ var app;
                     backdrop: "static",
                     templateUrl: "app/dashboard/isingeneration/isingeneration.html",
                     resolve: { cpProgram: selectedCPProgram, generateDoc: true }
+                });
+            };
+            DashboardController.prototype.addIPAVerificationDoc = function (selectedCPProgram) {
+                this.$uibModal.open({
+                    animation: true,
+                    ariaLabelledBy: "modal-title",
+                    ariaDescribedBy: "modal-body",
+                    controller: "app.dashboard.ipaverification.IPAverificationController",
+                    controllerAs: "vm",
+                    size: "lg",
+                    backdrop: "static",
+                    templateUrl: "app/dashboard/ipaverification/ipaverification.html",
+                    resolve: { cpProgram: selectedCPProgram }
                 });
             };
             DashboardController.prototype.createCPISsue = function (selectedCPProgram) {

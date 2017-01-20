@@ -152,9 +152,9 @@ module app.dashboard.ipaverification {
         }
 
         public sign(): void {
-            this.docSignService.signDoc(this.isinFile, "ISINDocument").
+            this.docSignService.signDoc(this.isinFile, "IPAVerificationDocument").
                 then((response: any) => {
-                    this.growl.success("ISIN document signed succesfully", { title: "ISIN Signed!" });
+                    this.growl.success("IPA document signed succesfully", { title: "IPA Signed!" });
                     let streamData = response.data;
 
                     var byteCharacters = atob(streamData);
@@ -181,11 +181,11 @@ module app.dashboard.ipaverification {
             isinZip.file(`${this.docDetails.docSubType}.pdf`, this.isinByteArray, { base64: false });
             // [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
             isinZip.generateAsync({ type: "blob" }).then((zippedFile: Blob) => {
-                let tempFile: File = new File([zippedFile], "isinDoc.zip");
+                let tempFile: File = new File([zippedFile], "ipaverifyDoc.zip");
                 this.issuerService.addDoc(this.cpProgram.programId, this.docDetails, tempFile).
                     then((response: any): void => {
                         console.log(response);
-                        this.growl.success("ISIN document uploaded succesfully", { title: "ISIN Document Uploaded." });
+                        this.growl.success("IPA document uploaded succesfully", { title: "IPA Document Uploaded." });
                     },
                     (error: any) => {
                         let errorMssg: app.models.Error = error.data;

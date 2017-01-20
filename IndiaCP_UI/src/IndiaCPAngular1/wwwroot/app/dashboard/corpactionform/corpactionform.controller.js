@@ -2,11 +2,11 @@ var app;
 (function (app) {
     var dashboard;
     (function (dashboard) {
-        var ipacertificate;
-        (function (ipacertificate) {
+        var corpactionform;
+        (function (corpactionform) {
             "use strict";
-            var IPACertificateController = (function () {
-                function IPACertificateController($sce, $uibModalInstance, issuerService, docSignService, authService, Upload, growl, cpProgram) {
+            var CorpActionFormController = (function () {
+                function CorpActionFormController($sce, $uibModalInstance, issuerService, docSignService, authService, Upload, growl, cpProgram) {
                     this.$sce = $sce;
                     this.$uibModalInstance = $uibModalInstance;
                     this.issuerService = issuerService;
@@ -87,10 +87,10 @@ var app;
                     this.docDetails.modifiedBy = this.authService.currentUser.username;
                     this.generateDocument();
                 }
-                IPACertificateController.prototype.cancel = function () {
+                CorpActionFormController.prototype.cancel = function () {
                     this.$uibModalInstance.close();
                 };
-                IPACertificateController.prototype.fetchDoc = function () {
+                CorpActionFormController.prototype.fetchDoc = function () {
                     var _this = this;
                     var docHash = this.cpProgram.isinGenerationRequestDocId.split(":")[0];
                     this.issuerService.getDocument(docHash, app.models.DOCTYPE.DEPOSITORY_DOCS.toString(), "pdf").then(function (response) {
@@ -100,13 +100,13 @@ var app;
                     }, function (error) {
                     });
                 };
-                IPACertificateController.prototype.generateDocument = function () {
+                CorpActionFormController.prototype.generateDocument = function () {
                     var _this = this;
                     // this.isinFile = file;
                     // this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
                     this.issuerService.generateISINDocument(this.docRefData).
                         then(function (response) {
-                        _this.growl.success("IPA Certification document generated succesfully", { title: "IPA Certification Doc Generated!" });
+                        _this.growl.success("IPA Verification document generated succesfully", { title: "IPA Doc Generated!" });
                         _this.isinSignedData = response.data;
                         var url = "data:application/pdf;base64," + _this.isinSignedData;
                         _this.isinFileUrl = _this.$sce.trustAsResourceUrl(url);
@@ -122,11 +122,11 @@ var app;
                         _this.growl.error("ISIN document generation unsuccesful", { title: "ISIN Doc Failed!" });
                     });
                 };
-                IPACertificateController.prototype.sign = function () {
+                CorpActionFormController.prototype.sign = function () {
                     var _this = this;
-                    this.docSignService.signDoc(this.isinFile, "IPACertificationDocument").
+                    this.docSignService.signDoc(this.isinFile, "ISINDocument").
                         then(function (response) {
-                        _this.growl.success("IPA Cert document signed succesfully", { title: "IPA Cert Signed!" });
+                        _this.growl.success("ISIN document signed succesfully", { title: "ISIN Signed!" });
                         var streamData = response.data;
                         var byteCharacters = atob(streamData);
                         var byteNumbers = new Array(byteCharacters.length);
@@ -140,19 +140,19 @@ var app;
                         _this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
                     });
                 };
-                IPACertificateController.prototype.verify = function () {
+                CorpActionFormController.prototype.verify = function () {
                 };
-                IPACertificateController.prototype.save = function () {
+                CorpActionFormController.prototype.save = function () {
                     var _this = this;
                     var isinZip = new JSZip();
                     isinZip.file(this.docDetails.docSubType + ".pdf", this.isinByteArray, { base64: false });
                     // [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
                     isinZip.generateAsync({ type: "blob" }).then(function (zippedFile) {
-                        var tempFile = new File([zippedFile], "IPACertDoc.zip");
+                        var tempFile = new File([zippedFile], "isinDoc.zip");
                         _this.issuerService.addDoc(_this.cpProgram.programId, _this.docDetails, tempFile).
                             then(function (response) {
                             console.log(response);
-                            _this.growl.success("IPA document uploaded succesfully", { title: "IPA Document Uploaded." });
+                            _this.growl.success("ISIN document uploaded succesfully", { title: "ISIN Document Uploaded." });
                         }, function (error) {
                             var errorMssg = error.data;
                             console.log(errorMssg.source + "-" + errorMssg.message);
@@ -160,9 +160,9 @@ var app;
                         });
                     });
                 };
-                return IPACertificateController;
+                return CorpActionFormController;
             }());
-            IPACertificateController.$inject = ["$sce",
+            CorpActionFormController.$inject = ["$sce",
                 "$uibModalInstance",
                 "app.services.IssuerService",
                 "app.services.DocSignService",
@@ -171,9 +171,9 @@ var app;
                 "growl",
                 "cpProgram"];
             angular
-                .module("app.dashboard.ipacertificate")
-                .controller("app.dashboard.ipacertificate.IPACertificateController", IPACertificateController);
-        })(ipacertificate = dashboard.ipacertificate || (dashboard.ipacertificate = {}));
+                .module("app.dashboard.corpactionform")
+                .controller("app.dashboard.corpactionform.CorpActionFormController", CorpActionFormController);
+        })(corpactionform = dashboard.corpactionform || (dashboard.corpactionform = {}));
     })(dashboard = app.dashboard || (app.dashboard = {}));
 })(app || (app = {}));
-//# sourceMappingURL=ipacertificate.controller.js.map
+//# sourceMappingURL=corpactionform.controller.js.map

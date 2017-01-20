@@ -1,7 +1,7 @@
-module app.dashboard.ipacertificate {
+module app.dashboard.corpactionform {
     "use strict";
 
-    interface IIPACertificateScope {
+    interface ICorpActionFormScope {
         generateDocument(): void;
         sign(): void;
         verify(): void;
@@ -9,7 +9,7 @@ module app.dashboard.ipacertificate {
         cancel(): void;
     }
 
-    class IPACertificateController implements IIPACertificateScope {
+    class CorpActionFormController implements ICorpActionFormScope {
         isinFile: File;
         isinFileUrl: string;
         isinSignedData: string;
@@ -131,7 +131,7 @@ module app.dashboard.ipacertificate {
             // this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
             this.issuerService.generateISINDocument(this.docRefData).
                 then((response: any) => {
-                    this.growl.success("IPA Certification document generated succesfully", { title: "IPA Certification Doc Generated!" });
+                    this.growl.success("IPA Verification document generated succesfully", { title: "IPA Doc Generated!" });
                     this.isinSignedData = response.data;
                     var url: string = "data:application/pdf;base64," + this.isinSignedData;
                     this.isinFileUrl = this.$sce.trustAsResourceUrl(url);
@@ -152,9 +152,9 @@ module app.dashboard.ipacertificate {
         }
 
         public sign(): void {
-            this.docSignService.signDoc(this.isinFile, "IPACertificationDocument").
+            this.docSignService.signDoc(this.isinFile, "ISINDocument").
                 then((response: any) => {
-                    this.growl.success("IPA Cert document signed succesfully", { title: "IPA Cert Signed!" });
+                    this.growl.success("ISIN document signed succesfully", { title: "ISIN Signed!" });
                     let streamData = response.data;
 
                     var byteCharacters = atob(streamData);
@@ -181,11 +181,11 @@ module app.dashboard.ipacertificate {
             isinZip.file(`${this.docDetails.docSubType}.pdf`, this.isinByteArray, { base64: false });
             // [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
             isinZip.generateAsync({ type: "blob" }).then((zippedFile: Blob) => {
-                let tempFile: File = new File([zippedFile], "IPACertDoc.zip");
+                let tempFile: File = new File([zippedFile], "isinDoc.zip");
                 this.issuerService.addDoc(this.cpProgram.programId, this.docDetails, tempFile).
                     then((response: any): void => {
                         console.log(response);
-                        this.growl.success("IPA document uploaded succesfully", { title: "IPA Document Uploaded." });
+                        this.growl.success("ISIN document uploaded succesfully", { title: "ISIN Document Uploaded." });
                     },
                     (error: any) => {
                         let errorMssg: app.models.Error = error.data;
@@ -197,7 +197,7 @@ module app.dashboard.ipacertificate {
     }
 
     angular
-        .module("app.dashboard.ipacertificate")
-        .controller("app.dashboard.ipacertificate.IPACertificateController",
-        IPACertificateController);
+        .module("app.dashboard.corpactionform")
+        .controller("app.dashboard.corpactionform.CorpActionFormController",
+        CorpActionFormController);
 } 

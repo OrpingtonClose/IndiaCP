@@ -124,9 +124,9 @@ var app;
                 };
                 IPAverificationController.prototype.sign = function () {
                     var _this = this;
-                    this.docSignService.signDoc(this.isinFile, "ISINDocument").
+                    this.docSignService.signDoc(this.isinFile, "IPAVerificationDocument").
                         then(function (response) {
-                        _this.growl.success("ISIN document signed succesfully", { title: "ISIN Signed!" });
+                        _this.growl.success("IPA document signed succesfully", { title: "IPA Signed!" });
                         var streamData = response.data;
                         var byteCharacters = atob(streamData);
                         var byteNumbers = new Array(byteCharacters.length);
@@ -148,11 +148,11 @@ var app;
                     isinZip.file(this.docDetails.docSubType + ".pdf", this.isinByteArray, { base64: false });
                     // [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
                     isinZip.generateAsync({ type: "blob" }).then(function (zippedFile) {
-                        var tempFile = new File([zippedFile], "isinDoc.zip");
+                        var tempFile = new File([zippedFile], "ipaverifyDoc.zip");
                         _this.issuerService.addDoc(_this.cpProgram.programId, _this.docDetails, tempFile).
                             then(function (response) {
                             console.log(response);
-                            _this.growl.success("ISIN document uploaded succesfully", { title: "ISIN Document Uploaded." });
+                            _this.growl.success("IPA document uploaded succesfully", { title: "IPA Document Uploaded." });
                         }, function (error) {
                             var errorMssg = error.data;
                             console.log(errorMssg.source + "-" + errorMssg.message);

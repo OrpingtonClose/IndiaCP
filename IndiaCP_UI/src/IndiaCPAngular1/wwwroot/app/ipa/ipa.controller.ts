@@ -37,14 +37,14 @@ module app.ipa {
             this.nodeInfo = localStorageService.get("nodeInfo") as app.models.NodeInfo;
 
 
-            this.gridColumns = [{ field: "version", displayName: "#", width:35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
-                { field: "issueCommencementDate", width:125, displayName:"Date", cellTemplate:" <div><span class='small text-nowrap'>{{row.entity.issueCommencementDate | date:'dd-MM-yyyy'}}</span></div>" },
-            { field: "name", displayName: "Program Name",width:170, enableColumnMenu: false, cellTemplate:"<div> <a href='' ng-click='grid.appScope.vm.showCPProgramDetails(row.entity.programId)' class='text-nowrap'>{{row.entity.name}}</a></div>" },
-            { field: "programAllocatedValue", width:100, displayName: "Allotment", cellTemplate: "<div height='20px' justgage min='0' max='100' ></div>",enableColumnMenu: false},
+            this.gridColumns = [{ field: "version", displayName: "#", width: 35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
+            { field: "issueCommencementDate", width: 125, displayName: "Date", cellTemplate: " <div><span class='small text-nowrap'>{{row.entity.issueCommencementDate | date:'dd-MM-yyyy'}}</span></div>" },
+            { field: "name", displayName: "Program Name", width: 170, enableColumnMenu: false, cellTemplate: "<div> <a href='' ng-click='grid.appScope.vm.showCPProgramDetails(row.entity.programId)' class='text-nowrap'>{{row.entity.name}}</a></div>" },
+            { field: "programAllocatedValue", width: 100, displayName: "Allotment", cellTemplate: "<div height='20px' justgage min='0' max='100' ></div>", enableColumnMenu: false },
             { field: "status", displayName: "Status", enableColumnMenu: false, cellTemplate: "<span class='label label-default'>{{row.entity.status}}</span>" },
             { field: "nextAction", displayName: "Action", enableColumnMenu: false, cellTemplate: "<div><button type='button' ng-click='grid.appScope.vm.executeNextAction(row.entity.nextAction.name, row.entity)' ng-disabled='row.entity.nextAction.allowedNodes.indexOf(\"ISSUER\") == -1'  class='btn btn-success btn-raised btn-xs'>{{row.entity.nextAction.name}}</button></div>" },
-            { field: "version", displayName: "Sell", width:75, enableColumnMenu: false, cellTemplate: "<button type='button' ng-click='grid.appScope.vm.createCPISsue(row.entity)' class='btn btn-success btn-raised btn-sm'>Sell</button>" },
-            { field: "version", displayName: "", width:150, enableColumnMenu: false, cellTemplate: "app/ipa/gridtemplates/gridoptionstemplate.html" }
+            { field: "version", displayName: "Sell", width: 75, enableColumnMenu: false, cellTemplate: "<button type='button' ng-click='grid.appScope.vm.createCPISsue(row.entity)' class='btn btn-success btn-raised btn-sm'>Sell</button>" },
+            { field: "version", displayName: "", width: 150, enableColumnMenu: false, cellTemplate: "app/ipa/gridtemplates/gridoptionstemplate.html" }
 
             ];
 
@@ -101,9 +101,26 @@ module app.ipa {
                 case "ADD_IPA_VERI_DOC":
                     this.createCPISsue(selectedCPProgram);
                     break;
+                case "ADD_IPA_CERT_DOC":
+                    this.addIPACertificationDoc(selectedCPProgram);
+                    break;
                 default:
                     this.createCPISsue(selectedCPProgram);
             }
+        }
+
+        public addIPACertificationDoc(selectedCPProgram: app.models.IndiaCPProgram): void {
+             this.$uibModal.open({
+                animation: true,
+                ariaLabelledBy: "modal-title",
+                ariaDescribedBy: "modal-body",
+                controller: "app.dashboard.ipacertificate.IPACertificateController",
+                controllerAs: "vm",
+                size: "lg",
+                backdrop: "static",
+                templateUrl: "app/dashboard/ipacertificate/ipacertificate.html",
+                resolve: { cpProgram: selectedCPProgram }
+            });
         }
 
         public generateISINDocs(selectedCPProgram: app.models.IndiaCPProgram): void {
