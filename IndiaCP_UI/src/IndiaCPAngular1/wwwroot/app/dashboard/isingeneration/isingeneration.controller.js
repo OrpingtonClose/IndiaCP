@@ -90,6 +90,7 @@ var app;
                         this.generateDocument();
                     }
                     else {
+                        this.generateDocument();
                     }
                 }
                 ISINGenerationController.prototype.cancel = function () {

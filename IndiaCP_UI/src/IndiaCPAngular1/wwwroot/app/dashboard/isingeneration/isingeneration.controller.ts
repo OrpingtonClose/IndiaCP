@@ -112,7 +112,7 @@ module app.dashboard.isingeneration {
 				this.generateDocument();
 			}
 			else {
-				//this.fetchDoc();
+				this.generateDocument();
 			}
 		}
 		public cancel(): void {

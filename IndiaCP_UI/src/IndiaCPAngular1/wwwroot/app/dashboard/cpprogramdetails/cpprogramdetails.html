@@ -97,7 +97,7 @@
                                                             <a href="#" ng-click="vm.showISINDocument()" class="control-label">Depository Letter : </a>
                                                         </td>
                                                         <td>
-                                                           <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null"> {{(vm.cpprogram.isinGenerationRequestDocId | split)[1]}} </span>
+                                                           <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null"> SIGNED_BY_ISSUER </span>
                                                         </td>
                                                         <td>
                                                             <!--Modified By-->
@@ -116,10 +116,10 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <a href="#" ng-click="vm.showIPAVerificcationDocument()" class="control-label">IPA verification documents : </a>
+                                                            <a href="#" ng-click="vm.showIPAVerification()" class="control-label">IPA verification documents : </a>
                                                         </td>
                                                         <td>
-                                                            <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null"> {{(vm.cpprogram.ipaVerificationRequestDocId | split)[1]}} </span>
+                                                            <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null"> SIGNED_BY_ISSUER </span>
                                                         </td>
                                                         <td>
                                                             <!--Modified By-->
@@ -138,10 +138,11 @@
                                                     </tr>
                                                     <tr>
                                                         <td>
-                                                            <a href="#" ng-click="vm.showIPACertificateDocument()" class="control-label">IPA Certificate : </a>
+                                                            <a href="#" ng-click="vm.showIPACertificate()" class="control-label">IPA Certificate : </a>
                                                         </td>
                                                         <td>
-                                                            <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null"> {{(vm.cpprogram.ipaCertificateDocId | split)[1]}} </span>
+                                                            <!--{{(vm.cpprogram.ipaCertificateDocId | split)[1]}}-->
+                                                            <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null">SIGNED_BY_ISSUER</span>
                                                         </td>
                                                         <td>
                                                             <!--Modified By-->
@@ -163,7 +164,8 @@
                                                             <a href="#" ng-click="vm.showCorporateActionForm()" class="control-label">Corporate action form : </a>
                                                         </td>
                                                         <td>
-                                                            <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null"> {{(vm.cpprogram.corporateActionFormDocId | split)[1]}} </span>
+                                                            <!--{{(vm.cpprogram.corporateActionFormDocId}} -->
+                                                            <span ng-if="vm.cpprogram.isinGenerationRequestDocId != null">SIGNED_BY_ISSUER</span>
                                                         </td>
                                                         <td>
                                                             <!--Modified By-->

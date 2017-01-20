@@ -18,6 +18,8 @@
             "app.dashboard.cpissue",
             "app.dashboard.cpprogramcreate",
             "app.dashboard.cpprogramdetails",
+            "app.dashboard.ipacertificate",
+            "app.dashboard.ipaverification",
             "app.investments",
             "app.legalentity",
             "app.depository",

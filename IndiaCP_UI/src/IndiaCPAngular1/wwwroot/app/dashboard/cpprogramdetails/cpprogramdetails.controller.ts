@@ -88,11 +88,11 @@ module app.dashboard.cpprogramdetails {
                 animation: true,
                 ariaLabelledBy: "modal-title",
                 ariaDescribedBy: "modal-body",
-                controller: "app.dashboard.isingeneration.ISINGenerationController",
+                controller: "app.dashboard.ipaverification.IPAverificationController",
                 controllerAs: "vm",
                 size: "lg",
                 backdrop: "static",
-                templateUrl: "app/dashboard/isingeneration/isingeneration.html",
+                templateUrl: "app/dashboard/ipaverification/ipaverification.html",
                 resolve: { cpProgram: this.cpprogram }
             });
         }
@@ -102,11 +102,11 @@ module app.dashboard.cpprogramdetails {
                 animation: true,
                 ariaLabelledBy: "modal-title",
                 ariaDescribedBy: "modal-body",
-                controller: "app.dashboard.isingeneration.ISINGenerationController",
+                controller: "app.dashboard.ipacertificate.IPACertificateController",
                 controllerAs: "vm",
                 size: "lg",
                 backdrop: "static",
-                templateUrl: "app/dashboard/isingeneration/isingeneration.html",
+                templateUrl: "app/dashboard/ipacertificate/ipacertificate.html",
                 resolve: { cpProgram: this.cpprogram }
             });
         }
@@ -116,11 +116,11 @@ module app.dashboard.cpprogramdetails {
                 animation: true,
                 ariaLabelledBy: "modal-title",
                 ariaDescribedBy: "modal-body",
-                controller: "app.dashboard.isingeneration.ISINGenerationController",
+                controller: "app.dashboard.ipaverification.IPAverificationController",
                 controllerAs: "vm",
                 size: "lg",
                 backdrop: "static",
-                templateUrl: "app/dashboard/isingeneration/isingeneration.html",
+                templateUrl: "app/dashboard/ipaverification/ipaverification.html",
                 resolve: { cpProgram: this.cpprogram }
             });
         }

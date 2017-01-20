@@ -4,7 +4,8 @@
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Generation Fields</h3></div>
+                    <h3 class="panel-title">Generation Fields</h3>
+                </div>
                 <div class="panel-body">
                     <form class="bootstrap-form-with-validation">
                         <div class="form-group">
@@ -24,18 +25,21 @@
             </div>
             <div class="well">
                 <div role="group" class="btn-group">
-                    <button class="btn btn-default" type="button">SIgn </button>
-                    <button class="btn btn-default" type="button">Save </button>
-                    <button class="btn btn-default" type="button">Edit </button>
-                    <button class="btn btn-default" type="button">Cancel </button>
+                    <button class="btn btn-primary" ng-click="vm.sign()" type="button">Sign </button>
+                    <button class="btn btn-primary" ng-click="vm.save()" type="button">Save </button>
+                    <button class="btn btn-primary" ng-disabled="true" type="button">Edit </button>
+                    <button class="btn btn-primary" ng-click="vm.cancel()" type="button">Close </button>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">IPA Certificate Preview</h3></div>
-                <div class="panel-body"><span> </span></div>
+                    <h3 class="panel-title">IPA Certificate Preview</h3>
+                </div>
+                <div class="panel-body"><span>
+                    <iframe id="dynamicIframe" height="400" width="490" ng-src={{vm.isinFileUrl}} scrolling="auto" type="application/pdf"></iframe>
+                     </span></div>
             </div>
         </div>
     </div>
