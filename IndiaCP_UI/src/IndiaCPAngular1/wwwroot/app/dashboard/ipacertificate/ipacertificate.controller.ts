@@ -129,7 +129,7 @@ module app.dashboard.ipacertificate {
         public generateDocument(): void {
             // this.isinFile = file;
             // this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
-            this.issuerService.generateISINDocument(this.docRefData).
+            this.issuerService.generateIPACertificateDocument(this.docRefData).
                 then((response: any) => {
                     this.growl.success("IPA Certification document generated succesfully", { title: "IPA Certification Doc Generated!" });
                     this.isinSignedData = response.data;

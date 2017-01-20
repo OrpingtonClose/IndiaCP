@@ -104,7 +104,7 @@ var app;
                     var _this = this;
                     // this.isinFile = file;
                     // this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
-                    this.issuerService.generateISINDocument(this.docRefData).
+                    this.issuerService.generateIPAVerificationDocuments(this.docRefData).
                         then(function (response) {
                         _this.growl.success("IPA Verification document generated succesfully", { title: "IPA Doc Generated!" });
                         _this.isinSignedData = response.data;

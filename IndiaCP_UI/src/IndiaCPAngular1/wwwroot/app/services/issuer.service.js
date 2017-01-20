@@ -105,6 +105,59 @@ var app;
                 return this.$http(httpRequestParams);
             };
             /**
+                    * This is to generate the ISIN documents from the docrefData
+                   **/
+            IssuerService.prototype.generateIPACertificateDocument = function (docRefData, extraHttpRequestParams) {
+                var localVarPath = this.basePath + "/indiacpdocuments/generateIPACertificateDocument";
+                var queryParameters = {};
+                var headerParams = this.extendObj({}, this.defaultHeaders);
+                // verify required parameter "docData" is not null or undefined
+                if (docRefData === null || docRefData === undefined) {
+                    throw new Error("Required parameter docData was null or undefined when calling generateISINDocument.");
+                }
+                var httpRequestParams = {
+                    method: "POST",
+                    url: localVarPath,
+                    json: true,
+                    data: docRefData,
+                    params: queryParameters,
+                    headers: headerParams,
+                    transformResponse: [function (data) {
+                            return data;
+                        }]
+                };
+                if (extraHttpRequestParams) {
+                    httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+                }
+                return this.$http(httpRequestParams);
+            }; /**
+             * This is to generate the ISIN documents from the docrefData
+            **/
+            IssuerService.prototype.generateIPAVerificationDocuments = function (docRefData, extraHttpRequestParams) {
+                var localVarPath = this.basePath + "/indiacpdocuments/generateIPAVerificationDocuments";
+                var queryParameters = {};
+                var headerParams = this.extendObj({}, this.defaultHeaders);
+                // verify required parameter "docData" is not null or undefined
+                if (docRefData === null || docRefData === undefined) {
+                    throw new Error("Required parameter docData was null or undefined when calling generateISINDocument.");
+                }
+                var httpRequestParams = {
+                    method: "POST",
+                    url: localVarPath,
+                    json: true,
+                    data: docRefData,
+                    params: queryParameters,
+                    headers: headerParams,
+                    transformResponse: [function (data) {
+                            return data;
+                        }]
+                };
+                if (extraHttpRequestParams) {
+                    httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+                }
+                return this.$http(httpRequestParams);
+            };
+            /**
              * Complete audit log of all changes/versions of given CP Issue
              * A given CP Issue once initiated undergoes various changes as it progresses through the trade lifecycle of adding settlement details, Deal Confirmations till the final settlement of all Deals and followed by redemption of the CP at the Maturity Date. This API will return this complete log history.
              * @param cpIssueId CP Issue ID that uniquely identifies the CP issued by the Issuer

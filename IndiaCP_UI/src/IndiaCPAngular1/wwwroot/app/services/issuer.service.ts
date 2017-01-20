@@ -46,6 +46,8 @@ module app.services {
         CPissueGetTransactionHistory(cpIssueId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>>;
         CPProgramGetTransactionHistory(cpProgramId: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPProgram>>;
         generateISINDocument(docData: app.models.DocRefData, extraHttpRequestParams?: any): ng.IHttpPromise<any>;
+        generateIPACertificateDocument(docData: app.models.DocRefData, extraHttpRequestParams?: any): ng.IHttpPromise<any>;
+        generateIPAVerificationDocuments(docData: app.models.DocRefData, extraHttpRequestParams?: any): ng.IHttpPromise<any>;
         getDocument(docHash: string, docSubType: string, docExtension: string, extraHttpRequestParams?: any): ng.IHttpPromise<any>;
 
     }
@@ -141,6 +143,68 @@ module app.services {
 
             return this.$http(httpRequestParams);
         }
+ /** 
+         * This is to generate the ISIN documents from the docrefData    
+        **/
+        public generateIPACertificateDocument(docRefData: app.models.DocRefData, extraHttpRequestParams?: any): ng.IHttpPromise<any> {
+            const localVarPath = this.basePath + "/indiacpdocuments/generateIPACertificateDocument";
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            // verify required parameter "docData" is not null or undefined
+            if (docRefData === null || docRefData === undefined) {
+                throw new Error("Required parameter docData was null or undefined when calling generateISINDocument.");
+            }
+            let httpRequestParams: any = {
+                method: "POST",
+                url: localVarPath,
+                json: true,
+                data: docRefData,
+                params: queryParameters,
+                headers: headerParams,
+                transformResponse: [function (data) {
+                    return data;
+                }]
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            return this.$http(httpRequestParams);
+        } /** 
+         * This is to generate the ISIN documents from the docrefData    
+        **/
+        public generateIPAVerificationDocuments(docRefData: app.models.DocRefData, extraHttpRequestParams?: any): ng.IHttpPromise<any> {
+            const localVarPath = this.basePath + "/indiacpdocuments/generateIPAVerificationDocuments";
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            // verify required parameter "docData" is not null or undefined
+            if (docRefData === null || docRefData === undefined) {
+                throw new Error("Required parameter docData was null or undefined when calling generateISINDocument.");
+            }
+            let httpRequestParams: any = {
+                method: "POST",
+                url: localVarPath,
+                json: true,
+                data: docRefData,
+                params: queryParameters,
+                headers: headerParams,
+                transformResponse: [function (data) {
+                    return data;
+                }]
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            return this.$http(httpRequestParams);
+        }
+
+
+
 
         /**
          * Complete audit log of all changes/versions of given CP Issue
