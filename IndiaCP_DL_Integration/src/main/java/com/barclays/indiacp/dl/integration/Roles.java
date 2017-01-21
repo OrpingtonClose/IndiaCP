@@ -69,13 +69,15 @@ public class Roles {
     }
 
     public class NSDL {
+        public String depositoryName;
         public String nsdlContactPerson;
         public String nsdlAddress;
 
         public NSDL() {
         }
 
-        public NSDL(String nsdlContactPerson, String nsdlAddress) {
+        public NSDL(String depositoryName, String nsdlContactPerson, String nsdlAddress) {
+            this.depositoryName = depositoryName;
             this.nsdlContactPerson = nsdlContactPerson;
             this.nsdlAddress = nsdlAddress;
         }
