@@ -37,12 +37,18 @@ public class IndiaCPContractUtils {
     }
 
     private static Object getParamValue(Object paramValue, SolidityType argType) {
+
         if (paramValue == null) {
+
             if (argType.getClass().equals(SolidityType.StringType.class)) {
                 paramValue = "";
             } else {
                 paramValue = 0;
             }
+        }else if(paramValue.getClass()==Date.class){
+
+            paramValue = castArgument(Date.class, paramValue);
+
         }
         return paramValue;
     }
@@ -62,13 +68,13 @@ public class IndiaCPContractUtils {
     private static String getSetterMethodName(String argName) {
         // Param name type is a special variable in Solidity hence the IndiaCP Contract classes have used _type instead.
         // Handling type param differently
-        String getterMethodName = null;
+        String setterMethodName = null;
         if (argName.equals("__type")) {
-            getterMethodName = "setType";
+            setterMethodName = "setType";
         } else {
-            getterMethodName = "set" + argName.substring(1,2).toUpperCase() + argName.substring(2,argName.length());
+            setterMethodName = "set" + argName.substring(1,2).toUpperCase() + argName.substring(2,argName.length());
         }
-        return getterMethodName;
+        return setterMethodName;
     }
 
     private static Class<?> getJavaType(String methodName, SolidityType solType) {
@@ -112,8 +118,13 @@ public class IndiaCPContractUtils {
 
     private static Object castArgument(Class<?> argClass, Object arg) {
         if(Date.class.getName().equals(argClass.getName())){
-            return new Date(((Integer)arg).longValue()*1000);
-        } else{
+            if(arg.getClass().getName().equals(Date.class.getName())){
+                return (int)(((Date)arg).getTime()/1000);
+            }else{
+                return new Date(((Integer)arg).longValue()*1000);
+            }
+
+        }else{
          return argClass.cast(arg);
         }
     }
