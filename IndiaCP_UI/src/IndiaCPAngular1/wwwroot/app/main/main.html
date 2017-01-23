@@ -1,45 +1,37 @@
 <header role="banner" id="top" class="site-header">
-    <nav class="navbar navbar-fixed-top navbar-primary first-navbar">
+    <nav ng-if="vm.nodeInfo.nodeType == 'DEPOSITORY'" class="navbar navbar-fixed-top navbar-primary first-navbar" style="background-color:#740021">
         <div class="container">
-
             <!-- Brand and menu toggle -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainMenu">
-                    <span class="sr-only">Menu</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <div class="navbar-brand"><strong>{{vm.nodeInfo.nodeName}}</strong></div>
+                <div style="padding-top:5px" class="navbar-brand">
+                    <img src="/images/nsdl.png" width="100" />
+                </div>
             </div>
-
-            <!-- Collapsible menu -->
-            <div class="collapse navbar-collapse" id="mainMenu">
-
-                <!--<ul class="nav navbar-nav">
-                    <li ng-class="vm.nodeType == 'ISSUER' ? 'active' : ''">
-                        <a ui-sref="main.dashboard">
-                            <span class="glyphicon glyphicon-inbox offset-right" aria-hidden="true"></span>
-                            <span class="hidden-sm">CP Programs</span>
-                        </a>
-                    </li>
-                    <li ng-class="vm.nodeType == 'INVESTOR' ? 'active' : ''">
-                        <a ui-sref="main.investments">
-                            <span class="glyphicon glyphicon-align-left offset-right" aria-hidden="true"></span>
-                            <span class="hidden-sm">Investments</span>
-                        </a>
-                    </li>
-                </ul>-->
-
-
-                <!-- .nav -->
-
-            </div>
-            <!-- .collapsible -->
-
         </div>
-        <!-- .container -->
     </nav>
+
+    <nav ng-if="vm.nodeInfo.nodeType == 'IPA'" class="navbar navbar-fixed-top navbar-primary first-navbar" style="background-color:#ffffff">
+        <div class="container">
+            <!-- Brand and menu toggle -->
+            <div class="navbar-header">
+                <div style="padding-top:5px" class="navbar-brand">
+                    <img src="/images/hdfc.png" width="200" />
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <nav ng-if="vm.nodeInfo.nodeType == 'ISSUER' || vm.nodeInfo.nodeType == 'INVESTOR'" class="navbar navbar-fixed-top navbar-primary first-navbar">
+        <div class="container">
+            <!-- Brand and menu toggle -->
+            <div class="navbar-header">
+                <div class="navbar-brand">
+                    <strong>{{vm.nodeInfo.nodeName}}</strong>
+                </div>
+            </div>
+        </div>
+    </nav>
+
     <nav class="navbar navbar-primary second-navbar">
         <div class="container">
 
@@ -62,16 +54,16 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
+                    <li ng-if="vm.nodeInfo.nodeType == 'ISSUER'" class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="My account">
-                           Legal Entity Setup
+                            Legal Entity Setup
                             <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <!--<li><a ui-sref="main.legalentity.uploadcr">Upload CR</a></li>-->
                             <!--<li><a ui-sref="main.legalentity.uploadbr">Upload BR</a></li>-->
-                            <li><a ng-click="vm.uploadCRDoc()">Upload CR</a></li>
-                            <li><a ng-click="vm.uploadBRDoc()">Upload BR</a></li>
+                            <li><a ng-click="vm.uploadCRDoc()">Edit CR</a></li>
+                            <li><a ng-click="vm.uploadBRDoc()">Edit BR</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a ui-sref="main.legalentity.setup">Entity Details</a></li>
                             <li><a ui-sref="main.legalentity.setup">Settlement Details</a></li>
@@ -132,7 +124,7 @@
                             <span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li class="dropdown-header">James Brown</li>
+                            <li class="dropdown-header">{{vm.currentUser.username}}</li>
                             <li class="divider"></li>
                             <li>
                                 <a href="" ng-click="vm.logout()">
@@ -171,9 +163,9 @@
 
 
 <script type="text/ng-template" id="myPopoverTemplate.html">
-        <div>Network Simulator</div>
-        <div class="form-group">
-          <label>Popup Title:</label>
-          <input type="text" class="form-control">ok working</input> 
-        </div>
+    <div>Network Simulator</div>
+    <div class="form-group">
+        <label>Popup Title:</label>
+        <input type="text" class="form-control">ok working</input>
+    </div>
 </script>

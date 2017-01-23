@@ -3,6 +3,9 @@ package com.barclays.indiacp.dl.integration;
 /**
  * Created by Electrania.com on 1/14/2017.
  */
+
+
+
 public class VerificationResult {
 
     public String result;

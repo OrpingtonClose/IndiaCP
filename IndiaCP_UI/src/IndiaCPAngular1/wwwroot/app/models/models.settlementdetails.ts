@@ -5,11 +5,11 @@ module app.models {
         /*
         * partyType
         */
-        "partyType"?: PartyTypeEnum;
+        partyType?: PartyTypeEnum;
 
-        "paymentAccountDetails"?: PaymentAccountDetails;
+        paymentAccountDetails?: PaymentAccountDetails;
 
-        "depositoryAccountDetails"?: Array<DepositoryAccountDetails>;
+        depositoryAccountDetails?: Array<DepositoryAccountDetails>;
 
     }
     export enum PartyTypeEnum {

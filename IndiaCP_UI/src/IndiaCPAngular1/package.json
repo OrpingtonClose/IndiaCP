@@ -16,6 +16,7 @@
     "@types/angular-ui-bootstrap": "^0.13.37",
     "@types/angular-ui-router": "^1.1.36",
     "@types/jszip": "0.0.32",
-    "@types/ng-file-upload": "^11.1.33"
+    "@types/ng-file-upload": "^11.1.33",
+    "@types/ui-grid": "0.0.35"
   }
 }

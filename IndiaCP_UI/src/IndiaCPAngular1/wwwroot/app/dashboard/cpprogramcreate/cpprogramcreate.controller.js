@@ -6,24 +6,30 @@ var app;
         (function (cpprogramcreate) {
             "use strict";
             var CPProgramCreateController = (function () {
-                function CPProgramCreateController($uibModalInstance, issuerService, uuid4, growl) {
+                function CPProgramCreateController($uibModalInstance, issuerService, uuid4, growl, localStorageService, authService) {
                     this.$uibModalInstance = $uibModalInstance;
                     this.issuerService = issuerService;
                     this.uuid4 = uuid4;
                     this.growl = growl;
+                    this.localStorageService = localStorageService;
+                    this.authService = authService;
+                    this.ipacollection = [{ displayName: "HDFC", id: "HDFC_IPA" }, { displayName: "SBI", id: "SBI_IPA" }];
+                    this.depositorycollection = [{ displayName: "NSDL", id: "NSDL_DEPOSITORY" }, { displayName: "CDSL", id: "CDSL_IPA" }];
+                    this.nodeInfo = this.localStorageService.get("nodeInfo");
                     this.cpprogram = new app.models.IndiaCPProgram();
-                    this.cpprogram.issuerId = "Issuer1";
+                    this.cpprogram.issuerId = this.nodeInfo.dlNodeName;
                     this.cpprogram.programCurrency = "INR";
-                    this.cpprogram.issuerName = "Issuer1";
+                    this.cpprogram.issuerName = this.nodeInfo.nodeName;
                     this.cpprogram.purpose = "ICP";
                     this.cpprogram.issueCommencementDate = new Date();
                     this.cpprogram.type = "India Commercial Paper";
                     this.cpprogram.maturityDays = 7;
                     this.cpprogram.programSize = 1000;
-                    this.cpprogram.depositoryId = "Issuer1";
-                    this.cpprogram.depositoryName = "Issuer1";
-                    this.cpprogram.ipaId = "Issuer1";
-                    this.cpprogram.ipaName = "Issuer1";
+                    this.cpprogram.depositoryId = "NSDL_DEPOSITORY";
+                    this.cpprogram.depositoryName = "NSDL";
+                    this.cpprogram.ipaId = "HDFC_IPA";
+                    this.cpprogram.ipaName = "HDFC";
+                    this.cpprogram.modifiedBy = authService.currentUser.username;
                 }
                 CPProgramCreateController.prototype.createCPProgram = function () {
                     var _this = this;
@@ -44,7 +50,12 @@ var app;
                 };
                 return CPProgramCreateController;
             }());
-            CPProgramCreateController.$inject = ["$uibModalInstance", "app.services.IssuerService", "uuid4", "growl"];
+            CPProgramCreateController.$inject = ["$uibModalInstance",
+                "app.services.IssuerService",
+                "uuid4",
+                "growl",
+                "localStorageService",
+                "app.services.AuthenticationService"];
             angular
                 .module("app.dashboard.cpprogramcreate")
                 .controller("app.dashboard.cpprogramcreate.CPProgramCreateController", CPProgramCreateController);

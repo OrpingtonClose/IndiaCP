@@ -52,15 +52,12 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">IPA Name</label>
-                    <select class="form-control" ng-model="vm.cpprogram.ipaId">
-                            <option value="Issuer" ng-selected="true">HDFC</option>
+                    <select class="form-control" ng-model="vm.cpprogram.ipaId" ng-options="ipa.id as ipa.displayName for ipa in vm.ipacollection" >
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="control-label">Depository Name</label>
-                    <select class="form-control" ng-model="vm.cpprogram.depositoryId">
-                            <option value="Issuer" ng-selected="true">NSDL</option>
-                            <option value="Issuer1">CDSL</option>
+                    <select class="form-control" ng-model="vm.cpprogram.depositoryId" ng-options="depository.id as depository.displayName for depository in vm.depositorycollection">
                     </select>
                 </div>
             </form>

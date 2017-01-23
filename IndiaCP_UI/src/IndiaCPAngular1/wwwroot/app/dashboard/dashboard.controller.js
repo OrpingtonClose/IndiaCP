@@ -12,8 +12,9 @@ var app;
                 this.localStorageService = localStorageService;
                 this.issuerService = issuerService;
                 this.workflowStates = new app.models.WorkflowStates();
-                this.nodeInfo = localStorageService.get("nodeInfo");
-                this.gridColumns = [{ field: "version", displayName: "#", width: 35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
+                this.nodeInfo = this.localStorageService.get("nodeInfo");
+                this.gridOptions = {};
+                this.gridOptions.columnDefs = [{ field: "version", displayName: "#", width: 35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
                     { field: "issueCommencementDate", width: 125, displayName: "Date", cellTemplate: " <div><span class='small text-nowrap'>{{row.entity.issueCommencementDate | date:'dd-MM-yyyy'}}</span></div>" },
                     { field: "name", displayName: "Program Name", width: 170, enableColumnMenu: false, cellTemplate: "<div> <a href='' ng-click='grid.appScope.vm.showCPProgramDetails(row.entity.programId)' class='text-nowrap'>{{row.entity.name}}</a></div>" },
                     { field: "programAllocatedValue", width: 100, displayName: "Allotment", cellTemplate: "<div height='20px' justgage min='0' max='100' ></div>", enableColumnMenu: false },
@@ -22,12 +23,20 @@ var app;
                     { field: "version", displayName: "Sell", width: 75, enableColumnMenu: false, cellTemplate: "<button type='button' ng-click='grid.appScope.vm.createCPISsue(row.entity)' class='btn btn-success btn-raised btn-sm'>Sell</button>" },
                     { field: "version", displayName: "", width: 150, enableColumnMenu: false, cellTemplate: "app/dashboard/gridtemplates/gridoptionstemplate.html" }
                 ];
-                this.gridOptions = {
-                    data: this.cpPrograms,
-                    columnDefs: this.gridColumns,
-                    rowHeight: 75,
-                    appScopeProvider: this
-                };
+                this.gridOptions.data = this.cpPrograms;
+                this.gridOptions.rowHeight = 75;
+                // this.gridOptions = {
+                //     data: this.cpPrograms,
+                //     columnDefs: this.gridColumns,
+                //     rowHeight: 75,
+                //     // expandableRowTemplate: 'expandableRowTemplate.html',
+                //     // expandableRowHeight: 150,
+                //     // //subGridVariable will be available in subGrid scope
+                //     // expandableRowScope: {
+                //     //     subGridVariable: 'subGridScopeVariable'
+                //     // }
+                // };
+                // { data: vm.cpPrograms, columnDefs: vm.gridColumns, rowHeight:75 }
                 this.fetchAllCPPrograms();
             }
             DashboardController.prototype.$onDestroy = function () {
@@ -58,7 +67,7 @@ var app;
                             });
                         });
                     });
-                }, 1000000);
+                }, 20000);
             };
             DashboardController.prototype.executeNextAction = function (nextAction, selectedCPProgram) {
                 switch (nextAction) {
@@ -69,7 +78,7 @@ var app;
                         this.createCPISsue(selectedCPProgram);
                         break;
                     case "ADD_IPA_VERI_DOC":
-                        this.createCPISsue(selectedCPProgram);
+                        this.addIPAVerificationDoc(selectedCPProgram);
                         break;
                     default:
                         this.createCPISsue(selectedCPProgram);
@@ -85,6 +94,19 @@ var app;
                     size: "lg",
                     backdrop: "static",
                     templateUrl: "app/dashboard/isingeneration/isingeneration.html",
+                    resolve: { cpProgram: selectedCPProgram, generateDoc: true }
+                });
+            };
+            DashboardController.prototype.addIPAVerificationDoc = function (selectedCPProgram) {
+                this.$uibModal.open({
+                    animation: true,
+                    ariaLabelledBy: "modal-title",
+                    ariaDescribedBy: "modal-body",
+                    controller: "app.dashboard.ipaverification.IPAverificationController",
+                    controllerAs: "vm",
+                    size: "lg",
+                    backdrop: "static",
+                    templateUrl: "app/dashboard/ipaverification/ipaverification.html",
                     resolve: { cpProgram: selectedCPProgram }
                 });
             };

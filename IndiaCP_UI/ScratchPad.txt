@@ -6,6 +6,7 @@ npm install --save @types/angular-growl-v2
 npm install --save @types/angular-local-storage
 npm install --save @types/ng-file-upload
 npm install --save @types/jszip
+npm install --save @types/ui-grid
 
 Angular2
 http://blog.stevensanderson.com/2016/10/04/angular2-template-for-visual-studio/
@@ -67,8 +68,9 @@ https://marketplace.visualstudio.com/items?itemName=frhagn.Typewriter
 http://bridge.net/
 
 
-PDF Signing
+HSM - PDF Signing
 http://www.rudeprogrammer.com/2016/01/overview-and-usage-of-azure-vault-key-with-itext/
+https://docs.microsoft.com/en-us/azure/key-vault/key-vault-developers-guide
 
 Read about sessionstorage and localstorage
 

@@ -41,10 +41,10 @@
                             <th class="table-cell-id">#</th>
                             <th data-toggle="sort" data-sort-onload="asc" class="col-sm-2 sorting-asc" tabindex="0">Date</th>
                             <th data-toggle="sort" class="col-sm-2" tabindex="0">Program Name</th>
+                            <th data-toggle="sort" class="col-sm-2" tabindex="0">Size(in ₹)</th>
                             <th data-toggle="sort" class="col-sm-1 text-right" tabindex="0">Allotment</th>
                             <th class="col-sm-2 text-center">Status</th>
                             <th class="col-sm-2 text-center">Action</th>
-                            <th class="col-sm-1 text-center">Sell</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -59,19 +59,19 @@
                             <td>
                                 <a href="" ng-click="vm.showCPProgramDetails(cpprogram.programId)" class="text-nowrap">{{cpprogram.name}}</a>
                             </td>
-                            <td class="text-right">
-                                <div justgage ng-value="{{(cpprogram.programAllocatedValue.quantity | number)*100/(cpprogram.programSize.quantity | number)}}"
-                                    min="0" max="100"></div>
+                            <td>
+                                <span class="small text-nowrap">{{cpprogram.programSize}}</span>
+                            </td>
+                              <td class="text-right">
+                                <div justgage value="{{cpprogram.programAllocatedValue*100/cpprogram.programSize}}" min="0" max="100"></div>
+                                <!--ng-value="{{(cpprogram.programAllocatedValue.quantity | number)*100/(cpprogram.programSize.quantity | number)}}"-->
                             </td>
                             <td class="text-center">
                                 <span class="label label-default">{{cpprogram.status}}</span>
                             </td>
                             <td class="text-center">
-                                <button type="button" ng-click="vm.executeNextAction(cpprogram.nextAction, cpprogram)" ng-disabled="vm.nodeInfo.nodeType != 'DEPOSITORY'"
-                                    class="btn btn-success btn-raised btn-xs">{{cpprogram.nextAction}}</button>
-                            </td>
-                            <td class="text-center">
-                                <button type="button" ng-click="vm.createCPISsue(cpprogram)" class="btn btn-success btn-raised btn-sm">Sell</button>
+                                <button type="button" ng-click="vm.executeNextAction(cpprogram.nextAction.name, cpprogram)" ng-disabled="cpprogram.nextAction.allowedNodes.indexOf('DEPOSITORY') == -1"
+                                    class="btn btn-success btn-raised btn-xs">{{cpprogram.nextAction.name}}</button>
                             </td>
                             <td class="table-cell-actions">
                                 <a ng-click="vm.showCPProgramDetails(cpprogram.programId)" class="item-action" title="Edit">

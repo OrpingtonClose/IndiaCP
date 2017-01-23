@@ -28,6 +28,7 @@ var app;
                     rowHeight: 75,
                     appScopeProvider: this
                 };
+                this.fetchAllCPProgramsOnce();
                 this.fetchAllCPPrograms();
             }
             DepositoryController.prototype.$onDestroy = function () {
@@ -35,6 +36,11 @@ var app;
             };
             DepositoryController.prototype.fetchAllCPPrograms = function () {
                 var _this = this;
+                this.dataRefresher = this.$interval(function () {
+                    _this.fetchAllCPProgramsOnce();
+                }, 20000);
+            };
+            DepositoryController.prototype.fetchAllCPProgramsOnce = function () {
                 var vm = this;
                 this.issuerService.fetchAllCPProgram().then(function (response) {
                     vm.cpPrograms = response.data;
@@ -46,19 +52,6 @@ var app;
                         });
                     });
                 });
-                this.dataRefresher = this.$interval(function () {
-                    var vm = _this;
-                    _this.issuerService.fetchAllCPProgram().then(function (response) {
-                        vm.cpPrograms = response.data;
-                        vm.cpPrograms.forEach(function (cpProgram) {
-                            vm.workflowStates.states.forEach(function (state) {
-                                if (state.status === cpProgram.status) {
-                                    cpProgram.nextAction = state.nextAction;
-                                }
-                            });
-                        });
-                    });
-                }, 10000);
             };
             DepositoryController.prototype.executeNextAction = function (nextAction, selectedCPProgram) {
                 switch (nextAction) {
@@ -70,16 +63,20 @@ var app;
                 }
             };
             DepositoryController.prototype.addISIN = function (selectedCPProgram) {
-                this.$uibModal.open({
+                var _this = this;
+                var addISINModal = this.$uibModal.open({
                     animation: true,
                     ariaLabelledBy: "modal-title",
                     ariaDescribedBy: "modal-body",
                     controller: "app.depository.addisin.AddISINController",
                     controllerAs: "vm",
-                    size: "lg",
+                    size: "sm",
                     backdrop: "static",
                     templateUrl: "app/depository/addisin/addisin.html",
                     resolve: { cpProgram: selectedCPProgram }
+                });
+                addISINModal.closed.then(function () {
+                    _this.fetchAllCPPrograms();
                 });
             };
             DepositoryController.prototype.showCPProgramDetails = function (cpProgramId) {

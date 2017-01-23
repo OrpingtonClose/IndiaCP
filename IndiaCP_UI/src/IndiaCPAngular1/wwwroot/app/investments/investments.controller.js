@@ -4,25 +4,35 @@ var app;
     (function (investments) {
         "use strict";
         var InvestmentsController = (function () {
-            function InvestmentsController($state, authService, InvestorService, localStorageService) {
+            function InvestmentsController($state, authService, InvestorService, localStorageService, growl) {
                 this.$state = $state;
                 this.authService = authService;
                 this.InvestorService = InvestorService;
                 this.localStorageService = localStorageService;
-                this.nodeType = this.localStorageService.get("nodeInfo").nodeType;
+                this.growl = growl;
+                this.nodeInfo = this.localStorageService.get("nodeInfo");
+                this.fetchCPIssues();
             }
             InvestmentsController.prototype.fetchCPIssues = function () {
                 var _this = this;
-                this.InvestorService.fetchAllCP("ddd").then(function (response) {
+                this.InvestorService.fetchAllCPOnThisNode().then(function (response) {
                     _this.cpIssues = response.data;
-                }, function (error) { });
+                    _this.cpIssues.forEach(function (cpissue) {
+                        cpissue.maturityDate = new Date(cpissue.valueDate);
+                        cpissue.maturityDate.setDate(cpissue.maturityDate.getDate() + cpissue.maturityDays);
+                    });
+                }, function (error) {
+                    _this.growl.error("Could not fetch cpissues for this node.", { title: "Error!" });
+                    console.log("CPIssues could not be fetched." + error);
+                });
             };
             return InvestmentsController;
         }());
         InvestmentsController.$inject = ["$state",
             "app.services.AuthenticationService",
             "app.services.InvestorService",
-            "localStorageService"];
+            "localStorageService",
+            "growl"];
         angular
             .module("app.investments")
             .controller("app.investments.InvestmentsController", InvestmentsController);

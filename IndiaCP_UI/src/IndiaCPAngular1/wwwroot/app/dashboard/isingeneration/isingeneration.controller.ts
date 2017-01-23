@@ -2,7 +2,7 @@ module app.dashboard.isingeneration {
 	"use strict";
 
 	interface IISINGenerationScope {
-		generateDocument(file: File): void;
+		generateDocument(): void;
 		sign(): void;
 		verify(): void;
 		save(): void;
@@ -16,18 +16,25 @@ module app.dashboard.isingeneration {
 		$ctrl: any;
 		docRefData: app.models.DocRefData;
 		docDetails: app.models.DocData;
+		isinByteArray: any;
 		static $inject = ["$sce",
 			"$uibModalInstance",
 			"app.services.IssuerService",
+			"app.services.DocSignService",
+			"app.services.AuthenticationService",
 			"Upload",
 			"growl",
-			"cpProgram"];
+			"cpProgram",
+			"generateDoc"];
 		constructor(protected $sce: ng.ISCEService,
 			protected $uibModalInstance: ng.ui.bootstrap.IModalServiceInstance,
 			protected issuerService: app.services.IIssuerService,
+			protected docSignService: app.services.IDocSignService,
+			protected authService : app.services.IAuthenticationService,
 			protected Upload: ng.angularFileUpload.IUploadService,
 			protected growl: ng.growl.IGrowlService,
-			protected cpProgram: app.models.IndiaCPProgram) {
+			protected cpProgram: app.models.IndiaCPProgram,
+			protected generateDoc: boolean) {
 			this.docRefData = new app.models.DocRefData();
 			this.docRefData.cp.issuerName = "Barclays Investments & Loans (India) Ltd";
 			this.docRefData.cp.secondParty = "";
@@ -90,35 +97,84 @@ module app.dashboard.isingeneration {
 			this.docRefData.cp.faceValue = 500000;
 			this.docRefData.cp.amountOfCPOutstanding = 14250000000.00;
 
+
+			this.docRefData.nsdl.nsdlAddress = "The Depository Branch of Maharashtra";
+			this.docRefData.nsdl.nsdlContactPerson = "Mr. Right Smith";
+
 			this.docDetails = new app.models.DocData();
 			this.docDetails.cpProgramId = this.cpProgram.programId;
 			this.docDetails.docExtension = app.models.DOCEXTENSION.PDF;
 			this.docDetails.docStatus = app.models.DOCSTATUS.SIGNED_BY_ISSUER;
+			this.docDetails.docType = app.models.DOCTYPE.DEPOSITORY_DOCS;
 			this.docDetails.docSubType = app.models.DOCTYPE.DEPOSITORY_DOCS;
-			this.docDetails.modifiedBy = this.cpProgram.issuerName;
-
+			this.docDetails.modifiedBy = this.authService.currentUser.username;
+			if (this.generateDoc === true) {
+				this.generateDocument();
+			}
+			else {
+				this.generateDocument();
+			}
 		}
 		public cancel(): void {
 			this.$uibModalInstance.close();
 		}
-		public generateDocument(file: File): void {
-			this.isinFile = file;
-			this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
 
+
+		public fetchDoc(): void {
+			let docHash = this.cpProgram.isinGenerationRequestDocId.split(":")[0];
+			this.issuerService.getDocument(docHash, app.models.DOCTYPE.DEPOSITORY_DOCS.toString(), "pdf").then((response) => {
+				this.isinSignedData = btoa(response.data);
+				var url: string = "data:application/pdf;base64," + this.isinSignedData;
+				this.isinFileUrl = this.$sce.trustAsResourceUrl(url);
+			}, (error) => {
+
+			})
 		}
 
-		public sign(): void {
-			let httpUploadRequestParams: any = {
-				url: "http://52.172.46.253:8182/indiacp/indiacpdocuments/signDoc/ISINDocument",
-				data: { file: this.isinFile },
-				method: "POST"
-			}
-			this.Upload.upload(httpUploadRequestParams).
+
+
+		public generateDocument(): void {
+			// this.isinFile = file;
+			// this.isinFileUrl = this.$sce.trustAsResourceUrl(URL.createObjectURL(file));
+			this.issuerService.generateISINDocument(this.docRefData).
 				then((response: any) => {
-					this.growl.success("ISIN document signed succesfully", { title: "ISIN Signed!" });
+					this.growl.success("ISIN document generated succesfully", { title: "ISIN Doc Generated!" });
 					this.isinSignedData = response.data;
 					var url: string = "data:application/pdf;base64," + this.isinSignedData;
 					this.isinFileUrl = this.$sce.trustAsResourceUrl(url);
+					// http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
+					var byteCharacters = atob(this.isinSignedData);
+					var byteNumbers = new Array(byteCharacters.length);
+					for (var i = 0; i < byteCharacters.length; i++) {
+						byteNumbers[i] = byteCharacters.charCodeAt(i);
+					}
+					var byteArray = new Uint8Array(byteNumbers);
+
+
+					this.isinFile = new File([new Blob([byteArray], { type: "application/pdf" })], "isinDoc.pdf");
+
+				}, (error: any) => {
+					this.growl.error("ISIN document generation unsuccesful", { title: "ISIN Doc Failed!" });
+				});
+		}
+
+		public sign(): void {
+			this.docSignService.signDoc(this.isinFile, "ISINDocument").
+				then((response: any) => {
+					this.growl.success("ISIN document signed succesfully", { title: "ISIN Signed!" });
+					let streamData = response.data;
+
+					var byteCharacters = atob(streamData);
+					var byteNumbers = new Array(byteCharacters.length);
+					for (var i = 0; i < byteCharacters.length; i++) {
+						byteNumbers[i] = byteCharacters.charCodeAt(i);
+					}
+					this.isinByteArray = new Uint8Array(byteNumbers);
+
+
+					var url: string = "data:application/pdf;base64," + streamData;
+					this.isinFileUrl = this.$sce.trustAsResourceUrl(url);
+
 				}, (error: any) => {
 					this.growl.error("Document signing unsuccesful", { title: "Signing Failed!" });
 				});
@@ -129,9 +185,9 @@ module app.dashboard.isingeneration {
 
 		public save(): void {
 			let isinZip: JSZip = new JSZip();
-			isinZip.file("isindoc.pdf", this.isinSignedData, { base64: true });
+			isinZip.file(`${this.docDetails.docSubType}.pdf`, this.isinByteArray, { base64: false });
 			// [new Blob([window.atob(zippedFile)], { type: "application/zip" })]		
-			isinZip.generateAsync({type:"blob"}).then((zippedFile:Blob) => {
+			isinZip.generateAsync({ type: "blob" }).then((zippedFile: Blob) => {
 				let tempFile: File = new File([zippedFile], "isinDoc.zip");
 				this.issuerService.addDoc(this.cpProgram.programId, this.docDetails, tempFile).
 					then((response: any): void => {

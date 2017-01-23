@@ -19,6 +19,7 @@ var app;
             AuthenticationService.prototype.login = function (userInfo) {
                 var _this = this;
                 var deferred = this.$q.defer();
+                this.currentUser = userInfo;
                 this.$http.post(this.basePath + "/authentication", JSON.stringify(userInfo))
                     .then(function (response) {
                     _this.isAuthenticated = true;

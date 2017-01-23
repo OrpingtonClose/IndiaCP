@@ -4,7 +4,7 @@ module app.depository {
     interface IDepositoryScope {
         fetchAllCPPrograms(): void;
         showCPProgramDetails(cpProgramId: string): void;
-        addISIN(cpProgramId:string):void;
+        addISIN(cpProgramId: string): void;
         workflowStates: app.models.WorkflowStates;
 
     }
@@ -34,14 +34,14 @@ module app.depository {
             this.nodeInfo = localStorageService.get("nodeInfo") as app.models.NodeInfo;
 
 
-            this.gridColumns = [{ field: "version", displayName: "#", width:35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
-                { field: "issueCommencementDate", width:125, displayName:"Date", cellTemplate:" <div><span class='small text-nowrap'>{{row.entity.issueCommencementDate | date:'dd-MM-yyyy'}}</span></div>" },
-            { field: "name", displayName: "Program Name",width:170, enableColumnMenu: false, cellTemplate:"<div> <a href='' ng-click='grid.appScope.vm.showCPProgramDetails(row.entity.programId)' class='text-nowrap'>{{row.entity.name}}</a></div>" },
-            { field: "programAllocatedValue", width:100, displayName: "Allotment", cellTemplate: "<div height='20px' justgage min='0' max='100' ></div>",enableColumnMenu: false},
+            this.gridColumns = [{ field: "version", displayName: "#", width: 35, enableColumnMenu: false, cellTemplate: "<div>1</div>" },
+            { field: "issueCommencementDate", width: 125, displayName: "Date", cellTemplate: " <div><span class='small text-nowrap'>{{row.entity.issueCommencementDate | date:'dd-MM-yyyy'}}</span></div>" },
+            { field: "name", displayName: "Program Name", width: 170, enableColumnMenu: false, cellTemplate: "<div> <a href='' ng-click='grid.appScope.vm.showCPProgramDetails(row.entity.programId)' class='text-nowrap'>{{row.entity.name}}</a></div>" },
+            { field: "programAllocatedValue", width: 100, displayName: "Allotment", cellTemplate: "<div height='20px' justgage min='0' max='100' ></div>", enableColumnMenu: false },
             { field: "status", displayName: "Status", enableColumnMenu: false, cellTemplate: "<span class='label label-default'>{{row.entity.status}}</span>" },
             { field: "nextAction", displayName: "Action", enableColumnMenu: false, cellTemplate: "<div><button type='button' ng-click='grid.appScope.vm.executeNextAction(row.entity.nextAction.name, row.entity)' ng-disabled='row.entity.nextAction.allowedNodes.indexOf(\"ISSUER\") == -1'  class='btn btn-success btn-raised btn-xs'>{{row.entity.nextAction.name}}</button></div>" },
-            { field: "version", displayName: "Sell", width:75, enableColumnMenu: false, cellTemplate: "<button type='button' ng-click='grid.appScope.vm.createCPISsue(row.entity)' class='btn btn-success btn-raised btn-sm'>Sell</button>" },
-            { field: "version", displayName: "", width:150, enableColumnMenu: false, cellTemplate: "app/depository/gridtemplates/gridoptionstemplate.html" }
+            { field: "version", displayName: "Sell", width: 75, enableColumnMenu: false, cellTemplate: "<button type='button' ng-click='grid.appScope.vm.createCPISsue(row.entity)' class='btn btn-success btn-raised btn-sm'>Sell</button>" },
+            { field: "version", displayName: "", width: 150, enableColumnMenu: false, cellTemplate: "app/depository/gridtemplates/gridoptionstemplate.html" }
 
             ];
 
@@ -52,15 +52,21 @@ module app.depository {
                 appScopeProvider: this
             };
 
-
+            this.fetchAllCPProgramsOnce();
             this.fetchAllCPPrograms();
         }
 
         public $onDestroy() {
             this.$interval.cancel(this.dataRefresher);
         }
-        
+
         public fetchAllCPPrograms(): void {
+            this.dataRefresher = this.$interval(() => {
+                this.fetchAllCPProgramsOnce();
+            }, 20000);
+        }
+
+        public fetchAllCPProgramsOnce() {
             var vm = this;
             this.issuerService.fetchAllCPProgram().then(function (response) {
                 vm.cpPrograms = response.data;
@@ -72,19 +78,6 @@ module app.depository {
                     });
                 });
             });
-            this.dataRefresher = this.$interval(() => {
-                var vm = this;
-                this.issuerService.fetchAllCPProgram().then(function (response) {
-                    vm.cpPrograms = response.data;
-                    vm.cpPrograms.forEach((cpProgram: app.models.IndiaCPProgram) => {
-                        vm.workflowStates.states.forEach((state: app.models.WorkflowState) => {
-                            if (state.status === cpProgram.status) {
-                                cpProgram.nextAction = state.nextAction;
-                            }
-                        });
-                    });
-                });
-            }, 10000);
         }
 
         public executeNextAction(nextAction: string, selectedCPProgram: app.models.IndiaCPProgram) {
@@ -97,17 +90,20 @@ module app.depository {
             }
         }
 
-        public addISIN(selectedCPProgram:app.models.IndiaCPProgram):void{
-            this.$uibModal.open({
+        public addISIN(selectedCPProgram: app.models.IndiaCPProgram): void {
+            let addISINModal: ng.ui.bootstrap.IModalServiceInstance = this.$uibModal.open({
                 animation: true,
                 ariaLabelledBy: "modal-title",
                 ariaDescribedBy: "modal-body",
                 controller: "app.depository.addisin.AddISINController",
                 controllerAs: "vm",
-                size: "lg",
+                size: "sm",
                 backdrop: "static",
                 templateUrl: "app/depository/addisin/addisin.html",
                 resolve: { cpProgram: selectedCPProgram }
+            });
+            addISINModal.closed.then(() => {
+                this.fetchAllCPPrograms();
             });
         }
 

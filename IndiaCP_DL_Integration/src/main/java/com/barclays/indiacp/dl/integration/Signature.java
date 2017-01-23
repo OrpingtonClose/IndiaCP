@@ -7,8 +7,10 @@ import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 import org.apache.axis.encoding.Base64;
 import org.apache.commons.io.IOUtils;
-
+//import org.apache.commons.lang3.StringUtils;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -21,8 +23,7 @@ import static java.io.File.createTempFile;
  */
 public class Signature {
 
-    public String inputStreamSign(InputStream uploadedInputStream, String docType)
-    {
+    public String inputStreamSign(InputStream uploadedInputStream, String currentUser, String coordinates) {
         String signedDocFolder = "";
         InputStream isSigned = null;
         String returnStr = "";
@@ -34,16 +35,15 @@ public class Signature {
             returnStr = signPDF(Base64Encode(tempFile.getAbsolutePath()));
 */
 
-            returnStr = signPDF(Base64.encode(IOUtils.toByteArray(uploadedInputStream)));
+            returnStr = signPDF(Base64.encode(IOUtils.toByteArray(uploadedInputStream)), currentUser,coordinates );
 
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return returnStr;
     }
 
-    public String signZipFolder(String ZipFilePath, String docType) {
+    /*public String signZipFolder(String ZipFilePath, String docType) {
         String finalPath = "";
         final File tempFile;
         String signedDocFolder = "";
@@ -66,42 +66,39 @@ public class Signature {
                 }
             }
 
-            finalPath = zipFile(signedDocFolder,docType);
+            finalPath = zipFile(signedDocFolder, docType);
 
             // return Base64Encode(zipFile(destination,docType));
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return finalPath;
 
-    }
+    }*/
 
 
-
-    public String signPDF(String b64EncodedString)
-    {
+    public String signPDF(String b64EncodedString, String currentUser, String coordinates) {
         String signed = "";
+        String certSerialId = "test1";
 
-        try{
+        try {
 
-            DSVerifyWSImplServiceSoapBindingStub binding = (DSVerifyWSImplServiceSoapBindingStub)new DSVerifyWSImplServiceLocator().getDSVerifyWSImplPort();
-            signed = binding.signPdf("test1", b64EncodedString,"", "400,170,500,250", "first", "test", "test");
-            } catch (javax.xml.rpc.ServiceException ex) {
-                ex.printStackTrace();
-            } catch (java.rmi.RemoteException ex) {
-                ex.printStackTrace();
-            }
+            DSVerifyWSImplServiceSoapBindingStub binding = (DSVerifyWSImplServiceSoapBindingStub) new DSVerifyWSImplServiceLocator().getDSVerifyWSImplPort();
+            signed = binding.signPdf(certSerialId, b64EncodedString, "", coordinates, "first", "test", "test");
+        } catch (javax.xml.rpc.ServiceException ex) {
+            ex.printStackTrace();
+        } catch (java.rmi.RemoteException ex) {
+            ex.printStackTrace();
+        }
 
-            return signed;
+        return signed;
     }
 
 
-
-    public String unzipFile(String zipFilePath, String docType)
-    {
+    public String unzipFile(String zipFilePath, String docType) {
         String destination = "";
 
-        try{
+        try {
 
             destination = createTempDir(docType).getAbsolutePath();
          /* byte[] decoded = Base64.decode(b64EncodedString);
@@ -114,38 +111,36 @@ public class Signature {
 
           String source = tempFile.getAbsolutePath();
 */
-              ZipFile zipFile = new ZipFile(zipFilePath);
-              //if (zipFile.isEncrypted()) {
-              //   zipFile.setPassword(password);
-              //}
-              zipFile.extractAll(destination);
+            ZipFile zipFile = new ZipFile(zipFilePath);
+            //if (zipFile.isEncrypted()) {
+            //   zipFile.setPassword(password);
+            //}
+            zipFile.extractAll(destination);
 
-      } catch (ZipException e) {
-          e.printStackTrace();
-      } catch (Exception e) {
-          e.printStackTrace();
+        } catch (ZipException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return destination;
     }
 
-    public String zipFile(String fileFolderPath, String docType)
-    {
+    public String zipFile(String fileFolderPath, String docType) {
 
 
-
-           Calendar calendar = Calendar.getInstance();
-           Date time = calendar.getTime();
-           long milliseconds = time.getTime();
-           String path = System.getProperty("java.io.tmpdir");
-           ZipFile zipFile;
-           try{
+        Calendar calendar = Calendar.getInstance();
+        Date time = calendar.getTime();
+        long milliseconds = time.getTime();
+        String path = System.getProperty("java.io.tmpdir");
+        ZipFile zipFile;
+        try {
             zipFile = new ZipFile(path + docType + "_" + milliseconds + ".zip");
 
-           ZipParameters parameters = new ZipParameters();
-           parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-           parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
-          // parameters.setSourceExternalStream(true);
+            ZipParameters parameters = new ZipParameters();
+            parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+            parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+            // parameters.setSourceExternalStream(true);
 
 
           /* if(password.length()>0){
@@ -156,44 +151,39 @@ public class Signature {
            }*/
 
 
-           //String folderToAdd = "E:\\Temp";
-           //zipFile.addFolder(folderToAdd, parameters);
+            //String folderToAdd = "E:\\Temp";
+            //zipFile.addFolder(folderToAdd, parameters);
 
-           File targetFile = new File(fileFolderPath);
+            File targetFile = new File(fileFolderPath);
 
-           if(targetFile.isFile()){
-               zipFile.addFile(targetFile, parameters);
-           }else if(targetFile.isDirectory()){
-               zipFile.addFolder(fileFolderPath, parameters);
-           }
+            if (targetFile.isFile()) {
+                zipFile.addFile(targetFile, parameters);
+            } else if (targetFile.isDirectory()) {
+                zipFile.addFolder(fileFolderPath, parameters);
+            }
 
 
-
-       } catch (ZipException e) {
-           e.printStackTrace();
-       }
+        } catch (ZipException e) {
+            e.printStackTrace();
+        }
         return (path + docType + "_" + milliseconds + ".zip");
 
     }
 
-    public String Base64Encode(String filePath)
-    {
-        String str="";
+    public String Base64Encode(String filePath) {
+        String str = "";
 
-       try {
-           byte[] bytes = IOUtils.toByteArray(new FileInputStream(new File(filePath)));
-           str = Base64.encode(bytes);
-       }
-       catch (IOException e)
-       {
-           e.printStackTrace();
-       }
-       return str;
+        try {
+            byte[] bytes = IOUtils.toByteArray(new FileInputStream(new File(filePath)));
+            str = Base64.encode(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return str;
 
     }
 
-    public String Base64Decode(String base64String, String docType, String filePath)
-    {
+    public String Base64Decode(String base64String, String docType, String filePath) {
 
         File dir = new File(filePath);
         String path = "";
@@ -204,17 +194,14 @@ public class Signature {
             FileOutputStream output = new FileOutputStream(tempFile);
             output.write(decoded);
             output.close();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return path;
     }
 
     public static File createTempDir(String prefix)
-            throws IOException
-    {
+            throws IOException {
         String tmpDirStr = System.getProperty("java.io.tmpdir");
         if (tmpDirStr == null) {
             throw new IOException(
@@ -230,7 +217,7 @@ public class Signature {
         }
 
         File resultDir = null;
-        int suffix = (int)System.currentTimeMillis();
+        int suffix = (int) System.currentTimeMillis();
         int failureCount = 0;
         do {
             resultDir = new File(tmpDir, prefix + suffix % 10000);
@@ -252,8 +239,6 @@ public class Signature {
     }
 
 
-
-
     private File createTempFile(String fileName, String extension, InputStream uploadedInputStream) {
         try {
             final File tempFile = File.createTempFile(fileName, extension);
@@ -261,10 +246,48 @@ public class Signature {
             FileOutputStream out = new FileOutputStream(tempFile);
             IOUtils.copy(uploadedInputStream, out);
             return tempFile;
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             throw new RuntimeException("File could not be uploaded.");
         }
+    }
+
+    public String initiateSignatureWorkflow(InputStream is, String docType, String currentUser, String currentUserRole) {
+        String signedOutcome = "";
+        Integer i = 0;
+        String coordinates = "";
+        String username[];
+        try {
+            ClassLoader classLoader = getClass().getClassLoader();
+            String content = new String(IOUtils.toByteArray(classLoader.getResourceAsStream("SignTable.txt")));
+
+
+            String[][] result = new String[content.split("\n").length][];
+            int count = 0;
+            for (String line : content.split("[" + "\n" + "]")) {
+                if (line.contains("|"))
+                    result[count++] = line.split("[" + "|" + "]");
+            }
+
+            for (String[] ar : result) {
+                if (ar[1].equals(docType) && ar[3].equals(currentUserRole)) {
+                    username = ar[4].split(", ");
+                    for (String s : username) {
+                        if (s.equals(currentUser) && i == 0) {
+                            signedOutcome = signPDF(Base64.encode(IOUtils.toByteArray(is)), currentUser, ar[6]);
+                            //signedOutcome = inputStreamSign(is, docType, currentUser, coordinates);
+                            i++;
+                        } else if (s.equals(currentUser)) {
+                            signedOutcome = signPDF(signedOutcome, currentUser, ar[7]);
+                        }
+                    }
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return signedOutcome;
+
     }
 
 

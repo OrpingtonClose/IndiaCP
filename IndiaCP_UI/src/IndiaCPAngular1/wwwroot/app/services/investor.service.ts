@@ -31,6 +31,7 @@ module app.services {
 
     export interface IInvestorService{
         fetchAllCP(entity: string, extraHttpRequestParams?: any): ng.IHttpPromise<Array<app.models.IndiaCPIssue>>;
+        fetchAllCPOnThisNode (extraHttpRequestParams?: any ) : ng.IHttpPromise<Array<app.models.IndiaCPIssue>>;
         fetchCP(entity: string, cpIssueId: string, extraHttpRequestParams?: any): ng.IHttpPromise<app.models.IndiaCPIssue>;
     }
 
@@ -62,17 +63,17 @@ module app.services {
          * @param entity issuer or investor id that uniquely maps to the DL node
          */
         public fetchAllCP (entity: string, extraHttpRequestParams?: any ) : ng.IHttpPromise<Array<app.models.IndiaCPIssue>> {
-            const localVarPath = this.basePath + '/cpissues/open/{entity}'
-                .replace('{' + 'entity' + '}', String(entity));
+            const localVarPath = this.basePath + "/cpissues/open/{entity}"
+                .replace("{" + "entity" + "}", String(entity));
 
             let queryParameters: any = {};
             let headerParams: any = this.extendObj({}, this.defaultHeaders);
-            // verify required parameter 'entity' is not null or undefined
+            // verify required parameter "entity" is not null or undefined
             if (entity === null || entity === undefined) {
-                throw new Error('Required parameter entity was null or undefined when calling fetchAllCP.');
+                throw new Error("Required parameter entity was null or undefined when calling fetchAllCP.");
             }
             let httpRequestParams: any = {
-                method: 'GET',
+                method: "GET",
                 url: localVarPath,
                 json: true,
                                                 params: queryParameters,
@@ -85,6 +86,32 @@ module app.services {
 
             return this.$http(httpRequestParams);
         }
+
+        /**
+         * Get All Open CP Issues for the given Issuer/Investor. Open CP Issues refers to the Issues that are yet to mature
+         * This returns all the Open CP Issues for the given DL Node
+         */
+        public fetchAllCPOnThisNode (extraHttpRequestParams?: any ) : ng.IHttpPromise<Array<app.models.IndiaCPIssue>> {
+            const localVarPath = this.basePath + "/indiacpissue/fetchAllCP";
+
+            let queryParameters: any = {};
+            let headerParams: any = this.extendObj({}, this.defaultHeaders);
+            let httpRequestParams: any = {
+                method: "GET",
+                url: localVarPath,
+                json: true,
+                                                params: queryParameters,
+                headers: headerParams
+            };
+
+            if (extraHttpRequestParams) {
+                httpRequestParams = this.extendObj(httpRequestParams, extraHttpRequestParams);
+            }
+
+            return this.$http(httpRequestParams);
+        }
+
+
         /**
          * Get All Open CP Issues for the given Issuer/Investor. Open CP Issues refers to the Issues that are yet to mature
          * This returns all the CP Issues under the umbrella CP Program identified by an Id provided by the call 
@@ -92,22 +119,22 @@ module app.services {
          * @param cpIssueId Unique identifier of the CP Issue to be fetched
          */
         public fetchCP (entity: string, cpIssueId: string, extraHttpRequestParams?: any ) : ng.IHttpPromise<app.models.IndiaCPIssue> {
-            const localVarPath = this.basePath + '/cpissue/{entity}/{cpIssueId}'
-                .replace('{' + 'entity' + '}', String(entity))
-                .replace('{' + 'cpIssueId' + '}', String(cpIssueId));
+            const localVarPath = this.basePath + "/cpissue/{entity}/{cpIssueId}"
+                .replace("{" + "entity" + "}", String(entity))
+                .replace("{" + "cpIssueId" + "}", String(cpIssueId));
 
             let queryParameters: any = {};
             let headerParams: any = this.extendObj({}, this.defaultHeaders);
-            // verify required parameter 'entity' is not null or undefined
+            // verify required parameter "entity" is not null or undefined
             if (entity === null || entity === undefined) {
-                throw new Error('Required parameter entity was null or undefined when calling fetchCP.');
+                throw new Error("Required parameter entity was null or undefined when calling fetchCP.");
             }
-            // verify required parameter 'cpIssueId' is not null or undefined
+            // verify required parameter "cpIssueId" is not null or undefined
             if (cpIssueId === null || cpIssueId === undefined) {
-                throw new Error('Required parameter cpIssueId was null or undefined when calling fetchCP.');
+                throw new Error("Required parameter cpIssueId was null or undefined when calling fetchCP.");
             }
             let httpRequestParams: any = {
-                method: 'GET',
+                method: "GET",
                 url: localVarPath,
                 json: true,
                                                 params: queryParameters,

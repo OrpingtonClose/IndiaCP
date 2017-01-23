@@ -21,8 +21,9 @@ module app.depository.addisin {
                 this.growl.success("ISIN added suceesfully.", { title: "Success!" });
                 this.$uibModalInstance.close();
             }, (error: any): void => {
-                console.log("ISIN not added.");
-                this.growl.error("ISIN not added.", { title: "Error!" });
+                let errorMssg: app.models.Error = error.data;
+                console.log("ISIN not added." + `${errorMssg.source}-${errorMssg.message}`);
+                this.growl.error(`ISIN not added. - ${errorMssg.message}`, { title: `${errorMssg.source}` });
             });
         }
         public cancel(): void {

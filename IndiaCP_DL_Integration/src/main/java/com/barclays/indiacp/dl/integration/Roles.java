@@ -1,7 +1,5 @@
 package com.barclays.indiacp.dl.integration;
 
-import java.util.Date;
-
 /**
  * Created by Electrania.com on 12/4/2016.
  */
@@ -18,6 +16,11 @@ public class Roles {
 
     public class IPA {
         public String ipaName;
+        public String ipaContactPerson;
+        public String ipaContactDept;
+        public String ipaContactAddress;
+        public String ipaContactTelephone;
+        public String ipaContactEmail;
         public String ipaAddress;
         public String ipaDPName;
         public String ipaAllotmentDPID;
@@ -29,9 +32,14 @@ public class Roles {
         public IPA() {
         }
 
-        public IPA(String ipaName, String ipaAddress, String ipaDPName, String ipaAllotmentDPID, String ipaAllotmentClientID,
+        public IPA(String ipaName, String ipaContactPerson, String ipaContactDept, String ipaContactAddress, String ipaContactTelephone, String ipaContactEmail, String ipaAddress, String ipaDPName, String ipaAllotmentDPID, String ipaAllotmentClientID,
                    String ipaRedemptionDPID, String ipaRedemptionClientID ) {
             this.ipaName = ipaName;
+            this.ipaContactPerson = ipaContactPerson;
+            this.ipaContactDept = ipaContactDept;
+            this.ipaContactAddress = ipaContactAddress;
+            this.ipaContactTelephone = ipaContactTelephone;
+            this.ipaContactEmail = ipaContactEmail;
             this.ipaAddress = ipaAddress;
             this.ipaDPName = ipaDPName;
             this.ipaAllotmentDPID = ipaAllotmentDPID;
@@ -61,13 +69,15 @@ public class Roles {
     }
 
     public class NSDL {
+        public String depositoryName;
         public String nsdlContactPerson;
         public String nsdlAddress;
 
         public NSDL() {
         }
 
-        public NSDL(String nsdlContactPerson, String nsdlAddress) {
+        public NSDL(String depositoryName, String nsdlContactPerson, String nsdlAddress) {
+            this.depositoryName = depositoryName;
             this.nsdlContactPerson = nsdlContactPerson;
             this.nsdlAddress = nsdlAddress;
         }

@@ -3,8 +3,8 @@ package com.barclays.indiacp.dl.integration;
 
 import com.barclays.indiacp.dl.EMVerifyClient.DSVerifyWSImplServiceLocator;
 import com.barclays.indiacp.dl.EMVerifyClient.DSVerifyWSImplServiceSoapBindingStub;
+import com.barclays.indiacp.model.VerificationResult;
 import org.apache.axis.encoding.Base64;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
