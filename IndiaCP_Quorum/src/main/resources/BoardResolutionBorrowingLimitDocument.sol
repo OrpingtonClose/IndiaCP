@@ -16,13 +16,14 @@ contract BoardResolutionBorrowingLimitDocument{
 
  function BoardResolutionBorrowingLimitDocument(string _legalEntityId, uint _boardResolutionBorrowingLimit,
     uint _boardResolutionIssuanceDate, uint _boardResolutionExpiryDate,
-    string _docHash){
+    string _docHash, string _modifiedBy){
 
     legalEntityId=_legalEntityId;
     boardResolutionBorrowingLimit=_boardResolutionBorrowingLimit;
     boardResolutionIssuanceDate=_boardResolutionIssuanceDate;
     boardResolutionExpiryDate=_boardResolutionExpiryDate;
     docHash=_docHash;
+    modifiedBy=_modifiedBy;
 
     //default values
 
@@ -36,13 +37,13 @@ contract BoardResolutionBorrowingLimitDocument{
 
 
 
- function fetchCRDetails() constant returns(string _legalEntityId, uint _boardResolutionBorrowingLimit, uint _currentOutstandingCreditBorrowing, string _currency, string _docHash, uint _boardResolutionIssuanceDate, uint _boardResolutionExpiryDate){
+ function fetchBRDetails() constant returns(string _legalEntityId, uint _boardResolutionBorrowingLimit, uint _currentOutstandingCreditBorrowing, string _currency, string _docHash, uint _boardResolutionIssuanceDate, uint _boardResolutionExpiryDate){
 
     return (legalEntityId, boardResolutionBorrowingLimit, currentOutstandingCreditBorrowing, currency, docHash, boardResolutionIssuanceDate, boardResolutionExpiryDate);
 
  }
 
- function fetchCRStatus() constant returns(uint _version, string _modifiedBy, uint _lastModifiedDate, string _status){
+ function fetchBRStatus() constant returns(uint _version, string _modifiedBy, uint _lastModifiedDate, string _status){
 
     return (version, modifiedBy, lastModifiedDate, status);
  }

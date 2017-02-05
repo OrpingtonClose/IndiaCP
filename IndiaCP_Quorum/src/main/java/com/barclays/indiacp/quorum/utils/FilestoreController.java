@@ -1,18 +1,9 @@
 package com.barclays.indiacp.quorum.utils;
 
-import com.barclays.indiacp.config.JsonMethodArgumentResolver;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-
 /**
  * Created by surajman
  */
+/*
 @Path("filestore")
 public class FilestoreController {
 
@@ -37,3 +28,4 @@ public class FilestoreController {
         }
     }
 }
+*/

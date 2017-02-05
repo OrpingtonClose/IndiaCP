@@ -19,7 +19,7 @@ contract LegalEntityCreditRatingDocument{
 
  function LegalEntityCreditRatingDocument(string _legalEntityId, string _creditRatingAgencyName, uint _creditRatingAmount,
     string _creditRating, uint _creditRatingIssuanceDate, uint _creditRatingEffectiveDate, uint _creditRatingExpiryDate,
-    string _docHash){
+    string _docHash, string _modifiedBy){
 
     legalEntityId=_legalEntityId;
     creditRatingAgencyName=_creditRatingAgencyName;
@@ -29,6 +29,7 @@ contract LegalEntityCreditRatingDocument{
     creditRatingEffectiveDate=_creditRatingEffectiveDate;
     creditRatingExpiryDate=_creditRatingExpiryDate;
     docHash=_docHash;
+    modifiedBy=_modifiedBy;
 
     //default values
 
@@ -42,7 +43,7 @@ contract LegalEntityCreditRatingDocument{
 
  function fetchCRDetails() constant returns(string _legalEntityId, string _creditRatingAgencyName, uint _creditRatingAmount, uint _currentOutstandingCreditBorrowing, string _currency, string _creditRating, string _docHash){
 
-    return (legalEntityId, creditRatingAgencyName, creditRatingAmount, currentOutstandingCreditBorrowing, currency, creditRating, docHash);
+   return (legalEntityId, creditRatingAgencyName, creditRatingAmount, currentOutstandingCreditBorrowing, currency, creditRating, docHash);
 
  }
 
