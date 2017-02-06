@@ -23,6 +23,8 @@ contract IndiaCPProgram{
   string corporateActionFormDocId;
   string allotmentLetterDocId;
 
+  mapping(string => string) docHashMap;
+
   //status fields
   uint version;
   string status;
@@ -70,6 +72,15 @@ contract IndiaCPProgram{
         locked = false;
    }
 
+/*
+  function embedDoc(string docName, string docHash) {
+    docHashMap[docName] = docHash;
+  }
+  */
+
+  function setIsinGenerationRequestDocId(string dochash) {
+    isinGenerationRequestDocId = dochash;
+  }
 
   function fetchCPProgramTradeDetails() constant returns (string _programId, string _name, string __type, string _purpose, uint _issueCommencementDate, string _programCurrency, uint _maturityDays, string _isin) {
     return (programId, name, _type, purpose, issueCommencementDate, programCurrency, maturityDays, isin);
@@ -94,7 +105,7 @@ contract IndiaCPProgram{
 
   function issueCP(uint issueVal, string cpAddr) onlyOwner noReentrancy {
     programAllocatedValue = programAllocatedValue - issueVal;
-    memberCPsIssued = strConcat(memberCPsIssued, " ", cpAddr);
+    memberCPsIssued = strConcat(memberCPsIssued, " ", cpAddr,"","");
   }
 
  function kill() onlyOwner { selfdestruct(owner); }

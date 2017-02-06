@@ -50,8 +50,6 @@ public class ContractController extends BaseController {
 	@Autowired
 	private ContractRegistryService contractRegistry;
 
-    // HOW TO AUTOWIRE THIS FROM CONF?
-	private IPFS ipfs = new IPFS("127.0.0.1",6969);
 
     @RequestMapping("/get")
     public ResponseEntity<APIResponse> getContract(
@@ -246,33 +244,8 @@ public class ContractController extends BaseController {
         return data;
     }
 
-    @RequestMapping("/ipfsUpload")
-    public WebAsyncTask<ResponseEntity<APIResponse>> ipfsUpload( @JsonMethodArgumentResolver.JsonBodyParam final InputStream inputFileStream ) throws APIException, IOException {
-        final String PREFIX = StringUtils.toString(System.currentTimeMillis());
-        final String SUFFIX = "garbage";
-
-        Callable<ResponseEntity<APIResponse>> callable = new Callable<ResponseEntity<APIResponse>>() {
-            @Override
-            public ResponseEntity<APIResponse> call() throws Exception {
-                final File tempFile = File.createTempFile(PREFIX, SUFFIX);
-                tempFile.deleteOnExit();
-
-                try (FileOutputStream out = new FileOutputStream(tempFile)) {
-                    IOUtils.copy(inputFileStream, out);
-                }
-
-                MerkleNode fileAddResult = ipfs.add(new NamedStreamable.FileWrapper(tempFile));
-                APIResponse res = new APIResponse();
-                res.setData(fileAddResult.hash.toBase58());
-                ResponseEntity<APIResponse> response = new ResponseEntity<>(res, HttpStatus.OK);
-                return response;
-            }
-        };
-        WebAsyncTask asyncTask = new WebAsyncTask(callable);
-        return asyncTask;
-    }
-
-    @RequestMapping("/ipfsDownload")
+/*
+    @RequestMapping("/downloadIPFSFile")
     public WebAsyncTask<ResponseEntity<APIResponse>> ipfsDownload(
             @JsonMethodArgumentResolver.JsonBodyParam final String destPath,
             @JsonMethodArgumentResolver.JsonBodyParam final String docId
@@ -295,14 +268,14 @@ public class ContractController extends BaseController {
         return asyncTask;
     }
 
-    @RequestMapping("/attachIPFSFile")
+    @RequestMapping("/embedIPFS")
     public WebAsyncTask<ResponseEntity<APIResponse>> upload(
             @JsonMethodArgumentResolver.JsonBodyParam final String from, //doc uploader
             @JsonMethodArgumentResolver.JsonBodyParam final String address, //contract instance to upload docs
             @JsonMethodArgumentResolver.JsonBodyParam final String hash, // base58 encoded file hash eg: QmPZ9gcCEpqKTo6aq61g2nXGUhM4iCL3ewB6LDXZCtioEB
             @JsonMethodArgumentResolver.JsonBodyParam final String docId, // docId should correspond to the variable name in the sol contract eg: isinGenerationDocId
             @JsonMethodArgumentResolver.JsonBodyParam final String privateFrom,
-            @JsonMethodArgumentResolver.JsonBodyParam final List<String> privateFor /*to look into this*/) throws APIException {
+            @JsonMethodArgumentResolver.JsonBodyParam final List<String> privateFor /*to look into this/) throws APIException {
 
         final String methodName = docId+"HashUpdate";
         final Object args[] = new Object[] {hash};
@@ -324,5 +297,5 @@ public class ContractController extends BaseController {
         WebAsyncTask asyncTask = new WebAsyncTask(callable);
         return asyncTask;
     }
-
+*/
 }
