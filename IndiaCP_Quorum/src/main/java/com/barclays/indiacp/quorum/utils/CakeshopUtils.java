@@ -44,8 +44,6 @@ public class CakeshopUtils {
     private static ContractApi contractApi;
     private static TransactionApi transactionApi;
     private static IPFS ipfs;
-    private static KVDao cPProgramAddrMap;
-
     static {
         // setup cakeshop manager
         cakeshopManager = ClientManager.create("http://52.172.49.221:8080/cakeshop");
@@ -53,7 +51,8 @@ public class CakeshopUtils {
         transactionApi = cakeshopManager.getClient(TransactionApi.class);
 
         //needs an object factory
-        ipfs = new IPFS("/ip4/127.0.0.1/tcp/5001");
+        ipfs = new IPFS("/ip4/52.172.49.221/tcp/5001");
+//        ipfs = new IPFS("http://52.172.49.221", 5001);
     }
 
     public static String getAddrFromTxId (String txnID) {

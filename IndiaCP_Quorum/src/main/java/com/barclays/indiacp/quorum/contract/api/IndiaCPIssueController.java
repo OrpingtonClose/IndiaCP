@@ -1,8 +1,11 @@
 package com.barclays.indiacp.quorum.contract.api;
 
 import com.barclays.indiacp.model.IndiaCPIssue;
+import com.barclays.indiacp.model.SettlementDetails;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 import com.barclays.indiacp.quorum.utils.KVDao;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -29,6 +32,23 @@ public class IndiaCPIssueController {
         }
         System.out.println("CP Issue failed!");
         return null;
+    }
+
+    @POST
+    @Path("addSettlementDetails/{cpProgID}_{cpIssueID}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String addSettlementDetails(SettlementDetails details, @PathParam("cpProgID") String cpProgID, @PathParam("cpIssueID") String cpIssueID) {
+        String addr = (String) cPIssueAddrMap.map().get(cpIssueID);
+        String detailsJSON="";
+        try {
+            detailsJSON = new ObjectMapper().writeValueAsString(details);
+        } catch (JsonProcessingException e) {
+            System.out.print("Error unpacking DTO object to get json string");
+            e.printStackTrace();
+        }
+        // Add to solidity
+        String txid = CakeshopUtils.transactContract(addr, "putSettlementDetails", new Object[] {detailsJSON});
+        return txid;
     }
 
     @GET

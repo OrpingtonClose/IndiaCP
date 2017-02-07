@@ -85,6 +85,7 @@ contract IndiaCPProgram{
   function fetchCPProgramTradeDetails() constant returns (string _programId, string _name, string __type, string _purpose, uint _issueCommencementDate, string _programCurrency, uint _maturityDays, string _isin) {
     return (programId, name, _type, purpose, issueCommencementDate, programCurrency, maturityDays, isin);
   }
+
 /*
   function fetchCPProgramIssueStatus() constant returns (uint _programSize, uint _programAllocatedValue){
     return (programSize, programAllocatedValue);

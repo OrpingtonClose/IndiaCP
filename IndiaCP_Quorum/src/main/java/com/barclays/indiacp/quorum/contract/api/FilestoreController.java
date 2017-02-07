@@ -23,7 +23,6 @@ public class FilestoreController {
 
     static {
         IPFS_CONFIG = "/home/indiacp/cakeshop/myNetwork/node1/ipfs/ipfs.config"; //Property file for ipfs daemon
-
         //ensure daemon is running
 
     }
