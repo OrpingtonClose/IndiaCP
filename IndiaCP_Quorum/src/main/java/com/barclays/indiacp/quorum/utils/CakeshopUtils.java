@@ -34,10 +34,9 @@ public class CakeshopUtils {
     static {
         // setup cakeshop manager
         cakeshopManager = ClientManager.create("http://52.172.49.221:8080/cakeshop");
-
         contractApi = cakeshopManager.getClient(ContractApi.class);
         transactionApi = cakeshopManager.getClient(TransactionApi.class);
-       /* ipfs = new IPFS("localhost",6969);*/
+        ipfs = new IPFS("/ip4/127.0.0.1/tcp/5001");
     }
 
     public static String getAddrFromTxId (String txnID) {
@@ -166,5 +165,37 @@ public class CakeshopUtils {
         byte[] fileContents = ipfs.cat(Multihash.fromBase58(dochash));
         fos.write(fileContents);
         fos.close();
-    }*/
+    }
+
+    /*
+    public static String uploadDocumentToIPFSTEST() throws RuntimeException {
+        final String PREFIX = StringUtils.toString(System.currentTimeMillis());
+        final String SUFFIX = "garbage";
+        File tempFile = null;
+        try {
+            tempFile = File.createTempFile(PREFIX, SUFFIX);
+        } catch (IOException e) {
+            System.out.println("Temp file creation failed");
+            throw new RuntimeException();
+        }
+        tempFile.deleteOnExit();
+
+        try {
+//            IOUtils.copy(inputFileStream, new FileOutputStream(tempFile));
+            tempFile = new File("/home/surajman/a.txt");
+        } catch (Exception e) {
+            System.out.println("Could not persist input stream");
+            throw new RuntimeException();
+        }
+
+        MerkleNode fileAddResult = null;
+        try {
+            fileAddResult = ipfs.add(new NamedStreamable.FileWrapper(tempFile));
+        } catch (IOException e) {
+            System.out.println("Upload to ipfs failed");
+            throw new RuntimeException();
+        }
+        return fileAddResult.hash.toBase58();
+    }
+    */
 }

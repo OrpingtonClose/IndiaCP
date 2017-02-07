@@ -1,9 +1,13 @@
 package com.barclays.indiacp.quorum.contract.api;
 
+import com.barclays.indiacp.config.JsonMethodArgumentResolver;
+import com.barclays.indiacp.model.IndiaCPDocumentDetails;
 import com.barclays.indiacp.model.IndiaCPIssue;
 import com.barclays.indiacp.model.IndiaCPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jpmorgan.cakeshop.client.model.Contract;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -18,10 +22,10 @@ import java.util.List;
  * Created by ritukedia on 23/12/16.
  */
 @Path("indiacpprogram")
-public class IndiaCPProgramController {
+public class IndiaCPProgramController extends IndiaCPContractController {
 
     Request request;
-    String userId; // is this the owner's address?
+    String userId; // is this the owner's address? should get from OAuth header?
 
     String [] METHODS = {"fetchCPProgramTradeDetails", "fetchCPProgramDocuments", "fetchCPProgramParties", "fetchCPProgramStatus", "issueCP"}; //temporarily hardcoded
 
@@ -92,7 +96,7 @@ public class IndiaCPProgramController {
     @Consumes(MediaType.APPLICATION_JSON)
     public String issueCP(@PathParam("cpProgramId") String cpProgramId, IndiaCPIssue cpIssue) {
         IndiaCPProgram cpProg = fetchCPProgram(cpProgramId);
-        String cpProgAddr = resolveAddrFromProgID(cpProgramId);
+        String cpProgAddr = resolveAddrFromID(cpProgramId);
         String issuedCpAddr="";
 
         if (cpIssue.getRate() <= cpProg.getProgramAllocatedValue()) {
@@ -113,11 +117,9 @@ public class IndiaCPProgramController {
     @Path("addISINGenerationDocs/{cpProgramId}/{docHash}/{docStatus}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     //@UploadsDocument
-    public Response addISINGenerationDocs(@PathParam("cpProgramId") String cpProgramId
-            , @PathParam("docStatus") String docStatus
-            , InputStream uploadedInputStream) {
+    public Response addISINGenerationDocs(@PathParam("cpProgramId") String cpProgramId, @PathParam("docStatus") String docStatus, InputStream uploadedInputStream) {
+        // what is this function supposed to do?
         return Response.status(Response.Status.OK).build();
-
     }
 
     @Context
@@ -126,6 +128,21 @@ public class IndiaCPProgramController {
         this.userId = ""; //TODO: Parse the userId from the Request Header
     }
 
-    public String resolveAddrFromProgID(String progId) {return "TODO"; };
+    @POST
+    @Path("addDocs/{docType}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    //Embeds document in contract
+    public Response addDocs(@JsonProperty("documentDetails") IndiaCPDocumentDetails docDetails, @PathParam("docType") String docType) {
+        String contractAddr = resolveAddrFromID(docDetails.getCpProgramId());
+        // use docType to determine methodName
+        String txid = CakeshopUtils.transactContract(contractAddr, "setIsinGenerationRequestDocId", new Object[] {docDetails.getDocHash()});
+        return Response.status(Response.Status.OK).build();
+    }
+
+    public String resolveAddrFromID(String progId) {
+        return "TODO";
+    }
+
+
 
 }
