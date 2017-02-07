@@ -5,6 +5,7 @@ import com.barclays.indiacp.model.IndiaCPDocumentDetails;
 import com.barclays.indiacp.model.IndiaCPIssue;
 import com.barclays.indiacp.model.IndiaCPProgram;
 import com.barclays.indiacp.quorum.utils.CakeshopUtils;
+import com.barclays.indiacp.quorum.utils.KVDao;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jpmorgan.cakeshop.client.model.Contract;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by ritukedia on 23/12/16.
@@ -27,6 +29,8 @@ public class IndiaCPProgramController extends IndiaCPContractController {
     Request request;
     String userId; // is this the owner's address? should get from OAuth header?
 
+    private KVDao cPProgramAddrMap = new KVDao("CPProgramAddrMap", "/home/indiacp/cakeshop/myNetwork/node1/nodedata.db");
+
     String [] METHODS = {"fetchCPProgramTradeDetails", "fetchCPProgramDocuments", "fetchCPProgramParties", "fetchCPProgramStatus", "issueCP"}; //temporarily hardcoded
 
     @POST
@@ -34,14 +38,20 @@ public class IndiaCPProgramController extends IndiaCPContractController {
     @Consumes(MediaType.APPLICATION_JSON)
     public String issueCPProgram(IndiaCPProgram indiaCPProgramArgs) {
         String addr = CakeshopUtils.createContract(this.getClass().getSimpleName().replaceFirst("Controller", ""), indiaCPProgramArgs, userId);
-        System.out.println("Newly created contract mined at: "+addr);
-        return addr;
+        if (null != addr) {
+            // updating cp prog lookup table
+            cPProgramAddrMap.map().putIfAbsent(indiaCPProgramArgs.getProgramId(), addr);
+            System.out.println("Newly created contract mined at: " + addr);
+            return addr;
+        }
+        System.out.println("CP Program issue failed!");
+        return null;
     }
 
     @GET
     @Path("fetchAllCPProgram")
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList<IndiaCPProgram>  fetchAllCPProgram() {
+    public ArrayList<IndiaCPProgram> fetchAllCPProgram() {
         //fetch all contract instances of IndiaCPProgramController Contracts
         List<Contract> contractList = CakeshopUtils.listContractsByName(this.getClass().getSimpleName().replaceFirst("Controller", ""));
 
@@ -75,11 +85,8 @@ public class IndiaCPProgramController extends IndiaCPContractController {
     @Path("fetchCPProgram/{cpProgramId}")
     @Consumes(MediaType.APPLICATION_JSON)
     public IndiaCPProgram fetchCPProgram(@PathParam("cpProgramId") String cpProgramId) {
-        //TODO Get contract address from mapping service
-        String contractAddress = cpProgramId;
-
+        String contractAddress = resolveAddrFromID(cpProgramId);
         String[] readMethodNames = METHODS;
-
         return CakeshopUtils.readContract(this.getClass().getSimpleName(), contractAddress, IndiaCPProgram.class, readMethodNames);
     }
 
@@ -140,7 +147,8 @@ public class IndiaCPProgramController extends IndiaCPContractController {
     }
 
     public String resolveAddrFromID(String progId) {
-        return "TODO";
+        //read from kv map
+        return (String) cPProgramAddrMap.map().get(progId);
     }
 
 

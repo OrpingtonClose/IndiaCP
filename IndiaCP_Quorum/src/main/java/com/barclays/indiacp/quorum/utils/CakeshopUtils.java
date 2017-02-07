@@ -2,6 +2,7 @@ package com.barclays.indiacp.quorum.utils;
 
 import com.barclays.indiacp.quorum.contract.code.SolidityContract;
 import com.barclays.indiacp.quorum.contract.code.SolidityContractCodeFactory;
+import com.barclays.indiacp.util.StringUtils;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.jpmorgan.cakeshop.client.ClientManager;
@@ -16,9 +17,22 @@ import com.jpmorgan.cakeshop.client.model.req.ContractMethodCallCommand;
 import com.jpmorgan.cakeshop.client.model.res.APIData;
 import com.jpmorgan.cakeshop.client.model.res.APIResponse;
 import feign.FeignException;
+import io.ipfs.api.IPFS;
+import io.ipfs.api.MerkleNode;
+import io.ipfs.api.NamedStreamable;
+import io.ipfs.multihash.Multihash;
+import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.async.WebAsyncTask;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -29,13 +43,16 @@ public class CakeshopUtils {
     private static ClientManager cakeshopManager;
     private static ContractApi contractApi;
     private static TransactionApi transactionApi;
-    /*private static IPFS ipfs;*/
+    private static IPFS ipfs;
+    private static KVDao cPProgramAddrMap;
 
     static {
         // setup cakeshop manager
         cakeshopManager = ClientManager.create("http://52.172.49.221:8080/cakeshop");
         contractApi = cakeshopManager.getClient(ContractApi.class);
         transactionApi = cakeshopManager.getClient(TransactionApi.class);
+
+        //needs an object factory
         ipfs = new IPFS("/ip4/127.0.0.1/tcp/5001");
     }
 
@@ -128,7 +145,7 @@ public class CakeshopUtils {
         contractMethodCallCommand.setMethod(methodName);
         return contractMethodCallCommand;
     }
-/*
+
     // Uploads document to IPFS and returns hashcode
     public static String uploadDocumentToIPFS(InputStream inputFileStream) throws RuntimeException {
         final String PREFIX = StringUtils.toString(System.currentTimeMillis());
@@ -167,7 +184,6 @@ public class CakeshopUtils {
         fos.close();
     }
 
-    /*
     public static String uploadDocumentToIPFSTEST() throws RuntimeException {
         final String PREFIX = StringUtils.toString(System.currentTimeMillis());
         final String SUFFIX = "garbage";
@@ -197,5 +213,5 @@ public class CakeshopUtils {
         }
         return fileAddResult.hash.toBase58();
     }
-    */
+
 }

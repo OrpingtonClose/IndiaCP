@@ -1,6 +1,6 @@
-package com.barclays.indiacp.quorum.utils;
+package com.barclays.indiacp.quorum.contract.api;
 
-import com.barclays.indiacp.config.JsonMethodArgumentResolver;
+import com.barclays.indiacp.quorum.utils.CakeshopUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -19,6 +19,15 @@ import java.io.InputStream;
 @Path("filestore")
 public class FilestoreController {
 
+    private static String IPFS_CONFIG;
+
+    static {
+        IPFS_CONFIG = "/home/indiacp/cakeshop/myNetwork/node1/ipfs/ipfs.config"; //Property file for ipfs daemon
+
+        //ensure daemon is running
+
+    }
+
     @POST
     @Path("upload")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -30,7 +39,7 @@ public class FilestoreController {
 
     @POST
     @Path("download/{docHash}")
-    @Consumes(MediaType.APPLICATION_JSON)
+//    @Consumes(MediaType.APPLICATION_JSON)
     public Response downloadFile(@PathParam("docHash") String docHash, @FormParam("filePath") String filePath) {
         try {
             CakeshopUtils.downloadDocumentFromIPFS(docHash, filePath);

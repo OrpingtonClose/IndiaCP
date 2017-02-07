@@ -31,13 +31,11 @@
             <artifactId>jersey-media-moxy</artifactId>
         </dependency>
 
-<!--
         <dependency>
             <groupId>com.barclays</groupId>
             <artifactId>indiacp-cakeshop</artifactId>
             <version>0.9.0</version>
         </dependency>
--->
 
         <dependency>
             <groupId>com.barclays</groupId>
@@ -88,11 +86,13 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.mapdb/mapdb -->
         <dependency>
             <groupId>org.mapdb</groupId>
             <artifactId>mapdb</artifactId>
             <version>3.0.2</version>
         </dependency>
+
 
     </dependencies>
 
